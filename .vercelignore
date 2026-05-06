@@ -1,0 +1,24 @@
+# Keep preview deployments metadata-only and lightweight.
+# Raw/source intake lives locally and must never upload to Vercel.
+data/
+**/source-logs/**
+**/dropbox-intake/**
+**/source-artifacts/**
+**/raw/**
+**/private/**
+
+# Build/runtime noise
+node_modules/
+dist/
+coverage/
+.git/
+.env
+.env.*
+.DS_Store
+
+# Raw document/export artifacts
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.zip
