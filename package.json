@@ -14,7 +14,8 @@
     "intake:procore-data-tie": "node scripts/index-procore-data-tie.js",
     "intake:forecast": "node scripts/index-procore-budget-forecast.js",
     "intake:budget-revisions": "node scripts/build-budget-revisions-register.js",
-    "intake:doc-intelligence": "node scripts/build-document-intelligence.js"
+    "intake:doc-intelligence": "node scripts/build-document-intelligence.js",
+    "intake:accounting-budget": "node scripts/index-accounting-budget-tieout.js"
   },
   "keywords": [
     "cast-build",
@@ -23,5 +24,7 @@
     "owner-platform"
   ],
   "license": "UNLICENSED",
-  "devDependencies": {}
+  "devDependencies": {
+    "xlsx": "^0.18.5"
+  }
 }

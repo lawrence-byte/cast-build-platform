@@ -41,6 +41,12 @@ if (!/alum-commitments\.html/.test(budgetPage)) {
   console.error('Budget page must link to commitments / procurement review.');
   failed = true;
 }
+if (!/alum-accounting-tieout\.html/.test(budgetPage)) {
+  console.error('Budget page must link to accounting budget tie-out.');
+  failed = true;
+}
+const accountingTieoutPath = path.join(root, 'data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
+const publicAccountingTieoutPath = path.join(root, 'public/data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
 const budgetExceptionsPage = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.html'), 'utf8');
 const budgetExceptionsScript = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.js'), 'utf8');
 if (!/Budget Exceptions \/ Needs Review/.test(budgetExceptionsPage) || !/Read-first/.test(budgetExceptionsPage)) {
@@ -90,6 +96,30 @@ if (!/alum-commitments\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the commitments control center.');
   failed = true;
 }
+if (!/alum-accounting-tieout\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the accounting tie-out control center.');
+  failed = true;
+}
+if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath)) {
+  console.error('Accounting budget tie-out JSON must be generated for private and public metadata views.');
+  failed = true;
+} else {
+  const accountingTieout = JSON.parse(fs.readFileSync(accountingTieoutPath, 'utf8'));
+  const publicAccountingTieout = fs.readFileSync(publicAccountingTieoutPath, 'utf8');
+  if (accountingTieout.budgetImport?.total !== budgetSummary.metrics['Original Budget Amount']) {
+    console.error('Accounting budget import must tie to the current original budget amount.');
+    failed = true;
+  }
+  if (/dropbox-intake|source-logs/.test(publicAccountingTieout)) {
+    console.error('Public accounting tie-out metadata must not expose raw intake/source-log paths.');
+    failed = true;
+  }
+}
+const accountingTieoutPage = fs.readFileSync(path.join(root, 'public/projects/alum-accounting-tieout.html'), 'utf8');
+if (!/Accounting Budget Tie-Out/.test(accountingTieoutPage) || !/data-check-rows/.test(accountingTieoutPage)) {
+  console.error('Accounting tie-out page must include tie-out checks.');
+  failed = true;
+}
 const commitmentsPage = fs.readFileSync(path.join(root, 'public/projects/alum-commitments.html'), 'utf8');
 const commitmentsScript = fs.readFileSync(path.join(root, 'public/projects/alum-commitments.js'), 'utf8');
 if (!/Commitments \/ Procurement Review/.test(commitmentsPage) || !/data-queue-rows/.test(commitmentsPage)) {
@@ -114,16 +144,28 @@ if (/source-logs\//i.test(openItemsPage)) {
 const distDir = path.join(root, 'dist');
 if (fs.existsSync(distDir)) {
   const leaked = [];
+  const leakedStrings = [];
   function walkDist(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) walkDist(full);
-      else if (/(^|[/\\])source-logs([/\\]|$)/.test(path.relative(distDir, full))) leaked.push(path.relative(distDir, full));
+      else {
+        const rel = path.relative(distDir, full);
+        if (/(^|[/\\])source-logs([/\\]|$)|(^|[/\\])dropbox-intake([/\\]|$)|\.pdf$|\.xlsx$|\.xls$|\.csv$|\.zip$/i.test(rel)) leaked.push(rel);
+        if (/\.(html|js|json|css|txt|md|svg)$/i.test(rel)) {
+          const text = fs.readFileSync(full, 'utf8');
+          if (/dropbox-intake|source-logs/.test(text)) leakedStrings.push(rel);
+        }
+      }
     }
   }
   walkDist(distDir);
   if (leaked.length) {
-    console.error(`Build bundle leaked source logs: ${leaked.join(', ')}`);
+    console.error(`Build bundle leaked private/raw files: ${leaked.join(', ')}`);
+    failed = true;
+  }
+  if (leakedStrings.length) {
+    console.error(`Build bundle leaked private source path strings: ${leakedStrings.join(', ')}`);
     failed = true;
   }
 }

@@ -1,0 +1,680 @@
+{
+  "projectName": "Alüm",
+  "formerName": "Golden Hill Apartments",
+  "source": "Approved Dropbox accounting folder snapshot plus CAST BUILD A.O metadata exports",
+  "generatedAt": "2026-05-06T16:21:09.262Z",
+  "guardrail": "Read-first metadata extraction only. Raw PDFs/XLS/XLSX/CSV files remain local/private and are not published.",
+  "accountingFolder": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING",
+  "budgetFolder": "dropbox-intake/extracted-20260506-050901/Alüm/02. BUDGET",
+  "fileInventory": {
+    "accountingFiles": 1757,
+    "budgetFolderFiles": 335,
+    "spreadsheetFiles": 229,
+    "budgetRelatedFiles": 1869
+  },
+  "currentCastBuildAOMetrics": {
+    "Original Budget Amount": 37013422,
+    "Approved Budget Changes": 0,
+    "Approved COs": 394673.6,
+    "Revised Budget": 37408095.6,
+    "Pending COs": 0,
+    "Projected Budget": 37408095.6,
+    "Committed Costs": 33027221.12,
+    "Direct Costs": 935986.93,
+    "Job to Date Costs": 22702462.85,
+    "Pending Cost Changes": 22408.27,
+    "Projected Costs": 33985616.32,
+    "Forecast To Complete": 3496224.16,
+    "Estimated Cost at Completion": 37481840.48,
+    "Projected over Under": -73744.88,
+    "Owner Invoiced cost to date": 23589625.15,
+    "rowCount": 111,
+    "rawRowCount": 112,
+    "variancePct": -0.2,
+    "committedPctOfRevised": 88.29,
+    "jtdPctOfRevised": 60.69
+  },
+  "budgetImport": {
+    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget import (final) REV.xlsx",
+    "rowCount": 77,
+    "total": 37013422,
+    "byCostType": [
+      {
+        "costType": "SVC",
+        "rowCount": 8,
+        "budgetAmount": 289601
+      },
+      {
+        "costType": "O",
+        "rowCount": 13,
+        "budgetAmount": 2253235
+      },
+      {
+        "costType": "S",
+        "rowCount": 51,
+        "budgetAmount": 33263259
+      },
+      {
+        "costType": "L",
+        "rowCount": 5,
+        "budgetAmount": 1207327
+      }
+    ]
+  },
+  "buyoutSummary": {
+    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/02. BUDGET/Golden Hill Apartments_Buyout Log_live.xls",
+    "rowCount": 53,
+    "gmpBudget": 33146127,
+    "subcontractAmount": 31963599,
+    "plugsAllowances": 871789,
+    "buyoutDelta": 310738.46,
+    "executedCount": 47,
+    "draftCount": 47,
+    "tbdCount": 8
+  },
+  "latestCommitmentSnapshot": {
+    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/14 APR 2026/Commitments (1).xlsx",
+    "folder": "16. ACCOUNTING/01.Pay Applications/14 APR 2026",
+    "rowCount": 40,
+    "originalContractAmount": 29446462.28,
+    "approvedChangeOrders": 1316694.7,
+    "revisedContractAmount": 30763156.98,
+    "pendingChangeOrders": 0,
+    "draftChangeOrders": 4563.13,
+    "invoiced": 18409093.37,
+    "paymentsIssued": 2727312.66,
+    "remainingBalanceOutstanding": 28035844.32
+  },
+  "commitmentSnapshots": [
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build, GHA - Commitments.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
+      "rowCount": 39,
+      "originalContractAmount": 0,
+      "approvedChangeOrders": 29073892.28,
+      "revisedContractAmount": 765145.83,
+      "pendingChangeOrders": 29839038.11,
+      "draftChangeOrders": 0,
+      "invoiced": 0,
+      "paymentsIssued": 0,
+      "remainingBalanceOutstanding": 0
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/Monthly Logs 1.31.26/Commitments 2.10.26.csv",
+      "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/Monthly Logs 1.31.26",
+      "rowCount": 39,
+      "originalContractAmount": 0,
+      "approvedChangeOrders": 0,
+      "revisedContractAmount": 0,
+      "pendingChangeOrders": 29073892.28,
+      "draftChangeOrders": 845424.06,
+      "invoiced": 29919316.34,
+      "paymentsIssued": 1243.5,
+      "remainingBalanceOutstanding": 0
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/12 FEB 2026/GHA Commitments (current) 3.20.26.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/12 FEB 2026",
+      "rowCount": 39,
+      "originalContractAmount": 0,
+      "approvedChangeOrders": 0,
+      "revisedContractAmount": 0,
+      "pendingChangeOrders": 29073892.28,
+      "draftChangeOrders": 998534.48,
+      "invoiced": 30072426.76,
+      "paymentsIssued": 0,
+      "remainingBalanceOutstanding": 15545245.59
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/13 MAR 2026/Commitments (3).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026",
+      "rowCount": 39,
+      "originalContractAmount": 0,
+      "approvedChangeOrders": 0,
+      "revisedContractAmount": 0,
+      "pendingChangeOrders": 29073892.28,
+      "draftChangeOrders": 1096327.53,
+      "invoiced": 30170219.81,
+      "paymentsIssued": 0,
+      "remainingBalanceOutstanding": 16172866.45
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/13 MAR 2026/monthly logs/Commitments.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026/monthly logs",
+      "rowCount": 39,
+      "originalContractAmount": 0,
+      "approvedChangeOrders": 0,
+      "revisedContractAmount": 0,
+      "pendingChangeOrders": 29073892.28,
+      "draftChangeOrders": 1175827.53,
+      "invoiced": 30249719.81,
+      "paymentsIssued": 16305352.57,
+      "remainingBalanceOutstanding": 343.92
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/14 APR 2026/Commitments (1).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/14 APR 2026",
+      "rowCount": 40,
+      "originalContractAmount": 29446462.28,
+      "approvedChangeOrders": 1316694.7,
+      "revisedContractAmount": 30763156.98,
+      "pendingChangeOrders": 0,
+      "draftChangeOrders": 4563.13,
+      "invoiced": 18409093.37,
+      "paymentsIssued": 2727312.66,
+      "remainingBalanceOutstanding": 28035844.32
+    }
+  ],
+  "forecastSnapshots": [
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 1.30.26.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 10.17.25.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 11.05.25.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 12.31.25.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 3.31.26.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 8.7.25.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 9.5.25.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
+      "rowCount": 15,
+      "listedBudget": 1297189,
+      "listedCostToComplete": 80,
+      "fileMtime": "2026-05-06T12:08:48.000Z"
+    }
+  ],
+  "latestForecastSnapshot": {
+    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
+    "rowCount": 15,
+    "listedBudget": 1297189,
+    "listedCostToComplete": 80,
+    "fileMtime": "2026-05-06T12:08:48.000Z"
+  },
+  "purchaseReports": [
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (5).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
+      "rowCount": 22,
+      "amount": 0
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (6).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
+      "rowCount": 12,
+      "amount": 4894.17
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (8).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
+      "rowCount": 27,
+      "amount": 0
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (ties out to Procore 10.31.25).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
+      "rowCount": 250,
+      "amount": 422677.12
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (10) GCs.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST",
+      "rowCount": 21,
+      "amount": 8988.98
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (14).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST",
+      "rowCount": 60,
+      "amount": 2385062.25
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/10 DEC 2025 CAST/CAST Build Inc._GC & GR Purchases by Product_Service Detail - copy.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/10 DEC 2025 CAST",
+      "rowCount": 37,
+      "amount": 12373.62
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC & GR Purchases by Product_Service Detail - DEC revised reconcile (1).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
+      "rowCount": 50,
+      "amount": 110233.67
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC& GR Purchases by Product_Service Detail (1.31.26).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
+      "rowCount": 28,
+      "amount": 14533.64
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC& GR Purchases by Product_Service Detail 1.31.26 final (1).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
+      "rowCount": 41,
+      "amount": 74779.34
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/12 FEB 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail (2).xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/12 FEB 2026",
+      "rowCount": 26,
+      "amount": 7665.45
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/13 MAR 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail 3.31.26.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026",
+      "rowCount": 54,
+      "amount": 32596.15
+    },
+    {
+      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/14 APR 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail.xlsx",
+      "folder": "16. ACCOUNTING/01.Pay Applications/14 APR 2026",
+      "rowCount": 24,
+      "amount": 16547.34
+    }
+  ],
+  "checks": [
+    {
+      "name": "Accounting budget import total ties to CAST BUILD A.O Original Budget Amount",
+      "source": 37013422,
+      "target": 37013422,
+      "delta": 0,
+      "status": "pass",
+      "tolerance": 1
+    },
+    {
+      "name": "Current budget formula: Original + Approved COs + Approved Budget Changes = Revised",
+      "source": 37408095.6,
+      "target": 37408095.6,
+      "delta": 0,
+      "status": "pass",
+      "tolerance": 1
+    },
+    {
+      "name": "Approved budget revision register net ties to zero",
+      "source": 0,
+      "target": 0,
+      "delta": 0,
+      "status": "pass",
+      "tolerance": 1
+    },
+    {
+      "name": "Buyout GMP budget ties to CAST BUILD A.O Construction division revised budget",
+      "source": 33146127,
+      "target": 33076061.69,
+      "delta": 70065.31,
+      "status": "review",
+      "tolerance": 1000
+    },
+    {
+      "name": "Buyout subcontract amount ties to CAST BUILD A.O committed costs",
+      "source": 31963599,
+      "target": 33027221.12,
+      "delta": -1063622.12,
+      "status": "review",
+      "tolerance": 1000
+    },
+    {
+      "name": "Latest accounting commitments revised contracts tie to CAST BUILD A.O committed costs",
+      "source": 30763156.98,
+      "target": 33027221.12,
+      "delta": -2264064.14,
+      "status": "review",
+      "tolerance": 1000
+    },
+    {
+      "name": "Latest accounting commitments invoiced tie to CAST BUILD A.O job-to-date costs",
+      "source": 18409093.37,
+      "target": 22702462.85,
+      "delta": -4293369.48,
+      "status": "review",
+      "tolerance": 1000
+    }
+  ],
+  "exceptions": [
+    {
+      "severity": "review",
+      "check": "Buyout GMP budget ties to CAST BUILD A.O Construction division revised budget",
+      "delta": 70065.31,
+      "nextStep": "Review buyout log rows, plugs/allowances, and construction-division budget scope before treating this as a variance."
+    },
+    {
+      "severity": "high",
+      "check": "Buyout subcontract amount ties to CAST BUILD A.O committed costs",
+      "delta": -1063622.12,
+      "nextStep": "Review buyout log rows, plugs/allowances, and construction-division budget scope before treating this as a variance."
+    },
+    {
+      "severity": "high",
+      "check": "Latest accounting commitments revised contracts tie to CAST BUILD A.O committed costs",
+      "delta": -2264064.14,
+      "nextStep": "Reconcile whether non-subcontract/direct/GC costs are intentionally outside the commitments workbook, then map those costs by cost code."
+    },
+    {
+      "severity": "high",
+      "check": "Latest accounting commitments invoiced tie to CAST BUILD A.O job-to-date costs",
+      "delta": -4293369.48,
+      "nextStep": "Reconcile whether non-subcontract/direct/GC costs are intentionally outside the commitments workbook, then map those costs by cost code."
+    }
+  ],
+  "topBuyoutRows": [
+    {
+      "specialist": "1/0/00",
+      "priority": "1",
+      "description": "01 54 16 - Hoists",
+      "gmpBudget": 387844,
+      "targetWOExecutedDate": "4/12/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Brewer Crane",
+      "subcontractAmount": 99980,
+      "plugsAllowances": 93965,
+      "buyoutDelta": 193899,
+      "notes": " Plugs: Operator RT,OT,Duration "
+    },
+    {
+      "specialist": "",
+      "priority": "1",
+      "description": "26 00 00 - Electrical",
+      "gmpBudget": 2769930,
+      "targetWOExecutedDate": "4/1/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Cal Pacific",
+      "subcontractAmount": 2553020,
+      "plugsAllowances": 48000,
+      "buyoutDelta": 168910,
+      "notes": " Plugs: See abstract "
+    },
+    {
+      "specialist": "Collette",
+      "priority": "3",
+      "description": "11 31 00 - Residential Appliances",
+      "gmpBudget": 575535,
+      "targetWOExecutedDate": "3/24/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "R&B Wholesale",
+      "subcontractAmount": 698767,
+      "plugsAllowances": 20000,
+      "buyoutDelta": -143231.52,
+      "notes": ""
+    },
+    {
+      "specialist": "",
+      "priority": "1",
+      "description": "09 24 00 - Plaster",
+      "gmpBudget": 764782,
+      "targetWOExecutedDate": "1/1/26",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Apptek",
+      "subcontractAmount": 645695,
+      "plugsAllowances": 0,
+      "buyoutDelta": 119087,
+      "notes": ""
+    },
+    {
+      "specialist": "",
+      "priority": "",
+      "description": "26 00 01 - Low Voltage",
+      "gmpBudget": 164168,
+      "targetWOExecutedDate": "4/1/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Fire Testing Solutions",
+      "subcontractAmount": 52445,
+      "plugsAllowances": 0,
+      "buyoutDelta": 111723,
+      "notes": ""
+    },
+    {
+      "specialist": "Hetzel",
+      "priority": "3",
+      "description": "09 30 00 - Tiling",
+      "gmpBudget": 314719,
+      "targetWOExecutedDate": "",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "TBD",
+      "subcontractAmount": 372570,
+      "plugsAllowances": 40000,
+      "buyoutDelta": -97851,
+      "notes": " Waiting on Dan "
+    },
+    {
+      "specialist": "",
+      "priority": "1",
+      "description": "14 42 16 - Automated Parking",
+      "gmpBudget": 1638165,
+      "targetWOExecutedDate": "3/3/26",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Utron",
+      "subcontractAmount": 1553834,
+      "plugsAllowances": 0,
+      "buyoutDelta": 84331,
+      "notes": ""
+    },
+    {
+      "specialist": "",
+      "priority": "2",
+      "description": "09 21 26 - Framing & Drywall",
+      "gmpBudget": 1458000,
+      "targetWOExecutedDate": "10/29/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "SoCal Interiors",
+      "subcontractAmount": 1508050,
+      "plugsAllowances": 30000,
+      "buyoutDelta": -80050,
+      "notes": " Review comments "
+    },
+    {
+      "specialist": "Lopez",
+      "priority": "3",
+      "description": "08 11 13 - Common Area Doors, Frames, Hardware",
+      "gmpBudget": 470287,
+      "targetWOExecutedDate": "10/6/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Patterson Palm",
+      "subcontractAmount": 331845,
+      "plugsAllowances": 69394,
+      "buyoutDelta": 69047.42,
+      "notes": " Plug: Latch & Corridor Base "
+    },
+    {
+      "specialist": "Hetzel",
+      "priority": "1",
+      "description": "07 60 00 - Flashing and Sheet Metal",
+      "gmpBudget": 305000,
+      "targetWOExecutedDate": "10/6/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Bay Sheet Metal",
+      "subcontractAmount": 196770,
+      "plugsAllowances": 41070,
+      "buyoutDelta": 67160,
+      "notes": ""
+    },
+    {
+      "specialist": "Hetzel",
+      "priority": "2",
+      "description": "07 50 00 - Membrane Roofing",
+      "gmpBudget": 265687,
+      "targetWOExecutedDate": "4/17/26",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Sylvester Roofing",
+      "subcontractAmount": 322554,
+      "plugsAllowances": 0,
+      "buyoutDelta": -56867.46,
+      "notes": ""
+    },
+    {
+      "specialist": "",
+      "priority": "1",
+      "description": "23 00 00 - HVAC (Epocha)",
+      "gmpBudget": 682717,
+      "targetWOExecutedDate": "5/1/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Epocha",
+      "subcontractAmount": 724404,
+      "plugsAllowances": 15000,
+      "buyoutDelta": -56686.86,
+      "notes": ""
+    },
+    {
+      "specialist": "Collette",
+      "priority": "3",
+      "description": "12 24 00 - Window Coverings",
+      "gmpBudget": 174372,
+      "targetWOExecutedDate": "",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "JW Blinds",
+      "subcontractAmount": 128910,
+      "plugsAllowances": 0,
+      "buyoutDelta": 45462,
+      "notes": ""
+    },
+    {
+      "specialist": "Collette",
+      "priority": "1",
+      "description": "07 10 00 - Dampproofing and Waterproofing",
+      "gmpBudget": 235276,
+      "targetWOExecutedDate": "4/15/25",
+      "draftWOSent": "Y",
+      "executed": "y",
+      "subcontractor": "Mark Beamish WP",
+      "subcontractAmount": 275000,
+      "plugsAllowances": 3000,
+      "buyoutDelta": -42724,
+      "notes": ""
+    },
+    {
+      "specialist": "Hetzel",
+      "priority": "1",
+      "description": "33 02 00 - Site Utilities",
+      "gmpBudget": 257793,
+      "targetWOExecutedDate": "4/1/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Cal Pacific",
+      "subcontractAmount": 298203,
+      "plugsAllowances": 0,
+      "buyoutDelta": -40410,
+      "notes": ""
+    },
+    {
+      "specialist": "",
+      "priority": "1",
+      "description": "23 00 00 - HVAC Install",
+      "gmpBudget": 574783,
+      "targetWOExecutedDate": "5/1/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Strang",
+      "subcontractAmount": 614000,
+      "plugsAllowances": 0,
+      "buyoutDelta": -39217.14,
+      "notes": ""
+    },
+    {
+      "specialist": "Frazier",
+      "priority": "1",
+      "description": "03 31 00 - Structural Concrete + Rebar",
+      "gmpBudget": 8606220,
+      "targetWOExecutedDate": "4/1/25",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Ferrocrete",
+      "subcontractAmount": 8504220,
+      "plugsAllowances": 64500,
+      "buyoutDelta": 37500,
+      "notes": " Plugs: waterstop, backfill "
+    },
+    {
+      "specialist": "",
+      "priority": "1",
+      "description": "09 91 00 - Paint & Wall Coverings",
+      "gmpBudget": 316070,
+      "targetWOExecutedDate": "1/1/26",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Anchor Coatings",
+      "subcontractAmount": 341995,
+      "plugsAllowances": 10000,
+      "buyoutDelta": -35925,
+      "notes": ""
+    },
+    {
+      "specialist": "Oh",
+      "priority": "2",
+      "description": "12 35 50 - Casework",
+      "gmpBudget": 798291,
+      "targetWOExecutedDate": "1/20/26",
+      "draftWOSent": "y",
+      "executed": "y",
+      "subcontractor": "Kember",
+      "subcontractAmount": 776469,
+      "plugsAllowances": 0,
+      "buyoutDelta": 21822,
+      "notes": ""
+    },
+    {
+      "specialist": "Oh",
+      "priority": "3",
+      "description": "09 64 00 - Corridor & Amenity Flooring",
+      "gmpBudget": 151800,
+      "targetWOExecutedDate": "1/16/26",
+      "draftWOSent": "",
+      "executed": "",
+      "subcontractor": "TBD",
+      "subcontractAmount": 151800,
+      "plugsAllowances": 20000,
+      "buyoutDelta": -20000,
+      "notes": " Waiting on Quince "
+    }
+  ],
+  "topCommitmentDeltas": []
+}

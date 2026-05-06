@@ -37,6 +37,31 @@ fs.cpSync(publicDir, distDir, {
   },
 });
 
+const textDeployExtensions = new Set(['.html', '.js', '.css', '.json', '.txt', '.md', '.svg']);
+function scrubPrivateSourceStrings(file) {
+  if (!textDeployExtensions.has(path.extname(file).toLowerCase())) return;
+  let text = fs.readFileSync(file, 'utf8');
+  text = text
+    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+\/Alüm\//g, '')
+    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+/g, 'private-intake-redacted')
+    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform\/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+\/Alüm\//g, '')
+    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform\/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+/g, 'private-intake-redacted')
+    .replace(/\/data\/projects\/golden-hill\/source-logs\/[^"'<>\s]+/g, '#private-source-excluded')
+    .replace(/data\/projects\/golden-hill\/source-logs\/[^"'<>\s]+/g, 'private-source-excluded')
+    .replace(/source-logs/g, 'private-source')
+    .replace(/dropbox-intake/g, 'private-intake');
+  fs.writeFileSync(file, text);
+}
+
+function walkForScrub(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkForScrub(full);
+    else scrubPrivateSourceStrings(full);
+  }
+}
+walkForScrub(distDir);
+
 const blocked = [];
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
