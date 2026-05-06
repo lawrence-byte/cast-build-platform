@@ -37,6 +37,10 @@ if (!/alum-budget-exceptions\.html/.test(budgetPage)) {
   console.error('Budget page must link to budget exceptions / needs review.');
   failed = true;
 }
+if (!/alum-commitments\.html/.test(budgetPage)) {
+  console.error('Budget page must link to commitments / procurement review.');
+  failed = true;
+}
 const budgetExceptionsPage = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.html'), 'utf8');
 const budgetExceptionsScript = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.js'), 'utf8');
 if (!/Budget Exceptions \/ Needs Review/.test(budgetExceptionsPage) || !/Read-first/.test(budgetExceptionsPage)) {
@@ -81,6 +85,22 @@ if (!/alum-open-items\.html/.test(alumReplicaPage)) {
 if (!/alum-budget-exceptions\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the budget exceptions control center.');
   failed = true;
+}
+if (!/alum-commitments\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the commitments control center.');
+  failed = true;
+}
+const commitmentsPage = fs.readFileSync(path.join(root, 'public/projects/alum-commitments.html'), 'utf8');
+const commitmentsScript = fs.readFileSync(path.join(root, 'public/projects/alum-commitments.js'), 'utf8');
+if (!/Commitments \/ Procurement Review/.test(commitmentsPage) || !/data-queue-rows/.test(commitmentsPage)) {
+  console.error('Commitments page must include procurement review queues.');
+  failed = true;
+}
+for (const requiredQueue of ['Over-committed', 'Low commitment coverage', 'No commitment with spend']) {
+  if (!commitmentsScript.includes(requiredQueue)) {
+    console.error(`Commitments script missing queue: ${requiredQueue}`);
+    failed = true;
+  }
 }
 const openItemsPage = fs.readFileSync(path.join(root, 'public/projects/alum-open-items.html'), 'utf8');
 if (!/Open Item Control Center/.test(openItemsPage) || !/Read-first replica/i.test(openItemsPage)) {
