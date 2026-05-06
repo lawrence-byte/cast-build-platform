@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
 let failed = false;
 for (const file of files) {
   const full = path.join(root, file);
@@ -127,6 +127,49 @@ if (!/alum-dynamic-forecast\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the dynamic forecast control center.');
   failed = true;
 }
+for (const requiredModule of ['alum-rfis.html', 'alum-submittals.html', 'alum-change-events.html', 'alum-daily-log.html']) {
+  if (!alumReplicaPage.includes(requiredModule)) {
+    console.error(`Alüm replica page must link to dedicated project-management module: ${requiredModule}`);
+    failed = true;
+  }
+}
+for (const moduleFile of ['public/projects/alum-rfis.html', 'public/projects/alum-submittals.html', 'public/projects/alum-change-events.html', 'public/projects/alum-daily-log.html']) {
+  const moduleText = fs.readFileSync(path.join(root, moduleFile), 'utf8');
+  if (!/Read-first|Read-only|read-first|read-only/i.test(moduleText) || !/CAST BUILD A\.O/.test(moduleText)) {
+    console.error(`${moduleFile} must state CAST BUILD A.O read-first/read-only posture.`);
+    failed = true;
+  }
+  if (/source-logs|dropbox-intake|\/Users\/|\.pdf|\.xlsx|\.xls|\.csv|\.zip/i.test(moduleText)) {
+    console.error(`${moduleFile} must not publish raw file links, private source paths, or raw artifact extensions.`);
+    failed = true;
+  }
+}
+const rfiModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-rfis.js'), 'utf8');
+const submittalModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-submittals.js'), 'utf8');
+const changeEventModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-change-events.js'), 'utf8');
+const dailyLogModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.js'), 'utf8');
+for (const requiredRfiSignal of ['costImpactYes', 'scheduleImpactYes', 'topManagers', 'topContractors']) {
+  if (!rfiModuleScript.includes(requiredRfiSignal)) {
+    console.error(`RFI module script missing signal: ${requiredRfiSignal}`);
+    failed = true;
+  }
+}
+for (const requiredSubmittalSignal of ['topSpecSections', 'typeCounts', 'Revise & Resubmit', 'Responsible Contractor']) {
+  if (!submittalModuleScript.includes(requiredSubmittalSignal)) {
+    console.error(`Submittal module script missing signal: ${requiredSubmittalSignal}`);
+    failed = true;
+  }
+}
+for (const requiredChangeSignal of ['11. CHANGE EVENTS', '12. OWNER CHANGE ORDERS', 'budget-revisions-register.json', 'raw log remains private']) {
+  if (!changeEventModuleScript.includes(requiredChangeSignal)) {
+    console.error(`Change Events module script missing signal: ${requiredChangeSignal}`);
+    failed = true;
+  }
+}
+if (!/No dedicated daily-log export/.test(dailyLogModuleScript) || !/ready/.test(fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.html'), 'utf8'))) {
+  console.error('Daily Log module must remain an explicit placeholder until approved metadata exists.');
+  failed = true;
+}
 if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath)) {
   console.error('Accounting budget tie-out JSON must be generated for private and public metadata views.');
   failed = true;
@@ -181,7 +224,7 @@ if (fs.existsSync(distDir)) {
         if (/(^|[/\\])source-logs([/\\]|$)|(^|[/\\])dropbox-intake([/\\]|$)|\.pdf$|\.xlsx$|\.xls$|\.csv$|\.zip$/i.test(rel)) leaked.push(rel);
         if (/\.(html|js|json|css|txt|md|svg)$/i.test(rel)) {
           const text = fs.readFileSync(full, 'utf8');
-          if (/dropbox-intake|source-logs/.test(text)) leakedStrings.push(rel);
+          if (/dropbox-intake|source-logs|source-artifacts|\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|00_PROCORE DATA TIE/.test(text)) leakedStrings.push(rel);
         }
       }
     }

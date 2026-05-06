@@ -10,6 +10,11 @@ Create a CAST-controlled construction management platform similar in structure t
 - `public/admin.html` — internal command center prototype
 - `public/projects.html` — project portfolio
 - `public/procore.html` — CAST BUILD A.O integration plan
+- `public/projects/golden-hill-procore.html` — legacy Golden Hill slug for the Alüm project-management replica overview
+- `public/projects/alum-rfis.html` — dedicated Alüm RFI module (metadata-only queue, impacts, responsibility)
+- `public/projects/alum-submittals.html` — dedicated Alüm submittal module (metadata-only queue, spec sections, type/status mix)
+- `public/projects/alum-change-events.html` — dedicated Alüm change-events module (metadata-only CE buckets and budget-revision tie-out)
+- `public/projects/alum-daily-log.html` — Alüm daily-log placeholder until approved field-log metadata exists
 - `src/adapters/procore.ts` — future CAST BUILD A.O/Membrane adapter boundary
 - `docs/` — platform documentation and security notes
 - `tests/` — static safety checks

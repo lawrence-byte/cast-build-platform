@@ -42,10 +42,13 @@ function scrubPrivateSourceStrings(file) {
   if (!textDeployExtensions.has(path.extname(file).toLowerCase())) return;
   let text = fs.readFileSync(file, 'utf8');
   text = text
-    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+\/Alüm\//g, '')
-    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+/g, 'private-intake-redacted')
-    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform\/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+\/Alüm\//g, '')
-    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform\/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\s]+/g, 'private-intake-redacted')
+    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\n\r]+\/Alüm\//g, '')
+    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\n\r]+/g, 'private-intake-redacted')
+    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform\/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\n\r]+\/Alüm\//g, '')
+    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform\/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'<>\n\r]+/g, 'private-intake-redacted')
+    .replace(/\/Users\/broderick\/Documents\/GitHub\/cast-build-platform[^"'<>\n\r]*/g, 'private-local-path-redacted')
+    .replace(/\/Users\/broderick\/\.openclaw[^"'<>\n\r]*/g, 'private-local-path-redacted')
+    .replace(/\/Users\/[A-Za-z0-9._-]+[^"'<>\n\r]*/g, 'private-user-path-redacted')
     .replace(/\/Users\/lawrencehoward\/CAST Community Dropbox\/CAST Automation\/CAST Build Management Platform\/Alüm\/00_PROCORE DATA TIE[^"'<>\n\r]*/g, 'private-data-tie-redacted')
     .replace(/\/Users\/lawrencehoward\/CAST Community Dropbox[^"'<>\n\r]*/g, 'private-dropbox-path-redacted')
     .replace(/\/Volumes\/CAST Drive[^"'<>\n\r]*/g, 'private-volume-path-redacted')
