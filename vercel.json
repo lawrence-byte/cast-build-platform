@@ -56,6 +56,10 @@
       "destination": "/projects/alum-budget-forecast.html"
     },
     {
+      "source": "/projects/alum-dynamic-forecast",
+      "destination": "/projects/alum-dynamic-forecast.html"
+    },
+    {
       "source": "/projects/alum-budget-modifications",
       "destination": "/projects/alum-budget-modifications.html"
     },

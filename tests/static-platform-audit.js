@@ -45,6 +45,29 @@ if (!/alum-accounting-tieout\.html/.test(budgetPage)) {
   console.error('Budget page must link to accounting budget tie-out.');
   failed = true;
 }
+if (!/Editable Budget Workspace/.test(budgetPage) || !/editableBudgetRows/.test(budgetPage)) {
+  console.error('Budget page must include an editable local planning workspace.');
+  failed = true;
+}
+const budgetScript = fs.readFileSync(path.join(root, 'public/projects/alum-budget.js'), 'utf8');
+for (const requiredEditableControl of ['budgetDelta', 'eacOverride', 'Export Budget Edits', 'localStorage']) {
+  if (!budgetScript.includes(requiredEditableControl) && !budgetPage.includes(requiredEditableControl)) {
+    console.error(`Editable budget workspace missing control: ${requiredEditableControl}`);
+    failed = true;
+  }
+}
+const dynamicForecastPage = fs.readFileSync(path.join(root, 'public/projects/alum-dynamic-forecast.html'), 'utf8');
+const dynamicForecastScript = fs.readFileSync(path.join(root, 'public/projects/alum-dynamic-forecast.js'), 'utf8');
+if (!/Dynamic Forecast \+ Cost Mapping/.test(dynamicForecastPage) || !/forecastRows/.test(dynamicForecastPage)) {
+  console.error('Dynamic forecast page must include editable forecast rows and cost mapping.');
+  failed = true;
+}
+for (const requiredForecastControl of ['Cost Mapping', 'ETC Override', 'risk', 'bucket', 'localStorage']) {
+  if (!dynamicForecastPage.includes(requiredForecastControl) && !dynamicForecastScript.includes(requiredForecastControl)) {
+    console.error(`Dynamic forecast missing control: ${requiredForecastControl}`);
+    failed = true;
+  }
+}
 const accountingTieoutPath = path.join(root, 'data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
 const publicAccountingTieoutPath = path.join(root, 'public/data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
 const budgetExceptionsPage = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.html'), 'utf8');
@@ -98,6 +121,10 @@ if (!/alum-commitments\.html/.test(alumReplicaPage)) {
 }
 if (!/alum-accounting-tieout\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the accounting tie-out control center.');
+  failed = true;
+}
+if (!/alum-dynamic-forecast\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the dynamic forecast control center.');
   failed = true;
 }
 if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath)) {
