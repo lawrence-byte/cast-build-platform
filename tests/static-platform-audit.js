@@ -33,6 +33,28 @@ if (!/Budget Input \+ Audit/.test(budgetPage) || !/data-audit-rows/.test(budgetP
   console.error('Budget page must include input and audit controls.');
   failed = true;
 }
+if (!/alum-budget-exceptions\.html/.test(budgetPage)) {
+  console.error('Budget page must link to budget exceptions / needs review.');
+  failed = true;
+}
+const budgetExceptionsPage = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.html'), 'utf8');
+const budgetExceptionsScript = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.js'), 'utf8');
+if (!/Budget Exceptions \/ Needs Review/.test(budgetExceptionsPage) || !/Read-first/.test(budgetExceptionsPage)) {
+  console.error('Budget exceptions page must state its needs-review and read-first purpose.');
+  failed = true;
+}
+for (const requiredFlag of ['Projected O/U negative', 'Pending cost changes', 'EAC exceeds revised budget', 'Low commitment coverage', 'Audit/reconciliation issue']) {
+  if (!budgetExceptionsScript.includes(requiredFlag)) {
+    console.error(`Budget exceptions script missing flag: ${requiredFlag}`);
+    failed = true;
+  }
+}
+for (const requiredData of ['budget-summary.json', 'budget-audit.json', 'budget-revisions-register.json', 'forecast-summary.json']) {
+  if (!budgetExceptionsScript.includes(requiredData)) {
+    console.error(`Budget exceptions script must use ${requiredData}.`);
+    failed = true;
+  }
+}
 if (!fs.existsSync(budgetAuditPath)) {
   console.error('Budget audit JSON must be generated.');
   failed = true;
@@ -54,6 +76,10 @@ if (!/CAST BUILD A\.O Module Map/.test(alumReplicaPage) || !/Action Queue/.test(
 }
 if (!/alum-open-items\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the open-items control center.');
+  failed = true;
+}
+if (!/alum-budget-exceptions\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the budget exceptions control center.');
   failed = true;
 }
 const openItemsPage = fs.readFileSync(path.join(root, 'public/projects/alum-open-items.html'), 'utf8');
