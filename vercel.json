@@ -68,6 +68,10 @@
       "destination": "/projects/alum-open-items.html"
     },
     {
+      "source": "/projects/alum-executive-report",
+      "destination": "/projects/alum-executive-report.html"
+    },
+    {
       "source": "/projects/alum-document-intelligence",
       "destination": "/projects/alum-document-intelligence.html"
     },
