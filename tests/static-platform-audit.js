@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
 let failed = false;
 for (const file of files) {
   const full = path.join(root, file);
@@ -127,6 +127,10 @@ if (!/alum-dynamic-forecast\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the dynamic forecast control center.');
   failed = true;
 }
+if (!/alum-executive-report\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the executive reporting layer.');
+  failed = true;
+}
 for (const requiredModule of ['alum-rfis.html', 'alum-submittals.html', 'alum-change-events.html', 'alum-daily-log.html']) {
   if (!alumReplicaPage.includes(requiredModule)) {
     console.error(`Alüm replica page must link to dedicated project-management module: ${requiredModule}`);
@@ -203,13 +207,30 @@ for (const requiredQueue of ['Over-committed', 'Low commitment coverage', 'No co
   }
 }
 const openItemsPage = fs.readFileSync(path.join(root, 'public/projects/alum-open-items.html'), 'utf8');
+const openItemsScript = fs.readFileSync(path.join(root, 'public/projects/alum-open-items.js'), 'utf8');
 if (!/Open Item Control Center/.test(openItemsPage) || !/Read-first replica/i.test(openItemsPage)) {
   console.error('Open-items page must state its read-first control-center purpose.');
+  failed = true;
+}
+if (!/Priority Action Drilldown/.test(openItemsPage) || !/data-priority-queue/.test(openItemsPage) || !/Accounting/.test(openItemsScript)) {
+  console.error('Open-items page must include deeper cross-module priority drilldowns.');
   failed = true;
 }
 if (/source-logs\//i.test(openItemsPage)) {
   console.error('Open-items page must not link directly to private source-log artifacts.');
   failed = true;
+}
+const executiveReportPage = fs.readFileSync(path.join(root, 'public/projects/alum-executive-report.html'), 'utf8');
+const executiveReportScript = fs.readFileSync(path.join(root, 'public/projects/alum-executive-report.js'), 'utf8');
+if (!/Executive Report/.test(executiveReportPage) || !/Cross-Module Action Drilldowns/.test(executiveReportPage) || !/Read-first executive report/i.test(executiveReportPage)) {
+  console.error('Executive report page must state reporting purpose, drilldowns, and read-first posture.');
+  failed = true;
+}
+for (const requiredExecutiveSignal of ['rfi-summary.json', 'submittal-summary.json', 'budget-revisions-register.json', 'budget-summary.json', 'accounting-budget-tieout.json', 'Executive Risk Board']) {
+  if (!executiveReportScript.includes(requiredExecutiveSignal) && !executiveReportPage.includes(requiredExecutiveSignal)) {
+    console.error(`Executive report missing signal: ${requiredExecutiveSignal}`);
+    failed = true;
+  }
 }
 const distDir = path.join(root, 'dist');
 if (fs.existsSync(distDir)) {
