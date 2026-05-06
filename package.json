@@ -10,7 +10,7 @@
     "build": "node scripts/build-static.js",
     "intake:index": "node scripts/index-dropbox-intake.js",
     "intake:alum": "node scripts/index-alum-data-room.js",
-    "intake:budget": "node scripts/index-procore-budget.js",
+    "intake:budget": "node scripts/index-procore-budget.js && node scripts/audit-procore-budget.js",
     "intake:procore-data-tie": "node scripts/index-procore-data-tie.js",
     "intake:forecast": "node scripts/index-procore-budget-forecast.js",
     "intake:budget-revisions": "node scripts/build-budget-revisions-register.js",

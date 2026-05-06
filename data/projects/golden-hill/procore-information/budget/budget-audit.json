@@ -1,0 +1,194 @@
+{
+  "projectName": "Alüm",
+  "sourceFile": "data/projects/golden-hill/procore-information/budget/budget_details_2.csv",
+  "generatedAt": "2026-05-06T15:21:22.953Z",
+  "status": "pass",
+  "summary": {
+    "rowCount": 111,
+    "revisedBudget": 37408095.6,
+    "estimatedCostAtCompletion": 37481840.48,
+    "projectedOverUnder": -73744.88,
+    "ownerInvoicedCostToDate": 23589625.15,
+    "failedCheckCount": 0,
+    "checkCount": 21
+  },
+  "checks": [
+    {
+      "id": "row-count",
+      "label": "Budget row count matches metrics",
+      "status": "pass",
+      "rows": 111,
+      "metricRowCount": 111
+    },
+    {
+      "id": "budget-code-completeness",
+      "label": "Every budget row has code and description",
+      "status": "pass"
+    },
+    {
+      "id": "revised-budget-positive",
+      "label": "Revised budget is populated",
+      "status": "pass"
+    },
+    {
+      "id": "eac-positive",
+      "label": "Estimated cost at completion is populated",
+      "status": "pass"
+    },
+    {
+      "id": "field-original-budget-amount",
+      "label": "Original Budget Amount reconciles",
+      "status": "pass",
+      "field": "Original Budget Amount",
+      "rowTotal": 37013422,
+      "metricTotal": 37013422,
+      "delta": 0
+    },
+    {
+      "id": "field-approved-budget-changes",
+      "label": "Approved Budget Changes reconciles",
+      "status": "pass",
+      "field": "Approved Budget Changes",
+      "rowTotal": 0,
+      "metricTotal": 0,
+      "delta": 0
+    },
+    {
+      "id": "field-approved-cos",
+      "label": "Approved COs reconciles",
+      "status": "pass",
+      "field": "Approved COs",
+      "rowTotal": 394673.6,
+      "metricTotal": 394673.6,
+      "delta": 0
+    },
+    {
+      "id": "field-revised-budget",
+      "label": "Revised Budget reconciles",
+      "status": "pass",
+      "field": "Revised Budget",
+      "rowTotal": 37408095.6,
+      "metricTotal": 37408095.6,
+      "delta": 0
+    },
+    {
+      "id": "field-pending-cos",
+      "label": "Pending COs reconciles",
+      "status": "pass",
+      "field": "Pending COs",
+      "rowTotal": 0,
+      "metricTotal": 0,
+      "delta": 0
+    },
+    {
+      "id": "field-projected-budget",
+      "label": "Projected Budget reconciles",
+      "status": "pass",
+      "field": "Projected Budget",
+      "rowTotal": 37408095.6,
+      "metricTotal": 37408095.6,
+      "delta": 0
+    },
+    {
+      "id": "field-committed-costs",
+      "label": "Committed Costs reconciles",
+      "status": "pass",
+      "field": "Committed Costs",
+      "rowTotal": 33027221.12,
+      "metricTotal": 33027221.12,
+      "delta": 0
+    },
+    {
+      "id": "field-direct-costs",
+      "label": "Direct Costs reconciles",
+      "status": "pass",
+      "field": "Direct Costs",
+      "rowTotal": 935986.93,
+      "metricTotal": 935986.93,
+      "delta": 0
+    },
+    {
+      "id": "field-job-to-date-costs",
+      "label": "Job to Date Costs reconciles",
+      "status": "pass",
+      "field": "Job to Date Costs",
+      "rowTotal": 22702462.85,
+      "metricTotal": 22702462.85,
+      "delta": 0
+    },
+    {
+      "id": "field-pending-cost-changes",
+      "label": "Pending Cost Changes reconciles",
+      "status": "pass",
+      "field": "Pending Cost Changes",
+      "rowTotal": 22408.27,
+      "metricTotal": 22408.27,
+      "delta": 0
+    },
+    {
+      "id": "field-projected-costs",
+      "label": "Projected Costs reconciles",
+      "status": "pass",
+      "field": "Projected Costs",
+      "rowTotal": 33985616.32,
+      "metricTotal": 33985616.32,
+      "delta": 0
+    },
+    {
+      "id": "field-forecast-to-complete",
+      "label": "Forecast To Complete reconciles",
+      "status": "pass",
+      "field": "Forecast To Complete",
+      "rowTotal": 3496224.16,
+      "metricTotal": 3496224.16,
+      "delta": 0
+    },
+    {
+      "id": "field-estimated-cost-at-completion",
+      "label": "Estimated Cost at Completion reconciles",
+      "status": "pass",
+      "field": "Estimated Cost at Completion",
+      "rowTotal": 37481840.48,
+      "metricTotal": 37481840.48,
+      "delta": 0
+    },
+    {
+      "id": "field-projected-over-under",
+      "label": "Projected over Under reconciles",
+      "status": "pass",
+      "field": "Projected over Under",
+      "rowTotal": -73744.88,
+      "metricTotal": -73744.88,
+      "delta": 0
+    },
+    {
+      "id": "field-owner-invoiced-cost-to-date",
+      "label": "Owner Invoiced cost to date reconciles",
+      "status": "pass",
+      "field": "Owner Invoiced cost to date",
+      "rowTotal": 23589625.15,
+      "metricTotal": 23589625.15,
+      "delta": 0
+    },
+    {
+      "id": "budget-revisions-reconcile",
+      "label": "Budget revisions reconcile to current approved budget changes",
+      "status": "pass",
+      "reconciliation": {
+        "currentBudgetSourceFile": "data/projects/golden-hill/procore-information/budget/budget_details_2.csv",
+        "currentBudgetRows": 111,
+        "exactRevisionBudgetCodes": 82,
+        "missingFromCurrentBudget": [],
+        "mismatchCount": 0,
+        "mismatches": [],
+        "status": "matches_current_budget_approved_budget_changes"
+      }
+    },
+    {
+      "id": "budget-revisions-net-zero",
+      "label": "Approved budget revisions net to zero",
+      "status": "pass",
+      "net": 0
+    }
+  ]
+}

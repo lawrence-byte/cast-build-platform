@@ -1,9 +1,9 @@
 {
-  "projectName": "Al\u00fcm",
+  "projectName": "Alüm",
   "formerName": "Golden Hill Apartments",
   "source": "CAST BUILD A.O budget details CSV export",
   "sourceFile": "data/projects/golden-hill/procore-information/budget/budget_details_2.csv",
-  "generatedAt": "2026-05-06T12:20:04.261Z",
+  "generatedAt": "2026-05-06T15:21:22.904Z",
   "metrics": {
     "Original Budget Amount": 37013422,
     "Approved Budget Changes": 0,
@@ -6818,8 +6818,5 @@
       "costTypeCode": "O",
       "costTypeName": "Other"
     }
-  ],
-  "baselineStatus": "current_budget_export",
-  "baselineLabel": "Current Budget",
-  "sourceNote": "Lawrence identified this attached CAST BUILD A.O export as the current budget."
+  ]
 }

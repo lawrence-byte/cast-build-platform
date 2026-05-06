@@ -21,6 +21,28 @@ if (!/no CAST BUILD A.O authentication/i.test(procorePage) || !/write API calls/
   console.error('CAST BUILD A.O page must state integration guardrails.');
   failed = true;
 }
+const budgetSummary = JSON.parse(fs.readFileSync(path.join(root, 'data/projects/golden-hill/procore-information/budget/budget-summary.json'), 'utf8'));
+const budgetAuditPath = path.join(root, 'data/projects/golden-hill/procore-information/budget/budget-audit.json');
+const budgetEmbedded = fs.readFileSync(path.join(root, 'public/projects/alum-budget-data.js'), 'utf8');
+const budgetPage = fs.readFileSync(path.join(root, 'public/projects/alum-budget.html'), 'utf8');
+if (!budgetEmbedded.includes('window.__ALUM_BUDGET_SUMMARY__') || !budgetEmbedded.includes('"Revised Budget"')) {
+  console.error('Budget page must include embedded budget data for reliable preview loading.');
+  failed = true;
+}
+if (!/Budget Input \+ Audit/.test(budgetPage) || !/data-audit-rows/.test(budgetPage)) {
+  console.error('Budget page must include input and audit controls.');
+  failed = true;
+}
+if (!fs.existsSync(budgetAuditPath)) {
+  console.error('Budget audit JSON must be generated.');
+  failed = true;
+} else {
+  const budgetAudit = JSON.parse(fs.readFileSync(budgetAuditPath, 'utf8'));
+  if (budgetAudit.status !== 'pass' || budgetAudit.summary?.revisedBudget !== budgetSummary.metrics['Revised Budget']) {
+    console.error('Budget audit must pass and match current budget summary.');
+    failed = true;
+  }
+}
 const alumReplicaPage = fs.readFileSync(path.join(root, 'public/projects/golden-hill-procore.html'), 'utf8');
 if (/source-logs\//i.test(alumReplicaPage)) {
   console.error('Alüm replica page must not link directly to private source-log artifacts.');

@@ -6,6 +6,7 @@ const root = path.resolve(__dirname, '..');
 const sourceFile = path.join(root, 'data/projects/golden-hill/procore-information/budget/budget_details_2.csv');
 const dataOut = path.join(root, 'data/projects/golden-hill/procore-information/budget/budget-summary.json');
 const publicOut = path.join(root, 'public/data/projects/golden-hill/procore-information/budget/budget-summary.json');
+const publicEmbeddedOut = path.join(root, 'public/projects/alum-budget-data.js');
 const numericColumns = ['Original Budget Amount','Approved Budget Changes','Approved COs','Revised Budget','Pending COs','Projected Budget','Committed Costs','Direct Costs','Job to Date Costs','Pending Cost Changes','Projected Costs','Forecast To Complete','Estimated Cost at Completion','Projected over Under','Owner Invoiced cost to date'];
 
 function parseCsv(text) {
@@ -89,6 +90,8 @@ function main() {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, `${JSON.stringify(out, null, 2)}\n`);
   }
+  fs.mkdirSync(path.dirname(publicEmbeddedOut), { recursive: true });
+  fs.writeFileSync(publicEmbeddedOut, `window.__ALUM_BUDGET_SUMMARY__ = ${JSON.stringify(out, null, 2)};\n`);
   console.log(`Indexed ${metrics.rowCount} CAST BUILD A.O budget rows; revised=${metrics['Revised Budget']}; EAC=${metrics['Estimated Cost at Completion']}; O/U=${metrics['Projected over Under']}`);
 }
 main();
