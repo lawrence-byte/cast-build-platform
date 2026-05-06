@@ -4,7 +4,7 @@
   "source": "CAST BUILD A.O Budget Revision PDFs in 001_CURRENT BUDGET",
   "generatedAt": "2026-05-06T13:43:17.717Z",
   "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
-  "localDropboxPath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm/00_PROCORE DATA TIE/001_CURRENT BUDGET",
+  "localDropboxPath": "private-data-tie-redacted/001_CURRENT BUDGET",
   "totals": {
     "changeCount": 24,
     "adjustmentCount": 101,
