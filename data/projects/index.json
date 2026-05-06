@@ -1,0 +1,26 @@
+[
+  {
+    "id": "golden-hill",
+    "slug": "golden-hill",
+    "name": "Al\u00fcm",
+    "type": "sub-project",
+    "status": "Active setup",
+    "phase": "CAST BUILD A.O workflow discovery",
+    "source": "Authorized CAST BUILD A.O learning scope",
+    "href": "/projects/golden-hill.html",
+    "cloneTarget": "overlook",
+    "modules": [
+      "overview",
+      "procore",
+      "rfis",
+      "submittals",
+      "drawings",
+      "budget",
+      "schedule",
+      "daily-logs",
+      "documents",
+      "risk"
+    ],
+    "formerName": "Golden Hill Apartments"
+  }
+]

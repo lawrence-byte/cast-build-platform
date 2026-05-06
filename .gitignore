@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.DS_Store
+.vercel/
+coverage/
+
+# Private/raw project intake artifacts are kept local only.
+# Commit platform source and derived JSON metadata, not raw drawings/PDFs/exports.
+data/projects/*/source-logs/
+data/projects/*/dropbox-intake/
+data/projects/*/source-artifacts/
+data/projects/*/raw/
+data/projects/*/private/
+public/data/projects/*/source-logs/
+public/data/projects/*/dropbox-intake/
+public/data/projects/*/source-artifacts/
+public/data/projects/*/raw/
+public/data/projects/*/private/
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.zip

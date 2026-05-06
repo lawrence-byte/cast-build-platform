@@ -1,0 +1,210 @@
+{
+  "generatedAt": "2026-05-06",
+  "source": "CAST BUILD A.O exported submittal XLSX/PDF attached by Lawrence",
+  "total": 525,
+  "statusCounts": {
+    "Approved/No Exceptions": 75,
+    "Draft": 60,
+    "Approved with Comments/Exceptions Noted": 70,
+    "Open": 6,
+    "Void": 247,
+    "Revise & Resubmit": 43,
+    "For Record Only": 3,
+    "Closed": 21
+  },
+  "typeCounts": {
+    "Product Data": 167,
+    "Blank": 15,
+    "Shop Drawing": 124,
+    "Operation & Maintenance Manuals (O&Ms)": 17,
+    "Record Drawing": 2,
+    "Other": 122,
+    "Coordination Drawing": 22,
+    "Sample": 29,
+    "Document": 4,
+    "Product Warranty": 7,
+    "Attic Stock/Extra Material": 1,
+    "Design Calculations": 2,
+    "Qualifications/Certifications": 8,
+    "Concrete Mix Design": 4,
+    "Tests & Inspections": 1
+  },
+  "openOrDraftCount": 66,
+  "pendingBallInCourtCount": 0,
+  "topSpecSections": [
+    [
+      "03 30 00 - CAST IN PLACE CONCRETE",
+      34
+    ],
+    [
+      "06 15 43 - CROSS LAMINATED TIMBER PANELS",
+      12
+    ],
+    [
+      "05 73 00 - DECORATIVE METAL RAILINGS",
+      11
+    ],
+    [
+      "26 51 19 - LED INTERIOR LIGHTING",
+      9
+    ],
+    [
+      "08 41 13 - ALUMINUM-FRAMED ENTRANCES AND STOREFRONTS",
+      9
+    ],
+    [
+      "08 11 15 - STEEL DOORS AND FRAMES",
+      9
+    ],
+    [
+      "26 56 19 - LED EXTERIOR LIGHTING",
+      8
+    ],
+    [
+      "23 81 26 - SPLIT-SYSTEM AIR CONDITIONERS",
+      8
+    ],
+    [
+      "22 10 23 - FACILITY NATURAL GAS PIPING",
+      8
+    ],
+    [
+      "26 09 23 - LIGHTING CONTROL DEVICES",
+      7
+    ]
+  ],
+  "sampleItems": [
+    {
+      "Spec Section": "33 10 00 - WET UTILITIES",
+      "Submittal Number": "33 10 00-1",
+      "Rev.": "0",
+      "Title": "WET UTILITIES - PRODUCT DATA",
+      "Type": "Product Data",
+      "Status": "Approved/No Exceptions ",
+      "Responsible Contractor": "CalPacific Electric & Cable, Inc.",
+      "Final Due Date": "05/06/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "32 93 00 - LANDSCAPING",
+      "Submittal Number": "32 93 00-2",
+      "Rev.": "0",
+      "Title": "LANDSCAPING - IRRIGATION PRODUCT DATA",
+      "Type": "Product Data",
+      "Status": "Draft",
+      "Responsible Contractor": "",
+      "Final Due Date": "",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "32 93 00 - LANDSCAPING",
+      "Submittal Number": "32 93 00-1",
+      "Rev.": "0",
+      "Title": "LANDSCAPING - PLANTING SUBMITTAL ",
+      "Type": "",
+      "Status": "Draft",
+      "Responsible Contractor": "",
+      "Final Due Date": "",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "31 41 00 - SHORING ",
+      "Submittal Number": "31 41 00-1",
+      "Rev.": "0",
+      "Title": "SHORING - CONCRETE SUBMITTAL ",
+      "Type": "Product Data",
+      "Status": "Approved/No Exceptions ",
+      "Responsible Contractor": "Condon-Johnson & Associates",
+      "Final Due Date": "05/07/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 51 29 - TWO-WAY COMMUNICATION SYSTEMS",
+      "Submittal Number": "27 51 29-2",
+      "Rev.": "0",
+      "Title": "TWO-WAY COMMUNICATION SYSTEMS - SHOP DRAWINGS",
+      "Type": "Shop Drawing",
+      "Status": "Approved with Comments/Exceptions Noted ",
+      "Responsible Contractor": "Symons Fire Protection, Inc.",
+      "Final Due Date": "05/26/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 51 29 - TWO-WAY COMMUNICATION SYSTEMS",
+      "Submittal Number": "27 51 29-1",
+      "Rev.": "0",
+      "Title": "TWO-WAY COMMUNICATION SYSTEMS - PRODUCT DATA ",
+      "Type": "Product Data",
+      "Status": "Approved/No Exceptions ",
+      "Responsible Contractor": "",
+      "Final Due Date": "06/18/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 35 23 - ERRC/DAS",
+      "Submittal Number": "27 35 23-2",
+      "Rev.": "0",
+      "Title": "ERRC - SHOP DRAWINGS",
+      "Type": "Shop Drawing",
+      "Status": "Approved with Comments/Exceptions Noted ",
+      "Responsible Contractor": "",
+      "Final Due Date": "07/07/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 35 23 - ERRC/DAS",
+      "Submittal Number": "27 35 23-1",
+      "Rev.": "0",
+      "Title": "ERRC - PRODUCT DATA",
+      "Type": "Product Data",
+      "Status": "Approved/No Exceptions ",
+      "Responsible Contractor": "",
+      "Final Due Date": "07/23/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 02 00 - FIRE ALARM",
+      "Submittal Number": "27 02 00-4",
+      "Rev.": "0",
+      "Title": "FIRE ALARM - OPERATION & MAINTENANCE MANUALS",
+      "Type": "Operation & Maintenance Manuals (O&Ms)",
+      "Status": "Draft",
+      "Responsible Contractor": "",
+      "Final Due Date": "",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 02 00 - FIRE ALARM",
+      "Submittal Number": "27 02 00-3",
+      "Rev.": "0",
+      "Title": "FIRE ALARM - RECORD DRAWINGS ",
+      "Type": "Record Drawing",
+      "Status": "Draft",
+      "Responsible Contractor": "",
+      "Final Due Date": "",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 02 00 - FIRE ALARM",
+      "Submittal Number": "27 02 00-2",
+      "Rev.": "0",
+      "Title": "FIRE ALARM - SHOP DRAWINGS",
+      "Type": "Shop Drawing",
+      "Status": "Approved with Comments/Exceptions Noted ",
+      "Responsible Contractor": "Symons Fire Protection, Inc.",
+      "Final Due Date": "05/26/2025",
+      "Ball In Court": ""
+    },
+    {
+      "Spec Section": "27 02 00 - FIRE ALARM",
+      "Submittal Number": "27 02 00-1",
+      "Rev.": "0",
+      "Title": "FIRE ALARM - PRODUCT DATA ",
+      "Type": "Product Data",
+      "Status": "Approved/No Exceptions ",
+      "Responsible Contractor": "",
+      "Final Due Date": "07/23/2025",
+      "Ball In Court": ""
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "generatedAt": "2026-05-06",
+  "source": "CAST BUILD A.O exported RFI CSV attached by Lawrence",
+  "total": 303,
+  "statusCounts": {
+    "Closed - Draft": 3,
+    "Draft": 4,
+    "Closed": 279,
+    "Closed - Revised": 14,
+    "Open": 3
+  },
+  "openCount": 7,
+  "draftCount": 4,
+  "closedCount": 296,
+  "overdueOpen": 2,
+  "dueWithin7Days": 1,
+  "dueAfter7Days": 0,
+  "openNoDueDate": 4,
+  "costImpactYes": 8,
+  "scheduleImpactYes": 4,
+  "topManagers": [
+    [
+      "Carlos Gutierrez (Cast Build)",
+      191
+    ],
+    [
+      "Jackie Villanueva (Cast Build)",
+      112
+    ]
+  ],
+  "topContractors": [
+    [
+      "Unassigned",
+      184
+    ],
+    [
+      "Timberlab",
+      31
+    ],
+    [
+      "Ferrocrete Builders",
+      22
+    ],
+    [
+      "J Geyer Plumbing, Inc.",
+      19
+    ],
+    [
+      "Southern California Interiors, Inc.",
+      11
+    ],
+    [
+      "Strang Heating & Air Conditioning, Inc.",
+      7
+    ],
+    [
+      "Window Installation Specialists",
+      5
+    ],
+    [
+      "Symons Fire Protection, Inc.",
+      5
+    ]
+  ],
+  "recentItems": [
+    {
+      "Number": "199",
+      "Revision": "2",
+      "Subject": "AC Condensers Relocation",
+      "Status": "Open",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "Gergievski, Michael (H+W Engineering, Inc.); Evans, Scott (H+W Engineering, Inc.)",
+      "Ball In Court": "Gergievski, Michael",
+      "Due Date": "05/06/26",
+      "Closed Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "284",
+      "Revision": "0",
+      "Subject": "EF-5 / SF-3 Dampers Clarification",
+      "Status": "Open",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "Evans, Scott (H+W Engineering, Inc.); Wagner, Travis (H+W Engineering, Inc.)",
+      "Ball In Court": "Evans, Scott; Wagner, Travis",
+      "Due Date": "05/05/26",
+      "Closed Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "282",
+      "Revision": "0",
+      "Subject": "Gap at CLT and Elevator Core",
+      "Status": "Open",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "Villanueva, Jackie",
+      "Due Date": "05/04/26",
+      "Closed Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "283",
+      "Revision": "0",
+      "Subject": "Elevator PH Embeds Correction",
+      "Status": "Closed",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "",
+      "Due Date": "05/04/26",
+      "Closed Date": "05/01/2026",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "281",
+      "Revision": "0",
+      "Subject": "Collector Strap Slot Corrections",
+      "Status": "Closed",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "",
+      "Due Date": "04/29/26",
+      "Closed Date": "04/24/2026",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "278",
+      "Revision": "0",
+      "Subject": "Collector Strap CS29 Relocation",
+      "Status": "Closed",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "",
+      "Due Date": "04/28/26",
+      "Closed Date": "04/29/2026",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "279",
+      "Revision": "0",
+      "Subject": "Collector Straps at Window Washing Anchors ",
+      "Status": "Closed",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "",
+      "Due Date": "04/28/26",
+      "Closed Date": "04/27/2026",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "280",
+      "Revision": "0",
+      "Subject": "Window Washing Drop Thru Sleeves",
+      "Status": "Closed",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "",
+      "Due Date": "04/28/26",
+      "Closed Date": "04/29/2026",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    }
+  ],
+  "openItems": [
+    {
+      "Number": "",
+      "Revision": "0",
+      "Subject": "Exterior Lighting at Pump Room and Transformer",
+      "Status": "Draft",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "Unassigned",
+      "Ball In Court": "Villanueva, Jackie",
+      "Due Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "",
+      "Revision": "0",
+      "Subject": "BBQ area ",
+      "Status": "Draft",
+      "RFI Manager": "Carlos Gutierrez (Cast Build)",
+      "Assigned Id": "Unassigned",
+      "Ball In Court": "Gutierrez, Carlos",
+      "Due Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "",
+      "Revision": "0",
+      "Subject": "L7 Amenity Lighting",
+      "Status": "Draft",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "Unassigned",
+      "Ball In Court": "Villanueva, Jackie",
+      "Due Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "",
+      "Revision": "0",
+      "Subject": "Lighting Submittal",
+      "Status": "Draft",
+      "RFI Manager": "Carlos Gutierrez (Cast Build)",
+      "Assigned Id": "Unassigned",
+      "Ball In Court": "Gutierrez, Carlos",
+      "Due Date": "",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "199",
+      "Revision": "2",
+      "Subject": "AC Condensers Relocation",
+      "Status": "Open",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "Gergievski, Michael (H+W Engineering, Inc.); Evans, Scott (H+W Engineering, Inc.)",
+      "Ball In Court": "Gergievski, Michael",
+      "Due Date": "05/06/26",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "282",
+      "Revision": "0",
+      "Subject": "Gap at CLT and Elevator Core",
+      "Status": "Open",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "DesRoches, Jim (KOR Structural)",
+      "Ball In Court": "Villanueva, Jackie",
+      "Due Date": "05/04/26",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    },
+    {
+      "Number": "284",
+      "Revision": "0",
+      "Subject": "EF-5 / SF-3 Dampers Clarification",
+      "Status": "Open",
+      "RFI Manager": "Jackie Villanueva (Cast Build)",
+      "Assigned Id": "Evans, Scott (H+W Engineering, Inc.); Wagner, Travis (H+W Engineering, Inc.)",
+      "Ball In Court": "Evans, Scott; Wagner, Travis",
+      "Due Date": "05/05/26",
+      "Cost Impact": "",
+      "Schedule Impact": ""
+    }
+  ]
+}

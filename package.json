@@ -1,0 +1,27 @@
+{
+  "name": "cast-build-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CAST Build owner/construction management platform scaffold with CAST BUILD A.O integration planning.",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "npx serve public",
+    "test": "node tests/static-platform-audit.js",
+    "build": "node scripts/build-static.js",
+    "intake:index": "node scripts/index-dropbox-intake.js",
+    "intake:alum": "node scripts/index-alum-data-room.js",
+    "intake:budget": "node scripts/index-procore-budget.js",
+    "intake:procore-data-tie": "node scripts/index-procore-data-tie.js",
+    "intake:forecast": "node scripts/index-procore-budget-forecast.js",
+    "intake:budget-revisions": "node scripts/build-budget-revisions-register.js",
+    "intake:doc-intelligence": "node scripts/build-document-intelligence.js"
+  },
+  "keywords": [
+    "cast-build",
+    "procore",
+    "construction-management",
+    "owner-platform"
+  ],
+  "license": "UNLICENSED",
+  "devDependencies": {}
+}

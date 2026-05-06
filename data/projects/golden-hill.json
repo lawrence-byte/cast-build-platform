@@ -1,0 +1,225 @@
+{
+  "id": "golden-hill",
+  "name": "Al\u00fcm",
+  "label": "Al\u00fcm",
+  "type": "sub-project",
+  "status": "Active setup",
+  "phase": "CAST BUILD A.O workflow discovery",
+  "procore": {
+    "connectionState": "not_connected",
+    "mode": "read-first",
+    "companyId": null,
+    "projectId": null,
+    "allowedActions": [
+      "discover",
+      "list",
+      "read",
+      "summarize"
+    ],
+    "blockedActions": [
+      "create",
+      "update",
+      "delete",
+      "write-back",
+      "billing-change"
+    ]
+  },
+  "workstreams": [
+    {
+      "key": "overview",
+      "name": "Project Overview",
+      "status": "ready"
+    },
+    {
+      "key": "procore",
+      "name": "CAST BUILD A.O Discovery",
+      "status": "waiting-auth"
+    },
+    {
+      "key": "rfis",
+      "name": "RFIs",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "submittals",
+      "name": "Submittals",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "drawings",
+      "name": "Drawings + Specs",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "budget",
+      "name": "Budget + Commitments",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "schedule",
+      "name": "Schedule + Milestones",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "daily-logs",
+      "name": "Daily Logs + Field Reports",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "documents",
+      "name": "Documents + Closeout",
+      "status": "mapped-placeholder"
+    },
+    {
+      "key": "risk",
+      "name": "Risk Register",
+      "status": "draft"
+    }
+  ],
+  "nextClone": {
+    "id": "overlook",
+    "name": "Overlook",
+    "basis": "Clone Al\u00fcm workspace after Al\u00fcm structure is stable."
+  },
+  "guardrails": [
+    "Use authorized CAST BUILD A.O access only.",
+    "Read-first until Lawrence explicitly approves write-back.",
+    "Do not store CAST BUILD A.O tokens or credentials in git.",
+    "Keep project-specific data isolated by project slug."
+  ],
+  "currentName": "Al\u00fcm",
+  "formerName": "Golden Hill Apartments",
+  "documentIntake": {
+    "provider": "Dropbox",
+    "name": "CAST Automation Storage",
+    "status": "downloaded-and-indexed",
+    "approvedBoundary": "https://www.dropbox.com/scl/fo/kkjixjyb4nc5sacfq7gwv/AOt0NM09D4VbDc_F8cb802E?rlkey=571qvd76rehr706qjzni0h87w&dl=0",
+    "localArchive": "data/integrations/dropbox-cast-automation-storage/downloads/CAST Build Management Platform.zip",
+    "localExtract": "data/projects/golden-hill/dropbox-intake/extracted/Al\u00fcm",
+    "manifest": "data/projects/golden-hill/dropbox-intake/manifests/dropbox-intake-manifest.json",
+    "contents": {
+      "rfiCsvRows": 303,
+      "submittalRows": 525,
+      "drawingLogRows": 458,
+      "drawingPdfFiles": 459
+    },
+    "notes": [
+      "Drawing Log.csv remains authoritative for drawing register rows; Dropbox folder also includes one root-level drawing PDF not represented as a drawing-log row."
+    ]
+  },
+  "dataRoom": {
+    "status": "indexed-full-dropbox-intake",
+    "page": "public/projects/alum-data-room.html",
+    "manifest": "data/projects/golden-hill/alum-data-room-index.json",
+    "publicManifest": "public/data/projects/golden-hill/alum-data-room-index.json",
+    "totalFiles": 4674,
+    "totalSizeLabel": "1.1 GB",
+    "sectionCount": 27,
+    "largestSections": [
+      {
+        "key": "16. ACCOUNTING",
+        "fileCount": 1757,
+        "size": "129.7 MB"
+      },
+      {
+        "key": "10. COMMITMENTS",
+        "fileCount": 846,
+        "size": "115.1 MB"
+      },
+      {
+        "key": "09. SUBMITTALS",
+        "fileCount": 482,
+        "size": "125.2 MB"
+      },
+      {
+        "key": "06A. Current Drawings",
+        "fileCount": 460,
+        "size": "522.5 MB"
+      },
+      {
+        "key": "02. BUDGET",
+        "fileCount": 335,
+        "size": "86.4 MB"
+      },
+      {
+        "key": "06. PLANS & SPECS",
+        "fileCount": 293,
+        "size": "66.4 MB"
+      },
+      {
+        "key": "21. SAFETY",
+        "fileCount": 107,
+        "size": "5.9 MB"
+      },
+      {
+        "key": "08. RFI's",
+        "fileCount": 90,
+        "size": "18.0 MB"
+      }
+    ]
+  },
+  "procoreInformation": {
+    "status": "local-export-sync-active",
+    "folder": "data/projects/golden-hill/procore-information",
+    "sourceLogFolder": "data/projects/golden-hill/source-logs/procore-information",
+    "budget": {
+      "sourceCsv": "data/projects/golden-hill/procore-information/budget/budget_details_2.csv",
+      "summary": "data/projects/golden-hill/procore-information/budget/budget-summary.json",
+      "page": "public/projects/alum-budget.html",
+      "rows": 111,
+      "revisedBudget": 37408095.6,
+      "estimatedCostAtCompletion": 37481840.48,
+      "projectedOverUnder": -73744.88,
+      "ownerInvoicedCostToDate": 23589625.15,
+      "baselineStatus": "current_budget_export",
+      "baselineLabel": "Current Budget",
+      "sourceNote": "Lawrence identified budget_details_2.csv as the current budget export."
+    },
+    "guardrails": [
+      "Read-only CAST BUILD A.O CSV/export ingestion only.",
+      "No CAST BUILD A.O API writes or budget edits.",
+      "Preserve raw exports under source-logs/procore-information."
+    ],
+    "localDataTiePath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alu\u0308m/00_PROCORE DATA TIE",
+    "localDataTieStatus": "authoritative_path_recorded_not_mounted_on_openclaw_host",
+    "localDataTieIndex": "data/projects/golden-hill/procore-information/procore-data-tie-index.json",
+    "budgetModifications": {
+      "status": "draft-scenario-platform",
+      "page": "public/projects/alum-budget-modifications.html",
+      "seedData": "data/projects/golden-hill/procore-information/budget-modifications/modifications.json",
+      "baseline": "data/projects/golden-hill/procore-information/budget/budget-summary.json",
+      "behavior": "local browser scenario register tied to current CAST BUILD A.O budget export; no CAST BUILD A.O write-back"
+    },
+    "budgetForecast": {
+      "sourceCsv": "data/projects/golden-hill/procore-information/budget-forecast/budget_details_forecast.csv",
+      "summary": "data/projects/golden-hill/procore-information/budget-forecast/forecast-summary.json",
+      "page": "public/projects/alum-budget-forecast.html",
+      "rows": 111,
+      "forecastMonths": [
+        "May 2026",
+        "June 2026",
+        "July 2026",
+        "August 2026",
+        "September 2026",
+        "October 2026",
+        "November 2026",
+        "December 2026",
+        "January 2027",
+        "February 2027",
+        "March 2027"
+      ],
+      "forecastTotal": 11725806.03,
+      "projectedCostToComplete": 12956228.4,
+      "estimatedCostAtCompletion": 37481840.48
+    },
+    "budgetChanges": {
+      "source": "CAST BUILD A.O Budget Changes screenshot OCR",
+      "json": "data/projects/golden-hill/procore-information/budget-changes/budget-changes-from-screenshot.json",
+      "csv": "data/projects/golden-hill/procore-information/budget-changes/budget-changes-from-screenshot.csv",
+      "page": "public/projects/alum-budget-changes.html",
+      "visibleRows": 24,
+      "mappedRows": 12,
+      "guardrail": "Screenshot-derived; detailed CAST BUILD A.O budget change export needed for exact line-level source/target amounts."
+    }
+  }
+}

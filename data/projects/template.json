@@ -1,0 +1,34 @@
+{
+  "id": "PROJECT_SLUG",
+  "name": "PROJECT_NAME",
+  "label": "PROJECT_LABEL",
+  "type": "sub-project",
+  "status": "Draft setup",
+  "phase": "Project onboarding",
+  "procore": {
+    "connectionState": "not_connected",
+    "mode": "read-first",
+    "companyId": null,
+    "projectId": null,
+    "allowedActions": ["discover", "list", "read", "summarize"],
+    "blockedActions": ["create", "update", "delete", "write-back", "billing-change"]
+  },
+  "workstreams": [
+    { "key": "overview", "name": "Project Overview", "status": "draft" },
+    { "key": "procore", "name": "CAST BUILD A.O Discovery", "status": "waiting-auth" },
+    { "key": "rfis", "name": "RFIs", "status": "mapped-placeholder" },
+    { "key": "submittals", "name": "Submittals", "status": "mapped-placeholder" },
+    { "key": "drawings", "name": "Drawings + Specs", "status": "mapped-placeholder" },
+    { "key": "budget", "name": "Budget + Commitments", "status": "mapped-placeholder" },
+    { "key": "schedule", "name": "Schedule + Milestones", "status": "mapped-placeholder" },
+    { "key": "daily-logs", "name": "Daily Logs + Field Reports", "status": "mapped-placeholder" },
+    { "key": "documents", "name": "Documents + Closeout", "status": "mapped-placeholder" },
+    { "key": "risk", "name": "Risk Register", "status": "draft" }
+  ],
+  "guardrails": [
+    "Use authorized project system access only.",
+    "Read-first until Lawrence explicitly approves write-back.",
+    "Do not store tokens or credentials in git.",
+    "Keep project-specific data isolated by project slug."
+  ]
+}

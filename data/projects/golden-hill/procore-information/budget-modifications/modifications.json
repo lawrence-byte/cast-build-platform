@@ -1,0 +1,13 @@
+{
+  "projectName": "Alüm",
+  "formerName": "Golden Hill Apartments",
+  "sourceBudget": "data/projects/golden-hill/procore-information/budget/budget-summary.json",
+  "status": "draft-scenario-platform",
+  "guardrails": [
+    "Budget modifications are CAST Build scenarios only until explicitly approved.",
+    "Do not write back to CAST BUILD A.O from this platform.",
+    "Do not overwrite the current budget export; store deltas separately.",
+    "Every modification should tie to a CAST BUILD A.O budget code when possible."
+  ],
+  "modifications": []
+}

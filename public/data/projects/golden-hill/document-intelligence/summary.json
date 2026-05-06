@@ -1,0 +1,67 @@
+{
+  "projectName": "Alüm",
+  "generatedAt": "2026-05-06T13:43:17.587Z",
+  "sourceRoot": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm",
+  "localDataTiePath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm/00_PROCORE DATA TIE",
+  "currentBudgetPath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm/00_PROCORE DATA TIE/001_CURRENT BUDGET",
+  "dataTieStatus": "not_mounted_or_not_available_on_this_host",
+  "currentBudgetStatus": "not_mounted_or_not_available_on_this_host",
+  "pdfCount": 3352,
+  "ocrCandidateCount": 319,
+  "zeroNativeTextCount": 256,
+  "sampleOcrCount": 6,
+  "skills": [
+    {
+      "name": "ocr-document-processor",
+      "status": "ready",
+      "role": "General scanned docs/images, tables, structured extraction."
+    },
+    {
+      "name": "pdf-ocr-extractor",
+      "status": "ready",
+      "role": "Tesseract-based local OCR for scanned PDFs."
+    },
+    {
+      "name": "pdf-ocr",
+      "status": "ready",
+      "role": "Dual OCR pipeline using local Python 3.12 venv and RapidOCR."
+    },
+    {
+      "name": "drawing-analyzer",
+      "status": "ready-caution",
+      "role": "Experimental construction drawing metadata/dimensions/symbol extraction."
+    },
+    {
+      "name": "floor-plan",
+      "status": "ready",
+      "role": "Draw.io-style generated layout diagrams."
+    }
+  ],
+  "pipeline": [
+    {
+      "step": "Intake",
+      "status": "live",
+      "detail": "Dropbox archive, CAST BUILD A.O exports, and Telegram attachments are indexed locally."
+    },
+    {
+      "step": "Classify",
+      "status": "live",
+      "detail": "4,674-file Alüm data room is grouped by section/category."
+    },
+    {
+      "step": "Extract",
+      "status": "pilot",
+      "detail": "OCR pilot identifies PDFs with weak/no native text and extracts representative samples."
+    },
+    {
+      "step": "Publish",
+      "status": "live",
+      "detail": "Document intelligence JSON feeds the CAST Build UI."
+    }
+  ],
+  "guardrails": [
+    "OCR is assistive; verify anything affecting cost, scope, code, life safety, structure, permits, or schedule.",
+    "Prefer native CSV/PDF text exports over OCR when available.",
+    "Do not run low-trust drawing analysis against sensitive documents without human review."
+  ]
+}

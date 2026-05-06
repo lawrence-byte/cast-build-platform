@@ -1,0 +1,18 @@
+[
+  {
+    "id": "golden-hill-apartments",
+    "name": "Alüm",
+    "phase": "Workflow discovery",
+    "status": "Active learning scope",
+    "procoreStatus": "Not connected",
+    "risk": "Use authorized CAST BUILD A.O access only; read-first until workflows are approved."
+  },
+  {
+    "id": "cast-build-template",
+    "name": "CAST Build Project Template",
+    "phase": "Platform setup",
+    "status": "Draft",
+    "procoreStatus": "Schema mapping pending",
+    "risk": "Do not treat static demo as authenticated production software."
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "projectName": "Alüm",
+  "source": "Local Dropbox sync folder for CAST BUILD A.O exports",
+  "localPath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm/00_PROCORE DATA TIE",
+  "currentBudgetPath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm/00_PROCORE DATA TIE/001_CURRENT BUDGET",
+  "currentBudgetStatus": "not_mounted_or_not_available_on_this_host",
+  "status": "not_mounted_or_not_available_on_this_host",
+  "generatedAt": "2026-05-06T13:43:17.847Z",
+  "totalFiles": 0,
+  "totalBytes": 0,
+  "files": [],
+  "note": "Lawrence identified this as the authoritative CAST BUILD A.O Information/Data Tie folder, but this OpenClaw host cannot currently see that local path."
+}

@@ -1,0 +1,80 @@
+{
+  "name": "CAST Automation Storage",
+  "provider": "Dropbox",
+  "status": "downloaded_and_indexed_from_shared_link",
+  "approvedBy": "Lawrence Howard",
+  "approvedAt": "2026-05-06",
+  "sharedFolderUrl": "https://www.dropbox.com/scl/fo/kkjixjyb4nc5sacfq7gwv/AOt0NM09D4VbDc_F8cb802E?rlkey=571qvd76rehr706qjzni0h87w&dl=0",
+  "scope": {
+    "allowed": [
+      "Files and folders reachable from this shared Dropbox folder only"
+    ],
+    "denied": [
+      "Any other Dropbox folder",
+      "Parent Dropbox account listing",
+      "Personal/company folders outside the shared CAST Automation Storage link",
+      "Search across all Dropbox"
+    ]
+  },
+  "projects": [
+    {
+      "id": "alum",
+      "currentName": "Al\u00fcm",
+      "formerName": "Golden Hill Apartments",
+      "legacySlug": "golden-hill"
+    }
+  ],
+  "accessMethods": {
+    "sharedLink": "available_for_manual/download_access_when_files_are_shared",
+    "dropboxSkill": "installed",
+    "membraneAuth": "not_logged_in"
+  },
+  "guardrails": [
+    "Read/list/index only inside the shared folder link or an explicitly approved local sync path for this same folder.",
+    "No deletes, moves, renames, uploads, shared-link creation/revocation, or permission changes without explicit approval.",
+    "Do not browse other Dropbox folders or run account-wide Dropbox search.",
+    "Treat all contents as private CAST Build project material."
+  ],
+  "download": {
+    "filename": "CAST Build Management Platform.zip",
+    "sizeBytes": 549166278,
+    "localPath": "data/integrations/dropbox-cast-automation-storage/downloads/CAST Build Management Platform.zip",
+    "extractedProjectPath": "data/projects/golden-hill/dropbox-intake/extracted/Al\u00fcm",
+    "manifest": "data/projects/golden-hill/dropbox-intake/manifests/dropbox-intake-manifest.json"
+  },
+  "contents": {
+    "totalFiles": 464,
+    "currentDrawingsFiles": 460,
+    "drawingPdfFiles": 459,
+    "drawingLogRows": 458,
+    "rfiFiles": 2,
+    "rfiCsvRows": 303,
+    "submittalFiles": 2,
+    "submittalRows": 525
+  },
+  "additionalFolders": [
+    {
+      "name": "Claude Projects",
+      "reportedBy": "Lawrence Howard",
+      "reportedAt": "2026-05-06T04:56:00-07:00",
+      "scope": "Approved only if contained inside the existing CAST Automation Storage shared Dropbox folder boundary.",
+      "status": "reported_not_yet_visible_in_downloaded_archive",
+      "notes": [
+        "Lawrence said all Claude projects were added to the Dropbox folder. Latest downloadable shared-folder ZIP still reported the same size and current extracted manifest contains only Al\u00fcm Current Drawings/RFIs/Submittals, so refresh/re-download later before indexing Claude project contents."
+      ]
+    }
+  ],
+  "procoreDataTie": {
+    "name": "CAST BUILD A.O Information / 00_PROCORE DATA TIE",
+    "authoritativeLocalPath": "/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alu\u0308m/00_PROCORE DATA TIE",
+    "status": "authoritative_path_recorded_not_mounted_on_openclaw_host",
+    "index": "data/projects/golden-hill/procore-information/procore-data-tie-index.json",
+    "publicIndex": "public/data/projects/golden-hill/procore-information/procore-data-tie-index.json",
+    "script": "npm run intake:procore-data-tie",
+    "guardrails": [
+      "Read-only local Dropbox sync intake.",
+      "Copy/archive CAST BUILD A.O exports into repo before parsing.",
+      "No CAST BUILD A.O writes or Dropbox mutations."
+    ]
+  }
+}

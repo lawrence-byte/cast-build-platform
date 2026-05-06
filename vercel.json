@@ -1,0 +1,20 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/projects", "destination": "/projects.html" },
+    { "source": "/procore", "destination": "/procore.html" },
+    { "source": "/document-tools", "destination": "/document-tools.html" },
+    { "source": "/projects/alum-document-intelligence", "destination": "/projects/alum-document-intelligence.html" },
+    { "source": "/api/:path*", "destination": "/api-placeholder.json" }
+  ]
+}
