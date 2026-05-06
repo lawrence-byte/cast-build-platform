@@ -30,6 +30,19 @@ if (!/CAST BUILD A\.O Module Map/.test(alumReplicaPage) || !/Action Queue/.test(
   console.error('Alüm replica page must include module map and action queue.');
   failed = true;
 }
+if (!/alum-open-items\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the open-items control center.');
+  failed = true;
+}
+const openItemsPage = fs.readFileSync(path.join(root, 'public/projects/alum-open-items.html'), 'utf8');
+if (!/Open Item Control Center/.test(openItemsPage) || !/Read-first replica/i.test(openItemsPage)) {
+  console.error('Open-items page must state its read-first control-center purpose.');
+  failed = true;
+}
+if (/source-logs\//i.test(openItemsPage)) {
+  console.error('Open-items page must not link directly to private source-log artifacts.');
+  failed = true;
+}
 const distDir = path.join(root, 'dist');
 if (fs.existsSync(distDir)) {
   const leaked = [];
