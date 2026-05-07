@@ -17,6 +17,8 @@ Use this checklist before merging overnight feature branches or creating any pre
 ## Brand/reference blocklist
 
 - Use CAST Build / CAST BUILD A.O naming in this scaffold.
+- Keep CAST Build construction-only: Procore-style budgets, commitments, change orders, RFIs, submittals, daily logs, draws/pay applications, schedule risk, field controls, and construction-cost forecasting.
+- Do not add CAST Development underwriting surfaces here: acquisition underwriting, market rent/unit-mix studies, NOI/value/cap-rate modeling, entitlement strategy, leasing strategy, or residual land value belong outside CAST Build.
 - Do not reintroduce CAST Capital language or legacy reference branding into public pages, docs, scripts, or tests.
 
 ## Validation gate
