@@ -32,3 +32,15 @@ find public dist -type f \( -iname '*.pdf' -o -iname '*.xlsx' -o -iname '*.xls' 
 ```
 
 The first `npm test` catches source issues; the build creates `dist/`; the second `npm test` verifies the deploy bundle did not leak raw/private artifacts or source strings.
+
+## Fast integration checklist
+
+For main/integration merge, keep this lane first or near-first so later feature lanes inherit the guardrails:
+
+1. Merge `overnight/qa-buildout` into the integration branch.
+2. Run the validation gate above before merging each feature lane.
+3. If a feature lane fails on broken routes, prefer adding the missing static page/rewrite or correcting the link; do not weaken route checks.
+4. If a feature lane fails on raw/private artifacts, move raw files out of `public/` and expose only sanitized JSON metadata.
+5. If a feature lane legitimately needs a public asset type that is currently blocked, add the narrowest possible exception and document why in this file.
+
+Current expected handoff state: no external deploy yet; metadata-only local/static preview is acceptable after the full validation gate passes.
