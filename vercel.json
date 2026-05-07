@@ -90,6 +90,10 @@
     {
       "source": "/api/:path*",
       "destination": "/api-placeholder.json"
+    },
+    {
+      "source": "/pricing-models",
+      "destination": "/pricing-models.html"
     }
   ]
 }
