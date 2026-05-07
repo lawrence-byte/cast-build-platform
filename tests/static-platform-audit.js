@@ -1,8 +1,63 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
+const publicDir = path.join(root, 'public');
+const distDir = path.join(root, 'dist');
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
+function fail(message) {
+  console.error(message);
+  failed = true;
+}
+function walk(dir, visitor) {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(full, visitor);
+    else visitor(full);
+  }
+}
+function stripHashAndQuery(value) {
+  return value.split('#')[0].split('?')[0];
+}
+function publicRelFromUrl(url) {
+  const cleaned = stripHashAndQuery(url.trim());
+  if (!cleaned || cleaned === '/') return 'index.html';
+  if (/^(https?:|mailto:|tel:|javascript:|data:|#)/i.test(cleaned)) return null;
+  const withoutSlash = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
+  if (!withoutSlash || withoutSlash.endsWith('/')) return `${withoutSlash}index.html`;
+  return withoutSlash;
+}
+function routeExists(route) {
+  const rel = publicRelFromUrl(route);
+  if (rel === null) return true;
+  const direct = path.join(publicDir, rel);
+  if (fs.existsSync(direct)) return true;
+  const asHtml = path.join(publicDir, `${rel}.html`);
+  if (!path.extname(rel) && fs.existsSync(asHtml)) return true;
+  return false;
+}
+const secretPattern = /APIFY_TOKEN|PROCORE_CLIENT_SECRET|password\s*=|sk-[A-Za-z0-9]/;
+const rawArtifactPathPattern = /(^|[/\\])(source-logs|dropbox-intake|source-artifacts|raw|private)([/\\]|$)|\.(pdf|xlsx?|csv|zip)$/i;
+const privateSourceStringPattern = /dropbox-intake|source-logs|source-artifacts|\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|00_PROCORE DATA TIE/i;
+const brandBlocklistPattern = /CAST\s+Capital/i;
+const selfReferenceAllowlist = new Set(['tests/static-platform-audit.js', 'docs/platform-guardrails.md']);
+const allowedRawMentions = [
+  'tests/static-platform-audit.js',
+  'docs/deployment-readiness.md',
+  'docs/platform-guardrails.md',
+  'public/projects/alum-data-room.js',
+  'public/projects/golden-hill-procore.js',
+  'public/projects/alum-daily-log.html',
+  'public/projects/alum-change-events.js',
+  'public/projects/alum-closeout.js',
+  'public/projects/alum-command-center.js',
+  'public/projects/alum-executive-report.js',
+  'scripts/build-static.js',
+];
+function isAllowedRawMention(rel) {
+  return allowedRawMentions.includes(rel.replace(/\\/g, '/'));
+}
 for (const file of files) {
   const full = path.join(root, file);
   if (!fs.existsSync(full)) {
@@ -11,9 +66,8 @@ for (const file of files) {
     continue;
   }
   const text = fs.readFileSync(full, 'utf8');
-  if (/APIFY_TOKEN|PROCORE_CLIENT_SECRET|password\s*=|sk-[A-Za-z0-9]/.test(text)) {
-    console.error(`Potential secret pattern in ${file}`);
-    failed = true;
+  if (secretPattern.test(text)) {
+    fail(`Potential secret pattern in ${file}`);
   }
 }
 const procorePage = fs.readFileSync(path.join(root, 'public/procore.html'), 'utf8');
@@ -294,7 +348,58 @@ for (const requiredCloseoutSignal of ['submittal-summary.json', 'document-intell
   }
 }
 
-const distDir = path.join(root, 'dist');
+const publicLeaks = [];
+const textExtensions = new Set(['.html', '.js', '.json', '.css', '.txt', '.md', '.svg']);
+walk(publicDir, (full) => {
+  const rel = path.relative(root, full).replace(/\\/g, '/');
+  const publicRel = path.relative(publicDir, full).replace(/\\/g, '/');
+  if (rawArtifactPathPattern.test(publicRel)) publicLeaks.push(`raw artifact path: ${rel}`);
+  if (!textExtensions.has(path.extname(full).toLowerCase())) return;
+  const text = fs.readFileSync(full, 'utf8');
+  if (secretPattern.test(text)) publicLeaks.push(`secret-like string: ${rel}`);
+  if (brandBlocklistPattern.test(text)) publicLeaks.push(`CAST Capital brand reference: ${rel}`);
+  if (privateSourceStringPattern.test(text) && !isAllowedRawMention(rel)) publicLeaks.push(`private source string: ${rel}`);
+});
+if (publicLeaks.length) {
+  fail(`Public bundle source/privacy scan failed:\n - ${publicLeaks.slice(0, 25).join('\n - ')}${publicLeaks.length > 25 ? `\n - ... ${publicLeaks.length - 25} more` : ''}`);
+}
+
+const contentDirs = ['docs', 'scripts', 'tests'];
+for (const dir of contentDirs) {
+  walk(path.join(root, dir), (full) => {
+    if (!textExtensions.has(path.extname(full).toLowerCase())) return;
+    const rel = path.relative(root, full).replace(/\\/g, '/');
+    const text = fs.readFileSync(full, 'utf8');
+    if (!selfReferenceAllowlist.has(rel) && secretPattern.test(text)) fail(`Potential secret pattern in ${rel}`);
+    if (!selfReferenceAllowlist.has(rel) && brandBlocklistPattern.test(text)) fail(`CAST Capital brand reference in ${rel}`);
+  });
+}
+
+const brokenLinks = [];
+const htmlFiles = [];
+walk(publicDir, (full) => {
+  if (path.extname(full).toLowerCase() === '.html') htmlFiles.push(full);
+});
+for (const full of htmlFiles) {
+  const rel = path.relative(publicDir, full).replace(/\\/g, '/');
+  const text = fs.readFileSync(full, 'utf8');
+  const attrs = text.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi);
+  for (const [, value] of attrs) {
+    if (!routeExists(value)) brokenLinks.push(`${rel} -> ${value}`);
+    if (rawArtifactPathPattern.test(stripHashAndQuery(value))) brokenLinks.push(`${rel} publishes raw/private route -> ${value}`);
+  }
+}
+if (brokenLinks.length) {
+  fail(`Broken or unsafe public routes:\n - ${brokenLinks.slice(0, 30).join('\n - ')}${brokenLinks.length > 30 ? `\n - ... ${brokenLinks.length - 30} more` : ''}`);
+}
+
+const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
+const rewrites = vercelConfig.rewrites || [];
+for (const source of ['/admin', '/projects', '/procore', '/document-tools', '/projects/golden-hill', '/projects/overlook']) {
+  const rewrite = rewrites.find((row) => row.source === source);
+  if (!rewrite || !routeExists(rewrite.destination)) fail(`Missing or invalid Vercel rewrite for ${source}`);
+}
+
 if (fs.existsSync(distDir)) {
   const leaked = [];
   const leakedStrings = [];
