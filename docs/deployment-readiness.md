@@ -21,23 +21,17 @@ The static CAST Build prototype is ready locally and can be deployed as a Vercel
 
 ## Privacy blocker before external deployment
 
-`public/` currently contains private project/source artifacts, including:
+The public bundle is now intended to be metadata-only: raw PDFs, Excel files, CSVs, ZIPs, source-log folders, Dropbox intake folders, and private filesystem paths should not be present in `public/` or `dist/`.
 
-- `public/data/projects/golden-hill/source-logs/current_drawings.pdf`
-- `public/data/projects/golden-hill/source-logs/submittal_logs.xlsx`
-- `public/data/projects/golden-hill/source-logs/rfi_list.csv`
-- budget revision CSVs and project metadata
-
-A Vercel preview URL is publicly reachable by anyone with the link unless access protection is configured. Do not deploy externally until one of these is true:
+A Vercel preview URL is still publicly reachable by anyone with the link unless access protection is configured. Do not deploy externally until one of these is true:
 
 1. Vercel project access protection / SSO / password protection is enabled, or
-2. private source files are removed from `public/` and replaced with metadata-only summaries, or
-3. Lawrence explicitly approves a link-access preview despite the exposure risk.
+2. Lawrence explicitly approves a link-access preview after the metadata-only artifact scan passes.
 
 ## Recommended deployment path
 
 1. Keep local preview for now.
-2. Add auth/access protection or strip source files from public bundle.
+2. Run the validation gate in `docs/platform-guardrails.md`.
 3. Link project to Vercel team `cast-community`.
 4. Deploy a preview, not production.
 5. Only promote to production after auth and tenant/data boundaries are implemented.
