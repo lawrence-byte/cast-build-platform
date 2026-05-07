@@ -40,6 +40,18 @@
       "destination": "/projects/alum-budget.html"
     },
     {
+      "source": "/projects/alum-command-center",
+      "destination": "/projects/alum-command-center.html"
+    },
+    {
+      "source": "/projects/alum-schedule",
+      "destination": "/projects/alum-schedule.html"
+    },
+    {
+      "source": "/projects/alum-closeout",
+      "destination": "/projects/alum-closeout.html"
+    },
+    {
       "source": "/projects/alum-accounting-tieout",
       "destination": "/projects/alum-accounting-tieout.html"
     },

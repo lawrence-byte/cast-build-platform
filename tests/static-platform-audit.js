@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
 let failed = false;
 for (const file of files) {
   const full = path.join(root, file);
@@ -131,6 +131,10 @@ if (!/alum-executive-report\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the executive reporting layer.');
   failed = true;
 }
+if (!/alum-command-center\.html/.test(alumReplicaPage) || !/alum-schedule\.html/.test(alumReplicaPage) || !/alum-closeout\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to command center, schedule control, and closeout modules.');
+  failed = true;
+}
 for (const requiredModule of ['alum-rfis.html', 'alum-submittals.html', 'alum-change-events.html', 'alum-daily-log.html']) {
   if (!alumReplicaPage.includes(requiredModule)) {
     console.error(`Alüm replica page must link to dedicated project-management module: ${requiredModule}`);
@@ -232,6 +236,46 @@ for (const requiredExecutiveSignal of ['rfi-summary.json', 'submittal-summary.js
     failed = true;
   }
 }
+
+const commandCenterPage = fs.readFileSync(path.join(root, 'public/projects/alum-command-center.html'), 'utf8');
+const commandCenterScript = fs.readFileSync(path.join(root, 'public/projects/alum-command-center.js'), 'utf8');
+if (!/Construction Command Center/.test(commandCenterPage) || !/OAC Agenda/.test(commandCenterPage) || !/Local Decision/.test(commandCenterPage) || !/Read-first operating layer/i.test(commandCenterPage)) {
+  console.error('Command center must include OAC agenda, local decisions, and read-first posture.');
+  failed = true;
+}
+for (const requiredCommandSignal of ['rfi-summary.json', 'submittal-summary.json', 'budget-summary.json', 'accounting-budget-tieout.json', 'localStorage', 'alumCommandDecisions']) {
+  if (!commandCenterScript.includes(requiredCommandSignal) && !commandCenterPage.includes(requiredCommandSignal)) {
+    console.error(`Command center missing signal/control: ${requiredCommandSignal}`);
+    failed = true;
+  }
+}
+const schedulePage = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.html'), 'utf8');
+const scheduleScript = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.js'), 'utf8');
+if (!/Schedule Control Board/.test(schedulePage) || !/3-Week Lookahead/.test(schedulePage) || !/Constraint Log/.test(schedulePage) || !/Read-first schedule planner/i.test(schedulePage)) {
+  console.error('Schedule control must include constraints, lookahead, and read-first posture.');
+  failed = true;
+}
+for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'alumScheduleMilestones', 'alumScheduleLookahead', 'localStorage']) {
+  if (!scheduleScript.includes(requiredScheduleSignal) && !schedulePage.includes(requiredScheduleSignal)) {
+    console.error(`Schedule control missing signal/control: ${requiredScheduleSignal}`);
+    failed = true;
+  }
+}
+
+
+const closeoutPage = fs.readFileSync(path.join(root, 'public/projects/alum-closeout.html'), 'utf8');
+const closeoutScript = fs.readFileSync(path.join(root, 'public/projects/alum-closeout.js'), 'utf8');
+if (!/Closeout Readiness Board/.test(closeoutPage) || !/Local Closeout Checklist/.test(closeoutPage) || !/Read-first closeout planner/i.test(closeoutPage)) {
+  console.error('Closeout readiness must include checklist and read-first posture.');
+  failed = true;
+}
+for (const requiredCloseoutSignal of ['submittal-summary.json', 'document-intelligence/summary.json', 'alumCloseoutChecklist', 'localStorage']) {
+  if (!closeoutScript.includes(requiredCloseoutSignal) && !closeoutPage.includes(requiredCloseoutSignal)) {
+    console.error(`Closeout readiness missing signal/control: ${requiredCloseoutSignal}`);
+    failed = true;
+  }
+}
+
 const distDir = path.join(root, 'dist');
 if (fs.existsSync(distDir)) {
   const leaked = [];
