@@ -94,6 +94,14 @@
     {
       "source": "/pricing-models",
       "destination": "/pricing-models.html"
+    },
+    {
+      "source": "/projects/golden-hill",
+      "destination": "/projects/golden-hill.html"
+    },
+    {
+      "source": "/projects/overlook",
+      "destination": "/projects/overlook.html"
     }
   ]
 }

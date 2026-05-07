@@ -1,1 +1,108 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alüm — CAST Build</title><link rel="stylesheet" href="/cast-build.css"></head><body><header class="topbar"><a class="brand-lockup" href="/" aria-label="CAST Build home"><img class="brand-logo" src="/assets/brand/cast-build-stacked-black-on-white.png" alt="CAST BUILD"><span><span class="brand">Build</span><span class="subbrand">Alüm sub-project</span></span></a><nav class="nav"><a href="/admin.html">Admin</a><a href="/projects.html">Projects</a><a href="/procore.html">CAST BUILD A.O</a></nav></header><div class="layout"><aside class="sidebar"><a href="#overview">Overview</a><a href="#procore">CAST BUILD A.O Discovery</a><a href="#controls">Project Controls</a><a href="#risk">Risk Register</a><a href="/projects/alum-data-room.html">Full Data Room</a><a href="#clone">Clone Template</a></aside><main class="main"><h1 class="section-title">Alüm</h1><p><a class="button" href="/projects/golden-hill-procore.html">Open CAST BUILD A.O-style Overview</a> <a class="button secondary" href="/projects/golden-hill-documents.html">Open Documents</a> <a class="button secondary" href="/projects/alum-data-room.html">Open Full Data Room</a> <a class="button secondary" href="/document-tools.html">Open Doc Tools</a> <a class="button secondary" href="/projects/alum-document-intelligence.html">Open Document Intelligence</a> <a class="button secondary" href="/projects/alum-budget.html">Open CAST BUILD A.O Budget</a> <a class="button secondary" href="/projects/alum-budget-modifications.html">Open Budget Mods</a> <a class="button secondary" href="/projects/alum-budget-changes.html">Open Budget Revisions</a> <a class="button secondary" href="/projects/alum-budget-forecast.html">Open Forecast</a></p><p class="lead">First CAST Build sub-project workspace. This is the CAST BUILD A.O workflow discovery and project operating template we will clone for Overlook once the structure is stable.</p><div class="warning"><strong>Current state:</strong> CAST BUILD A.O is not connected yet. This workspace is read-first and has no write-back actions enabled.</div><section class="grid" style="padding:18px 0;grid-template-columns:repeat(4,1fr)"><article class="card"><span class="status">Active setup</span><h3>Phase</h3><p>CAST BUILD A.O workflow discovery</p></article><article class="card"><span class="status">Read-first</span><h3>CAST BUILD A.O</h3><p>Awaiting Membrane/CAST BUILD A.O auth</p></article><article class="card"><span class="status">Template</span><h3>Clone target</h3><p>Overlook</p></article><article class="card"><span class="status">Isolated</span><h3>Data boundary</h3><p><code>golden-hill</code></p></article></section><h2 id="procore" class="section-title">CAST BUILD A.O discovery modules</h2><table class="table"><tr><th>Module</th><th>Read-only objective</th><th>Status</th></tr><tr><td>Projects / Directory</td><td>Confirm company, project ID, users, roles, vendors, permissions.</td><td>Waiting auth</td></tr><tr><td>RFIs</td><td>List RFIs, statuses, responsible parties, overdue items.</td><td>Mapped placeholder</td></tr><tr><td>Submittals</td><td>List packages, approvals, responsible contractor, due dates.</td><td>Mapped placeholder</td></tr><tr><td>Drawings + Specs</td><td>Index current revisions and document organization.</td><td>Mapped placeholder</td></tr><tr><td>Budget + Commitments</td><td>Read budget, commitments, change exposure, invoices if permitted.</td><td>Mapped placeholder</td></tr><tr><td>Schedule</td><td>Read milestones, tasks, schedule drift indicators.</td><td>Mapped placeholder</td></tr><tr><td>Daily Logs + Photos</td><td>Summarize field activity, manpower, weather, photo record.</td><td>Mapped placeholder</td></tr><tr><td>Risk Register</td><td>Create CAST-controlled risk summaries from read-only project data.</td><td>Draft</td></tr></table><h2 id="controls" class="section-title" style="margin-top:34px">Controls</h2><div class="danger"><strong>Blocked until explicit approval:</strong> create/update/delete CAST BUILD A.O records, write-back automation, credential handling, billing/spend changes, or broad scraping outside authorized access.</div><h2 id="clone" class="section-title" style="margin-top:34px">Clone path: Overlook</h2><p>Once Alüm’s modules are stable, clone <code>data/projects/golden-hill.json</code> and <code>public/projects/golden-hill.html</code> into an Overlook workspace, changing project slug/data boundaries to <code>overlook</code>.</p></main></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alüm — CAST Build Dashboard</title>
+  <link rel="stylesheet" href="/cast-build.css">
+</head>
+<body class="project-admin-body">
+  <div class="project-dashboard-wrapper">
+    <aside class="project-sidebar" aria-label="Alüm project navigation">
+      <a class="project-sidebar-logo" href="/" aria-label="CAST Build home">
+        <img src="/assets/brand/cast-build-stacked-white-on-charcoal.png" alt="CAST BUILD">
+        <span>ALÜM</span>
+      </a>
+      <nav class="project-sidebar-nav">
+        <a class="active" href="#dashboard"><span class="nav-icon">⌂</span>Dashboard</a>
+        <a href="/projects/alum-command-center.html"><span class="nav-icon">◇</span>Command Center</a>
+        <a href="/projects/alum-rfis.html"><span class="nav-icon">R</span>RFIs</a>
+        <a href="/projects/alum-submittals.html"><span class="nav-icon">S</span>Submittals</a>
+        <a href="#meeting-minutes"><span class="nav-icon">M</span>Meeting Minutes</a>
+        <a href="/projects/alum-budget.html"><span class="nav-icon">$</span>Budget</a>
+        <a href="/projects/alum-budget-forecast.html"><span class="nav-icon">F</span>Forecast</a>
+        <a href="/projects/alum-schedule.html"><span class="nav-icon">T</span>Schedule</a>
+        <a href="/projects/golden-hill-documents.html"><span class="nav-icon">D</span>Documents</a>
+        <a href="/projects/alum-change-events.html"><span class="nav-icon">Δ</span>Change Events</a>
+        <a href="/projects/alum-commitments.html"><span class="nav-icon">C</span>Commitments</a>
+        <a href="/projects/alum-daily-log.html"><span class="nav-icon">L</span>Daily Logs</a>
+        <a href="/projects/alum-closeout.html"><span class="nav-icon">✓</span>Closeout</a>
+        <a href="/projects/alum-executive-report.html"><span class="nav-icon">↗</span>Reports</a>
+        <a href="/projects/alum-data-room.html"><span class="nav-icon">□</span>Data Room</a>
+      </nav>
+      <div class="sidebar-automation"><img src="/assets/brand/cast-automation-stacked-white-on-charcoal.png" alt="CAST AUTOMATION"></div>
+    </aside>
+
+    <main class="project-main-content" id="dashboard">
+      <header class="project-page-header">
+        <div>
+          <h1 class="project-page-title">Alüm Dashboard</h1>
+          <p class="project-page-subtitle">1101 25th Street · San Diego · Read-first project controls</p>
+        </div>
+        <img class="project-monogram" src="/assets/brand/cast-monogram-logo.svg" alt="CAST monogram">
+      </header>
+
+      <section class="project-kpi-grid" aria-label="Project status">
+        <article class="project-kpi-card"><div class="kpi-label">Open RFIs</div><div class="kpi-value">303</div><div class="kpi-change">RFI log indexed</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Submittals</div><div class="kpi-value">525</div><div class="kpi-change">Review queue active</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Drawings</div><div class="kpi-value">459</div><div class="kpi-change">Metadata only</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Source Sections</div><div class="kpi-value">27</div><div class="kpi-change">Archive indexed</div></article>
+      </section>
+
+      <section class="project-dashboard-grid">
+        <article class="project-panel span-8">
+          <div class="panel-header"><h2>Project Management</h2><span>Core modules</span></div>
+          <div class="project-module-grid">
+            <a href="/projects/alum-command-center.html"><strong>Command Center</strong><span>Priority stack, owner agenda, decisions, follow-ups</span></a>
+            <a href="/projects/alum-rfis.html"><strong>RFIs</strong><span>Status, aging, responsibility, due dates</span></a>
+            <a href="/projects/alum-submittals.html"><strong>Submittals</strong><span>Review queue, packages, spec sections, contractors</span></a>
+            <a href="#meeting-minutes"><strong>Meeting Minutes</strong><span>OAC log, unresolved decisions, follow-up owners</span></a>
+            <a href="/projects/alum-schedule.html"><strong>Schedule</strong><span>Milestones, constraints, 3-week lookahead</span></a>
+            <a href="/projects/alum-daily-log.html"><strong>Daily Logs</strong><span>Field activity, weather, manpower, photos</span></a>
+          </div>
+        </article>
+
+        <article class="project-panel span-4">
+          <div class="panel-header"><h2>Fast Links</h2><span>Open workspace</span></div>
+          <div class="fast-link-list">
+            <a href="/projects/alum-budget.html">Budget</a>
+            <a href="/projects/alum-budget-exceptions.html">Budget Needs Review</a>
+            <a href="/projects/alum-budget-changes.html">Change Control</a>
+            <a href="/projects/alum-commitments.html">Commitments</a>
+            <a href="/projects/alum-accounting-tieout.html">Accounting Tie-Out</a>
+            <a href="/projects/alum-dynamic-forecast.html">Dynamic Forecast</a>
+          </div>
+        </article>
+
+        <article class="project-panel span-8">
+          <div class="panel-header"><h2>Action Queue</h2><span>Safe next steps</span></div>
+          <table class="project-table">
+            <thead><tr><th>Module</th><th>Current focus</th><th>Status</th><th>Open</th></tr></thead>
+            <tbody>
+              <tr><td>RFIs</td><td>Review aged/open items and responsibility</td><td><span class="status">Live</span></td><td><a href="/projects/alum-rfis.html">Open</a></td></tr>
+              <tr><td>Submittals</td><td>Review draft/open submittals by contractor</td><td><span class="status">Live</span></td><td><a href="/projects/alum-submittals.html">Open</a></td></tr>
+              <tr><td>Budget</td><td>Check exceptions, commitments, forecast movement</td><td><span class="status">Live</span></td><td><a href="/projects/alum-budget-exceptions.html">Open</a></td></tr>
+              <tr><td>Documents</td><td>Search drawing register and data room metadata</td><td><span class="status">Live</span></td><td><a href="/projects/alum-data-room.html">Open</a></td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="project-panel span-4" id="meeting-minutes">
+          <div class="panel-header"><h2>Meeting Minutes</h2><span>Setup</span></div>
+          <div class="empty-state"><img src="/assets/brand/cast-monogram-logo.svg" alt=""><h3>Meeting log ready</h3><p>Use this area for OAC minutes, owner decisions, and follow-up tracking.</p><a class="small-action" href="/projects/alum-command-center.html">Open agenda</a></div>
+        </article>
+
+        <article class="project-panel span-12">
+          <div class="panel-header"><h2>Document + Cost Controls</h2><span>Project links</span></div>
+          <div class="project-module-grid wide">
+            <a href="/projects/golden-hill-documents.html"><strong>Documents</strong><span>Drawing register, RFI log, submittal log</span></a>
+            <a href="/projects/alum-document-intelligence.html"><strong>Document Intelligence</strong><span>OCR candidates, extracted text, evidence review</span></a>
+            <a href="/projects/alum-closeout.html"><strong>Closeout</strong><span>O&M, warranty, record drawings, attic stock</span></a>
+            <a href="/projects/alum-executive-report.html"><strong>Executive Report</strong><span>Owner-ready project posture and drilldowns</span></a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
