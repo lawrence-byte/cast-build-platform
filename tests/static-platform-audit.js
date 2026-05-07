@@ -41,6 +41,8 @@ const secretPattern = /APIFY_TOKEN|PROCORE_CLIENT_SECRET|password\s*=|sk-[A-Za-z
 const rawArtifactPathPattern = /(^|[/\\])(source-logs|dropbox-intake|source-artifacts|raw|private)([/\\]|$)|\.(pdf|xlsx?|csv|zip)$/i;
 const privateSourceStringPattern = /dropbox-intake|source-logs|source-artifacts|\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|00_PROCORE DATA TIE/i;
 const brandBlocklistPattern = /CAST\s+Capital/i;
+const developmentUnderwritingPattern = /underwriting|pre-development|feasibility|unit[- ]mix|parking\s*\+|entitlement|acquisition|market rent|rent support|development cost/i;
+const developmentUnderwritingAllowlist = new Set(['tests/static-platform-audit.js', 'docs/platform-guardrails.md', 'docs/cast-build-platform-map.md']);
 const selfReferenceAllowlist = new Set(['tests/static-platform-audit.js', 'docs/platform-guardrails.md']);
 const allowedRawMentions = [
   'tests/static-platform-audit.js',
@@ -393,29 +395,33 @@ for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.jso
 const overlookPage = fs.readFileSync(path.join(root, 'public/projects/overlook.html'), 'utf8');
 const overlookWorkspacePage = fs.readFileSync(path.join(root, 'public/projects/overlook-workspace.html'), 'utf8');
 const overlookWorkspaceScript = fs.readFileSync(path.join(root, 'public/projects/overlook-workspace.js'), 'utf8');
-const overlookSample = fs.readFileSync(path.join(root, 'public/data/projects/overlook/feasibility-sample.json'), 'utf8');
+const overlookSample = fs.readFileSync(path.join(root, 'public/data/projects/overlook/construction-controls-sample.json'), 'utf8');
 if (!/Overlook Dashboard/.test(overlookPage) || !/overlook-workspace\.html/.test(overlookPage)) {
   console.error('Overlook dashboard must link to the practical workspace.');
   failed = true;
 }
-for (const requiredOverlookModule of ['Scenario / Feasibility Dashboard', 'Action / Risk Register', 'Evidence / Data-Room Shell', 'Parking + Unit-Mix Tracker']) {
+for (const requiredOverlookModule of ['Construction Cost Forecast Dashboard', 'Action / Risk Register', 'Evidence / Data-Room Shell', 'Draw + Project-Control Tracker']) {
   if (!overlookWorkspacePage.includes(requiredOverlookModule)) {
     console.error(`Overlook workspace missing module: ${requiredOverlookModule}`);
     failed = true;
   }
 }
-for (const requiredOverlookSignal of ['feasibility-sample.json', 'data-actions', 'data-evidence', 'data-parking']) {
+for (const requiredOverlookSignal of ['construction-controls-sample.json', 'data-actions', 'data-evidence', 'data-draws']) {
   if (!overlookWorkspacePage.includes(requiredOverlookSignal) && !overlookWorkspaceScript.includes(requiredOverlookSignal)) {
     console.error(`Overlook workspace missing signal/control: ${requiredOverlookSignal}`);
     failed = true;
   }
 }
-if (!/Sample workspace metadata only/.test(overlookSample) || !/No raw\/private files/.test(overlookPage + overlookWorkspacePage + overlookSample)) {
-  console.error('Overlook workspace must clearly label sample metadata and no raw/private data posture.');
+if (!/Sample construction-controls metadata only/.test(overlookSample) || !/No raw\/private files/.test(overlookPage + overlookWorkspacePage + overlookSample)) {
+  console.error('Overlook workspace must clearly label construction-controls sample metadata and no raw/private data posture.');
   failed = true;
 }
 if (/source-logs|dropbox-intake|\/Users\/|\.pdf|\.xlsx|\.xls|\.csv|\.zip/i.test(overlookPage + overlookWorkspacePage + overlookWorkspaceScript + overlookSample)) {
   console.error('Overlook workspace must not publish raw file links, private source paths, or raw artifact extensions.');
+  failed = true;
+}
+if (developmentUnderwritingPattern.test(overlookPage + overlookWorkspacePage + overlookWorkspaceScript + overlookSample)) {
+  console.error('Overlook workspace must stay construction-only and avoid development/underwriting copy.');
   failed = true;
 }
 
@@ -442,6 +448,7 @@ walk(publicDir, (full) => {
   const text = fs.readFileSync(full, 'utf8');
   if (secretPattern.test(text)) publicLeaks.push(`secret-like string: ${rel}`);
   if (brandBlocklistPattern.test(text)) publicLeaks.push(`CAST Capital brand reference: ${rel}`);
+  if (developmentUnderwritingPattern.test(text) && !developmentUnderwritingAllowlist.has(rel)) publicLeaks.push(`development/underwriting reference: ${rel}`);
   if (privateSourceStringPattern.test(text) && !isAllowedRawMention(rel)) publicLeaks.push(`private source string: ${rel}`);
 });
 if (publicLeaks.length) {
