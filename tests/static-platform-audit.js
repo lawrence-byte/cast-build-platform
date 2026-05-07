@@ -228,9 +228,16 @@ for (const requiredChangeSignal of ['11. CHANGE EVENTS', '12. OWNER CHANGE ORDER
     failed = true;
   }
 }
-if (!/No dedicated daily-log export/.test(dailyLogModuleScript) || !/ready/.test(fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.html'), 'utf8'))) {
-  console.error('Daily Log module must remain an explicit placeholder until approved metadata exists.');
+const dailyLogPage = fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.html'), 'utf8');
+if (!/Read-first \/ local-write module/.test(dailyLogPage) || !/localStorage/.test(dailyLogModuleScript) || !/data-review-rows/.test(dailyLogPage)) {
+  console.error('Daily Log module must stay browser-local, read-first, and include a PM review queue.');
   failed = true;
+}
+for (const requiredDailyLogControl of ['data-save', 'data-export', 'data-reset', 'alum-daily-log-local-export.json']) {
+  if (!dailyLogPage.includes(requiredDailyLogControl) && !dailyLogModuleScript.includes(requiredDailyLogControl)) {
+    console.error(`Daily Log module missing local control: ${requiredDailyLogControl}`);
+    failed = true;
+  }
 }
 if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath)) {
   console.error('Accounting budget tie-out JSON must be generated for private and public metadata views.');
