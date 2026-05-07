@@ -335,6 +335,36 @@ for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.jso
 }
 
 
+
+const overlookPage = fs.readFileSync(path.join(root, 'public/projects/overlook.html'), 'utf8');
+const overlookWorkspacePage = fs.readFileSync(path.join(root, 'public/projects/overlook-workspace.html'), 'utf8');
+const overlookWorkspaceScript = fs.readFileSync(path.join(root, 'public/projects/overlook-workspace.js'), 'utf8');
+const overlookSample = fs.readFileSync(path.join(root, 'public/data/projects/overlook/feasibility-sample.json'), 'utf8');
+if (!/Overlook Dashboard/.test(overlookPage) || !/overlook-workspace\.html/.test(overlookPage)) {
+  console.error('Overlook dashboard must link to the practical workspace.');
+  failed = true;
+}
+for (const requiredOverlookModule of ['Scenario / Feasibility Dashboard', 'Action / Risk Register', 'Evidence / Data-Room Shell', 'Parking + Unit-Mix Tracker']) {
+  if (!overlookWorkspacePage.includes(requiredOverlookModule)) {
+    console.error(`Overlook workspace missing module: ${requiredOverlookModule}`);
+    failed = true;
+  }
+}
+for (const requiredOverlookSignal of ['feasibility-sample.json', 'data-actions', 'data-evidence', 'data-parking']) {
+  if (!overlookWorkspacePage.includes(requiredOverlookSignal) && !overlookWorkspaceScript.includes(requiredOverlookSignal)) {
+    console.error(`Overlook workspace missing signal/control: ${requiredOverlookSignal}`);
+    failed = true;
+  }
+}
+if (!/Sample workspace metadata only/.test(overlookSample) || !/No raw\/private files/.test(overlookPage + overlookWorkspacePage + overlookSample)) {
+  console.error('Overlook workspace must clearly label sample metadata and no raw/private data posture.');
+  failed = true;
+}
+if (/source-logs|dropbox-intake|\/Users\/|\.pdf|\.xlsx|\.xls|\.csv|\.zip/i.test(overlookPage + overlookWorkspacePage + overlookWorkspaceScript + overlookSample)) {
+  console.error('Overlook workspace must not publish raw file links, private source paths, or raw artifact extensions.');
+  failed = true;
+}
+
 const closeoutPage = fs.readFileSync(path.join(root, 'public/projects/alum-closeout.html'), 'utf8');
 const closeoutScript = fs.readFileSync(path.join(root, 'public/projects/alum-closeout.js'), 'utf8');
 if (!/Closeout Readiness Board/.test(closeoutPage) || !/Local Closeout Checklist/.test(closeoutPage) || !/Read-first closeout planner/i.test(closeoutPage)) {
