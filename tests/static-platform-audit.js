@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
 let failed = false;
 for (const file of files) {
   const full = path.join(root, file);
@@ -131,8 +131,8 @@ if (!/alum-executive-report\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the executive reporting layer.');
   failed = true;
 }
-if (!/alum-command-center\.html/.test(alumReplicaPage) || !/alum-schedule\.html/.test(alumReplicaPage) || !/alum-closeout\.html/.test(alumReplicaPage)) {
-  console.error('Alüm replica page must link to command center, schedule control, and closeout modules.');
+if (!/alum-command-center\.html/.test(alumReplicaPage) || !/alum-meeting-minutes\.html/.test(alumReplicaPage) || !/alum-schedule\.html/.test(alumReplicaPage) || !/alum-closeout\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to command center, meeting minutes, schedule control, and closeout modules.');
   failed = true;
 }
 for (const requiredModule of ['alum-rfis.html', 'alum-submittals.html', 'alum-change-events.html', 'alum-daily-log.html']) {
@@ -235,6 +235,24 @@ for (const requiredExecutiveSignal of ['rfi-summary.json', 'submittal-summary.js
     console.error(`Executive report missing signal: ${requiredExecutiveSignal}`);
     failed = true;
   }
+}
+
+
+const meetingMinutesPage = fs.readFileSync(path.join(root, 'public/projects/alum-meeting-minutes.html'), 'utf8');
+const meetingMinutesScript = fs.readFileSync(path.join(root, 'public/projects/alum-meeting-minutes.js'), 'utf8');
+if (!/Meeting Minutes \/ OAC Prep Board/.test(meetingMinutesPage) || !/Local Meeting Notes/.test(meetingMinutesPage) || !/Read-first meeting planner/i.test(meetingMinutesPage)) {
+  console.error('Meeting minutes must include OAC prep, local notes, and read-first posture.');
+  failed = true;
+}
+for (const requiredMeetingSignal of ['rfi-summary.json', 'submittal-summary.json', 'budget-summary.json', 'budget-revisions-register.json', 'accounting-budget-tieout.json', 'alumMeetingMinutesNotes', 'alumMeetingAttendees', 'Copy Packet']) {
+  if (!meetingMinutesScript.includes(requiredMeetingSignal) && !meetingMinutesPage.includes(requiredMeetingSignal)) {
+    console.error(`Meeting minutes missing signal/control: ${requiredMeetingSignal}`);
+    failed = true;
+  }
+}
+if (/source-logs|dropbox-intake|\/Users\/|\.pdf|\.xlsx|\.xls|\.csv|\.zip/i.test(meetingMinutesPage)) {
+  console.error('Meeting minutes page must not publish raw file links, private source paths, or raw artifact extensions.');
+  failed = true;
 }
 
 const commandCenterPage = fs.readFileSync(path.join(root, 'public/projects/alum-command-center.html'), 'utf8');
