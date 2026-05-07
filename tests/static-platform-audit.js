@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md'];
 let failed = false;
 for (const file of files) {
   const full = path.join(root, file);
@@ -174,8 +174,15 @@ for (const requiredChangeSignal of ['11. CHANGE EVENTS', '12. OWNER CHANGE ORDER
     failed = true;
   }
 }
-if (!/No dedicated daily-log export/.test(dailyLogModuleScript) || !/ready/.test(fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.html'), 'utf8'))) {
-  console.error('Daily Log module must remain an explicit placeholder until approved metadata exists.');
+const dailyLogPage = fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.html'), 'utf8');
+if (!/localStorage/.test(dailyLogPage) || !/Save Daily Log/.test(dailyLogPage) || !/alumDailyLog\.v1/.test(dailyLogModuleScript)) {
+  console.error('Daily Log module must provide browser-local daily-log capture with explicit localStorage boundary.');
+  failed = true;
+}
+const meetingMinutesPage = fs.readFileSync(path.join(root, 'public/projects/alum-meeting-minutes.html'), 'utf8');
+const meetingMinutesScript = fs.readFileSync(path.join(root, 'public/projects/alum-meeting-minutes.js'), 'utf8');
+if (!/Meeting Control Board/.test(meetingMinutesPage) || !/localStorage/.test(meetingMinutesPage) || !/alumMeetingMinutes\.v1/.test(meetingMinutesScript)) {
+  console.error('Meeting Minutes module must provide browser-local minutes/actions with explicit localStorage boundary.');
   failed = true;
 }
 if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath)) {
