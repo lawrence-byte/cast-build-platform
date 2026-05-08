@@ -111,13 +111,19 @@ if (!/no CAST BUILD A.O authentication/i.test(procorePage) || !/write API calls/
 const constructionForecastPage = fs.readFileSync(path.join(root, 'public/construction-cost-forecasting.html'), 'utf8');
 
 const scheduleBrainPage = fs.readFileSync(path.join(root, 'public/schedule-brain.html'), 'utf8');
-for (const requiredScheduleBrainSignal of ['CAST Build Schedule Brain', 'Open Alüm Workbench', 'Voice Intake', 'Delay Detection', 'Recovery Pressure', 'No auto-send', 'Human approval gate']) {
+for (const requiredScheduleBrainSignal of ['Schedule Dashboard', 'Current Schedule Items', 'Daily Superintendent Huddle', 'Recovery Watch', 'Field Update Intake', 'Recovery Request Draft', 'RFI / Submittal Constraints', '3-Week Lookahead', 'Export CSV', 'Copy Huddle Board']) {
   if (!scheduleBrainPage.includes(requiredScheduleBrainSignal)) {
     console.error(`Schedule Brain platform page missing signal: ${requiredScheduleBrainSignal}`);
     failed = true;
   }
 }
-for (const requiredScheduleSourceSignal of ['schedule-source-index.json', 'data-schedule-source-status']) {
+for (const forbiddenScheduleBrainCopy of ['Field reality into schedule pressure', 'Less admin', 'Talk, don\'t type', 'Find the drag', 'Pressure without chaos', 'Why It Matters']) {
+  if (scheduleBrainPage.includes(forbiddenScheduleBrainCopy)) {
+    console.error(`Schedule Brain platform page must not expose slogan/catch-line copy: ${forbiddenScheduleBrainCopy}`);
+    failed = true;
+  }
+}
+for (const requiredScheduleSourceSignal of ['schedule-source-index.json', 'data-source-index-status']) {
   if (!scheduleBrainPage.includes(requiredScheduleSourceSignal)) {
     console.error(`Schedule Brain platform page missing source-index signal: ${requiredScheduleSourceSignal}`);
     failed = true;
@@ -405,7 +411,7 @@ for (const requiredCommandSignal of ['rfi-summary.json', 'submittal-summary.json
 
 const managementCenterPage = fs.readFileSync(path.join(root, 'public/projects/alum-management-control-center.html'), 'utf8');
 const managementCenterScript = fs.readFileSync(path.join(root, 'public/projects/alum-management-control-center.js'), 'utf8');
-for (const requiredMgmtSignal of ['Comprehensive Project Dashboard', 'Management Priorities', 'Project Controls by Management Area', 'Management Needs / Next Actions', 'project-control-center.json']) {
+for (const requiredMgmtSignal of ['Comprehensive Project Dashboard', 'Management Priorities', 'Project Controls by Management Area', 'Management Needs / Next Actions', 'Operations Snapshot', 'Superintendent / Trade Coordination Focus', 'data-focus-rows', 'project-control-center.json']) {
   if (!managementCenterPage.includes(requiredMgmtSignal) && !managementCenterScript.includes(requiredMgmtSignal)) {
     console.error(`Management control center missing signal: ${requiredMgmtSignal}`);
     failed = true;
@@ -416,6 +422,10 @@ if (!managementCenterData.scan_scope?.file_count || !managementCenterData.manage
   console.error('Management control center data must include scan scope, management areas, and priorities.');
   failed = true;
 }
+if (!managementCenterData.management_snapshot?.active_work_packages || !managementCenterData.coordination_focus?.some(item => /Superintendent trade huddle/.test(item.lane)) || !managementCenterData.coordination_focus?.some(item => /Budget \/ change control/.test(item.lane))) {
+  console.error('Management control center data must include an operations snapshot and superintendent/trade coordination focus lanes.');
+  failed = true;
+}
 if (/\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|\.pdf|\.xlsx|\.mpp|\.xml|source-logs|dropbox-intake/i.test(JSON.stringify(managementCenterData))) {
   console.error('Management control center data must not leak private paths or raw artifact extensions.');
   failed = true;
@@ -423,9 +433,15 @@ if (/\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|\.pdf|\.xlsx|\.mpp|\
 
 const schedulePage = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.html'), 'utf8');
 const scheduleScript = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.js'), 'utf8');
-if (!/Field-First Schedule Intelligence/.test(schedulePage) || !/Voice Field Updates/.test(schedulePage) || !/3-Week Lookahead/.test(schedulePage) || !/Constraint Log/.test(schedulePage) || !/Draft-only/i.test(schedulePage)) {
-  console.error('Schedule intelligence must include voice intake, constraints, lookahead, and draft-only correspondence posture.');
+if (!/Schedule Dashboard/.test(schedulePage) || !/Field Update Intake/.test(schedulePage) || !/Current Schedule Items/.test(schedulePage) || !/Daily Superintendent Huddle/.test(schedulePage) || !/3-Week Lookahead/.test(schedulePage) || !/RFI \/ Submittal Constraints/.test(schedulePage) || !/Draft only/i.test(schedulePage)) {
+  console.error('Schedule dashboard must include schedule items, huddle, field intake, constraints, lookahead, and draft-only correspondence posture.');
   failed = true;
+}
+for (const forbiddenSchedulePageCopy of ['Field-First Schedule Intelligence', 'Voice-first schedule brain', 'Field reality into schedule pressure', 'Less admin']) {
+  if (schedulePage.includes(forbiddenSchedulePageCopy)) {
+    console.error(`Alüm schedule page must not expose slogan/catch-line copy: ${forbiddenSchedulePageCopy}`);
+    failed = true;
+  }
 }
 for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'schedule-source-index.json', 'data-source-index-status', 'alumScheduleFieldUpdates', 'alumScheduleLookahead', 'SpeechRecognition', 'Recovery Plan Required', 'localStorage']) {
   if (!scheduleScript.includes(requiredScheduleSignal) && !schedulePage.includes(requiredScheduleSignal)) {

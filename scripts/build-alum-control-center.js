@@ -33,6 +33,7 @@ function areaFor(rel) { const text = rel.replace(/[/\\]/g, ' '); const hits = ma
 function writeJson(file, data) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n'); }
 function walk(dir, visitor, rel = '') { for (const entry of fs.readdirSync(dir, { withFileTypes: true })) { if (entry.name === '.DS_Store' || entry.name.startsWith('._')) continue; const full = path.join(dir, entry.name); const childRel = rel ? `${rel}/${entry.name}` : entry.name; visitor(full, childRel, entry); if (entry.isDirectory()) walk(full, visitor, childRel); } }
 function loadJsonMaybe(file) { try { return JSON.parse(fs.readFileSync(path.join(root, file), 'utf8')); } catch { return null; } }
+function formatMoney(value) { return typeof value === 'number' ? value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }) : '—'; }
 
 const result = {
   project_id: 'golden-hill',
@@ -43,6 +44,8 @@ const result = {
   scan_scope: { folder_count: 0, file_count: 0, total_bytes: 0 },
   management_areas: [],
   recent_activity: [],
+  management_snapshot: {},
+  coordination_focus: [],
   control_priorities: [],
   management_needs: [],
   source_gaps: [],
@@ -78,6 +81,10 @@ const budget = loadJsonMaybe('data/projects/golden-hill/procore-information/budg
 const tieout = loadJsonMaybe('data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
 const schedule = loadJsonMaybe('data/projects/golden-hill/schedule/superintendent-schedule.json');
 const docIntel = loadJsonMaybe('data/projects/golden-hill/document-intelligence/summary.json');
+const scheduleStatusCounts = (schedule?.work_packages || []).reduce((acc, item) => { acc[item.status || 'unknown'] = (acc[item.status || 'unknown'] || 0) + 1; return acc; }, {});
+const subTypeCounts = sub?.typeCounts || {};
+const closeoutSubmittalCount = (subTypeCounts['Operation & Maintenance Manuals (O&Ms)'] || 0) + (subTypeCounts['Record Drawing'] || 0) + (subTypeCounts['Product Warranty'] || 0) + (subTypeCounts['Attic Stock/Extra Material'] || 0);
+const budgetMetrics = budget?.metrics || {};
 
 function setRead(id, read, actions = []) { const b = areas.get(id); if (b) { b.management_read = read; b.next_actions = actions; } }
 setRead('schedule', `${schedule?.work_packages?.length || 0} superintendent work packages and ${schedule?.sub_directives?.length || 0} subcontractor directives are available.`, ['Run daily voice updates by trade/location/percent complete.', 'Use recovery-watch drafts for trades that cannot meet current windows.', 'Keep a verified correspondence log before sending notices.']);
@@ -99,6 +106,26 @@ result.control_priorities = [
   { priority: 'Budget / commitment / change control', owner: 'Project Controls + Accounting', signal: budget ? 'Budget metadata indexed' : 'Budget metadata missing', action: 'Reconcile forecast, commitments, pending changes, and accounting tie-out.' },
   { priority: 'Turnover readiness', owner: 'Superintendent + Closeout Lead', signal: 'Closeout/QA docs present in project folder', action: 'Build floor-by-floor closeout and inspection matrix.' },
   { priority: 'Verified communication map', owner: 'CAST Build', signal: 'Correspondence should become approval-gated', action: 'Map each trade/company/contact before any automated notice leaves CAST Build.' }
+];
+result.management_snapshot = {
+  active_work_packages: scheduleStatusCounts.active_now || 0,
+  verify_complete_work_packages: scheduleStatusCounts.verify_complete || 0,
+  starts_soon_work_packages: scheduleStatusCounts.starts_soon || 0,
+  trade_directives: schedule?.sub_directives?.length || 0,
+  open_rfis: rfi?.openCount ?? rfi?.openItems?.length ?? 0,
+  overdue_rfis: rfi?.overdueOpen || 0,
+  open_or_draft_submittals: sub?.openOrDraftCount || 0,
+  revise_resubmit_submittals: sub?.statusCounts?.['Revise & Resubmit'] || 0,
+  projected_over_under: budgetMetrics['Projected over Under'] ?? null,
+  committed_percent_of_revised: budgetMetrics.committedPctOfRevised ?? null,
+  closeout_submittal_signals: closeoutSubmittalCount
+};
+result.coordination_focus = [
+  { lane: 'Superintendent trade huddle', owner: 'Superintendent', signal: `${result.management_snapshot.active_work_packages} active, ${result.management_snapshot.verify_complete_work_packages} verify-complete, ${result.management_snapshot.trade_directives} trade directives`, management_move: 'Run the day by trade/location, confirm manpower and blockers, and require recovery plans where dates cannot be met.', link: '/projects/alum-schedule.html' },
+  { lane: 'RFI / design blockers', owner: 'PM + Design Team', signal: `${result.management_snapshot.open_rfis} open/draft RFIs; ${result.management_snapshot.overdue_rfis} overdue`, management_move: 'Put overdue and no-due-date RFIs on the OAC agenda with a named decision owner and field impact.', link: '/projects/alum-rfis.html' },
+  { lane: 'Submittal / procurement pressure', owner: 'PM + Responsible Contractors', signal: `${result.management_snapshot.open_or_draft_submittals} open/draft; ${result.management_snapshot.revise_resubmit_submittals} revise/resubmit`, management_move: 'Separate procurement blockers from cleanup items, then assign contractor/date for each revise-resubmit or long-lead item.', link: '/projects/alum-submittals.html' },
+  { lane: 'Budget / change control', owner: 'Project Controls + Accounting', signal: budget ? `${formatMoney(result.management_snapshot.projected_over_under)} projected over/under; ${result.management_snapshot.committed_percent_of_revised}% committed` : 'Budget source needs refresh', management_move: 'Review exceptions before treating commitments as stable; tie pending changes and accounting mismatches to forecast exposure.', link: '/projects/alum-budget-exceptions.html' },
+  { lane: 'Quality / closeout readiness', owner: 'Superintendent + Closeout Lead', signal: `${result.management_snapshot.closeout_submittal_signals} O&M, warranty, record drawing, or attic-stock submittal signals`, management_move: 'Build a floor-by-floor inspection, punch, O&M, warranty, attic stock, and record drawing matrix before turnover pressure peaks.', link: '/projects/alum-closeout.html' }
 ];
 result.management_needs = result.management_areas.map(a => ({ area: a.label, need: a.management_read || 'Review source folder and assign control owner.', next_actions: a.next_actions || [] }));
 for (const required of ['schedule','rfi','submittals','financial','quality','closeout','directory']) {

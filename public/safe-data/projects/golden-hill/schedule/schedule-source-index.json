@@ -1,0 +1,16 @@
+{
+  "project_id": "golden-hill",
+  "module": "schedule-brain",
+  "source_label": "Alüm private schedule folder",
+  "source_status": "source_unavailable",
+  "generated_at": "2026-05-08T04:43:32.799Z",
+  "publish_guardrail": "Sanitized schedule metadata only. No raw artifacts, private paths, or source files are published.",
+  "artifact_counts": {},
+  "latest_artifacts": [],
+  "next_actions": [
+    "Set ALUM_SCHEDULE_SOURCE_DIR to the private Alüm schedule folder on the machine that can access Dropbox.",
+    "Run npm run intake:schedule to refresh sanitized schedule metadata.",
+    "Review extracted schedule artifacts before enabling baseline comparisons or correspondence automation."
+  ],
+  "notes": "Configured private schedule source was not reachable from this runtime."
+}
