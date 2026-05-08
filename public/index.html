@@ -4,11 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CAST Build</title>
-  <meta name="description" content="CAST Build project access.">
+  <meta name="description" content="CAST Build project controls, schedule intelligence, document tools, and construction-cost forecasting.">
   <link rel="stylesheet" href="/cast-build.css">
+  <link rel="stylesheet" href="/cast-build-components.css">
+  <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
+  <script src="/assets/brand/brand.js" defer></script>
 </head>
 <body>
-  <main class="cast-access-section" aria-label="CAST Build project access">
+  <main class="cast-access-section cast-access-section--platform" aria-label="CAST Build project access">
     <div class="cast-access-bg"></div>
     <div class="cast-access-overlay"></div>
 
@@ -20,32 +23,82 @@
       <img src="/assets/brand/cast-automation-horizontal-white-on-charcoal.png" alt="CAST AUTOMATION">
     </a>
 
-    <section class="cast-access-content" aria-label="Project portals">
-      <div class="cast-access-logo" aria-label="CASTBUILD">
-        <img src="/assets/brand/cast-build-main-logo-supplied-transparent.png" alt="CAST BUILD">
+    <section class="cast-access-content cast-access-content--platform" aria-label="CAST Build platform overview">
+      <div class="cast-access-copy">
+        <div class="cast-access-logo" aria-label="CASTBUILD">
+          <img src="/assets/brand/cast-build-main-logo-supplied-transparent.png" alt="CAST BUILD">
+        </div>
+        <p class="cast-access-eyebrow">Construction management operating layer</p>
+        <h1>Project controls for the field, budget, documents, and owner decisions.</h1>
+        <p class="cast-access-lede">
+          CAST Build is the construction-only command center for Alüm and future CAST projects:
+          schedule intelligence, RFIs, submittals, change control, document registers, budget/EAC forecasting,
+          and read-first CAST BUILD A.O workflows.
+        </p>
+        <div class="cast-access-status" aria-label="Platform status">
+          <span>Alüm Project Home refreshed</span>
+          <span>RFI command module live</span>
+          <span>Metadata-only safe data</span>
+        </div>
       </div>
 
-      <div class="cast-access-grid">
-        <a class="cast-access-card" href="/projects/golden-hill.html">
-          <h2>ALÜM</h2>
+      <div class="cast-access-grid cast-access-grid--platform">
+        <a class="cast-access-card cast-access-card--primary" href="/projects/golden-hill-procore.html">
+          <span>
+            <small>Alüm</small>
+            <h2>Project Home</h2>
+            <p>Executive project controls, open items, risk signals, and live module navigation.</p>
+          </span>
           <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
           </svg>
         </a>
-        <a class="cast-access-card" href="/projects/overlook.html">
-          <h2>OVERLOOK</h2>
-          <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
-        <a class="cast-access-card" href="/construction-cost-forecasting.html">
-          <h2>COST FORECAST</h2>
+        <a class="cast-access-card" href="/projects/alum-rfis.html">
+          <span>
+            <small>Action Items</small>
+            <h2>RFI Log</h2>
+            <p>Review queue, impact flags, responsibility, aging, and safe next steps.</p>
+          </span>
           <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
           </svg>
         </a>
         <a class="cast-access-card" href="/schedule-brain.html">
-          <h2>SCHEDULE BRAIN</h2>
+          <span>
+            <small>Field Operations</small>
+            <h2>Schedule Brain</h2>
+            <p>Superintendent-first schedule intelligence, blockers, float, and look-ahead controls.</p>
+          </span>
+          <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a class="cast-access-card" href="/construction-cost-forecasting.html">
+          <span>
+            <small>Cost Controls</small>
+            <h2>Cost Forecast</h2>
+            <p>Construction-only budget, commitments, change-order, draw, schedule-risk, and EAC scenarios.</p>
+          </span>
+          <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a class="cast-access-card" href="/document-tools.html">
+          <span>
+            <small>Documents</small>
+            <h2>Document Tools</h2>
+            <p>Metadata-first document intelligence without publishing raw/private project files.</p>
+          </span>
+          <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a class="cast-access-card" href="/procore.html">
+          <span>
+            <small>Integration</small>
+            <h2>CAST BUILD A.O</h2>
+            <p>Read-first Procore-style workflow map for budgets, commitments, change events, and documents.</p>
+          </span>
           <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
           </svg>
