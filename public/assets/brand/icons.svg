@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!--
+    CAST Build icon library.
+    Sprite of <symbol> elements — reference with <svg class="cb-icon"><use href="/assets/brand/icons.svg#name"/></svg>
+    Stroke-only, 1.4 weight, 24x24 viewBox. Uses currentColor.
+  -->
+  <defs>
+    <style>.s{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}</style>
+  </defs>
+
+  <symbol id="i-home" viewBox="0 0 24 24"><path class="s" d="M3 12 12 4l9 8M5 10v10h14V10"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><path class="s" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol>
+  <symbol id="i-dashboard" viewBox="0 0 24 24"><path class="s" d="M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path class="s" d="M4 6h16M4 12h16M4 18h16"/><circle class="s" cx="2.4" cy="6" r=".6"/><circle class="s" cx="2.4" cy="12" r=".6"/><circle class="s" cx="2.4" cy="18" r=".6"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle class="s" cx="12" cy="12" r="9"/><path class="s" d="M9.4 9.5a2.6 2.6 0 0 1 5.2 0c0 1.4-1 1.9-2.1 2.4-.5.3-.5.7-.5 1.1"/><circle cx="12" cy="17" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><path class="s" d="M9 4h6v3H9zM6 5h2v2h-2zM6 5v15h12V5h-2v2H8V5"/><path class="s" d="M9 11h6M9 15h6M9 19h4"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path class="s" d="m4 20 4-1L20 7l-3-3L5 16zM15 6l3 3"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path class="s" d="m4 8 3-3 3 3M7 5v14M20 16l-3 3-3-3M17 19V5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle class="s" cx="12" cy="12" r="9"/><path class="s" d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle class="s" cx="12" cy="12" r="4"/><path class="s" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path class="s" d="M5 6h14v14H5zM5 10h14M9 4v4M15 4v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle class="s" cx="12" cy="12" r="9"/><path class="s" d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path class="s" d="M12 4l2.6 5.3 5.9.9-4.3 4.2 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 10.2l5.9-.9z"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path class="s" d="M12 4v16"/><path class="s" d="M16 8a3 3 0 0 0-3-3h-2a3 3 0 0 0 0 6h2a3 3 0 0 1 0 6h-2a3 3 0 0 1-3-3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path class="s" d="m12 4 9 16H3z"/><path class="s" d="M12 10v5"/><circle cx="12" cy="17.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-diamond" viewBox="0 0 24 24"><path class="s" d="M12 3 4 12l8 9 8-9z"/></symbol>
+  <symbol id="i-trend-up" viewBox="0 0 24 24"><path class="s" d="m4 17 5-5 4 3 7-8M14 7h6v6"/></symbol>
+  <symbol id="i-trend-curve" viewBox="0 0 24 24"><path class="s" d="M3 18c4 0 4-12 9-12s5 12 9 12"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path class="s" d="M9 13a4 4 0 0 0 5 1l4-4a4 4 0 0 0-5-5l-1 1M15 11a4 4 0 0 0-5-1l-4 4a4 4 0 0 0 5 5l1-1"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path class="s" d="M6 4h8l4 4v12H6z"/><path class="s" d="M14 4v4h4M9 12h6M9 16h6"/></symbol>
+  <symbol id="i-cog" viewBox="0 0 24 24"><circle class="s" cx="12" cy="12" r="3"/><path class="s" d="M19 12a7 7 0 0 0-.1-1.2l2.1-1.6-2-3.4-2.5.9a7 7 0 0 0-2-1.2l-.4-2.7h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.5-.9-2 3.4 2.1 1.6a7 7 0 0 0 0 2.4l-2.1 1.6 2 3.4 2.5-.9a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.5.9 2-3.4-2.1-1.6c.1-.4.1-.8.1-1.2z"/></symbol>
+  <symbol id="i-spec" viewBox="0 0 24 24"><path class="s" d="M5 4h14v16H5z"/><path class="s" d="M9 8h6M9 12h6M9 16h4M5 8h1M5 12h1M5 16h1"/></symbol>
+  <symbol id="i-data" viewBox="0 0 24 24"><ellipse class="s" cx="12" cy="6" rx="7" ry="2.5"/><path class="s" d="M5 6v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6M5 12v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path class="s" d="M5 4v16M5 5h11l-2 4 2 4H5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle class="s" cx="9" cy="9" r="3"/><path class="s" d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle class="s" cx="17" cy="8" r="2.5"/><path class="s" d="M14 14a5 5 0 0 1 7 5"/></symbol>
+  <symbol id="i-report" viewBox="0 0 24 24"><path class="s" d="M5 4h14v16H5z"/><path class="s" d="M9 16v-4M12 16V8M15 16v-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle class="s" cx="11" cy="11" r="6"/><path class="s" d="m16 16 4 4"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path class="s" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path class="s" d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2.5h-15zM10 19a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path class="s" d="M4 7h6l2 2h8v10H4z"/></symbol>
+  <symbol id="i-money" viewBox="0 0 24 24"><path class="s" d="M3 7h18v10H3z"/><circle class="s" cx="12" cy="12" r="2.5"/><path class="s" d="M6 9.5v5M18 9.5v5"/></symbol>
+</svg>

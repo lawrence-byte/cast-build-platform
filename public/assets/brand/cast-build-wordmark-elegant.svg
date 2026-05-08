@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200" role="img" aria-labelledby="title">
+  <title id="title">CAST BUILD wordmark — elegant two-tone</title>
+  <!-- CAST: solid fill in currentColor (typically ivory/cream) -->
+  <text x="40" y="138"
+        font-family="Cormorant Garamond, Georgia, serif"
+        font-size="124"
+        font-weight="300"
+        letter-spacing="14"
+        fill="currentColor">CAST</text>
+  <!-- BUILD: hairline outline, no fill -->
+  <text x="640" y="138"
+        font-family="Cormorant Garamond, Georgia, serif"
+        font-size="124"
+        font-weight="300"
+        letter-spacing="14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="0.8"
+        vector-effect="non-scaling-stroke">BUILD</text>
+</svg>

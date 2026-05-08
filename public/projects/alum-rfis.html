@@ -1,1 +1,260 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alüm RFIs — CAST BUILD A.O</title><link rel="stylesheet" href="/projects/golden-hill-procore.css"></head><body><div class="app"><header class="top"><div class="title"><span class="building"></span><span class="project-context">Project Controls</span></div><a class="link" href="/projects/golden-hill-procore.html">Overview</a><a class="link" href="/projects/alum-open-items.html">Open Items</a><a class="link" href="/projects/alum-submittals.html">Submittals</a><a class="link" href="/projects/alum-change-events.html">Change Events</a><div><button class="quick">Read-only RFI Log</button></div></header><nav class="tabs"><a class="tablink" href="/projects/golden-hill-procore.html">Overview</a><a class="tablink" href="/projects/alum-open-items.html">Open Items</a><div class="tab">RFIs</div><a class="tablink" href="/projects/alum-submittals.html">Submittals</a><a class="tablink" href="/projects/alum-change-events.html">Change Events</a><a class="tablink" href="/projects/alum-daily-log.html">Daily Log</a></nav><main class="dashboard"><section class="card span-12"><div class="head"><h2>Dedicated RFI Module</h2><div class="tools"><span data-generated>Loading metadata…</span></div></div><div class="body"><div class="modulemap"><a href="#queue"><strong>Review Queue</strong><span data-queue-summary>Open/draft RFIs loading…</span></a><a href="#impact"><strong>Impact Flags</strong><span data-impact-summary>Cost and schedule impacts loading…</span></a><a href="#teams"><strong>Responsibility</strong><span data-team-summary>Managers and contractors loading…</span></a></div><div class="wide-note compact">Read-first replica: this module renders local metadata summaries only. It does not expose raw CSV/PDF/XLSX exports, authenticate to CAST BUILD A.O, assign ball-in-court, or update RFI statuses.</div></div></section><section class="card span-8" id="queue"><div class="head"><h2>RFI Action Queue</h2><div class="tools"><span data-rfi-count>—</span></div></div><div class="body"><table class="rfi-table"><thead><tr><th>#</th><th>Subject</th><th>Status</th><th>Ball In Court</th><th>Due</th><th>Safe Next Step</th></tr></thead><tbody data-rfi-rows></tbody></table></div></section><section class="card span-4" id="impact"><div class="head"><h2>RFI Metrics</h2><div class="tools"><span>metadata-derived</span></div></div><div class="body metricgrid"><div class="metric"><strong data-total>—</strong><span>Total RFIs</span></div><div class="metric"><strong data-open>—</strong><span>Open/Draft</span></div><div class="metric"><strong data-overdue>—</strong><span>Overdue Open</span></div><div class="metric"><strong data-seven>—</strong><span>Due &lt; 7 Days</span></div><div class="metric"><strong data-cost>—</strong><span>Cost Impact Yes</span></div><div class="metric"><strong data-schedule>—</strong><span>Schedule Impact Yes</span></div><div class="metric"><strong data-nodue>—</strong><span>Open No Due Date</span></div><div class="metric"><strong data-closed>—</strong><span>Closed</span></div></div></section><section class="card span-6" id="teams"><div class="head"><h2>Top RFI Managers</h2><div class="tools"><span>by count</span></div></div><div class="body"><table class="rfi-table"><thead><tr><th>Manager</th><th>RFIs</th></tr></thead><tbody data-manager-rows></tbody></table></div></section><section class="card span-6"><div class="head"><h2>Top Responsible Contractors</h2><div class="tools"><span>by count</span></div></div><div class="body"><table class="rfi-table"><thead><tr><th>Contractor</th><th>RFIs</th></tr></thead><tbody data-contractor-rows></tbody></table></div></section><section class="card span-12"><div class="head"><h2>Status Distribution</h2><div class="tools"><span data-status-count>—</span></div></div><div class="body"><table class="rfi-table"><thead><tr><th>Status</th><th>Count</th><th>Share</th></tr></thead><tbody data-status-rows></tbody></table></div></section></main></div><script src="/projects/alum-rfis.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alüm RFIs — CAST Build</title>
+  <meta name="description" content="Alüm RFI log — review queue, impact flags, responsibility, and status distribution.">
+  <link rel="stylesheet" href="/cast-build.css">
+  <link rel="stylesheet" href="/cast-build-components.css">
+  <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
+  <script src="/assets/brand/brand.js" defer></script>
+  <script src="/cast-build-shell.js" defer></script>
+</head>
+<body class="project-admin-body">
+
+  <div class="project-dashboard-wrapper">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="project-sidebar" aria-label="Alüm project navigation">
+      <a class="project-sidebar-logo" href="/projects/golden-hill-procore.html">
+        <img data-brand-role="alum-wordmark-light"
+             src="/assets/brand/alum-logo-white.svg"
+             alt="ALÜM">
+        <span>Project Controls</span>
+      </a>
+
+      <nav class="project-sidebar-nav">
+        <div class="project-sidebar-group">Overview</div>
+        <a href="/projects/golden-hill-procore.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-home"/></svg></span>Project Home</a>
+        <a href="/projects/alum-command-center.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-dashboard"/></svg></span>Command Center</a>
+        <a href="/projects/alum-management-control-center.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-grid"/></svg></span>Management</a>
+
+        <div class="project-sidebar-group">Action Items</div>
+        <a href="/projects/alum-open-items.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-clock"/></svg></span>Open Items</a>
+        <a href="/projects/alum-rfis.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-help"/></svg></span>RFIs</a>
+        <a href="/projects/alum-submittals.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-clipboard"/></svg></span>Submittals</a>
+        <a href="/projects/alum-change-events.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-swap"/></svg></span>Change Events</a>
+        <a href="/projects/alum-meeting-minutes.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-edit"/></svg></span>Meetings</a>
+
+        <div class="project-sidebar-group">Field</div>
+        <a href="/projects/alum-daily-log.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-sun"/></svg></span>Daily Log</a>
+        <a href="/projects/alum-schedule.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-calendar"/></svg></span>Schedule</a>
+        <a href="/projects/alum-punch-list.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-check"/></svg></span>Punch List</a>
+        <a href="/projects/alum-quality.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-star"/></svg></span>Quality</a>
+
+        <div class="project-sidebar-group">Money</div>
+        <a href="/projects/alum-budget.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-dollar"/></svg></span>Budget</a>
+        <a href="/projects/alum-budget-exceptions.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-alert"/></svg></span>Budget Review</a>
+        <a href="/projects/alum-commitments.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-diamond"/></svg></span>Commitments</a>
+        <a href="/projects/alum-budget-forecast.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-trend-up"/></svg></span>Forecast</a>
+        <a href="/projects/alum-dynamic-forecast.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-trend-curve"/></svg></span>Dynamic Forecast</a>
+        <a href="/projects/alum-accounting-tieout.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-link"/></svg></span>Accounting Tie-Out</a>
+        <a href="/projects/alum-budget-changes.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-swap"/></svg></span>Change Control</a>
+        <a href="/projects/alum-owner-billings.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-money"/></svg></span>Owner Billings</a>
+        <a href="/projects/alum-contracts.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-document"/></svg></span>Contracts</a>
+
+        <div class="project-sidebar-group">Documents</div>
+        <a href="/projects/golden-hill-documents.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-folder"/></svg></span>Documents</a>
+        <a href="/projects/alum-document-intelligence.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-cog"/></svg></span>Doc Intelligence</a>
+        <a href="/projects/alum-specifications.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-spec"/></svg></span>Specifications</a>
+        <a href="/projects/alum-data-room.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-data"/></svg></span>Data Room</a>
+
+        <div class="project-sidebar-group">Closeout</div>
+        <a href="/projects/alum-closeout.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-flag"/></svg></span>Closeout</a>
+
+        <div class="project-sidebar-group">Team</div>
+        <a href="/projects/alum-directory.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-users"/></svg></span>Directory</a>
+        <a href="/projects/alum-reports.html"><span class="nav-icon"><svg><use href="/assets/brand/icons.svg#i-report"/></svg></span>Reports</a>
+      </nav>
+
+      <div class="sidebar-automation">
+        <a href="/procore.html" aria-label="CAST BUILD A.O integration">
+          <img data-brand-role="automation-horizontal-light"
+               src="/assets/brand/cast-automation-horizontal-white-on-charcoal.png"
+               alt="CAST Automation">
+        </a>
+        <p class="project-rail-note">Read-first replica of CAST BUILD A.O metadata. No write actions.</p>
+      </div>
+    </aside>
+
+    <!-- ===== Main ===== -->
+    <main class="project-main-content">
+
+      <!-- Page header -->
+      <header class="project-page-header">
+        <div>
+          <div class="project-page-subtitle">Alüm · Action Items</div>
+          <h1 class="project-page-title">RFIs</h1>
+          <p style="color:var(--muted);font-size:.92rem;margin-top:8px;max-width:640px;line-height:1.5">
+            Request-for-information log: review queue, impact flags, responsibility, and status distribution.
+          </p>
+        </div>
+        <div class="cb-action-row">
+          <button class="cb-btn cb-btn--ghost cb-btn--small" type="button" disabled title="Read-only replica">Export</button>
+          <button class="cb-btn cb-btn--primary" type="button" disabled title="Read-only replica">+ New RFI</button>
+        </div>
+      </header>
+
+      <!-- Read-first callout -->
+      <div class="cb-callout cb-callout--read-first" role="note">
+        <strong>Read-first replica</strong>
+        Metadata derived from CAST BUILD A.O exports. RFI updates, ball-in-court reassignment, and exports happen in CAST BUILD A.O — this view is for monitoring and triage only.
+      </div>
+
+      <!-- KPI Grid -->
+      <section class="project-kpi-grid" aria-label="RFI metrics">
+        <article class="project-kpi-card">
+          <div class="kpi-label">Total RFIs</div>
+          <div class="kpi-value kpi-value--num" data-total><span class="cb-skeleton cb-skeleton--num"></span></div>
+          <div class="kpi-change" data-total-caption>Across all statuses</div>
+        </article>
+        <article class="project-kpi-card">
+          <div class="kpi-label">Open / Draft</div>
+          <div class="kpi-value kpi-value--num" data-open><span class="cb-skeleton cb-skeleton--num"></span></div>
+          <div class="kpi-change" data-open-caption>Awaiting response</div>
+        </article>
+        <article class="project-kpi-card">
+          <div class="kpi-label">Overdue</div>
+          <div class="kpi-value kpi-value--num" data-overdue><span class="cb-skeleton cb-skeleton--num"></span></div>
+          <div class="kpi-change" data-overdue-caption>Past due date</div>
+        </article>
+        <article class="project-kpi-card">
+          <div class="kpi-label">Due &lt; 7 Days</div>
+          <div class="kpi-value kpi-value--num" data-seven><span class="cb-skeleton cb-skeleton--num"></span></div>
+          <div class="kpi-change" data-seven-caption>Coming up</div>
+        </article>
+      </section>
+
+      <!-- Secondary metrics strip -->
+      <section class="project-meta-strip" aria-label="Secondary RFI metrics">
+        <div class="project-meta-item">
+          <span>Cost Impact</span>
+          <strong data-cost>—</strong>
+        </div>
+        <div class="project-meta-item">
+          <span>Schedule Impact</span>
+          <strong data-schedule>—</strong>
+        </div>
+        <div class="project-meta-item">
+          <span>Open / No Due Date</span>
+          <strong data-nodue>—</strong>
+        </div>
+        <div class="project-meta-item">
+          <span>Closed</span>
+          <strong data-closed>—</strong>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <nav class="cb-tabs" role="tablist" aria-label="RFI views">
+        <a href="#queue" class="is-active" data-tab="queue" role="tab">Action Queue</a>
+        <a href="#status" data-tab="status" role="tab">Status</a>
+        <a href="#managers" data-tab="managers" role="tab">Managers</a>
+        <a href="#contractors" data-tab="contractors" role="tab">Contractors</a>
+      </nav>
+
+      <!-- ====== Tab: Action Queue ====== -->
+      <section id="queue" class="cb-tab-panel" role="tabpanel">
+        <div class="cb-toolbar">
+          <div class="cb-toolbar__group">
+            <span class="cb-toolbar__label">Status</span>
+            <select class="cb-select" data-filter="status" aria-label="Filter by status">
+              <option value="">All statuses</option>
+              <option value="open">Open</option>
+              <option value="draft">Draft</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+          <div class="cb-toolbar__sep"></div>
+          <div class="cb-toolbar__group">
+            <span class="cb-toolbar__label">Impact</span>
+            <select class="cb-select" data-filter="impact" aria-label="Filter by impact">
+              <option value="">Any</option>
+              <option value="cost">Cost impact</option>
+              <option value="schedule">Schedule impact</option>
+              <option value="overdue">Overdue</option>
+              <option value="due7">Due &lt; 7 days</option>
+            </select>
+          </div>
+          <div class="cb-toolbar__sep"></div>
+          <input type="search" class="cb-input cb-search" placeholder="Search subject, ball-in-court…" aria-label="Search RFIs" data-cb-search>
+          <div class="cb-toolbar__spacer"></div>
+          <span class="cb-toolbar__count" data-rfi-count>—</span>
+        </div>
+
+        <div class="cb-table-wrap">
+          <table class="project-table" aria-label="RFI action queue">
+            <thead>
+              <tr>
+                <th style="width:5rem">#</th>
+                <th>Subject</th>
+                <th style="width:8rem">Status</th>
+                <th>Ball In Court</th>
+                <th style="width:7rem">Due</th>
+                <th>Safe Next Step</th>
+              </tr>
+            </thead>
+            <tbody data-rfi-rows>
+              <tr><td colspan="6" style="padding:24px"><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-80"></span><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-60"></span><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-40"></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====== Tab: Status Distribution ====== -->
+      <section id="status" class="cb-tab-panel" role="tabpanel" hidden>
+        <div class="cb-table-wrap">
+          <table class="project-table" aria-label="Status distribution">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th style="width:8rem;text-align:right" class="cb-td-num">Count</th>
+                <th style="width:8rem;text-align:right" class="cb-td-num">Share</th>
+              </tr>
+            </thead>
+            <tbody data-status-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====== Tab: Managers ====== -->
+      <section id="managers" class="cb-tab-panel" role="tabpanel" hidden>
+        <div class="cb-table-wrap">
+          <table class="project-table" aria-label="Top RFI managers">
+            <thead>
+              <tr>
+                <th>Manager</th>
+                <th style="width:8rem;text-align:right" class="cb-td-num">RFIs</th>
+              </tr>
+            </thead>
+            <tbody data-manager-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====== Tab: Contractors ====== -->
+      <section id="contractors" class="cb-tab-panel" role="tabpanel" hidden>
+        <div class="cb-table-wrap">
+          <table class="project-table" aria-label="Top responsible contractors">
+            <thead>
+              <tr>
+                <th>Contractor</th>
+                <th style="width:8rem;text-align:right" class="cb-td-num">RFIs</th>
+              </tr>
+            </thead>
+            <tbody data-contractor-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p style="color:var(--muted);font-size:.78rem;margin-top:24px;letter-spacing:.04em">
+        <span data-generated>Loading metadata…</span>
+      </p>
+
+    </main>
+  </div>
+
+  <script src="/projects/alum-rfis.js" defer></script>
+</body>
+</html>

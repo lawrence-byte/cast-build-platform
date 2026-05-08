@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title">
+  <title id="title">CAST monogram — thin</title>
+  <!-- Outer hairline circle. Stroke kept at 0.6 so it reads as a hairline at any size. -->
+  <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="0.6" vector-effect="non-scaling-stroke"/>
+  <!-- C glyph. Open-faced editorial cut. -->
+  <text x="100" y="124" text-anchor="middle"
+        font-family="Cormorant Garamond, Georgia, serif"
+        font-size="84"
+        font-weight="300"
+        letter-spacing="0"
+        fill="currentColor">C</text>
+</svg>

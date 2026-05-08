@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-labelledby="title">
+  <title id="title">CAST · BUILD editorial composition</title>
+
+  <!-- Top left: page number -->
+  <text x="80" y="98"
+        font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"
+        font-size="22"
+        font-weight="500"
+        letter-spacing="3"
+        fill="currentColor">03</text>
+
+  <!-- Top right: section ID -->
+  <text x="1000" y="98" text-anchor="end"
+        font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"
+        font-size="22"
+        font-weight="500"
+        letter-spacing="6"
+        fill="currentColor">CAST · BUILD</text>
+
+  <!-- Top hairline rule -->
+  <line x1="80" y1="130" x2="1000" y2="130" stroke="currentColor" stroke-width="0.6" vector-effect="non-scaling-stroke"/>
+
+  <!-- Wordmark: CAST -->
+  <text x="540" y="500" text-anchor="middle"
+        font-family="Cormorant Garamond, Georgia, serif"
+        font-size="180"
+        font-weight="300"
+        letter-spacing="22"
+        fill="currentColor">CAST</text>
+
+  <!-- Wordmark: BUILD (smaller, hairline) -->
+  <text x="540" y="700" text-anchor="middle"
+        font-family="Cormorant Garamond, Georgia, serif"
+        font-size="156"
+        font-weight="300"
+        letter-spacing="20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="0.8"
+        vector-effect="non-scaling-stroke">BUILD</text>
+
+  <!-- Bottom hairline rule -->
+  <line x1="80" y1="950" x2="1000" y2="950" stroke="currentColor" stroke-width="0.6" vector-effect="non-scaling-stroke"/>
+
+  <!-- Bottom caption -->
+  <text x="540" y="990" text-anchor="middle"
+        font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"
+        font-size="20"
+        font-weight="500"
+        letter-spacing="4"
+        fill="currentColor">A CAST COMMUNITY OF COMPANIES BRAND</text>
+</svg>

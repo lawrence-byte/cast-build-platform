@@ -1,0 +1,136 @@
+{
+  "$schema": "./manifest.schema.json",
+  "_comment": "CAST Build brand asset manifest. Maps semantic roles to filenames. openclaw and any code that renders a logo must reference assets BY ROLE (e.g. wordmark-light), never by raw filename. CI rejects any HTML referencing /assets/brand/* files not declared here.",
+  "_lastReviewed": "2026-05-08",
+  "_owner": "Lawrence Howard",
+
+  "roles": {
+    "icon-default": {
+      "file": "cast-monogram-thin.svg",
+      "description": "Primary CAST monogram (C in hairline circle). Use for favicons, sidebar marks, small surfaces. Inherits color via currentColor.",
+      "format": "svg",
+      "useFor": ["favicon", "sidebar-collapsed", "loading-mark", "chat-avatar"]
+    },
+
+    "icon-square": {
+      "file": "cast-square-mark.svg",
+      "description": "CAST wordmark inside a hairline square. Secondary monogram for editorial surfaces.",
+      "format": "svg",
+      "useFor": ["editorial-card", "social-avatar"]
+    },
+
+    "wordmark-dark": {
+      "file": "cast-build-stacked-black-on-white.png",
+      "description": "Stacked CAST BUILD wordmark, black on white. Use on light backgrounds.",
+      "format": "png",
+      "useFor": ["topbar-light", "login-screen", "footer-light"]
+    },
+
+    "wordmark-light": {
+      "file": "cast-build-stacked-white-on-charcoal.png",
+      "description": "Stacked CAST BUILD wordmark, white on charcoal. Use on dark backgrounds.",
+      "format": "png",
+      "useFor": ["sidebar-dark", "hero-dark", "email-header"]
+    },
+
+    "wordmark-brand": {
+      "file": "cast-build-main-logo-supplied-transparent.png",
+      "description": "Hero brand mark. Highest visual weight — reserve for landing pages and Open Graph cards.",
+      "format": "png",
+      "useFor": ["landing-hero", "og-image", "marketing"]
+    },
+
+    "wordmark-outline": {
+      "file": "castbuild-outline-logo.svg",
+      "description": "Outline-only wordmark for watermark or background usage.",
+      "format": "svg",
+      "useFor": ["watermark", "loading-skeleton", "letterhead"]
+    },
+
+    "wordmark-elegant": {
+      "file": "cast-build-wordmark-elegant.svg",
+      "description": "Two-tone CAST BUILD wordmark — CAST filled, BUILD hairline outline. Editorial treatment.",
+      "format": "svg",
+      "useFor": ["sidebar-dark-elegant", "hero-secondary", "email-signature"]
+    },
+
+    "editorial-card": {
+      "file": "cast-build-editorial.svg",
+      "description": "Magazine-style editorial composition — page-number top-left, rule, large CAST · BUILD wordmark, attribution. Use as a self-contained block.",
+      "format": "svg",
+      "useFor": ["section-divider", "marketing-card", "share-card"]
+    },
+
+    "wordmark-build-horizontal-light": {
+      "file": "horizontal-build-white-on-charcoal.svg",
+      "description": "Horizontal CAST BUILD wordmark, white on charcoal. Use in narrow horizontal bars on dark backgrounds.",
+      "format": "svg",
+      "useFor": ["topbar-dark-narrow", "email-banner-dark"]
+    },
+
+    "automation-horizontal-light": {
+      "file": "cast-automation-horizontal-white-on-charcoal.png",
+      "description": "CAST AUTOMATION horizontal wordmark, white on charcoal. Sister product brand.",
+      "format": "png",
+      "useFor": ["sidebar-automation-credit", "automation-page-header"]
+    },
+
+    "automation-stacked-light": {
+      "file": "cast-automation-stacked-white-on-charcoal.png",
+      "description": "CAST AUTOMATION stacked wordmark, white on charcoal.",
+      "format": "png",
+      "useFor": ["automation-hero", "automation-card"]
+    },
+
+    "cast-family-mark": {
+      "file": "cast-community-companies-top-left.png",
+      "description": "CAST Community of Companies mark — parent brand association. Top-left of access landing only.",
+      "format": "png",
+      "useFor": ["access-landing-top-left"]
+    },
+
+    "alum-wordmark-light": {
+      "file": "alum-logo-white.svg",
+      "description": "ALÜM project wordmark, white. Use only on Alüm project surfaces, on dark backgrounds.",
+      "format": "svg",
+      "scope": "project:alum",
+      "useFor": ["project-sidebar-alum", "project-hero-alum"]
+    }
+  },
+
+  "deprecated": {
+    "_note": "These files exist in /assets/brand/ but are NOT to be referenced. Either redundant duplicates, legacy variants, or experimental.",
+    "files": [
+      "cast-automation-black-on-linen.png",
+      "cast-automation-black-on-white.png",
+      "cast-automation-charcoal-on-linen.png",
+      "cast-automation-outline-on-linen.png",
+      "cast-automation-stacked-black-on-linen.png",
+      "cast-automation-stacked-black-on-white.png",
+      "cast-automation-stacked-charcoal-on-linen.png",
+      "cast-automation-stacked-outline-on-linen.png",
+      "cast-build-stacked-black-on-linen.png",
+      "cast-build-stacked-charcoal-on-linen.png",
+      "cast-build-stacked-outline-on-linen.png",
+      "cast-build-stacked-supplied-white.png",
+      "cast-logo-black.png",
+      "cast-logo-grey.png",
+      "cast-monogram-black.jpg",
+      "cast-monogram-grey.jpg",
+      "cast-monogram-outline.jpg",
+      "cast-wordmark-black.jpg",
+      "cast-wordmark-grey.jpg",
+      "cast-wordmark-outline.jpg",
+      "cast-wordmark-white.jpg",
+      "castbuild-outline-logo.png"
+    ]
+  },
+
+  "rules": [
+    "Always reference brand assets by role, never by raw filename. Use the provided <img data-brand-role=\"…\"> pattern or the resolveBrandAsset() helper.",
+    "Adding a new asset requires adding a new role here in the same commit.",
+    "Renaming a file requires updating the role's file field in the same commit.",
+    "Files listed in deprecated.files must not be referenced from any HTML or CSS. CI will fail the build if they are.",
+    "Roles are stable contracts: do not rename or remove a role without a deprecation pass."
+  ]
+}
