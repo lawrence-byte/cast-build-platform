@@ -730,3 +730,12 @@
     transform: none;
   }
 }
+
+/* --- project pages without the generated sidebar rail ---------------- */
+.project-dashboard-wrapper--no-rail .project-main-content {
+  margin-left: 0;
+  width: 100%;
+}
+.project-dashboard-wrapper--no-rail {
+  display: block;
+}
