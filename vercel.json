@@ -36,6 +36,18 @@
       "destination": "/document-tools.html"
     },
     {
+      "source": "/schedule-brain",
+      "destination": "/schedule-brain.html"
+    },
+    {
+      "source": "/schdule-brain",
+      "destination": "/schedule-brain.html"
+    },
+    {
+      "source": "/schedule",
+      "destination": "/schedule-brain.html"
+    },
+    {
       "source": "/projects/alum-budget",
       "destination": "/projects/alum-budget.html"
     },

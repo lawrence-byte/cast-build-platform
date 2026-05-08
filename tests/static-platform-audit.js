@@ -133,6 +133,14 @@ if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain
   failed = true;
 }
 const pricingModelsPage = fs.readFileSync(path.join(root, 'public/pricing-models.html'), 'utf8');
+
+const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
+const rewriteMap = new Map((vercelConfig.rewrites || []).map((r) => [r.source, r.destination]));
+if (rewriteMap.get('/schedule-brain') !== '/schedule-brain.html' || rewriteMap.get('/schedule') !== '/schedule-brain.html') {
+  console.error('Missing schedule-brain rewrite routes.');
+  failed = true;
+}
+
 for (const [forecastFile, forecastText] of [['public/construction-cost-forecasting.html', constructionForecastPage], ['public/pricing-models.html', pricingModelsPage]]) {
   for (const requiredSignal of ['Construction Cost Forecasting', 'Revised budget', 'Approved commitments', 'Job to date', 'Cost to complete', 'Pending changes', 'Schedule risk allowance', 'Next draw request', 'RFI/submittal risk', 'localStorage']) {
     if (!forecastText.includes(requiredSignal)) {
