@@ -80,6 +80,17 @@ for (const requiredCleanup of [
 ]) {
   if (!nav.includes(requiredCleanup)) fail(`persistent Alüm nav missing cleanup rule: ${requiredCleanup}`);
 }
+for (const requiredRail of [
+  'alum-section-rail',
+  'Project',
+  'Controls',
+  'Field',
+  'Financials',
+  'Documents + Closeout',
+  'Team',
+]) {
+  if (!nav.includes(requiredRail)) fail(`persistent Alüm nav missing left section rail item: ${requiredRail}`);
+}
 
 if (failed) process.exit(1);
 console.log('Alüm portal link-flow audit passed.');
