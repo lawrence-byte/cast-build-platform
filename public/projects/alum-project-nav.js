@@ -94,11 +94,13 @@
     .alum-section-rail__link.is-active::after{content:'•';color:#cfc7b1;font-size:18px;line-height:0}
     .alum-section-rail__note{margin:22px 8px 0;padding-top:16px;border-top:1px solid rgba(207,199,177,.16);color:rgba(247,243,232,.52);font:600 11px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 
-    .alum-project-nav-spacer .app .top,.alum-project-nav-spacer .app .tabs,.alum-project-nav-spacer .project-sidebar{display:none!important}
+    .alum-project-nav-spacer .app .top,.alum-project-nav-spacer .app .tabs,.alum-project-nav-spacer .project-sidebar,.alum-project-nav-spacer>header.top,.alum-project-nav-spacer>.wrap>.side{display:none!important}
     .alum-project-nav-spacer .app{padding-left:272px!important}
     .alum-project-nav-spacer .project-dashboard-wrapper{display:block!important}
     .alum-project-nav-spacer .project-main-content{margin-left:272px!important;width:auto!important}
     .alum-project-nav-spacer .dashboard{padding-left:calc(24px + 272px)!important}
+    .alum-project-nav-spacer>.wrap{margin-left:272px!important;width:calc(100% - 272px)!important;display:block!important;grid-template-columns:1fr!important;min-width:0!important}
+    .alum-project-nav-spacer>.wrap>.main{max-width:none!important;width:100%!important;box-sizing:border-box!important}
 
     @media(max-width:1050px){
       .alum-section-rail{position:relative;width:auto;inset:auto;height:auto;padding:18px 14px;box-shadow:none;border-right:none;border-bottom:1px solid rgba(207,199,177,.18)}
@@ -107,6 +109,7 @@
       .alum-project-nav{padding:10px 14px;position:sticky}.alum-project-nav__brand{display:flex;align-items:center;gap:10px}.alum-project-nav__links{justify-content:flex-start}
       .alum-project-nav-spacer .app,.alum-project-nav-spacer .dashboard{padding-left:0!important}
       .alum-project-nav-spacer .project-main-content{margin-left:0!important;width:100%!important}
+      .alum-project-nav-spacer>.wrap{margin-left:0!important;width:100%!important}
     }
   `;
   document.head.appendChild(css);

@@ -77,6 +77,9 @@ for (const requiredCleanup of [
   '.alum-project-nav-spacer .app .tabs',
   '.alum-project-nav-spacer .project-sidebar',
   '.alum-project-nav-spacer .project-main-content',
+  '.alum-project-nav-spacer>header.top',
+  '.alum-project-nav-spacer>.wrap>.side',
+  '.alum-project-nav-spacer>.wrap',
 ]) {
   if (!nav.includes(requiredCleanup)) fail(`persistent Alüm nav missing cleanup rule: ${requiredCleanup}`);
 }
