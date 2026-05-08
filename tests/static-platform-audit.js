@@ -3,7 +3,7 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -109,6 +109,18 @@ if (!/no CAST BUILD A.O authentication/i.test(procorePage) || !/write API calls/
   failed = true;
 }
 const constructionForecastPage = fs.readFileSync(path.join(root, 'public/construction-cost-forecasting.html'), 'utf8');
+
+const scheduleBrainPage = fs.readFileSync(path.join(root, 'public/schedule-brain.html'), 'utf8');
+for (const requiredScheduleBrainSignal of ['CAST Build Schedule Brain', 'Open Alüm Workbench', 'Voice Intake', 'Delay Detection', 'Recovery Pressure', 'No auto-send', 'Human approval gate']) {
+  if (!scheduleBrainPage.includes(requiredScheduleBrainSignal)) {
+    console.error(`Schedule Brain platform page missing signal: ${requiredScheduleBrainSignal}`);
+    failed = true;
+  }
+}
+if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain\.html/.test(fs.readFileSync(path.join(root, 'public/index.html'), 'utf8'))) {
+  console.error('CAST Build landing must link to Schedule Brain and Schedule Brain must link to Alüm workbench.');
+  failed = true;
+}
 const pricingModelsPage = fs.readFileSync(path.join(root, 'public/pricing-models.html'), 'utf8');
 for (const [forecastFile, forecastText] of [['public/construction-cost-forecasting.html', constructionForecastPage], ['public/pricing-models.html', pricingModelsPage]]) {
   for (const requiredSignal of ['Construction Cost Forecasting', 'Revised budget', 'Approved commitments', 'Job to date', 'Cost to complete', 'Pending changes', 'Schedule risk allowance', 'Next draw request', 'RFI/submittal risk', 'localStorage']) {
