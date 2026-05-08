@@ -16,7 +16,8 @@
     "intake:budget-revisions": "node scripts/build-budget-revisions-register.js",
     "intake:doc-intelligence": "node scripts/build-document-intelligence.js",
     "intake:accounting-budget": "node scripts/index-accounting-budget-tieout.js",
-    "intake:schedule": "node scripts/index-alum-schedule.js"
+    "intake:schedule": "node scripts/index-alum-schedule.js",
+    "schedule:brain": "node scripts/build-schedule-brain.js"
   },
   "keywords": [
     "cast-build",
