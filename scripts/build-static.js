@@ -65,6 +65,7 @@ function scrubPrivateSourceStrings(file) {
     .replace(/\/Users\/[A-Za-z0-9._-]+[^"'<>\n\r]*/g, 'private-user-path-redacted')
     .replace(/\/Users\/lawrencehoward\/CAST Community Dropbox\/CAST Automation\/CAST Build Management Platform\/Alüm\/00_PROCORE DATA TIE[^"'<>\n\r]*/g, 'private-data-tie-redacted')
     .replace(/\/Users\/lawrencehoward\/CAST Community Dropbox[^"'<>\n\r]*/g, 'private-dropbox-path-redacted')
+    .replace(/\/Users\/broderick\/Library\/CloudStorage\/Dropbox-CASTCommunity\/CAST Automation\/CAST Build Management Platform[^"'<>\n\r]*/g, 'private-dropbox-path-redacted')
     .replace(/\/Volumes\/CAST Drive[^"'<>\n\r]*/g, 'private-volume-path-redacted')
     .replace(/\/data\/projects\/golden-hill\/source-logs\/[^"'<>\s]+/g, '#private-source-excluded')
     .replace(/data\/projects\/golden-hill\/source-logs\/[^"'<>\s]+/g, 'private-source-excluded')
