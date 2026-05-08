@@ -10,8 +10,8 @@ function replicaTreatment(bucket){
 }
 (async()=>{
   const [room,revisions]=await Promise.all([
-    loadJson('/data/projects/golden-hill/alum-data-room-index.json'),
-    loadJson('/data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json')
+    loadJson('/safe-data/projects/golden-hill/alum-data-room-index.json'),
+    loadJson('/safe-data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json')
   ]);
   const ce=room.sections?.find(s=>s.key==='11. CHANGE EVENTS')||{};
   const owner=room.sections?.find(s=>s.key==='12. OWNER CHANGE ORDERS')||{};
@@ -29,4 +29,4 @@ function replicaTreatment(bucket){
   const changes=(revisions.changes||[]).slice(-24).reverse();
   document.querySelector('[data-budget-count]').textContent=`${changes.length} shown`;
   document.querySelector('[data-budget-rows]').innerHTML=changes.map(x=>`<tr><td>#${esc(x.number||'—')}</td><td>${esc(x.name||'')}</td><td>${statusPill(x.status||'Approved')}</td><td>${esc(x.adjustmentCount||0)}</td><td>${esc(x.lineCount||0)}</td><td>${money(x.net||0)}</td><td class="nextstep">${x.net===0?'Retain balanced transfer for audit tie-out':'Verify budget impact before owner action'}</td></tr>`).join('') || '<tr><td colspan="7">No approved budget revisions found.</td></tr>';
-})().catch(err=>{document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note">Could not load change-event metadata: ${esc(err.message)}</div>`);});
+})().catch(err=>{document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note">Change-event metadata unavailable. Refresh the page or check the latest deployment.</div>`);});

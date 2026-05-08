@@ -1,5 +1,5 @@
 // Alüm RFIs — populates the dedicated module page from local metadata.
-// Data shape: /data/projects/golden-hill/rfi-summary.json
+// Data shape: /safe-data/projects/golden-hill/rfi-summary.json
 // Note: this is a read-first replica. No write actions, no CAST BUILD A.O auth.
 
 (function () {
@@ -8,7 +8,7 @@
   // ---------- helpers ----------
   async function loadJson(path) {
     const r = await fetch(path);
-    if (!r.ok) throw new Error(`HTTP ${r.status} loading ${path}`);
+    if (!r.ok) throw new Error('metadata unavailable');
     return r.json();
   }
   function esc(s) {
@@ -119,10 +119,10 @@
   (async () => {
     let rfi;
     try {
-      rfi = await loadJson('/data/projects/golden-hill/rfi-summary.json');
+      rfi = await loadJson('/safe-data/projects/golden-hill/rfi-summary.json');
     } catch (err) {
       const tbody = document.querySelector('[data-rfi-rows]');
-      if (tbody) tbody.innerHTML = rowEmpty(6, 'Could not load RFI metadata', err.message);
+      if (tbody) tbody.innerHTML = rowEmpty(6, 'RFI metadata unavailable', 'The data file is being refreshed.');
       console.error('[rfi]', err);
       return;
     }

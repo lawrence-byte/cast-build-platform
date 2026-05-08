@@ -3,7 +3,7 @@ const esc=(v)=>String(v??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 async function getJson(url){const r=await fetch(url); if(!r.ok) throw new Error(url); return r.json();}
 function splitParty(value){const raw=String(value||'').trim(); const match=raw.match(/^(.*?)\s*\((.*?)\)$/); return match?[match[1],match[2]]:[raw,''];}
 (async()=>{
-  const [rfi,submittal]=await Promise.all([getJson('/data/projects/golden-hill/rfi-summary.json'),getJson('/data/projects/golden-hill/submittal-summary.json')]);
+  const [rfi,submittal]=await Promise.all([getJson('/safe-data/projects/golden-hill/rfi-summary.json'),getJson('/safe-data/projects/golden-hill/submittal-summary.json')]);
   const companies=new Map(); const people=[];
   for(const [name,count] of (rfi.topManagers||[])){const [person,company]=splitParty(name); people.push({person,company:company||'Cast Build',role:'Project Management',source:`${count} RFI signals`}); companies.set(company||'Cast Build',{company:company||'Cast Build',role:'Project Management',signals:count,focus:'RFIs'});}
   for(const [company,count] of (rfi.topContractors||[]).filter(([n])=>n && n!=='Unassigned')) companies.set(company,{company,role:'Trade Partner',signals:(companies.get(company)?.signals||0)+count,focus:'RFIs'});

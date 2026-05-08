@@ -1,0 +1,34 @@
+{
+  "projectName": "Overlook Guy Street",
+  "posture": "Sample construction-controls metadata only — replace after approved intake. No raw/private files are published.",
+  "generatedAt": "2026-05-07T09:28:00-07:00",
+  "currentScenario": "Baseline construction controls setup",
+  "summary": {
+    "site": "Future construction project controls workspace",
+    "planningStatus": "Read-first controls setup",
+    "recommendedNextStep": "Confirm budget baseline, change-order register, schedule-risk posture, and draw package rhythm before project controls lock."
+  },
+  "kpis": [
+    { "label": "Budget Baseline", "value": "Draft", "note": "Needs approved construction budget import" },
+    { "label": "Change Orders", "value": "Setup", "note": "Track pending, approved, and rejected changes" },
+    { "label": "Schedule Risk", "value": "Watch", "note": "Link delays to cost exposure" },
+    { "label": "Draw Controls", "value": "Ready", "note": "Prepare owner draw package cadence" }
+  ],
+  "scenarios": [
+    { "name": "Baseline Controls", "budgetStatus": "Draft budget baseline pending approval", "changeOrderPosture": "No approved changes imported", "scheduleRisk": "Medium", "drawCadence": "Monthly owner draw package", "forecastFocus": "Set EAC, ETC, contingency, and commitment coverage", "watchout": "Do not publish source workbooks or private backup." },
+    { "name": "Change Pressure", "budgetStatus": "Track contingency drawdown", "changeOrderPosture": "Pending changes require owner-facing status", "scheduleRisk": "High", "drawCadence": "Monthly with change-control appendix", "forecastFocus": "Model pending CO exposure and schedule-cost impact", "watchout": "Separate pending exposure from approved budget moves." },
+    { "name": "Draw Readiness", "budgetStatus": "Reconcile budget, commitments, and JTD", "changeOrderPosture": "Tie approved changes to revised budget", "scheduleRisk": "Low", "drawCadence": "Next draw package checklist", "forecastFocus": "Validate backup, retainage, and owner billing support", "watchout": "Publish only sanitized summary metadata." }
+  ],
+  "actions": [
+    { "priority": "Critical", "area": "Budget", "item": "Load approved construction budget baseline", "owner": "Project Controls", "due": "Before controls review", "next": "Capture sanitized budget summary fields only." },
+    { "priority": "High", "area": "Change Orders", "item": "Create change-control register", "owner": "Project Manager", "due": "This week", "next": "Classify pending, approved, rejected, and owner review items." },
+    { "priority": "High", "area": "Schedule Risk", "item": "Connect schedule constraints to cost exposure", "owner": "Superintendent + PM", "due": "Next lookahead", "next": "Tag delay drivers, responsible party, and forecast impact." },
+    { "priority": "Medium", "area": "Draws", "item": "Define next owner draw package checklist", "owner": "Accounting + PM", "due": "Next billing cycle", "next": "Track backup status, retainage, and approval path." }
+  ],
+  "evidence": [
+    { "category": "Budget", "status": "Placeholder", "signal": "Approved budget summary", "safeNext": "Attach sanitized totals and variance notes only." },
+    { "category": "Change Control", "status": "Placeholder", "signal": "CO register summary", "safeNext": "Publish status rollups, not source backup." },
+    { "category": "Schedule", "status": "Placeholder", "signal": "Milestone and constraint summary", "safeNext": "Track risk signals without raw schedule exports." },
+    { "category": "Draws", "status": "Placeholder", "signal": "Owner billing checklist", "safeNext": "Publish readiness metadata only." }
+  ]
+}

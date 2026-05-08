@@ -20,7 +20,7 @@ function renderCodes(){
   document.querySelector('#code-rows').innerHTML=rows.map(b=>`<tr><td><strong>${esc(b.budgetCode)}</strong></td><td>${esc(b.description)}</td><td>${esc(b.changes.join(', '))}</td><td class="money pos">${money(b.positiveAmount)}</td><td class="money neg">${money(b.negativeAmount)}</td><td class="money ${b.netAmount<0?'neg':'pos'}">${money(b.netAmount)}</td></tr>`).join('');
 }
 (async()=>{
-  const r=await fetch('/data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json');
+  const r=await fetch('/safe-data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json');
   if(!r.ok)throw new Error('Budget revisions register missing. Run npm run intake:budget-revisions.');
   register=await r.json();
   flattenLines();
@@ -35,4 +35,4 @@ function renderCodes(){
   document.querySelector('#change').innerHTML+=(register.changes||[]).map(c=>`<option value="${esc(c.number)}">#${esc(c.number)} — ${esc(c.name)}</option>`).join('');
   ['q','change','direction'].forEach(id=>document.querySelector('#'+id).addEventListener('input',renderLines));
   renderLines(); renderCodes();
-})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="note">${esc(e.message)}</div>`));
+})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="note">Refresh the page or check the latest deployment.</div>`));

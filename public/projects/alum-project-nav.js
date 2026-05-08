@@ -83,11 +83,15 @@
     ['Reporting', '/projects/alum-reports.html'],
   ];
 
+  const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
+  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/cast-build-main-logo-supplied-transparent.png';
+
   const css = document.createElement('style');
   css.textContent = `
     .alum-project-nav{position:sticky;top:0;z-index:1300;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 22px 10px 296px;background:rgba(24,24,22,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(207,199,177,.18);box-shadow:0 10px 30px rgba(0,0,0,.18)}
-    .alum-project-nav__brand{display:flex;align-items:center;gap:10px;min-width:max-content;color:#f7f3e8;text-decoration:none;font:800 10px/1.1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.18em;text-transform:uppercase;border-color:rgba(207,199,177,.18)!important;background:rgba(255,255,255,.045)!important}
-    .alum-project-nav__brand img{width:44px;height:auto;display:block;object-fit:contain}
+    .alum-project-nav__brand{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;min-width:92px;color:#f7f3e8;text-decoration:none;font:800 10px/1.1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.18em;text-transform:uppercase;border-color:rgba(207,199,177,.18)!important;background:rgba(255,255,255,.045)!important}
+    .alum-project-nav__brand img{width:58px;height:auto;display:block;object-fit:contain}
+    .alum-project-mark__name{display:block;color:#f7f3e8;font:800 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.22em;text-transform:uppercase}
     .alum-project-nav__links{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:0;overflow:auto;scrollbar-width:none;width:100%}
     .alum-project-nav__links::-webkit-scrollbar{display:none}
     .alum-project-nav a{white-space:nowrap;border:1px solid transparent;background:transparent;color:rgba(247,243,232,.72);text-decoration:none;padding:8px 10px;font:700 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.13em;text-transform:uppercase}
@@ -95,8 +99,9 @@
     .alum-project-nav a.is-active{color:#fff;border-color:rgba(207,199,177,.42);background:rgba(207,199,177,.12)}
 
     .alum-section-rail{position:fixed;inset:0 auto 0 0;z-index:1250;width:272px;background:#181816;color:#f7f3e8;border-right:1px solid rgba(207,199,177,.18);overflow:auto;padding:24px 18px 28px;box-shadow:16px 0 38px rgba(0,0,0,.12);scrollbar-width:thin;scrollbar-color:rgba(207,199,177,.28) transparent}
-    .alum-section-rail__brand{display:flex;align-items:center;gap:12px;padding:0 6px 20px;margin-bottom:16px;border-bottom:1px solid rgba(207,199,177,.16);color:#f7f3e8;text-decoration:none;font:800 10px/1.1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.18em;text-transform:uppercase}
-    .alum-section-rail__brand img{width:82px;height:auto;object-fit:contain;display:block}
+    .alum-section-rail__brand{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 6px 20px;margin-bottom:16px;border-bottom:1px solid rgba(207,199,177,.16);color:#f7f3e8;text-decoration:none;font:800 10px/1.1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.18em;text-transform:uppercase}
+    .alum-section-rail__brand img{width:86px;height:auto;object-fit:contain;display:block}
+    .alum-section-rail__project-name{display:block;color:#f7f3e8;font:800 12px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.24em;text-transform:uppercase}
     .alum-section-rail__group{margin:18px 0 5px;padding:0 8px;color:rgba(207,199,177,.68);font:800 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.15em;text-transform:uppercase}
     .alum-section-rail__summary{margin:0 8px 7px;color:rgba(247,243,232,.42);font:600 10px/1.35 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.07em;text-transform:uppercase}
     .alum-section-rail__tabs{display:grid;gap:2px;margin-bottom:6px}
@@ -122,7 +127,7 @@
       .alum-section-rail__brand{padding-bottom:14px;margin-bottom:12px}
       .alum-section-rail__group{margin-top:14px}
       .alum-project-nav{padding:10px 14px;position:sticky}.alum-project-nav__links{justify-content:flex-start}
-      .alum-project-nav__brand img{width:38px}
+      .alum-project-nav__brand img{width:46px}
       .alum-project-nav-spacer .app,.alum-project-nav-spacer .dashboard{padding-left:0!important}
       .alum-project-nav-spacer .project-main-content{margin-left:0!important;width:100%!important}
       .alum-project-nav-spacer>.wrap{margin-left:0!important;width:100%!important}
@@ -156,7 +161,7 @@
   brand.className = 'alum-project-nav__brand';
   brand.href = HOME;
   brand.setAttribute('aria-label', 'Back to Alüm Project Home');
-  brand.innerHTML = '<img src="/assets/brand/alum-logo-white.svg" alt="ALÜM"><span>Project Home</span>';
+  brand.innerHTML = `<img src="${projectLogo}" alt="CAST Build"><span class="alum-project-mark__name">${projectName}</span>`;
   const topLinks = document.createElement('div');
   topLinks.className = 'alum-project-nav__links';
   for (const [label, href] of primary) topLinks.appendChild(link(label, href));
@@ -169,7 +174,7 @@
   railBrand.className = 'alum-section-rail__brand';
   railBrand.href = HOME;
   railBrand.setAttribute('aria-label', 'Back to Alüm Project Home');
-  railBrand.innerHTML = '<img src="/assets/brand/alum-logo-white.svg" alt="ALÜM"><span>Project Home</span>';
+  railBrand.innerHTML = `<img src="${projectLogo}" alt="CAST Build"><span class="alum-section-rail__project-name">${projectName}</span>`;
   rail.appendChild(railBrand);
   for (const group of groups) {
     const heading = document.createElement('div');

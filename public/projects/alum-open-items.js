@@ -11,10 +11,10 @@ function changePriority(x){return {priority:Number(x.net||0)!==0?'warning':'revi
 function rank(p){return {critical:0,warning:1,review:2}[p]??3;}
 (async()=>{
   const [rfi,sub,changes,acct]=await Promise.all([
-    loadJson('/data/projects/golden-hill/rfi-summary.json'),
-    loadJson('/data/projects/golden-hill/submittal-summary.json'),
-    loadJson('/data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json'),
-    loadJson('/data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json')
+    loadJson('/safe-data/projects/golden-hill/rfi-summary.json'),
+    loadJson('/safe-data/projects/golden-hill/submittal-summary.json'),
+    loadJson('/safe-data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json'),
+    loadJson('/safe-data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json')
   ]);
   document.querySelector('[data-generated]').textContent=`Generated from exports · ${esc(rfi.generatedAt||sub.generatedAt||changes.generatedAt||'local metadata')}`;
   document.querySelector('[data-rfi-summary]').textContent=`${rfi.openCount||0} open/draft of ${rfi.total||0}; ${rfi.overdueOpen||0} overdue.`;
@@ -45,4 +45,4 @@ function rank(p){return {critical:0,warning:1,review:2}[p]??3;}
   const priority=[...rfiQueue.map(rfiPriority),...subQueue.map(subPriority),...changeQueue.filter(x=>Number(x.net||0)!==0).map(changePriority),...(acct.exceptions||[]).map(e=>({priority:e.severity==='high'?'critical':'warning',module:'Accounting',item:e.check||'Tie-out exception',owner:'Accounting controls',signal:money(e.delta),next:e.nextStep||'Review reconciliation mapping.'}))].sort((a,b)=>rank(a.priority)-rank(b.priority)).slice(0,24);
   document.querySelector('[data-priority-count]').textContent=`${priority.length} actions`;
   document.querySelector('[data-priority-queue]').innerHTML=priority.map(x=>`<tr><td>${severityPill(x.priority)}</td><td>${esc(x.module)}</td><td>${esc(x.item)}</td><td>${esc(x.owner)}</td><td>${esc(x.signal)}</td><td class="nextstep">${esc(x.next)}</td></tr>`).join('') || '<tr><td colspan="6">No priority actions found in metadata.</td></tr>';
-})().catch(err=>{document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note">Could not load open-item metadata: ${esc(err.message)}</div>`);});
+})().catch(err=>{document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note">Open-item metadata unavailable. Refresh the page or check the latest deployment.</div>`);});

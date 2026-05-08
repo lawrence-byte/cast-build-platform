@@ -1,0 +1,4037 @@
+{
+  "projectName": "Alüm",
+  "formerName": "Golden Hill Apartments",
+  "source": "CAST BUILD A.O Budget Revision PDFs in 001_CURRENT BUDGET",
+  "generatedAt": "2026-05-06T13:43:17.717Z",
+  "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+  "localDropboxPath": "private-data-tie-redacted/001_CURRENT BUDGET",
+  "totals": {
+    "changeCount": 24,
+    "adjustmentCount": 101,
+    "lineCount": 208,
+    "positiveTotal": 3300452.1000000006,
+    "negativeTotal": -3300452.1000000006,
+    "net": 0
+  },
+  "currentBudgetReconciliation": {
+    "currentBudgetSourceFile": "data/projects/golden-hill/procore-information/budget/budget_details_2.csv",
+    "currentBudgetRows": 111,
+    "exactRevisionBudgetCodes": 82,
+    "missingFromCurrentBudget": [],
+    "mismatchCount": 0,
+    "mismatches": [],
+    "status": "matches_current_budget_approved_budget_changes"
+  },
+  "byBudgetCode": [
+    {
+      "budgetCode": "A.15-7200.S",
+      "description": "HVAC Install",
+      "netAmount": 607000,
+      "positiveAmount": 607000,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        6,
+        7
+      ]
+    },
+    {
+      "budgetCode": "A.15-7000.S",
+      "description": "HVAC (units)",
+      "netAmount": -544296.45,
+      "positiveAmount": 0,
+      "negativeAmount": -544296.45,
+      "lineCount": 1,
+      "changes": [
+        6
+      ]
+    },
+    {
+      "budgetCode": "A.08-1000.S",
+      "description": "Interior Doors",
+      "netAmount": -449391.82,
+      "positiveAmount": 0,
+      "negativeAmount": -449391.82,
+      "lineCount": 4,
+      "changes": [
+        14,
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.08-2000.S",
+      "description": "Common Area Doors",
+      "netAmount": 365056.73,
+      "positiveAmount": 372069.73,
+      "negativeAmount": -7013,
+      "lineCount": 4,
+      "changes": [
+        14,
+        15,
+        21,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.16-1000.S",
+      "description": "Building Electrical",
+      "netAmount": -334219.91,
+      "positiveAmount": 0,
+      "negativeAmount": -334219.91,
+      "lineCount": 11,
+      "changes": [
+        1,
+        3,
+        5,
+        7,
+        8,
+        13,
+        14,
+        16,
+        17,
+        18
+      ]
+    },
+    {
+      "budgetCode": "A.09-3500.S",
+      "description": "Microcement",
+      "netAmount": 323657.88,
+      "positiveAmount": 323657.88,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.09-3000.S",
+      "description": "Tile",
+      "netAmount": -314719,
+      "positiveAmount": 0,
+      "negativeAmount": -314719,
+      "lineCount": 3,
+      "changes": [
+        10,
+        22,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.09-4000.M",
+      "description": "Stone - Material",
+      "netAmount": 259334.43,
+      "positiveAmount": 259334.43,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        18,
+        19
+      ]
+    },
+    {
+      "budgetCode": "B.00-1960.S",
+      "description": "Temp Hoist",
+      "netAmount": -239893.87,
+      "positiveAmount": 0,
+      "negativeAmount": -239893.87,
+      "lineCount": 13,
+      "changes": [
+        4,
+        13,
+        16,
+        17,
+        18,
+        19,
+        21,
+        22,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.09-2400.S",
+      "description": "Plaster",
+      "netAmount": -218422,
+      "positiveAmount": 0,
+      "negativeAmount": -218422,
+      "lineCount": 4,
+      "changes": [
+        13,
+        14,
+        16,
+        19
+      ]
+    },
+    {
+      "budgetCode": "C.01-1001.L",
+      "description": "Operations Manager",
+      "netAmount": -190208,
+      "positiveAmount": 0,
+      "negativeAmount": -190208,
+      "lineCount": 1,
+      "changes": [
+        12
+      ]
+    },
+    {
+      "budgetCode": "A.16-4000.S",
+      "description": "Communications/Low Voltage",
+      "netAmount": -163402.51,
+      "positiveAmount": 0,
+      "negativeAmount": -163402.51,
+      "lineCount": 8,
+      "changes": [
+        1,
+        13,
+        14,
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.06-1100.S",
+      "description": "Mass Timber (Install)",
+      "netAmount": 155000,
+      "positiveAmount": 155000,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        2
+      ]
+    },
+    {
+      "budgetCode": "A.06-1000.S",
+      "description": "Mass Timber",
+      "netAmount": -155000,
+      "positiveAmount": 0,
+      "negativeAmount": -155000,
+      "lineCount": 1,
+      "changes": [
+        2
+      ]
+    },
+    {
+      "budgetCode": "B.00-1970.O",
+      "description": "Temp Crane - other generator",
+      "netAmount": 144269.13,
+      "positiveAmount": 144269.13,
+      "negativeAmount": 0,
+      "lineCount": 8,
+      "changes": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        21,
+        22,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.11-4500.S",
+      "description": "Residential Appliances",
+      "netAmount": 143231.52,
+      "positiveAmount": 143231.52,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        13
+      ]
+    },
+    {
+      "budgetCode": "A.09-4000.S",
+      "description": "Stone Countertops",
+      "netAmount": -142872,
+      "positiveAmount": 0,
+      "negativeAmount": -142872,
+      "lineCount": 2,
+      "changes": [
+        18,
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.16-1200.S",
+      "description": "Electrical Fixtures",
+      "netAmount": 127073.11,
+      "positiveAmount": 127073.11,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        5,
+        16,
+        18
+      ]
+    },
+    {
+      "budgetCode": "C.01-1005.L",
+      "description": "Accountant",
+      "netAmount": 100000,
+      "positiveAmount": 100000,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        23
+      ]
+    },
+    {
+      "budgetCode": "A.09-1000.S",
+      "description": "Scaffold",
+      "netAmount": 99335,
+      "positiveAmount": 99335,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        16
+      ]
+    },
+    {
+      "budgetCode": "C.01-5000.O",
+      "description": "GC Excess",
+      "netAmount": 90208,
+      "positiveAmount": 190208,
+      "negativeAmount": -100000,
+      "lineCount": 2,
+      "changes": [
+        12,
+        23
+      ]
+    },
+    {
+      "budgetCode": "A.34-1000.S",
+      "description": "Automated Parking",
+      "netAmount": -75244.76,
+      "positiveAmount": 0,
+      "negativeAmount": -75244.76,
+      "lineCount": 4,
+      "changes": [
+        1,
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.03-1000.S",
+      "description": "Concrete",
+      "netAmount": -67706.65,
+      "positiveAmount": 0,
+      "negativeAmount": -67706.65,
+      "lineCount": 6,
+      "changes": [
+        14,
+        19,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.08-2000.M",
+      "description": "Common Area Door Hardware",
+      "netAmount": 67402.09,
+      "positiveAmount": 67402.09,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        14
+      ]
+    },
+    {
+      "budgetCode": "A.09-2000.S",
+      "description": "Drywall",
+      "netAmount": 65781,
+      "positiveAmount": 65781,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        13,
+        16,
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.16-4100.S",
+      "description": "ERCC",
+      "netAmount": 61035,
+      "positiveAmount": 61035,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        1
+      ]
+    },
+    {
+      "budgetCode": "A.07-4000.S",
+      "description": "Roofing",
+      "netAmount": 56867.46,
+      "positiveAmount": 56867.46,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        13
+      ]
+    },
+    {
+      "budgetCode": "A.07-6000.S",
+      "description": "Sheet Metal",
+      "netAmount": -54432.46,
+      "positiveAmount": 0,
+      "negativeAmount": -54432.46,
+      "lineCount": 2,
+      "changes": [
+        13,
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.07-1000.S",
+      "description": "Waterproofing",
+      "netAmount": 47473,
+      "positiveAmount": 47473,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        1,
+        13,
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.12-2000.S",
+      "description": "Window Coverings",
+      "netAmount": -45462,
+      "positiveAmount": 0,
+      "negativeAmount": -45462,
+      "lineCount": 6,
+      "changes": [
+        15,
+        16,
+        18,
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.16-1100.S",
+      "description": "Power Plus",
+      "netAmount": 43555,
+      "positiveAmount": 43555,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        3
+      ]
+    },
+    {
+      "budgetCode": "A.02-5000.S",
+      "description": "Utilities",
+      "netAmount": 40410,
+      "positiveAmount": 40410,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        1
+      ]
+    },
+    {
+      "budgetCode": "A.09-9000.S",
+      "description": "Painting (interior)",
+      "netAmount": 28725,
+      "positiveAmount": 28725,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        13,
+        15
+      ]
+    },
+    {
+      "budgetCode": "A.16-4200.S",
+      "description": "2 Way Communications",
+      "netAmount": 24737,
+      "positiveAmount": 24737,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        1
+      ]
+    },
+    {
+      "budgetCode": "B.00-1960.O",
+      "description": "Temp Hoist - other generator",
+      "netAmount": 24646.75,
+      "positiveAmount": 24646.75,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        18,
+        19,
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.04-2000.M",
+      "description": "Material - exterior partitions",
+      "netAmount": 23658.8,
+      "positiveAmount": 23658.8,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.04-2000.S",
+      "description": "CMU",
+      "netAmount": -23658.8,
+      "positiveAmount": 0,
+      "negativeAmount": -23658.8,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "B.00-1960.L",
+      "description": "Temp-Hoist (Labor)",
+      "netAmount": 23443.53,
+      "positiveAmount": 23443.53,
+      "negativeAmount": 0,
+      "lineCount": 5,
+      "changes": [
+        18,
+        19,
+        21,
+        22,
+        24
+      ]
+    },
+    {
+      "budgetCode": "C.01-3010.S",
+      "description": "Field -Temp Utility - Power",
+      "netAmount": -22246.93,
+      "positiveAmount": 0,
+      "negativeAmount": -22246.93,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.05-7000.S",
+      "description": "Decorative Railing",
+      "netAmount": 21769,
+      "positiveAmount": 21769,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        1,
+        15,
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.14-2000.S",
+      "description": "Elevators",
+      "netAmount": 21150,
+      "positiveAmount": 21150,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        1,
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.12-3000.S",
+      "description": "Casework",
+      "netAmount": -19692.28,
+      "positiveAmount": 0,
+      "negativeAmount": -19692.28,
+      "lineCount": 2,
+      "changes": [
+        13,
+        19
+      ]
+    },
+    {
+      "budgetCode": "B.00-1365.S",
+      "description": "SWPP",
+      "netAmount": -19156.25,
+      "positiveAmount": 0,
+      "negativeAmount": -19156.25,
+      "lineCount": 4,
+      "changes": [
+        17,
+        21,
+        22,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.27-1000.S",
+      "description": "Fire Alarm",
+      "netAmount": 18540,
+      "positiveAmount": 18540,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        1
+      ]
+    },
+    {
+      "budgetCode": "B.00-1800.SVC",
+      "description": "Field Engineer (Survey)",
+      "netAmount": 18197.5,
+      "positiveAmount": 18197.5,
+      "negativeAmount": 0,
+      "lineCount": 3,
+      "changes": [
+        17,
+        18,
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.02-4800.S",
+      "description": "Earthwork (Grading)",
+      "netAmount": -18139,
+      "positiveAmount": 0,
+      "negativeAmount": -18139,
+      "lineCount": 2,
+      "changes": [
+        13,
+        18
+      ]
+    },
+    {
+      "budgetCode": "A.21-1000.O",
+      "description": "Fire Sprinkler - Permits",
+      "netAmount": 17992.84,
+      "positiveAmount": 17992.84,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        17,
+        18
+      ]
+    },
+    {
+      "budgetCode": "B.00-1200.SVC",
+      "description": "Portable Toilets/Handwash",
+      "netAmount": 16000,
+      "positiveAmount": 16000,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "B.00-1310.O",
+      "description": "Traffic Control - Permits",
+      "netAmount": 14048.12,
+      "positiveAmount": 14048.12,
+      "negativeAmount": 0,
+      "lineCount": 8,
+      "changes": [
+        11,
+        14,
+        15,
+        16,
+        17,
+        18,
+        21,
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.09-3000.M",
+      "description": "Tile - Material",
+      "netAmount": 11561.12,
+      "positiveAmount": 11561.12,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "B.00-1970.S",
+      "description": "Temp Crane",
+      "netAmount": 10222.77,
+      "positiveAmount": 52246.93,
+      "negativeAmount": -42024.16,
+      "lineCount": 6,
+      "changes": [
+        15,
+        18,
+        21,
+        22,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.09-6000.SVC",
+      "description": "Wood Flooring Site Office",
+      "netAmount": 9607.44,
+      "positiveAmount": 9607.44,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        9
+      ]
+    },
+    {
+      "budgetCode": "A.09-6000.S",
+      "description": "Wood Flooring",
+      "netAmount": -9607.44,
+      "positiveAmount": 0,
+      "negativeAmount": -9607.44,
+      "lineCount": 1,
+      "changes": [
+        9
+      ]
+    },
+    {
+      "budgetCode": "A.10-1000.M",
+      "description": "Mirrors",
+      "netAmount": 9375.29,
+      "positiveAmount": 9375.29,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.10-1000.S",
+      "description": "Specialties",
+      "netAmount": -9375.29,
+      "positiveAmount": 0,
+      "negativeAmount": -9375.29,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.03-1000.M",
+      "description": "Crawlspace Access Panel",
+      "netAmount": 8604.77,
+      "positiveAmount": 8604.77,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        14,
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.02-4000.S",
+      "description": "Site Demolition",
+      "netAmount": 7889,
+      "positiveAmount": 7889,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        8,
+        18
+      ]
+    },
+    {
+      "budgetCode": "A.27-1000.O",
+      "description": "Fire Alarm - Permit",
+      "netAmount": 6376.14,
+      "positiveAmount": 6376.14,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        14,
+        16
+      ]
+    },
+    {
+      "budgetCode": "A.05-5000.S",
+      "description": "Structural Steel/Misc. Metals",
+      "netAmount": -6337.85,
+      "positiveAmount": 0,
+      "negativeAmount": -6337.85,
+      "lineCount": 3,
+      "changes": [
+        15,
+        21,
+        22
+      ]
+    },
+    {
+      "budgetCode": "B.00-1340.S",
+      "description": "Temp Covered Walkways",
+      "netAmount": 5975,
+      "positiveAmount": 5975,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        4
+      ]
+    },
+    {
+      "budgetCode": "A.02-4500.S",
+      "description": "Shoring & Special Foundations",
+      "netAmount": 5300,
+      "positiveAmount": 5300,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        14
+      ]
+    },
+    {
+      "budgetCode": "B.00-1720.S",
+      "description": "Safety",
+      "netAmount": 5000,
+      "positiveAmount": 5000,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "B.00-1320.SVC",
+      "description": "General Labor",
+      "netAmount": -5000,
+      "positiveAmount": 0,
+      "negativeAmount": -5000,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.09-3000.SVC",
+      "description": "Tile - Site Office",
+      "netAmount": 4500,
+      "positiveAmount": 4500,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        10
+      ]
+    },
+    {
+      "budgetCode": "B.00-1310.S",
+      "description": "Temporary Traffic Control",
+      "netAmount": -4031.91,
+      "positiveAmount": 3734.21,
+      "negativeAmount": -7766.12,
+      "lineCount": 10,
+      "changes": [
+        11,
+        14,
+        15,
+        16,
+        19,
+        21,
+        24
+      ]
+    },
+    {
+      "budgetCode": "C.01-3050.O",
+      "description": "Field Office - Printing (reprographics)",
+      "netAmount": 2500,
+      "positiveAmount": 2500,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        20
+      ]
+    },
+    {
+      "budgetCode": "C.01-3040.O",
+      "description": "Field Office - Software",
+      "netAmount": -2500,
+      "positiveAmount": 0,
+      "negativeAmount": -2500,
+      "lineCount": 1,
+      "changes": [
+        20
+      ]
+    },
+    {
+      "budgetCode": "A.07-2000.S",
+      "description": "Insulation",
+      "netAmount": -2090,
+      "positiveAmount": 3600,
+      "negativeAmount": -5690,
+      "lineCount": 3,
+      "changes": [
+        1,
+        13,
+        16
+      ]
+    },
+    {
+      "budgetCode": "B.00-1900.SVC",
+      "description": "Jobsite Utilities/Misc Equip.",
+      "netAmount": -2017.46,
+      "positiveAmount": 0,
+      "negativeAmount": -2017.46,
+      "lineCount": 2,
+      "changes": [
+        16,
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.21-1000.S",
+      "description": "Fire Sprinkler",
+      "netAmount": -1763,
+      "positiveAmount": 1510.76,
+      "negativeAmount": -3273.76,
+      "lineCount": 2,
+      "changes": [
+        17,
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.16-1000.SVC",
+      "description": "Building Electrical - Testing",
+      "netAmount": 1450,
+      "positiveAmount": 1450,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        14
+      ]
+    },
+    {
+      "budgetCode": "A.05-5000.M",
+      "description": "Misc Metals Material",
+      "netAmount": 980.09,
+      "positiveAmount": 980.09,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "B.00-1310.L",
+      "description": "Traffic Control - Labor",
+      "netAmount": 756,
+      "positiveAmount": 756,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        14
+      ]
+    },
+    {
+      "budgetCode": "A.05-5000.O",
+      "description": "Structural Steel/Misc Metals - permit",
+      "netAmount": 661.52,
+      "positiveAmount": 661.52,
+      "negativeAmount": 0,
+      "lineCount": 2,
+      "changes": [
+        19,
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.08-8000.O",
+      "description": "Window Wall Permits",
+      "netAmount": 661.52,
+      "positiveAmount": 661.52,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.06-2000.S",
+      "description": "Finish Carpentry",
+      "netAmount": -530.76,
+      "positiveAmount": 0,
+      "negativeAmount": -530.76,
+      "lineCount": 2,
+      "changes": [
+        19
+      ]
+    },
+    {
+      "budgetCode": "A.06-1000.O",
+      "description": "Mass Timber - Other",
+      "netAmount": 490.05,
+      "positiveAmount": 490.05,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.02-7500.S",
+      "description": "Site Concrete",
+      "netAmount": -490.05,
+      "positiveAmount": 0,
+      "negativeAmount": -490.05,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.34-1000.O",
+      "description": "Automated Parking - Permits",
+      "netAmount": 330.76,
+      "positiveAmount": 330.76,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        21
+      ]
+    },
+    {
+      "budgetCode": "A.08-2000.O",
+      "description": "Common Area Doors - Other",
+      "netAmount": 125,
+      "positiveAmount": 125,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        24
+      ]
+    },
+    {
+      "budgetCode": "A.08-8000.S",
+      "description": "Glazing",
+      "netAmount": -56.37,
+      "positiveAmount": 605.15,
+      "negativeAmount": -661.52,
+      "lineCount": 2,
+      "changes": [
+        13,
+        22
+      ]
+    },
+    {
+      "budgetCode": "A.11-1000.S",
+      "description": "Window Washing Equipment",
+      "netAmount": 0.46,
+      "positiveAmount": 0.46,
+      "negativeAmount": 0,
+      "lineCount": 1,
+      "changes": [
+        13
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "number": 1,
+      "status": "APPROVED",
+      "name": "INTERNAL BUDGET ADJUSTMENT - MAY 2025",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.02-5000.S",
+              "description": "Utilities",
+              "amount": 40410
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -40410
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.05-7000.S",
+              "description": "Decorative Railing",
+              "amount": 5000
+            },
+            {
+              "budgetCode": "A.07-2000.S",
+              "description": "Insulation",
+              "amount": -5000
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.07-1000.S",
+              "description": "Waterproofing",
+              "amount": 39724
+            },
+            {
+              "budgetCode": "A.34-1000.S",
+              "description": "Automated Parking",
+              "amount": -39724
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.14-2000.S",
+              "description": "Elevators",
+              "amount": 16650
+            },
+            {
+              "budgetCode": "A.34-1000.S",
+              "description": "Automated Parking",
+              "amount": -16650
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.27-1000.S",
+              "description": "Fire Alarm",
+              "amount": 18540
+            },
+            {
+              "budgetCode": "A.34-1000.S",
+              "description": "Automated Parking",
+              "amount": -18540
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.16-4200.S",
+              "description": "2 Way Communications",
+              "amount": 24737
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -24737
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.16-4100.S",
+              "description": "ERCC",
+              "amount": 61035
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -61035
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 7,
+      "lineCount": 14,
+      "positiveTotal": 206096,
+      "negativeTotal": -206096,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.02-5000.S",
+          "description": "Utilities",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-7000.S",
+          "description": "Decorative Railing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-2000.S",
+          "description": "Insulation",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-1000.S",
+          "description": "Waterproofing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.34-1000.S",
+          "description": "Automated Parking",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.14-2000.S",
+          "description": "Elevators",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.27-1000.S",
+          "description": "Fire Alarm",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-4200.S",
+          "description": "2 Way Communications",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-4000.S",
+          "description": "Communications/Low Voltage",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-4100.S",
+          "description": "ERCC",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 2,
+      "status": "APPROVED",
+      "name": "Mass Timber Install",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 06-1000 Mass Timber TO Mass Timber Install",
+          "lines": [
+            {
+              "budgetCode": "A.06-1100.S",
+              "description": "Mass Timber (Install)",
+              "amount": 155000
+            },
+            {
+              "budgetCode": "A.06-1000.S",
+              "description": "Mass Timber",
+              "amount": -155000
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 155000,
+      "negativeTotal": -155000,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.06-1100.S",
+          "description": "Mass Timber (Install)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.06-1000.S",
+          "description": "Mass Timber",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 3,
+      "status": "APPROVED",
+      "name": "Move Funds From Electrical for Temp Power (Power Plus)",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 16-1000 Electrical TO 16-1100 Power Plus",
+          "lines": [
+            {
+              "budgetCode": "A.16-1100.S",
+              "description": "Power Plus",
+              "amount": 43555
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -43555
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 43555,
+      "negativeTotal": -43555,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.16-1100.S",
+          "description": "Power Plus",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 4,
+      "status": "APPROVED",
+      "name": "Move Funds from Hoist to Covered Walkway",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 00-1960 Temp Hoist TO 00-1340 Temp Covered Walkway",
+          "lines": [
+            {
+              "budgetCode": "B.00-1340.S",
+              "description": "Temp Covered Walkways",
+              "amount": 5975
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -5975
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 5975,
+      "negativeTotal": -5975,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "B.00-1340.S",
+          "description": "Temp Covered Walkways",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 5,
+      "status": "APPROVED",
+      "name": "Move Funds from Electrical to Fixtures",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 16-1000 Electrical TO 16-1200 Electrical Fixtures",
+          "lines": [
+            {
+              "budgetCode": "A.16-1200.S",
+              "description": "Electrical Fixtures",
+              "amount": 97317.41
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -97317.41
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 97317.41,
+      "negativeTotal": -97317.41,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.16-1200.S",
+          "description": "Electrical Fixtures",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 6,
+      "status": "APPROVED",
+      "name": "Move Funds for HVAC Install",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 15-7000 HVAC TO 15-7200 HVAC Install",
+          "lines": [
+            {
+              "budgetCode": "A.15-7200.S",
+              "description": "HVAC Install",
+              "amount": 544296.45
+            },
+            {
+              "budgetCode": "A.15-7000.S",
+              "description": "HVAC (units)",
+              "amount": -544296.45
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 544296.45,
+      "negativeTotal": -544296.45,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.15-7200.S",
+          "description": "HVAC Install",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.15-7000.S",
+          "description": "HVAC (units)",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 7,
+      "status": "APPROVED",
+      "name": "Move Funds from Electrical for HVAC Install",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 16-1000 Electrical TO 15-7200 HVAC Install",
+          "lines": [
+            {
+              "budgetCode": "A.15-7200.S",
+              "description": "HVAC Install",
+              "amount": 62703.55
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -62703.55
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 62703.55,
+      "negativeTotal": -62703.55,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.15-7200.S",
+          "description": "HVAC Install",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 8,
+      "status": "APPROVED",
+      "name": "Move Funds From Electrical to Demo",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "FROM 16-1000 Electrical TO 02-4000 Site Demo",
+          "lines": [
+            {
+              "budgetCode": "A.02-4000.S",
+              "description": "Site Demolition",
+              "amount": 2000
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -2000
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 2000,
+      "negativeTotal": -2000,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.02-4000.S",
+          "description": "Site Demolition",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 9,
+      "status": "APPROVED",
+      "name": "Wood Flooring - Site Office",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Move Funds from 09-6000.S to 09-6000.SVC for Site Office Flooring; Howards Inv 32726-1 6.10.25",
+          "lines": [
+            {
+              "budgetCode": "A.09-6000.SVC",
+              "description": "Wood Flooring Site Office",
+              "amount": 9607.44
+            },
+            {
+              "budgetCode": "A.09-6000.S",
+              "description": "Wood Flooring",
+              "amount": -9607.44
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 9607.44,
+      "negativeTotal": -9607.44,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.09-6000.SVC",
+          "description": "Wood Flooring Site Office",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-6000.S",
+          "description": "Wood Flooring",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 10,
+      "status": "APPROVED",
+      "name": "Tile - Site Office",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Move funds from 09-3000.S to 09-3000.SVC for site office tile; Joe Tinsely Stone & Tile Inv 10325",
+          "lines": [
+            {
+              "budgetCode": "A.09-3000.SVC",
+              "description": "Tile - Site Office",
+              "amount": 4500
+            },
+            {
+              "budgetCode": "A.09-3000.S",
+              "description": "Tile",
+              "amount": -4500
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 4500,
+      "negativeTotal": -4500,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.09-3000.SVC",
+          "description": "Tile - Site Office",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-3000.S",
+          "description": "Tile",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 11,
+      "status": "APPROVED",
+      "name": "Traffic Control - Permits",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Move funds from 00-1310.S to 00-1310.O for DSD permits",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 4460.46
+            },
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": -4460.46
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 4460.46,
+      "negativeTotal": -4460.46,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 12,
+      "status": "APPROVED",
+      "name": "Establish GC Excess",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Move funds from 01-1001 Ops Manager to 01-5000 GC Excess",
+          "lines": [
+            {
+              "budgetCode": "C.01-5000.O",
+              "description": "GC Excess",
+              "amount": 190208
+            },
+            {
+              "budgetCode": "C.01-1001.L",
+              "description": "Operations Manager",
+              "amount": -190208
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 190208,
+      "negativeTotal": -190208,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "C.01-5000.O",
+          "description": "GC Excess",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "C.01-1001.L",
+          "description": "Operations Manager",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 13,
+      "status": "APPROVED",
+      "name": "July Budget Adjustment",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.08-8000.S",
+              "description": "Glazing",
+              "amount": 605.15
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -605.15
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.11-1000.S",
+              "description": "Window Washing Equipment",
+              "amount": 0.46
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -0.46
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.09-9000.S",
+              "description": "Painting (interior)",
+              "amount": 25925
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -25925
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.07-1000.S",
+              "description": "Waterproofing",
+              "amount": 2329
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -2329
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.11-4500.S",
+              "description": "Residential Appliances",
+              "amount": 75000
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -75000
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.11-4500.S",
+              "description": "Residential Appliances",
+              "amount": 50050
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -50050
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.11-4500.S",
+              "description": "Residential Appliances",
+              "amount": 18181.52
+            },
+            {
+              "budgetCode": "A.12-3000.S",
+              "description": "Casework",
+              "amount": -18181.52
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.09-2000.S",
+              "description": "Drywall",
+              "amount": 50050
+            },
+            {
+              "budgetCode": "A.09-2400.S",
+              "description": "Plaster",
+              "amount": -50050
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 9,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.07-4000.S",
+              "description": "Roofing",
+              "amount": 43927.46
+            },
+            {
+              "budgetCode": "A.07-6000.S",
+              "description": "Sheet Metal",
+              "amount": -43927.46
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 10,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.07-4000.S",
+              "description": "Roofing",
+              "amount": 12250
+            },
+            {
+              "budgetCode": "A.02-4800.S",
+              "description": "Earthwork (Grading)",
+              "amount": -12250
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 11,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.07-4000.S",
+              "description": "Roofing",
+              "amount": 690
+            },
+            {
+              "budgetCode": "A.07-2000.S",
+              "description": "Insulation",
+              "amount": -690
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 11,
+      "lineCount": 22,
+      "positiveTotal": 279008.58999999997,
+      "negativeTotal": -279008.58999999997,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.08-8000.S",
+          "description": "Glazing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-4000.S",
+          "description": "Communications/Low Voltage",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.11-1000.S",
+          "description": "Window Washing Equipment",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-9000.S",
+          "description": "Painting (interior)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-1000.S",
+          "description": "Waterproofing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.11-4500.S",
+          "description": "Residential Appliances",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.12-3000.S",
+          "description": "Casework",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2000.S",
+          "description": "Drywall",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2400.S",
+          "description": "Plaster",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-4000.S",
+          "description": "Roofing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-6000.S",
+          "description": "Sheet Metal",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.02-4800.S",
+          "description": "Earthwork (Grading)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-2000.S",
+          "description": "Insulation",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 14,
+      "status": "APPROVED",
+      "name": "August Pay App #6 Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.16-1000.SVC",
+              "description": "Building Electrical - Testing",
+              "amount": 1450
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -1450
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.27-1000.O",
+              "description": "Fire Alarm - Permit",
+              "amount": 4909.89
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -4909.89
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 907.16
+            },
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": -907.16
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.L",
+              "description": "Traffic Control - Labor",
+              "amount": 756
+            },
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": -756
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.03-1000.M",
+              "description": "Crawlspace Access Panel",
+              "amount": 2205.36
+            },
+            {
+              "budgetCode": "A.03-1000.S",
+              "description": "Concrete",
+              "amount": -2205.36
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.02-4500.S",
+              "description": "Shoring & Special Foundations",
+              "amount": 5300
+            },
+            {
+              "budgetCode": "A.09-2400.S",
+              "description": "Plaster",
+              "amount": -5300
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.08-2000.S",
+              "description": "Common Area Doors",
+              "amount": 372069.73
+            },
+            {
+              "budgetCode": "A.08-1000.S",
+              "description": "Interior Doors",
+              "amount": -372069.73
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 10,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.08-2000.M",
+              "description": "Common Area Door Hardware",
+              "amount": 67402.09
+            },
+            {
+              "budgetCode": "A.08-1000.S",
+              "description": "Interior Doors",
+              "amount": -67402.09
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 8,
+      "lineCount": 16,
+      "positiveTotal": 455000.23,
+      "negativeTotal": -455000.23,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.16-1000.SVC",
+          "description": "Building Electrical - Testing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.27-1000.O",
+          "description": "Fire Alarm - Permit",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-4000.S",
+          "description": "Communications/Low Voltage",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.L",
+          "description": "Traffic Control - Labor",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.03-1000.M",
+          "description": "Crawlspace Access Panel",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.03-1000.S",
+          "description": "Concrete",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.02-4500.S",
+          "description": "Shoring & Special Foundations",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2400.S",
+          "description": "Plaster",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-2000.S",
+          "description": "Common Area Doors",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-1000.S",
+          "description": "Interior Doors",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-2000.M",
+          "description": "Common Area Door Hardware",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 15,
+      "status": "APPROVED",
+      "name": "September 2025 Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 745.7
+            },
+            {
+              "budgetCode": "B.00-1970.S",
+              "description": "Temp Crane",
+              "amount": -745.7
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "Move Funds from Misc Metals and Common Area Doors to Decorative Railing",
+          "lines": [
+            {
+              "budgetCode": "A.05-7000.S",
+              "description": "Decorative Railing",
+              "amount": 6264
+            },
+            {
+              "budgetCode": "A.05-5000.S",
+              "description": "Structural Steel/Misc. Metals",
+              "amount": -5027
+            },
+            {
+              "budgetCode": "A.08-2000.S",
+              "description": "Common Area Doors",
+              "amount": -1237
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.09-9000.S",
+              "description": "Painting (interior)",
+              "amount": 2800
+            },
+            {
+              "budgetCode": "A.12-2000.S",
+              "description": "Window Coverings",
+              "amount": -2800
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 658.5
+            },
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": -658.5
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 4,
+      "lineCount": 9,
+      "positiveTotal": 10468.2,
+      "negativeTotal": -10468.2,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.S",
+          "description": "Temp Crane",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-7000.S",
+          "description": "Decorative Railing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-5000.S",
+          "description": "Structural Steel/Misc. Metals",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-2000.S",
+          "description": "Common Area Doors",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-9000.S",
+          "description": "Painting (interior)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.12-2000.S",
+          "description": "Window Coverings",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 16,
+      "status": "APPROVED",
+      "name": "October Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.09-1000.S",
+              "description": "Scaffold",
+              "amount": 99335
+            },
+            {
+              "budgetCode": "A.09-2400.S",
+              "description": "Plaster",
+              "amount": -99335
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "Office improvement project",
+          "lines": [
+            {
+              "budgetCode": "A.07-2000.S",
+              "description": "Insulation",
+              "amount": 3600
+            },
+            {
+              "budgetCode": "A.12-2000.S",
+              "description": "Window Coverings",
+              "amount": -3600
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "Office improvement project",
+          "lines": [
+            {
+              "budgetCode": "A.09-2000.S",
+              "description": "Drywall",
+              "amount": 10080
+            },
+            {
+              "budgetCode": "A.12-2000.S",
+              "description": "Window Coverings",
+              "amount": -10080
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "Generator fuel",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 60000
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -60000
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "TCP Permit",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 737.25
+            },
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": -737.25
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "Fire alarm permit fee",
+          "lines": [
+            {
+              "budgetCode": "A.27-1000.O",
+              "description": "Fire Alarm - Permit",
+              "amount": 1466.25
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -1466.25
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "Cover overage",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": 585.54
+            },
+            {
+              "budgetCode": "B.00-1900.SVC",
+              "description": "Jobsite Utilities/Misc Equip.",
+              "amount": -585.54
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "Integris PO",
+          "lines": [
+            {
+              "budgetCode": "A.16-1200.S",
+              "description": "Electrical Fixtures",
+              "amount": 26749.01
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -26749.01
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 8,
+      "lineCount": 16,
+      "positiveTotal": 202553.05000000002,
+      "negativeTotal": -202553.05000000002,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.09-1000.S",
+          "description": "Scaffold",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2400.S",
+          "description": "Plaster",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-2000.S",
+          "description": "Insulation",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.12-2000.S",
+          "description": "Window Coverings",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2000.S",
+          "description": "Drywall",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.27-1000.O",
+          "description": "Fire Alarm - Permit",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1900.SVC",
+          "description": "Jobsite Utilities/Misc Equip.",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1200.S",
+          "description": "Electrical Fixtures",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 17,
+      "status": "APPROVED",
+      "name": "November Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Generator & fuel",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 9272.69
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -9272.69
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 328.5
+            },
+            {
+              "budgetCode": "B.00-1365.S",
+              "description": "SWPP",
+              "amount": -328.5
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.21-1000.O",
+              "description": "Fire Sprinkler - Permits",
+              "amount": 3273.76
+            },
+            {
+              "budgetCode": "A.21-1000.S",
+              "description": "Fire Sprinkler",
+              "amount": -3273.76
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1800.SVC",
+              "description": "Field Engineer (Survey)",
+              "amount": 5512
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -5512
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 4,
+      "lineCount": 8,
+      "positiveTotal": 18386.95,
+      "negativeTotal": -18386.95,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1365.S",
+          "description": "SWPP",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.21-1000.O",
+          "description": "Fire Sprinkler - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.21-1000.S",
+          "description": "Fire Sprinkler",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1800.SVC",
+          "description": "Field Engineer (Survey)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 18,
+      "status": "APPROVED",
+      "name": "December 2025 Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Cover commitment CO - in scope",
+          "lines": [
+            {
+              "budgetCode": "A.02-4000.S",
+              "description": "Site Demolition",
+              "amount": 5889
+            },
+            {
+              "budgetCode": "A.02-4800.S",
+              "description": "Earthwork (Grading)",
+              "amount": -5889
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "B.00-1800.SVC",
+              "description": "Field Engineer (Survey)",
+              "amount": 6343
+            },
+            {
+              "budgetCode": "B.00-1970.S",
+              "description": "Temp Crane",
+              "amount": -6343
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "Cover permits",
+          "lines": [
+            {
+              "budgetCode": "A.21-1000.O",
+              "description": "Fire Sprinkler - Permits",
+              "amount": 14719.08
+            },
+            {
+              "budgetCode": "A.12-2000.S",
+              "description": "Window Coverings",
+              "amount": -14719.08
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "Cover permits",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 5398.5
+            },
+            {
+              "budgetCode": "A.12-2000.S",
+              "description": "Window Coverings",
+              "amount": -5398.5
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "Hoist operator labor",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.L",
+              "description": "Temp-Hoist (Labor)",
+              "amount": 3200
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -3200
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "Generator for hoist",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.O",
+              "description": "Temp Hoist - other generator",
+              "amount": 1705
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -1705
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "Generator for crane",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 20147.02
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -20147.02
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "Moved from stone countertops to material line item",
+          "lines": [
+            {
+              "budgetCode": "A.09-4000.M",
+              "description": "Stone - Material",
+              "amount": 70150.33
+            },
+            {
+              "budgetCode": "A.09-4000.S",
+              "description": "Stone Countertops",
+              "amount": -70150.33
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 9,
+          "comment": "Tax on added inverters",
+          "lines": [
+            {
+              "budgetCode": "A.16-1200.S",
+              "description": "Electrical Fixtures",
+              "amount": 3006.69
+            },
+            {
+              "budgetCode": "A.16-1000.S",
+              "description": "Building Electrical",
+              "amount": -3006.69
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 9,
+      "lineCount": 18,
+      "positiveTotal": 130558.62000000001,
+      "negativeTotal": -130558.62000000001,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.02-4000.S",
+          "description": "Site Demolition",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.02-4800.S",
+          "description": "Earthwork (Grading)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1800.SVC",
+          "description": "Field Engineer (Survey)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.S",
+          "description": "Temp Crane",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.21-1000.O",
+          "description": "Fire Sprinkler - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.12-2000.S",
+          "description": "Window Coverings",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.L",
+          "description": "Temp-Hoist (Labor)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.O",
+          "description": "Temp Hoist - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-4000.M",
+          "description": "Stone - Material",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-4000.S",
+          "description": "Stone Countertops",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1200.S",
+          "description": "Electrical Fixtures",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-1000.S",
+          "description": "Building Electrical",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 19,
+      "status": "APPROVED",
+      "name": "January 2026 Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Cover permit",
+          "lines": [
+            {
+              "budgetCode": "A.05-5000.O",
+              "description": "Structural Steel/Misc Metals - permit",
+              "amount": 330.76
+            },
+            {
+              "budgetCode": "A.06-2000.S",
+              "description": "Finish Carpentry",
+              "amount": -330.76
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "Traffic control overage",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": 200
+            },
+            {
+              "budgetCode": "A.06-2000.S",
+              "description": "Finish Carpentry",
+              "amount": -200
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "Temp hoist generator",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.O",
+              "description": "Temp Hoist - other generator",
+              "amount": 8591.12
+            },
+            {
+              "budgetCode": "A.03-1000.S",
+              "description": "Concrete",
+              "amount": -8591.12
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "Hoist labor",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.L",
+              "description": "Temp-Hoist (Labor)",
+              "amount": 5169.04
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -5169.04
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "Crane generator",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 19168.26
+            },
+            {
+              "budgetCode": "A.03-1000.S",
+              "description": "Concrete",
+              "amount": -19168.26
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "Cover stone material PO",
+          "lines": [
+            {
+              "budgetCode": "A.09-4000.M",
+              "description": "Stone - Material",
+              "amount": 189184.1
+            },
+            {
+              "budgetCode": "A.09-4000.S",
+              "description": "Stone Countertops",
+              "amount": -72721.67
+            },
+            {
+              "budgetCode": "A.09-2400.S",
+              "description": "Plaster",
+              "amount": -63737
+            },
+            {
+              "budgetCode": "A.12-2000.S",
+              "description": "Window Coverings",
+              "amount": -8864.42
+            },
+            {
+              "budgetCode": "A.16-4000.S",
+              "description": "Communications/Low Voltage",
+              "amount": -43861.01
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "Cover commitment overage",
+          "lines": [
+            {
+              "budgetCode": "A.21-1000.S",
+              "description": "Fire Sprinkler",
+              "amount": 1510.76
+            },
+            {
+              "budgetCode": "A.12-3000.S",
+              "description": "Casework",
+              "amount": -1510.76
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "Cover overage",
+          "lines": [
+            {
+              "budgetCode": "B.00-1800.SVC",
+              "description": "Field Engineer (Survey)",
+              "amount": 6342.5
+            },
+            {
+              "budgetCode": "A.03-1000.S",
+              "description": "Concrete",
+              "amount": -6342.5
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 9,
+          "comment": "Trucking & fill",
+          "lines": [
+            {
+              "budgetCode": "A.03-1000.M",
+              "description": "Crawlspace Access Panel",
+              "amount": 6399.41
+            },
+            {
+              "budgetCode": "A.03-1000.S",
+              "description": "Concrete",
+              "amount": -6399.41
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 9,
+      "lineCount": 21,
+      "positiveTotal": 236895.95,
+      "negativeTotal": -236895.95000000004,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.05-5000.O",
+          "description": "Structural Steel/Misc Metals - permit",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.06-2000.S",
+          "description": "Finish Carpentry",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.O",
+          "description": "Temp Hoist - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.03-1000.S",
+          "description": "Concrete",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.L",
+          "description": "Temp-Hoist (Labor)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-4000.M",
+          "description": "Stone - Material",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-4000.S",
+          "description": "Stone Countertops",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2400.S",
+          "description": "Plaster",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.12-2000.S",
+          "description": "Window Coverings",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.16-4000.S",
+          "description": "Communications/Low Voltage",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.21-1000.S",
+          "description": "Fire Sprinkler",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.12-3000.S",
+          "description": "Casework",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1800.SVC",
+          "description": "Field Engineer (Survey)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.03-1000.M",
+          "description": "Crawlspace Access Panel",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 20,
+      "status": "APPROVED",
+      "name": "January 2026 - GC internal adjustment",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "C.01-3050.O",
+              "description": "Field Office - Printing (reprographics)",
+              "amount": 2500
+            },
+            {
+              "budgetCode": "C.01-3040.O",
+              "description": "Field Office - Software",
+              "amount": -2500
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 2500,
+      "negativeTotal": -2500,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "C.01-3050.O",
+          "description": "Field Office - Printing (reprographics)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "C.01-3040.O",
+          "description": "Field Office - Software",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 21,
+      "status": "APPROVED",
+      "name": "February 2026 Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Crane generator invoices",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 33950.46
+            },
+            {
+              "budgetCode": "B.00-1970.S",
+              "description": "Temp Crane",
+              "amount": -33950.46
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "Cover commitment overage",
+          "lines": [
+            {
+              "budgetCode": "A.05-7000.S",
+              "description": "Decorative Railing",
+              "amount": 10505
+            },
+            {
+              "budgetCode": "A.07-6000.S",
+              "description": "Sheet Metal",
+              "amount": -10505
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "Cover commitment overage",
+          "lines": [
+            {
+              "budgetCode": "A.09-2000.S",
+              "description": "Drywall",
+              "amount": 5651
+            },
+            {
+              "budgetCode": "A.08-2000.S",
+              "description": "Common Area Doors",
+              "amount": -5651
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "Generator invoices",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.O",
+              "description": "Temp Hoist - other generator",
+              "amount": 14350.63
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -14350.63
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "Hoist labor",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.L",
+              "description": "Temp-Hoist (Labor)",
+              "amount": 5695.49
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -5695.49
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "Permit",
+          "lines": [
+            {
+              "budgetCode": "A.05-5000.O",
+              "description": "Structural Steel/Misc Metals - permit",
+              "amount": 330.76
+            },
+            {
+              "budgetCode": "A.05-5000.S",
+              "description": "Structural Steel/Misc. Metals",
+              "amount": -330.76
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "Permit",
+          "lines": [
+            {
+              "budgetCode": "A.34-1000.O",
+              "description": "Automated Parking - Permits",
+              "amount": 330.76
+            },
+            {
+              "budgetCode": "A.34-1000.S",
+              "description": "Automated Parking",
+              "amount": -330.76
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 9,
+          "comment": "Permit",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 246.75
+            },
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": -246.75
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 10,
+          "comment": "VCON CO & permit",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": 1516.75
+            },
+            {
+              "budgetCode": "B.00-1365.S",
+              "description": "SWPP",
+              "amount": -1516.75
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 9,
+      "lineCount": 18,
+      "positiveTotal": 72577.59999999999,
+      "negativeTotal": -72577.59999999999,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.S",
+          "description": "Temp Crane",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-7000.S",
+          "description": "Decorative Railing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-6000.S",
+          "description": "Sheet Metal",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-2000.S",
+          "description": "Drywall",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-2000.S",
+          "description": "Common Area Doors",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.O",
+          "description": "Temp Hoist - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.L",
+          "description": "Temp-Hoist (Labor)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-5000.O",
+          "description": "Structural Steel/Misc Metals - permit",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-5000.S",
+          "description": "Structural Steel/Misc. Metals",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.34-1000.O",
+          "description": "Automated Parking - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.34-1000.S",
+          "description": "Automated Parking",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1365.S",
+          "description": "SWPP",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 22,
+      "status": "APPROVED",
+      "name": "March 2026 Budget Adjustments",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Crystalia invoice material",
+          "lines": [
+            {
+              "budgetCode": "A.04-2000.M",
+              "description": "Material - exterior partitions",
+              "amount": 23658.8
+            },
+            {
+              "budgetCode": "A.04-2000.S",
+              "description": "CMU",
+              "amount": -23658.8
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "IMS metal plates",
+          "lines": [
+            {
+              "budgetCode": "A.05-5000.M",
+              "description": "Misc Metals Material",
+              "amount": 980.09
+            },
+            {
+              "budgetCode": "A.05-5000.S",
+              "description": "Structural Steel/Misc. Metals",
+              "amount": -980.09
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "Window Wall Permits",
+          "lines": [
+            {
+              "budgetCode": "A.08-8000.O",
+              "description": "Window Wall Permits",
+              "amount": 661.52
+            },
+            {
+              "budgetCode": "A.08-8000.S",
+              "description": "Glazing",
+              "amount": -661.52
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "Global Tile invoice",
+          "lines": [
+            {
+              "budgetCode": "A.09-3000.M",
+              "description": "Tile - Material",
+              "amount": 11561.12
+            },
+            {
+              "budgetCode": "A.09-3000.S",
+              "description": "Tile",
+              "amount": -11561.12
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "Moon Mirror invoice",
+          "lines": [
+            {
+              "budgetCode": "A.10-1000.M",
+              "description": "Mirrors",
+              "amount": 9375.29
+            },
+            {
+              "budgetCode": "A.10-1000.S",
+              "description": "Specialties",
+              "amount": -9375.29
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "Traffic control permits",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.O",
+              "description": "Traffic Control - Permits",
+              "amount": 1311
+            },
+            {
+              "budgetCode": "B.00-1365.S",
+              "description": "SWPP",
+              "amount": -1311
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "Temp hoist labor March",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.L",
+              "description": "Temp-Hoist (Labor)",
+              "amount": 4790.43
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -4790.43
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "Permit",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 165
+            },
+            {
+              "budgetCode": "B.00-1970.S",
+              "description": "Temp Crane",
+              "amount": -165
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 9,
+          "comment": "Cover commitment overage",
+          "lines": [
+            {
+              "budgetCode": "A.07-1000.S",
+              "description": "Waterproofing",
+              "amount": 5420
+            },
+            {
+              "budgetCode": "A.08-1000.S",
+              "description": "Interior Doors",
+              "amount": -5420
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 10,
+          "comment": "Cover commitment overage",
+          "lines": [
+            {
+              "budgetCode": "A.14-2000.S",
+              "description": "Elevators",
+              "amount": 4500
+            },
+            {
+              "budgetCode": "A.08-1000.S",
+              "description": "Interior Doors",
+              "amount": -4500
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 10,
+      "lineCount": 20,
+      "positiveTotal": 62423.25,
+      "negativeTotal": -62423.25,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.04-2000.M",
+          "description": "Material - exterior partitions",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.04-2000.S",
+          "description": "CMU",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-5000.M",
+          "description": "Misc Metals Material",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.05-5000.S",
+          "description": "Structural Steel/Misc. Metals",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-8000.O",
+          "description": "Window Wall Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-8000.S",
+          "description": "Glazing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-3000.M",
+          "description": "Tile - Material",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-3000.S",
+          "description": "Tile",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.10-1000.M",
+          "description": "Mirrors",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.10-1000.S",
+          "description": "Specialties",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.O",
+          "description": "Traffic Control - Permits",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1365.S",
+          "description": "SWPP",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.L",
+          "description": "Temp-Hoist (Labor)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.S",
+          "description": "Temp Crane",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.07-1000.S",
+          "description": "Waterproofing",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-1000.S",
+          "description": "Interior Doors",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.14-2000.S",
+          "description": "Elevators",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 23,
+      "status": "APPROVED",
+      "name": "April - Internal Adjustment for GC's (accountant)",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Move Funds for Accountant",
+          "lines": [
+            {
+              "budgetCode": "C.01-1005.L",
+              "description": "Accountant",
+              "amount": 100000
+            },
+            {
+              "budgetCode": "C.01-5000.O",
+              "description": "GC Excess",
+              "amount": -100000
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 1,
+      "lineCount": 2,
+      "positiveTotal": 100000,
+      "negativeTotal": -100000,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "C.01-1005.L",
+          "description": "Accountant",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "C.01-5000.O",
+          "description": "GC Excess",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    },
+    {
+      "number": 24,
+      "status": "APPROVED",
+      "name": "April 2026 Budget Adjustment",
+      "addToOwnerInvoice": true,
+      "budgetChangeEstimate": 0,
+      "pdfFolder": "data/projects/golden-hill/procore-information/001_CURRENT_BUDGET/budget-revisions/pdfs",
+      "adjustments": [
+        {
+          "adjustmentNumber": 1,
+          "comment": "Microcement subcontract",
+          "lines": [
+            {
+              "budgetCode": "A.09-3500.S",
+              "description": "Microcement",
+              "amount": 323657.88
+            },
+            {
+              "budgetCode": "A.09-3000.S",
+              "description": "Tile",
+              "amount": -298657.88
+            },
+            {
+              "budgetCode": "A.03-1000.S",
+              "description": "Concrete",
+              "amount": -25000
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 2,
+          "comment": "IMS purchase for Mass Timber",
+          "lines": [
+            {
+              "budgetCode": "A.06-1000.O",
+              "description": "Mass Timber - Other",
+              "amount": 490.05
+            },
+            {
+              "budgetCode": "A.02-7500.S",
+              "description": "Site Concrete",
+              "amount": -490.05
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 3,
+          "comment": "Projected overage",
+          "lines": [
+            {
+              "budgetCode": "B.00-1200.SVC",
+              "description": "Portable Toilets/Handwash",
+              "amount": 16000
+            },
+            {
+              "budgetCode": "B.00-1365.S",
+              "description": "SWPP",
+              "amount": -16000
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 4,
+          "comment": "Traffic control supplies and submittals",
+          "lines": [
+            {
+              "budgetCode": "B.00-1310.S",
+              "description": "Temporary Traffic Control",
+              "amount": 1431.92
+            },
+            {
+              "budgetCode": "B.00-1900.SVC",
+              "description": "Jobsite Utilities/Misc Equip.",
+              "amount": -1431.92
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 5,
+          "comment": "Safety consultant overage",
+          "lines": [
+            {
+              "budgetCode": "B.00-1720.S",
+              "description": "Safety",
+              "amount": 5000
+            },
+            {
+              "budgetCode": "B.00-1320.SVC",
+              "description": "General Labor",
+              "amount": -5000
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 6,
+          "comment": "Hoist operator",
+          "lines": [
+            {
+              "budgetCode": "B.00-1960.L",
+              "description": "Temp-Hoist (Labor)",
+              "amount": 4588.57
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -4588.57
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 7,
+          "comment": "Crane overage",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.S",
+              "description": "Temp Crane",
+              "amount": 52246.93
+            },
+            {
+              "budgetCode": "B.00-1960.S",
+              "description": "Temp Hoist",
+              "amount": -30000
+            },
+            {
+              "budgetCode": "C.01-3010.S",
+              "description": "Field -Temp Utility - Power",
+              "amount": -22246.93
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 8,
+          "comment": "Generator",
+          "lines": [
+            {
+              "budgetCode": "B.00-1970.O",
+              "description": "Temp Crane - other generator",
+              "amount": 820
+            },
+            {
+              "budgetCode": "B.00-1970.S",
+              "description": "Temp Crane",
+              "amount": -820
+            }
+          ]
+        },
+        {
+          "adjustmentNumber": 9,
+          "comment": "",
+          "lines": [
+            {
+              "budgetCode": "A.08-2000.O",
+              "description": "Common Area Doors - Other",
+              "amount": 125
+            },
+            {
+              "budgetCode": "A.08-2000.S",
+              "description": "Common Area Doors",
+              "amount": -125
+            }
+          ]
+        }
+      ],
+      "adjustmentCount": 9,
+      "lineCount": 20,
+      "positiveTotal": 404360.35,
+      "negativeTotal": -404360.35,
+      "net": 0,
+      "budgetCodeTies": [
+        {
+          "budgetCode": "A.09-3500.S",
+          "description": "Microcement",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.09-3000.S",
+          "description": "Tile",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.03-1000.S",
+          "description": "Concrete",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.06-1000.O",
+          "description": "Mass Timber - Other",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.02-7500.S",
+          "description": "Site Concrete",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1200.SVC",
+          "description": "Portable Toilets/Handwash",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1365.S",
+          "description": "SWPP",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1310.S",
+          "description": "Temporary Traffic Control",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1900.SVC",
+          "description": "Jobsite Utilities/Misc Equip.",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1720.S",
+          "description": "Safety",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1320.SVC",
+          "description": "General Labor",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.L",
+          "description": "Temp-Hoist (Labor)",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1960.S",
+          "description": "Temp Hoist",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.S",
+          "description": "Temp Crane",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "C.01-3010.S",
+          "description": "Field -Temp Utility - Power",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "B.00-1970.O",
+          "description": "Temp Crane - other generator",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-2000.O",
+          "description": "Common Area Doors - Other",
+          "role": "line item"
+        },
+        {
+          "budgetCode": "A.08-2000.S",
+          "description": "Common Area Doors",
+          "role": "line item"
+        }
+      ],
+      "tieConfidence": "exact-pdf",
+      "tieNotes": "Exact line-level adjustment extracted from CAST BUILD A.O budget revision PDF."
+    }
+  ]
+}

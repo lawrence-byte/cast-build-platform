@@ -10,7 +10,7 @@ function safeStep(item){
 }
 function pairRows(pairs){return (pairs||[]).map(([name,count])=>`<tr><td>${esc(name||'Uncategorized')}</td><td>${esc(count)}</td></tr>`).join('') || '<tr><td colspan="2">No metadata available.</td></tr>';}
 (async()=>{
-  const sub=await loadJson('/data/projects/golden-hill/submittal-summary.json');
+  const sub=await loadJson('/safe-data/projects/golden-hill/submittal-summary.json');
   const statuses=sub.statusCounts||{};
   const types=Object.entries(sub.typeCounts||{}).sort((a,b)=>b[1]-a[1]);
   document.querySelector('[data-generated]').textContent=`Generated ${esc(sub.generatedAt||'from local metadata')}`;
@@ -27,4 +27,4 @@ function pairRows(pairs){return (pairs||[]).map(([name,count])=>`<tr><td>${esc(n
   const statusPairs=Object.entries(statuses).sort((a,b)=>b[1]-a[1]);
   document.querySelector('[data-status-count]').textContent=`${statusPairs.length} statuses`;
   document.querySelector('[data-status-rows]').innerHTML=statusPairs.map(([status,count])=>`<tr><td>${statusPill(status)}</td><td>${esc(count)}</td><td>${pct(count,sub.total||0)}</td></tr>`).join('') || '<tr><td colspan="3">No status metadata available.</td></tr>';
-})().catch(err=>{document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note">Could not load submittal metadata: ${esc(err.message)}</div>`);});
+})().catch(err=>{document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note">Submittal metadata unavailable. Refresh the page or check the latest deployment.</div>`);});

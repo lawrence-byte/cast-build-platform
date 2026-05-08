@@ -1,0 +1,2796 @@
+{
+  "generatedAt": "2026-05-06",
+  "csvRows": 458,
+  "pdfCrossCheck": {
+    "pdfParsedCount": 457,
+    "csvCount": 458,
+    "missingInPdfCount": 10,
+    "extraInPdfCount": 13,
+    "revisionMismatchCount": 4,
+    "missingInPdf": [
+      "100461-1-D",
+      "100461-2-D",
+      "100461-3-D",
+      "100461-4-D",
+      "100461-5-D",
+      "100461-6-D",
+      "100461-7-D",
+      "100461-8-D",
+      "100461-9-D",
+      "UDG"
+    ],
+    "extraInPdf": [
+      "100461-1",
+      "100461-11-",
+      "100461-14-",
+      "100461-2",
+      "100461-3",
+      "100461-4",
+      "100461-5",
+      "100461-6",
+      "100461-7",
+      "100461-8-",
+      "100461-9-",
+      "100461-T0",
+      "100461-T07-"
+    ],
+    "revisionMismatches": [
+      {
+        "drawingNo": "100461-11- D",
+        "csvRevision": 0,
+        "pdfRevision": 1,
+        "title": "IRRIGATIONS PLANS FOR:"
+      },
+      {
+        "drawingNo": "100461-14- D",
+        "csvRevision": 0,
+        "pdfRevision": 1,
+        "title": "NOTE: ALL LANDSCAPING AND IRRIGATION SHOWN IS PRIVATE"
+      },
+      {
+        "drawingNo": "100461-T0 5-D",
+        "csvRevision": 2,
+        "pdfRevision": 0,
+        "title": "TRAFFIC CONTROL 25TH STREET UTILITIES - PHASE II"
+      },
+      {
+        "drawingNo": "100461 -T07- D",
+        "csvRevision": 1,
+        "pdfRevision": 0,
+        "title": "TRAFFIC CONTROL CURB RAMP PLAN"
+      }
+    ]
+  },
+  "rfiLinkedDrawingCount": 117,
+  "unresolvedRfiReferenceCount": 0,
+  "linkedDrawings": [
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-1.01",
+      "drawingNoKey": "L-1.01",
+      "title": "GROUND FLOOR LANDSCAPE & HARDSCAPE PLAN",
+      "revision": 6,
+      "drawingDate": "01/22/2026",
+      "receivedDate": "",
+      "set": "RFI 221 Amenity Planter Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "221"
+      ],
+      "linkedRfis": [
+        {
+          "number": "221",
+          "revision": "0",
+          "subject": "Amenity Planter Update ",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/13/26",
+          "closedDate": "01/26/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-1.02",
+      "drawingNoKey": "L-1.02",
+      "title": "2ND FLOOR LANDSCAPE PLAN",
+      "revision": 7,
+      "drawingDate": "02/10/2026",
+      "receivedDate": "",
+      "set": "RFI 239 Landscape Updates per City Pool Comments",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "239"
+      ],
+      "linkedRfis": [
+        {
+          "number": "239",
+          "revision": "0",
+          "subject": "Landscape Updates per City Pool Comments",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/09/26",
+          "closedDate": "02/10/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-1.07",
+      "drawingNoKey": "L-1.07",
+      "title": "7TH FLOOR LANDSCAPE PLAN",
+      "revision": 6,
+      "drawingDate": "01/22/2026",
+      "receivedDate": "",
+      "set": "RFI 221 Amenity Planter Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "221"
+      ],
+      "linkedRfis": [
+        {
+          "number": "221",
+          "revision": "0",
+          "subject": "Amenity Planter Update ",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/13/26",
+          "closedDate": "01/26/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-1.08",
+      "drawingNoKey": "L-1.08",
+      "title": "8TH FLOOR LANDSCAPE PLAN",
+      "revision": 6,
+      "drawingDate": "01/22/2026",
+      "receivedDate": "",
+      "set": "RFI 221 Amenity Planter Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "221"
+      ],
+      "linkedRfis": [
+        {
+          "number": "221",
+          "revision": "0",
+          "subject": "Amenity Planter Update ",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/13/26",
+          "closedDate": "01/26/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-3.00",
+      "drawingNoKey": "L-3.00",
+      "title": "DETAILS",
+      "revision": 6,
+      "drawingDate": "01/22/2026",
+      "receivedDate": "",
+      "set": "RFI 221 Amenity Planter Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "221"
+      ],
+      "linkedRfis": [
+        {
+          "number": "221",
+          "revision": "0",
+          "subject": "Amenity Planter Update ",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/13/26",
+          "closedDate": "01/26/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-3.01",
+      "drawingNoKey": "L-3.01",
+      "title": "DETAILS",
+      "revision": 3,
+      "drawingDate": "01/22/2026",
+      "receivedDate": "",
+      "set": "RFI 221 Amenity Planter Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "221"
+      ],
+      "linkedRfis": [
+        {
+          "number": "221",
+          "revision": "0",
+          "subject": "Amenity Planter Update ",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/13/26",
+          "closedDate": "01/26/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.00",
+      "drawingNoKey": "L-4.00",
+      "title": "GROUND FLOOR IRRIGATION PLAN",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.01",
+      "drawingNoKey": "L-4.01",
+      "title": "2ND FLOOR IRRIGATION PLAN",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.02",
+      "drawingNoKey": "L-4.02",
+      "title": "7TH FLOOR IRRIGATION PLAN",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.03",
+      "drawingNoKey": "L-4.03",
+      "title": "8TH FLOOR IRRIGATION PLAN",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.04",
+      "drawingNoKey": "L-4.04",
+      "title": "IRRIGATION LEGEND AND NOTES",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.05",
+      "drawingNoKey": "L-4.05",
+      "title": "IRRIGATION DETAILS",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.06",
+      "drawingNoKey": "L-4.06",
+      "title": "IRRIGATION DETAILS",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Landscape",
+      "drawingNo": "L-4.07",
+      "drawingNoKey": "L-4.07",
+      "title": "IRRIGATION DETAILS",
+      "revision": 2,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 069 - BALCONY LANDSCAPING",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "69"
+      ],
+      "linkedRfis": [
+        {
+          "number": "69",
+          "revision": "0",
+          "subject": "Balcony Landscaping",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "05/15/25",
+          "closedDate": "10/21/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_101",
+      "drawingNoKey": "A_101",
+      "title": "1ST FLOOR PLAN",
+      "revision": 14,
+      "drawingDate": "",
+      "receivedDate": "",
+      "set": "RFI 253 Commercial Stair Design",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "253"
+      ],
+      "linkedRfis": [
+        {
+          "number": "253",
+          "revision": "0",
+          "subject": "Commercial Stair Design",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/25/26",
+          "closedDate": "03/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_106",
+      "drawingNoKey": "A_106",
+      "title": "6TH FLOOR PLAN",
+      "revision": 9,
+      "drawingDate": "03/18/2026",
+      "receivedDate": "",
+      "set": "RFI 264 L6 Demising Wall at Unit S5",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "264"
+      ],
+      "linkedRfis": [
+        {
+          "number": "264",
+          "revision": "0",
+          "subject": "L6 Demising Wall at Unit S5",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "03/24/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_107",
+      "drawingNoKey": "A_107",
+      "title": "7TH FLOOR PLAN",
+      "revision": 11,
+      "drawingDate": "01/22/2026",
+      "receivedDate": "",
+      "set": "RFI 221 Amenity Planter Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "221"
+      ],
+      "linkedRfis": [
+        {
+          "number": "221",
+          "revision": "0",
+          "subject": "Amenity Planter Update ",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/13/26",
+          "closedDate": "01/26/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_108S",
+      "drawingNoKey": "A_108S",
+      "title": "8TH FLOOR SLAB PLAN",
+      "revision": 11,
+      "drawingDate": "03/18/2026",
+      "receivedDate": "",
+      "set": "RFI 261 L8 Scupper Relocation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "261"
+      ],
+      "linkedRfis": [
+        {
+          "number": "261",
+          "revision": "0",
+          "subject": "L8 Scupper Relocation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "03/18/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_372",
+      "drawingNoKey": "A_372",
+      "title": "ELEVATORS PLANS & SECTION",
+      "revision": 3,
+      "drawingDate": "02/19/2026",
+      "receivedDate": "",
+      "set": "RFI 246 Elevator Penthouse Elevations & Details",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "246"
+      ],
+      "linkedRfis": [
+        {
+          "number": "246",
+          "revision": "0",
+          "subject": "Elevator Penthouse Elevations & Details",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/18/26",
+          "closedDate": "03/09/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_376",
+      "drawingNoKey": "A_376",
+      "title": "COMMERCIAL STAIR",
+      "revision": 1,
+      "drawingDate": "04/06/2026",
+      "receivedDate": "",
+      "set": "RFI 253 Commercial Stair Design R1",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "253"
+      ],
+      "linkedRfis": [
+        {
+          "number": "253",
+          "revision": "0",
+          "subject": "Commercial Stair Design",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/25/26",
+          "closedDate": "03/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_405",
+      "drawingNoKey": "A_405",
+      "title": "ENLARGED PLANS - STUDIO UNITS",
+      "revision": 6,
+      "drawingDate": "03/18/2026",
+      "receivedDate": "",
+      "set": "RFI 264 L6 Demising Wall at Unit S5",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "264"
+      ],
+      "linkedRfis": [
+        {
+          "number": "264",
+          "revision": "0",
+          "subject": "L6 Demising Wall at Unit S5",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "03/24/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_420",
+      "drawingNoKey": "A_420",
+      "title": "ENLARGED ELEVATIONS",
+      "revision": 3,
+      "drawingDate": "02/12/2026",
+      "receivedDate": "",
+      "set": "RFI 241 Panda Door Concrete Header",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "241"
+      ],
+      "linkedRfis": [
+        {
+          "number": "241",
+          "revision": "0",
+          "subject": "Panda Door Concrete Header",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/17/26",
+          "closedDate": "03/03/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_502",
+      "drawingNoKey": "A_502",
+      "title": "REFLECTED CEILING PLAN LVL 2",
+      "revision": 12,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_503",
+      "drawingNoKey": "A_503",
+      "title": "REFLECTED CEILING PLAN LVL 3",
+      "revision": 11,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_504",
+      "drawingNoKey": "A_504",
+      "title": "REFLECTED CEILING PLAN LVL 4",
+      "revision": 10,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_505",
+      "drawingNoKey": "A_505",
+      "title": "REFLECTED CEILING PLAN LVL 5",
+      "revision": 11,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_506",
+      "drawingNoKey": "A_506",
+      "title": "REFLECTED CEILING PLAN LVL 6",
+      "revision": 10,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_507",
+      "drawingNoKey": "A_507",
+      "title": "REFLECTED CEILING PLAN LVL 7",
+      "revision": 13,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_508",
+      "drawingNoKey": "A_508",
+      "title": "REFLECTED CEILING PLAN LVL 8",
+      "revision": 11,
+      "drawingDate": "04/08/2026",
+      "receivedDate": "",
+      "set": "RFI 271 RCP Updates",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "271"
+      ],
+      "linkedRfis": [
+        {
+          "number": "271",
+          "revision": "0",
+          "subject": "RCP Updates",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/14/26",
+          "closedDate": "04/08/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_712",
+      "drawingNoKey": "A_712",
+      "title": "PODIUM DETAILS",
+      "revision": 7,
+      "drawingDate": "01/12/2026",
+      "receivedDate": "",
+      "set": "RFI 218 Level 7 Slab Plan & Structural Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "218"
+      ],
+      "linkedRfis": [
+        {
+          "number": "218",
+          "revision": "0",
+          "subject": "Level 7 Slab Plan & Structural Update Required",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/06/26",
+          "closedDate": "01/19/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_713",
+      "drawingNoKey": "A_713",
+      "title": "PODIUM DETAILS",
+      "revision": 7,
+      "drawingDate": "01/12/2026",
+      "receivedDate": "",
+      "set": "RFI 218 Level 7 Slab Plan & Structural Update",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "218"
+      ],
+      "linkedRfis": [
+        {
+          "number": "218",
+          "revision": "0",
+          "subject": "Level 7 Slab Plan & Structural Update Required",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/06/26",
+          "closedDate": "01/19/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_721",
+      "drawingNoKey": "A_721",
+      "title": "EXTERIOR DETAILS",
+      "revision": 3,
+      "drawingDate": "03/18/2026",
+      "receivedDate": "",
+      "set": "RFI 244 Flashing for Exterior Waterproofing",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "244"
+      ],
+      "linkedRfis": [
+        {
+          "number": "244",
+          "revision": "0",
+          "subject": "Flashing for Exterior Waterproofing",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/17/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_800",
+      "drawingNoKey": "A_800",
+      "title": "BATHROOMS",
+      "revision": 5,
+      "drawingDate": "12/24/2025",
+      "receivedDate": "",
+      "set": "RFI 215 Unit Bathroom Elevations - Mirror & Wall Sconce",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "215"
+      ],
+      "linkedRfis": [
+        {
+          "number": "215",
+          "revision": "0",
+          "subject": "Unit Bathroom Elevations - Mirror & Wall Sconce",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "12/31/25",
+          "closedDate": "01/22/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_801",
+      "drawingNoKey": "A_801",
+      "title": "BATHROOMS",
+      "revision": 5,
+      "drawingDate": "12/24/2025",
+      "receivedDate": "",
+      "set": "RFI 215 Unit Bathroom Elevations - Mirror & Wall Sconce",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "215"
+      ],
+      "linkedRfis": [
+        {
+          "number": "215",
+          "revision": "0",
+          "subject": "Unit Bathroom Elevations - Mirror & Wall Sconce",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "12/31/25",
+          "closedDate": "01/22/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Architectural",
+      "drawingNo": "A_802",
+      "drawingNoKey": "A_802",
+      "title": "BATHROOMS",
+      "revision": 5,
+      "drawingDate": "02/12/2026",
+      "receivedDate": "",
+      "set": "RFI 238 Diaper Stations in L7 Amenity Restrooms",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "238"
+      ],
+      "linkedRfis": [
+        {
+          "number": "238",
+          "revision": "0",
+          "subject": "Diaper Stations in L7 Amenity Restrooms",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/04/26",
+          "closedDate": "02/12/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M201",
+      "drawingNoKey": "M201",
+      "title": "MECHANICAL NEW WORK 1ST FLOORPLAN",
+      "revision": 8,
+      "drawingDate": "01/20/2026",
+      "receivedDate": "",
+      "set": "RFI 199 AC Condensers Relocation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "199"
+      ],
+      "linkedRfis": [
+        {
+          "number": "199",
+          "revision": "0",
+          "subject": "AC Condensers Relocation",
+          "status": "Closed - Revised",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "11/25/25",
+          "closedDate": "01/20/2026"
+        },
+        {
+          "number": "199",
+          "revision": "1",
+          "subject": "AC Condensers Relocation",
+          "status": "Closed - Revised",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/03/26",
+          "closedDate": "04/29/2026"
+        },
+        {
+          "number": "199",
+          "revision": "2",
+          "subject": "AC Condensers Relocation",
+          "status": "Open",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "05/06/26",
+          "closedDate": ""
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M202",
+      "drawingNoKey": "M202",
+      "title": "MECHANICAL NEW WORK 2ND FLOOR PLAN",
+      "revision": 5,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M203",
+      "drawingNoKey": "M203",
+      "title": "MECHANICAL NEW WORK 3RD FLOOR PLAN",
+      "revision": 5,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M204",
+      "drawingNoKey": "M204",
+      "title": "MECHANICAL NEW WORK 4TH FLOOR PLAN",
+      "revision": 4,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M205",
+      "drawingNoKey": "M205",
+      "title": "MECHANICAL NEW WORK 5TH FLOOR PLAN",
+      "revision": 4,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M206",
+      "drawingNoKey": "M206",
+      "title": "MECHANICAL NEW WORK 6TH FLOOR PLAN",
+      "revision": 5,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M207",
+      "drawingNoKey": "M207",
+      "title": "MECHANICAL NEW WORK 7TH FLOOR PLAN",
+      "revision": 7,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M208",
+      "drawingNoKey": "M208",
+      "title": "MECHANICAL NEW WORK 8TH FLOOR PLAN",
+      "revision": 4,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Mechanical",
+      "drawingNo": "M209",
+      "drawingNoKey": "M209",
+      "title": "MECHANICAL NEW WORK ROOF PLAN",
+      "revision": 6,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 233 Exhaust Louvers Relocations",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "233"
+      ],
+      "linkedRfis": [
+        {
+          "number": "233",
+          "revision": "0",
+          "subject": "Exhaust Louvers Relocations",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P001",
+      "drawingNoKey": "P001",
+      "title": "PLUMBING LEGEND & GENERAL NOTES",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P003",
+      "drawingNoKey": "P003",
+      "title": "PLUMBING NOTES & SCHEDULES",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P004",
+      "drawingNoKey": "P004",
+      "title": "PLUMBING ISOMETRIC",
+      "revision": 3,
+      "drawingDate": "10/27/2025",
+      "receivedDate": "",
+      "set": "RFI 164 PL POOL DISCREPANCIES",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "164"
+      ],
+      "linkedRfis": [
+        {
+          "number": "164",
+          "revision": "0",
+          "subject": "Pool & Plumbing Discrepancies",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/22/25",
+          "closedDate": "10/27/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P008",
+      "drawingNoKey": "P008",
+      "title": "PLUMBING DOMESTIC WATER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P009",
+      "drawingNoKey": "P009",
+      "title": "PLUMBING WASTE AND VENT RISER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P010",
+      "drawingNoKey": "P010",
+      "title": "PLUMBING WASTE AND VENT RISER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P011",
+      "drawingNoKey": "P011",
+      "title": "PLUMBING WASTE AND VENT RISER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P012",
+      "drawingNoKey": "P012",
+      "title": "PLUMBING WASTE AND VENT RISER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P013",
+      "drawingNoKey": "P013",
+      "title": "PLUMBING WASTE AND VENT RISER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P014",
+      "drawingNoKey": "P014",
+      "title": "PLUMBING WASTE AND VENT RISER DIAGRAM",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P217",
+      "drawingNoKey": "P217",
+      "title": "PLUMBING NEW WORK ROOF PLAN",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P401",
+      "drawingNoKey": "P401",
+      "title": "PLUMBING DETAILS",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P402",
+      "drawingNoKey": "P402",
+      "title": "PLUMBING DETAILS",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P403",
+      "drawingNoKey": "P403",
+      "title": "PLUMBING DETAILS",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Plumbing",
+      "drawingNo": "P501",
+      "drawingNoKey": "P501",
+      "title": "PLUMBING SPECIFICATIONS",
+      "revision": 2,
+      "drawingDate": "07/09/2025",
+      "receivedDate": "",
+      "set": "RFI 099 LATEST PLUMBING SET",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "99"
+      ],
+      "linkedRfis": [
+        {
+          "number": "99",
+          "revision": "0",
+          "subject": "Latest Plumbing Set",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/16/25",
+          "closedDate": "07/09/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E001",
+      "drawingNoKey": "E001",
+      "title": "ELECTRICAL NOTE SHEET",
+      "revision": 4,
+      "drawingDate": "07/15/2025",
+      "receivedDate": "",
+      "set": "RFI 098 ALUMINUM FEEDER SCHEDULE",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "98"
+      ],
+      "linkedRfis": [
+        {
+          "number": "98",
+          "revision": "0",
+          "subject": "Request for Aluminum Feeder Schedule",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "07/15/25",
+          "closedDate": "07/15/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E002",
+      "drawingNoKey": "E002",
+      "title": "LIGHT FIXTURE SCHEDULE",
+      "revision": 3,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 237 Unit Entry Door Lights",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "237"
+      ],
+      "linkedRfis": [
+        {
+          "number": "237",
+          "revision": "0",
+          "subject": "Unit Entry Door Lights",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "03/23/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E003",
+      "drawingNoKey": "E003",
+      "title": "LIGHTING CONTROL DIAGRAMS",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E004",
+      "drawingNoKey": "E004",
+      "title": "INDOOR TITLE 24",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E005",
+      "drawingNoKey": "E005",
+      "title": "EXTERIOR TITLE 24",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E006",
+      "drawingNoKey": "E006",
+      "title": "SOLAR READY TITLE 24",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E007",
+      "drawingNoKey": "E007",
+      "title": "POWER DISTRIBUTION TITLE 24",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E100",
+      "drawingNoKey": "E100",
+      "title": "SITE PLAN",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E202",
+      "drawingNoKey": "E202",
+      "title": "1ST FLOOR LIGHTING PLAN",
+      "revision": 7,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E203",
+      "drawingNoKey": "E203",
+      "title": "2ND FLOOR LIGHTING PLAN",
+      "revision": 5,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E204",
+      "drawingNoKey": "E204",
+      "title": "3RD FLOOR LIGHTING PLAN",
+      "revision": 6,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E205",
+      "drawingNoKey": "E205",
+      "title": "4TH FLOOR LIGHTING PLAN",
+      "revision": 6,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E206",
+      "drawingNoKey": "E206",
+      "title": "5TH FLOOR LIGHTING PLAN",
+      "revision": 6,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E207",
+      "drawingNoKey": "E207",
+      "title": "6TH FLOOR LIGHTING PLAN",
+      "revision": 6,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E208",
+      "drawingNoKey": "E208",
+      "title": "7TH FLOOR LIGHTING PLAN",
+      "revision": 7,
+      "drawingDate": "04/01/2026",
+      "receivedDate": "",
+      "set": "RFI 270 Light Fixtures at Concrete",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "270"
+      ],
+      "linkedRfis": [
+        {
+          "number": "270",
+          "revision": "0",
+          "subject": "Light Fixtures at Concrete Ceilings",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "04/06/26",
+          "closedDate": "04/01/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E209",
+      "drawingNoKey": "E209",
+      "title": "8TH FLOOR LIGHTING PLAN",
+      "revision": 3,
+      "drawingDate": "03/19/2026",
+      "receivedDate": "",
+      "set": "RFI 237 Unit Entry Door Lights",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "237"
+      ],
+      "linkedRfis": [
+        {
+          "number": "237",
+          "revision": "0",
+          "subject": "Unit Entry Door Lights",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "03/23/26",
+          "closedDate": "03/23/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E210",
+      "drawingNoKey": "E210",
+      "title": "1ST FLOOR EGRESS LIGHTING PHOTOMETRICS",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E211",
+      "drawingNoKey": "E211",
+      "title": "2ND FLOOR EGRESS LIGHTING PHOTOMETRICS",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E212",
+      "drawingNoKey": "E212",
+      "title": "3RD-6TH FLOOR TYPICAL EGRESS PHOTOMETRICS",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E213",
+      "drawingNoKey": "E213",
+      "title": "7TH FLOOR EGRESS PHOTOMETRICS",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E214",
+      "drawingNoKey": "E214",
+      "title": "8TH FLOOR EGRESS PHOTOMETRICS",
+      "revision": 2,
+      "drawingDate": "06/05/2025",
+      "receivedDate": "",
+      "set": "RFI 080 UPDATED ELECTRICAL FOR FIRE PUMP",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "80"
+      ],
+      "linkedRfis": [
+        {
+          "number": "80",
+          "revision": "0",
+          "subject": "Updated Electrical for Fire Pump",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/05/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E301",
+      "drawingNoKey": "E301",
+      "title": "1ST FLOOR POWER PLAN",
+      "revision": 10,
+      "drawingDate": "01/14/2026",
+      "receivedDate": "",
+      "set": "RFI 226 Power to Storefront Doors",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "226"
+      ],
+      "linkedRfis": [
+        {
+          "number": "226",
+          "revision": "0",
+          "subject": "Power to Storefront Doors",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/19/26",
+          "closedDate": "01/14/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E302",
+      "drawingNoKey": "E302",
+      "title": "2ND FLOOR POWER PLAN",
+      "revision": 3,
+      "drawingDate": "09/19/2025",
+      "receivedDate": "",
+      "set": "RFI 158 DOOR MAG HOLD POWER",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "158"
+      ],
+      "linkedRfis": [
+        {
+          "number": "158",
+          "revision": "0",
+          "subject": "Mag Hold Power ",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/19/25",
+          "closedDate": "09/19/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E303",
+      "drawingNoKey": "E303",
+      "title": "3RD FLOOR POWER PLAN",
+      "revision": 3,
+      "drawingDate": "09/19/2025",
+      "receivedDate": "",
+      "set": "RFI 158 DOOR MAG HOLD POWER",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "158"
+      ],
+      "linkedRfis": [
+        {
+          "number": "158",
+          "revision": "0",
+          "subject": "Mag Hold Power ",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/19/25",
+          "closedDate": "09/19/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E304",
+      "drawingNoKey": "E304",
+      "title": "4TH FLOOR POWER PLAN",
+      "revision": 3,
+      "drawingDate": "09/19/2025",
+      "receivedDate": "",
+      "set": "RFI 158 DOOR MAG HOLD POWER",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "158"
+      ],
+      "linkedRfis": [
+        {
+          "number": "158",
+          "revision": "0",
+          "subject": "Mag Hold Power ",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/19/25",
+          "closedDate": "09/19/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E305",
+      "drawingNoKey": "E305",
+      "title": "5TH FLOOR POWER PLAN",
+      "revision": 3,
+      "drawingDate": "09/19/2025",
+      "receivedDate": "",
+      "set": "RFI 158 DOOR MAG HOLD POWER",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "158"
+      ],
+      "linkedRfis": [
+        {
+          "number": "158",
+          "revision": "0",
+          "subject": "Mag Hold Power ",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/19/25",
+          "closedDate": "09/19/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E306",
+      "drawingNoKey": "E306",
+      "title": "6TH FLOOR POWER PLAN",
+      "revision": 3,
+      "drawingDate": "09/19/2025",
+      "receivedDate": "",
+      "set": "RFI 158 DOOR MAG HOLD POWER",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "158"
+      ],
+      "linkedRfis": [
+        {
+          "number": "158",
+          "revision": "0",
+          "subject": "Mag Hold Power ",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/19/25",
+          "closedDate": "09/19/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E307",
+      "drawingNoKey": "E307",
+      "title": "7TH FLOOR POWER PLAN",
+      "revision": 8,
+      "drawingDate": "02/25/2026",
+      "receivedDate": "",
+      "set": "RFI 251 Amenity Room Power",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "251"
+      ],
+      "linkedRfis": [
+        {
+          "number": "251",
+          "revision": "0",
+          "subject": "Amenity Room Power",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/23/26",
+          "closedDate": "03/09/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E308",
+      "drawingNoKey": "E308",
+      "title": "8TH FLOOR POWER PLAN",
+      "revision": 3,
+      "drawingDate": "09/19/2025",
+      "receivedDate": "",
+      "set": "RFI 158 DOOR MAG HOLD POWER",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "158"
+      ],
+      "linkedRfis": [
+        {
+          "number": "158",
+          "revision": "0",
+          "subject": "Mag Hold Power ",
+          "status": "Closed",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "09/19/25",
+          "closedDate": "09/19/2025"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E309",
+      "drawingNoKey": "E309",
+      "title": "ROOF PLAN",
+      "revision": 5,
+      "drawingDate": "02/11/2026",
+      "receivedDate": "",
+      "set": "RFI 077.1 Elevator Hoistway Venting",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "77.1"
+      ],
+      "linkedRfis": [
+        {
+          "number": "77",
+          "revision": "0",
+          "subject": "Elevator Hoistway Venting",
+          "status": "Closed - Revised",
+          "manager": "Carlos Gutierrez (Cast Build)",
+          "dueDate": "06/12/25",
+          "closedDate": "06/13/2025"
+        },
+        {
+          "number": "77",
+          "revision": "1",
+          "subject": "Elevator Hoistway Venting",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "02/09/26",
+          "closedDate": "02/11/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E400",
+      "drawingNoKey": "E400",
+      "title": "ENLARGED PLANS",
+      "revision": 10,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E401",
+      "drawingNoKey": "E401",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 8,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E402",
+      "drawingNoKey": "E402",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 8,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E403",
+      "drawingNoKey": "E403",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 8,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E404",
+      "drawingNoKey": "E404",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 8,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E405",
+      "drawingNoKey": "E405",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 9,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E406",
+      "drawingNoKey": "E406",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 9,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E407",
+      "drawingNoKey": "E407",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 9,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E408",
+      "drawingNoKey": "E408",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 8,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E409",
+      "drawingNoKey": "E409",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 8,
+      "drawingDate": "02/04/2026",
+      "receivedDate": "",
+      "set": "RFI 232 Appliance & Wall Unit Power Confirmation",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "232"
+      ],
+      "linkedRfis": [
+        {
+          "number": "232",
+          "revision": "0",
+          "subject": "Appliance & Wall Unit Power Confirmation",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "01/30/26",
+          "closedDate": "02/05/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    },
+    {
+      "discipline": "Electrical",
+      "drawingNo": "E410",
+      "drawingNoKey": "E410",
+      "title": "TYPICAL UNIT PLANS",
+      "revision": 10,
+      "drawingDate": "02/27/2026",
+      "receivedDate": "",
+      "set": "RFI 254 L8 Power Modifications",
+      "sourceType": "RFI",
+      "rfiRefs": [
+        "254"
+      ],
+      "linkedRfis": [
+        {
+          "number": "254",
+          "revision": "0",
+          "subject": "L8 Power Modifications & Clarifications",
+          "status": "Closed",
+          "manager": "Jackie Villanueva (Cast Build)",
+          "dueDate": "03/03/26",
+          "closedDate": "03/02/2026"
+        }
+      ],
+      "hasRfiLink": true,
+      "crossRefStatus": "linked-rfi"
+    }
+  ],
+  "unresolvedRfiReferences": []
+}

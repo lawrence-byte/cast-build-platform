@@ -1,0 +1,4453 @@
+{
+  "projectName": "Alüm",
+  "source": "Local Dropbox sync folder for CAST BUILD A.O exports",
+  "localPath": "private-dropbox-path-redacted",
+  "currentBudgetPath": "private-dropbox-path-redacted",
+  "currentBudgetStatus": "available",
+  "status": "indexed",
+  "generatedAt": "2026-05-08T15:46:29.487Z",
+  "totalFiles": 492,
+  "totalBytes": 551931435,
+  "totalSizeLabel": "526.4 MB",
+  "extensionCounts": {
+    "pdf": 487,
+    "csv": 4,
+    "xlsx": 1
+  },
+  "topFolderCounts": {
+    "Current Drawings": 460,
+    "001_CURRENT BUDGET": 28,
+    "RFIs": 2,
+    "Submittals": 2
+  },
+  "files": [
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-1-INTERNAL_BUDGET_ADJUSTMENT-MAY_2025-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-1-INTERNAL_BUDGET_ADJUSTMENT-MAY_2025-2026-05-06.pdf",
+      "size": 125192,
+      "sizeLabel": "122.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:17:01.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-2-Mass_Timber_Install-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-2-Mass_Timber_Install-2026-05-06.pdf",
+      "size": 100970,
+      "sizeLabel": "98.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:17:31.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-3-Move_Funds_From_Electrical_for_Temp_Power_Power_Plus-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-3-Move_Funds_From_Electrical_for_Temp_Power_Power_Plus-2026-05-06.pdf",
+      "size": 103085,
+      "sizeLabel": "100.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:18:14.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-4-Move_Funds_from_Hoist_to_Covered_Walkway-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-4-Move_Funds_from_Hoist_to_Covered_Walkway-2026-05-06.pdf",
+      "size": 104063,
+      "sizeLabel": "101.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:18:39.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-5-Move_Funds_from_Electrical_to_Fixtures-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-5-Move_Funds_from_Electrical_to_Fixtures-2026-05-06.pdf",
+      "size": 101833,
+      "sizeLabel": "99.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:19:00.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-6-Move_Funds_for_HVAC_Install-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-6-Move_Funds_for_HVAC_Install-2026-05-06.pdf",
+      "size": 100580,
+      "sizeLabel": "98.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:20:00.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-7-Move_Funds_from_Electrical_for_HVAC_Install-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-7-Move_Funds_from_Electrical_for_HVAC_Install-2026-05-06.pdf",
+      "size": 101854,
+      "sizeLabel": "99.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:20:24.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-8-Move_Funds_From_Electrical_to_Demo-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-8-Move_Funds_From_Electrical_to_Demo-2026-05-06.pdf",
+      "size": 100422,
+      "sizeLabel": "98.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:20:45.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-9-Wood_Flooring-Site_Office-2026-05-06 (1).pdf",
+      "name": "001-Golden_Hill_Apartments-9-Wood_Flooring-Site_Office-2026-05-06 (1).pdf",
+      "size": 102912,
+      "sizeLabel": "100.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:21:23.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-9-Wood_Flooring-Site_Office-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-9-Wood_Flooring-Site_Office-2026-05-06.pdf",
+      "size": 102911,
+      "sizeLabel": "100.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:21:03.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-10-Tile-Site_Office-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-10-Tile-Site_Office-2026-05-06.pdf",
+      "size": 102212,
+      "sizeLabel": "99.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:21:44.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-11-Traffic_Control-Permits-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-11-Traffic_Control-Permits-2026-05-06.pdf",
+      "size": 102609,
+      "sizeLabel": "100.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:22:11.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-12-Establish_GC_Excess-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-12-Establish_GC_Excess-2026-05-06.pdf",
+      "size": 100261,
+      "sizeLabel": "97.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:22:37.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-13-July_Budget_Adjustment-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-13-July_Budget_Adjustment-2026-05-06.pdf",
+      "size": 132333,
+      "sizeLabel": "129.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:23:04.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-14-August_Pay_App_6_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-14-August_Pay_App_6_Budget_Adjustments-2026-05-06.pdf",
+      "size": 123667,
+      "sizeLabel": "120.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:23:40.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-15-September_2025_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-15-September_2025_Budget_Adjustments-2026-05-06.pdf",
+      "size": 107578,
+      "sizeLabel": "105.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:24:14.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-16-October_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-16-October_Budget_Adjustments-2026-05-06.pdf",
+      "size": 115560,
+      "sizeLabel": "112.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:24:35.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-17-November_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-17-November_Budget_Adjustments-2026-05-06.pdf",
+      "size": 107117,
+      "sizeLabel": "104.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:24:53.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-18-December_2025_Budget_Adjustments-2026-05-06 (1).pdf",
+      "name": "001-Golden_Hill_Apartments-18-December_2025_Budget_Adjustments-2026-05-06 (1).pdf",
+      "size": 117834,
+      "sizeLabel": "115.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:25:38.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-18-December_2025_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-18-December_2025_Budget_Adjustments-2026-05-06.pdf",
+      "size": 117834,
+      "sizeLabel": "115.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:25:17.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-19-January_2026_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-19-January_2026_Budget_Adjustments-2026-05-06.pdf",
+      "size": 117955,
+      "sizeLabel": "115.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:26:03.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-20-January_2026-GC_internal_adjustment-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-20-January_2026-GC_internal_adjustment-2026-05-06.pdf",
+      "size": 99240,
+      "sizeLabel": "96.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:26:34.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-21-February_2026_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-21-February_2026_Budget_Adjustments-2026-05-06.pdf",
+      "size": 116494,
+      "sizeLabel": "113.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:26:58.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-22-March_2026_Budget_Adjustments-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-22-March_2026_Budget_Adjustments-2026-05-06.pdf",
+      "size": 116776,
+      "sizeLabel": "114.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:27:26.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-23-April-Internal_Adjustment_for_GC_s_accountant-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-23-April-Internal_Adjustment_for_GC_s_accountant-2026-05-06.pdf",
+      "size": 99290,
+      "sizeLabel": "97.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:27:57.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/001-Golden_Hill_Apartments-24-April_2026_Budget_Adjustment-2026-05-06.pdf",
+      "name": "001-Golden_Hill_Apartments-24-April_2026_Budget_Adjustment-2026-05-06.pdf",
+      "size": 116423,
+      "sizeLabel": "113.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T12:28:18.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/budget_details (2).csv",
+      "name": "budget_details (2).csv",
+      "size": 22809,
+      "sizeLabel": "22.3 KB",
+      "extension": "csv",
+      "modifiedAt": "2026-05-06T12:10:49.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "001_CURRENT BUDGET/budget_details (forecast).csv",
+      "name": "budget_details (forecast).csv",
+      "size": 28053,
+      "sizeLabel": "27.4 KB",
+      "extension": "csv",
+      "modifiedAt": "2026-05-06T12:14:29.000Z",
+      "topFolder": "001_CURRENT BUDGET"
+    },
+    {
+      "path": "Current Drawings/1c149dc7-5849-4db1-97c7-63bb5a94a206.pdf",
+      "name": "1c149dc7-5849-4db1-97c7-63bb5a94a206.pdf",
+      "size": 133647,
+      "sizeLabel": "130.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:30:29.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_000-DEMO-PLAN-Rev.1.pdf",
+      "name": "A_000-DEMO-PLAN-Rev.1.pdf",
+      "size": 2906192,
+      "sizeLabel": "2.8 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_002-SITE-PLAN-Rev.2.pdf",
+      "name": "A_002-SITE-PLAN-Rev.2.pdf",
+      "size": 12820658,
+      "sizeLabel": "12.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_100-BASEMENT-PLAN-Rev.3.pdf",
+      "name": "A_100-BASEMENT-PLAN-Rev.3.pdf",
+      "size": 15265446,
+      "sizeLabel": "14.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_101-1ST-FLOOR-PLAN-Rev.14.pdf",
+      "name": "A_101-1ST-FLOOR-PLAN-Rev.14.pdf",
+      "size": 1024683,
+      "sizeLabel": "1000.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_101S-1ST-FLOOR-SLAB-PLAN-Rev.12.pdf",
+      "name": "A_101S-1ST-FLOOR-SLAB-PLAN-Rev.12.pdf",
+      "size": 1043748,
+      "sizeLabel": "1019.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_102-2ND-FLOOR-PLAN-Rev.11.pdf",
+      "name": "A_102-2ND-FLOOR-PLAN-Rev.11.pdf",
+      "size": 1477343,
+      "sizeLabel": "1.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_102S-2ND-FLOOR-SLAB-PLAN-Rev.9.pdf",
+      "name": "A_102S-2ND-FLOOR-SLAB-PLAN-Rev.9.pdf",
+      "size": 1633584,
+      "sizeLabel": "1.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_103-3RD-FLOOR-PLAN-Rev.10.pdf",
+      "name": "A_103-3RD-FLOOR-PLAN-Rev.10.pdf",
+      "size": 1250179,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_103S-3RD-FLOOR-SLAB-PLAN-Rev.8.pdf",
+      "name": "A_103S-3RD-FLOOR-SLAB-PLAN-Rev.8.pdf",
+      "size": 1413639,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_104-4TH-FLOOR-PLAN-Rev.9.pdf",
+      "name": "A_104-4TH-FLOOR-PLAN-Rev.9.pdf",
+      "size": 1230238,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_104S-4TH-FLOOR-SLAB-PLAN-Rev.7.pdf",
+      "name": "A_104S-4TH-FLOOR-SLAB-PLAN-Rev.7.pdf",
+      "size": 1406451,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_105-5TH-FLOOR-PLAN-Rev.10.pdf",
+      "name": "A_105-5TH-FLOOR-PLAN-Rev.10.pdf",
+      "size": 1245482,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_105S-5TH-FLOOR-SLAB-PLAN-Rev.7.pdf",
+      "name": "A_105S-5TH-FLOOR-SLAB-PLAN-Rev.7.pdf",
+      "size": 1410953,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_106-6TH-FLOOR-PLAN-Rev.9.pdf",
+      "name": "A_106-6TH-FLOOR-PLAN-Rev.9.pdf",
+      "size": 1158184,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_106S-6TH-FLOOR-SLAB-PLAN-Rev.7.pdf",
+      "name": "A_106S-6TH-FLOOR-SLAB-PLAN-Rev.7.pdf",
+      "size": 1407954,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_107-7TH-FLOOR-PLAN-Rev.11.pdf",
+      "name": "A_107-7TH-FLOOR-PLAN-Rev.11.pdf",
+      "size": 1153067,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_107S-7TH-FLOOR-SLAB-PLAN-Rev.10.pdf",
+      "name": "A_107S-7TH-FLOOR-SLAB-PLAN-Rev.10.pdf",
+      "size": 1513714,
+      "sizeLabel": "1.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_108-8TH-FLOOR-PLAN-Rev.8.pdf",
+      "name": "A_108-8TH-FLOOR-PLAN-Rev.8.pdf",
+      "size": 1266894,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_108S-8TH-FLOOR-SLAB-PLAN-Rev.11.pdf",
+      "name": "A_108S-8TH-FLOOR-SLAB-PLAN-Rev.11.pdf",
+      "size": 1337884,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_109-ROOF-PLAN-Rev.10.pdf",
+      "name": "A_109-ROOF-PLAN-Rev.10.pdf",
+      "size": 5200970,
+      "sizeLabel": "5.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_201-ELEVATION-(WEST)-Rev.4.pdf",
+      "name": "A_201-ELEVATION-(WEST)-Rev.4.pdf",
+      "size": 9499568,
+      "sizeLabel": "9.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_202-ELEVATION-(SOUTH)-Rev.4.pdf",
+      "name": "A_202-ELEVATION-(SOUTH)-Rev.4.pdf",
+      "size": 10097285,
+      "sizeLabel": "9.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_203-ELEVATIONS-Rev.8.pdf",
+      "name": "A_203-ELEVATIONS-Rev.8.pdf",
+      "size": 5416083,
+      "sizeLabel": "5.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_204-ELEVATIONS-(EAST)-Rev.4.pdf",
+      "name": "A_204-ELEVATIONS-(EAST)-Rev.4.pdf",
+      "size": 10571709,
+      "sizeLabel": "10.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_205-ELEVATIONS-(NORTH)-Rev.4.pdf",
+      "name": "A_205-ELEVATIONS-(NORTH)-Rev.4.pdf",
+      "size": 10529461,
+      "sizeLabel": "10.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_206-ELEVATIONS-Rev.4.pdf",
+      "name": "A_206-ELEVATIONS-Rev.4.pdf",
+      "size": 3217103,
+      "sizeLabel": "3.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_207-ELEVATIONS-Rev.4.pdf",
+      "name": "A_207-ELEVATIONS-Rev.4.pdf",
+      "size": 4782709,
+      "sizeLabel": "4.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_208-ARCHITECTURAL-CONCRETE-ELEVATIONS-Rev.2.pdf",
+      "name": "A_208-ARCHITECTURAL-CONCRETE-ELEVATIONS-Rev.2.pdf",
+      "size": 715026,
+      "sizeLabel": "698.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_209-ARCHITECTURAL-CONCRETE-ELEVATIONS-Rev.2.pdf",
+      "name": "A_209-ARCHITECTURAL-CONCRETE-ELEVATIONS-Rev.2.pdf",
+      "size": 1486234,
+      "sizeLabel": "1.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_210-ARCHITECTURAL-CONCRETE-ELEVATIONS-Rev.2.pdf",
+      "name": "A_210-ARCHITECTURAL-CONCRETE-ELEVATIONS-Rev.2.pdf",
+      "size": 949229,
+      "sizeLabel": "927.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_301-SECTIONS-Rev.4.pdf",
+      "name": "A_301-SECTIONS-Rev.4.pdf",
+      "size": 7098350,
+      "sizeLabel": "6.8 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_302-SECTIONS-Rev.7.pdf",
+      "name": "A_302-SECTIONS-Rev.7.pdf",
+      "size": 7164422,
+      "sizeLabel": "6.8 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_303-SECTIONS-Rev.4.pdf",
+      "name": "A_303-SECTIONS-Rev.4.pdf",
+      "size": 5985827,
+      "sizeLabel": "5.7 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_304-SECTIONS-Rev.3.pdf",
+      "name": "A_304-SECTIONS-Rev.3.pdf",
+      "size": 7447126,
+      "sizeLabel": "7.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_305-SECTIONS-Rev.4.pdf",
+      "name": "A_305-SECTIONS-Rev.4.pdf",
+      "size": 6583993,
+      "sizeLabel": "6.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_306-SECTIONS-Rev.3.pdf",
+      "name": "A_306-SECTIONS-Rev.3.pdf",
+      "size": 7905283,
+      "sizeLabel": "7.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_307-SECTIONS-Rev.3.pdf",
+      "name": "A_307-SECTIONS-Rev.3.pdf",
+      "size": 7526421,
+      "sizeLabel": "7.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_308-SECTIONS-Rev.3.pdf",
+      "name": "A_308-SECTIONS-Rev.3.pdf",
+      "size": 7557346,
+      "sizeLabel": "7.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_309-SECTIONS-Rev.3.pdf",
+      "name": "A_309-SECTIONS-Rev.3.pdf",
+      "size": 7191131,
+      "sizeLabel": "6.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_310-SECTIONS-Rev.3.pdf",
+      "name": "A_310-SECTIONS-Rev.3.pdf",
+      "size": 7895230,
+      "sizeLabel": "7.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_311-SECTIONS-Rev.3.pdf",
+      "name": "A_311-SECTIONS-Rev.3.pdf",
+      "size": 7736876,
+      "sizeLabel": "7.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_312-SECTIONS-Rev.3.pdf",
+      "name": "A_312-SECTIONS-Rev.3.pdf",
+      "size": 7503653,
+      "sizeLabel": "7.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_313-SECTIONS-Rev.4.pdf",
+      "name": "A_313-SECTIONS-Rev.4.pdf",
+      "size": 6044532,
+      "sizeLabel": "5.8 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_314-SECTIONS-Rev.4.pdf",
+      "name": "A_314-SECTIONS-Rev.4.pdf",
+      "size": 7664893,
+      "sizeLabel": "7.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_351-WALL-SECTIONS-Rev.3.pdf",
+      "name": "A_351-WALL-SECTIONS-Rev.3.pdf",
+      "size": 913541,
+      "sizeLabel": "892.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_370-STAIR-1-PLANS-&-SECTION-Rev.3.pdf",
+      "name": "A_370-STAIR-1-PLANS-&-SECTION-Rev.3.pdf",
+      "size": 3121874,
+      "sizeLabel": "3.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_371-STAIR-2-PLANS-&-SECTION-Rev.3.pdf",
+      "name": "A_371-STAIR-2-PLANS-&-SECTION-Rev.3.pdf",
+      "size": 1270638,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_372-ELEVATORS-PLANS-&-SECTION-Rev.3.pdf",
+      "name": "A_372-ELEVATORS-PLANS-&-SECTION-Rev.3.pdf",
+      "size": 2350210,
+      "sizeLabel": "2.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_373-RAMP-PLANS-&-SECTIONS-Rev.1.pdf",
+      "name": "A_373-RAMP-PLANS-&-SECTIONS-Rev.1.pdf",
+      "size": 2174112,
+      "sizeLabel": "2.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_374-RAMP-PLANS-&-SECTIONS-Rev.1.pdf",
+      "name": "A_374-RAMP-PLANS-&-SECTIONS-Rev.1.pdf",
+      "size": 1117663,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_375-TRASH-CHUTE-Rev.1.pdf",
+      "name": "A_375-TRASH-CHUTE-Rev.1.pdf",
+      "size": 488576,
+      "sizeLabel": "477.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_376-COMMERCIAL-STAIR-Rev.1.pdf",
+      "name": "A_376-COMMERCIAL-STAIR-Rev.1.pdf",
+      "size": 1520385,
+      "sizeLabel": "1.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_400-ENLARGED-PLANS---1-BED-UNITS-Rev.6.pdf",
+      "name": "A_400-ENLARGED-PLANS---1-BED-UNITS-Rev.6.pdf",
+      "size": 543131,
+      "sizeLabel": "530.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_401-ENLARGED-PLANS---2-BED-UNITS-Rev.4.pdf",
+      "name": "A_401-ENLARGED-PLANS---2-BED-UNITS-Rev.4.pdf",
+      "size": 544870,
+      "sizeLabel": "532.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_402-ENLARGED-PLANS---2-BED-UNITS-Rev.8.pdf",
+      "name": "A_402-ENLARGED-PLANS---2-BED-UNITS-Rev.8.pdf",
+      "size": 427279,
+      "sizeLabel": "417.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_403-ENLARGED-PLANS---2-BED-UNITS-Rev.4.pdf",
+      "name": "A_403-ENLARGED-PLANS---2-BED-UNITS-Rev.4.pdf",
+      "size": 242121,
+      "sizeLabel": "236.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_404-ENLARGED-PLANS---1-BED-+-DEN-UNITS-Rev.4.pdf",
+      "name": "A_404-ENLARGED-PLANS---1-BED-+-DEN-UNITS-Rev.4.pdf",
+      "size": 411616,
+      "sizeLabel": "402.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_405-ENLARGED-PLANS---STUDIO-UNITS-Rev.6.pdf",
+      "name": "A_405-ENLARGED-PLANS---STUDIO-UNITS-Rev.6.pdf",
+      "size": 518862,
+      "sizeLabel": "506.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_406-ENLARGED-PLANS---PENTHOUSE-UNITS-Rev.7.pdf",
+      "name": "A_406-ENLARGED-PLANS---PENTHOUSE-UNITS-Rev.7.pdf",
+      "size": 402364,
+      "sizeLabel": "392.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_407-ENLARGED-PLANS---PENTHOUSE-UNITS-Rev.5.pdf",
+      "name": "A_407-ENLARGED-PLANS---PENTHOUSE-UNITS-Rev.5.pdf",
+      "size": 604245,
+      "sizeLabel": "590.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_408-ENLARGED-PLANS---PENTHOUSE-UNITS-Rev.6.pdf",
+      "name": "A_408-ENLARGED-PLANS---PENTHOUSE-UNITS-Rev.6.pdf",
+      "size": 375253,
+      "sizeLabel": "366.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_409-ENLARGED-PLANS-Rev.6.pdf",
+      "name": "A_409-ENLARGED-PLANS-Rev.6.pdf",
+      "size": 719930,
+      "sizeLabel": "703.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_420-ENLARGED-ELEVATIONS-Rev.3.pdf",
+      "name": "A_420-ENLARGED-ELEVATIONS-Rev.3.pdf",
+      "size": 437086,
+      "sizeLabel": "426.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_421-ENLARGED-ELEVATIONS-Rev.1.pdf",
+      "name": "A_421-ENLARGED-ELEVATIONS-Rev.1.pdf",
+      "size": 4336922,
+      "sizeLabel": "4.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_422-ENLARGED-ELEVATIONS-Rev.1.pdf",
+      "name": "A_422-ENLARGED-ELEVATIONS-Rev.1.pdf",
+      "size": 840637,
+      "sizeLabel": "820.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_501-REFLECTED-CEILING-PLAN-LVL-1-Rev.6.pdf",
+      "name": "A_501-REFLECTED-CEILING-PLAN-LVL-1-Rev.6.pdf",
+      "size": 435884,
+      "sizeLabel": "425.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_502-REFLECTED-CEILING-PLAN-LVL-2-Rev.12.pdf",
+      "name": "A_502-REFLECTED-CEILING-PLAN-LVL-2-Rev.12.pdf",
+      "size": 647837,
+      "sizeLabel": "632.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_503-REFLECTED-CEILING-PLAN-LVL-3-Rev.11.pdf",
+      "name": "A_503-REFLECTED-CEILING-PLAN-LVL-3-Rev.11.pdf",
+      "size": 591170,
+      "sizeLabel": "577.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_504-REFLECTED-CEILING-PLAN-LVL-4-Rev.10.pdf",
+      "name": "A_504-REFLECTED-CEILING-PLAN-LVL-4-Rev.10.pdf",
+      "size": 580523,
+      "sizeLabel": "566.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_505-REFLECTED-CEILING-PLAN-LVL-5-Rev.11.pdf",
+      "name": "A_505-REFLECTED-CEILING-PLAN-LVL-5-Rev.11.pdf",
+      "size": 578571,
+      "sizeLabel": "565.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_506-REFLECTED-CEILING-PLAN-LVL-6-Rev.10.pdf",
+      "name": "A_506-REFLECTED-CEILING-PLAN-LVL-6-Rev.10.pdf",
+      "size": 577746,
+      "sizeLabel": "564.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_507-REFLECTED-CEILING-PLAN-LVL-7-Rev.13.pdf",
+      "name": "A_507-REFLECTED-CEILING-PLAN-LVL-7-Rev.13.pdf",
+      "size": 536025,
+      "sizeLabel": "523.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_508-REFLECTED-CEILING-PLAN-LVL-8-Rev.11.pdf",
+      "name": "A_508-REFLECTED-CEILING-PLAN-LVL-8-Rev.11.pdf",
+      "size": 1301773,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_551-FINISH-SCHEDULE-Rev.1.pdf",
+      "name": "A_551-FINISH-SCHEDULE-Rev.1.pdf",
+      "size": 140381,
+      "sizeLabel": "137.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_601-DOOR-SCHEDULE-Rev.8.pdf",
+      "name": "A_601-DOOR-SCHEDULE-Rev.8.pdf",
+      "size": 272958,
+      "sizeLabel": "266.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_602-WINDOW-SCHEDULE-Rev.4.pdf",
+      "name": "A_602-WINDOW-SCHEDULE-Rev.4.pdf",
+      "size": 191831,
+      "sizeLabel": "187.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_700-WINDOW-DETAILS-(NON-COMBUSTIBLE)-Rev.1.pdf",
+      "name": "A_700-WINDOW-DETAILS-(NON-COMBUSTIBLE)-Rev.1.pdf",
+      "size": 512601,
+      "sizeLabel": "500.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_705-DOOR-DETAILS-(NON-COMBUSTIBLE)-Rev.1.pdf",
+      "name": "A_705-DOOR-DETAILS-(NON-COMBUSTIBLE)-Rev.1.pdf",
+      "size": 571037,
+      "sizeLabel": "557.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_706-DOOR-DETAILS-Rev.2.pdf",
+      "name": "A_706-DOOR-DETAILS-Rev.2.pdf",
+      "size": 264214,
+      "sizeLabel": "258.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_708-DOOR-DETAILS-(HM-&-MASONRY)-Rev.3.pdf",
+      "name": "A_708-DOOR-DETAILS-(HM-&-MASONRY)-Rev.3.pdf",
+      "size": 409439,
+      "sizeLabel": "399.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_710-FOUNDATION-DETAILS-Rev.2.pdf",
+      "name": "A_710-FOUNDATION-DETAILS-Rev.2.pdf",
+      "size": 746116,
+      "sizeLabel": "728.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_711-PODIUM-DETAILS-Rev.2.pdf",
+      "name": "A_711-PODIUM-DETAILS-Rev.2.pdf",
+      "size": 680202,
+      "sizeLabel": "664.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_712-PODIUM-DETAILS-Rev.7.pdf",
+      "name": "A_712-PODIUM-DETAILS-Rev.7.pdf",
+      "size": 651095,
+      "sizeLabel": "635.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_713-PODIUM-DETAILS-Rev.7.pdf",
+      "name": "A_713-PODIUM-DETAILS-Rev.7.pdf",
+      "size": 710963,
+      "sizeLabel": "694.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_714-ROOF-DETAILS-Rev.2.pdf",
+      "name": "A_714-ROOF-DETAILS-Rev.2.pdf",
+      "size": 401734,
+      "sizeLabel": "392.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_720-EXTERIOR-DETAILS-Rev.4.pdf",
+      "name": "A_720-EXTERIOR-DETAILS-Rev.4.pdf",
+      "size": 474782,
+      "sizeLabel": "463.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_721-EXTERIOR-DETAILS-Rev.3.pdf",
+      "name": "A_721-EXTERIOR-DETAILS-Rev.3.pdf",
+      "size": 493514,
+      "sizeLabel": "481.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_725-WATERPROOFING-DETAILS-Rev.1.pdf",
+      "name": "A_725-WATERPROOFING-DETAILS-Rev.1.pdf",
+      "size": 1307812,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_730-FIRE-RATED-DETAILS-Rev.1.pdf",
+      "name": "A_730-FIRE-RATED-DETAILS-Rev.1.pdf",
+      "size": 226324,
+      "sizeLabel": "221.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_731-PENETRATION-DETAILS-Rev.1.pdf",
+      "name": "A_731-PENETRATION-DETAILS-Rev.1.pdf",
+      "size": 2008894,
+      "sizeLabel": "1.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_740-STAIR-MISC.-MTL-DETAILS-Rev.3.pdf",
+      "name": "A_740-STAIR-MISC.-MTL-DETAILS-Rev.3.pdf",
+      "size": 306085,
+      "sizeLabel": "298.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_741-STAIR-DETAILS-Rev.1.pdf",
+      "name": "A_741-STAIR-DETAILS-Rev.1.pdf",
+      "size": 288176,
+      "sizeLabel": "281.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_742-EXTERIOR-DETAILS---ACM-Rev.1.pdf",
+      "name": "A_742-EXTERIOR-DETAILS---ACM-Rev.1.pdf",
+      "size": 348374,
+      "sizeLabel": "340.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_743-STAIR-DETAILS-(CONC)-Rev.3.pdf",
+      "name": "A_743-STAIR-DETAILS-(CONC)-Rev.3.pdf",
+      "size": 203609,
+      "sizeLabel": "198.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_750-INTERIOR-DETAILS-Rev.2.pdf",
+      "name": "A_750-INTERIOR-DETAILS-Rev.2.pdf",
+      "size": 341225,
+      "sizeLabel": "333.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_751-INTERIOR-DETAILS-Rev.1.pdf",
+      "name": "A_751-INTERIOR-DETAILS-Rev.1.pdf",
+      "size": 242367,
+      "sizeLabel": "236.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_800-BATHROOMS-Rev.5.pdf",
+      "name": "A_800-BATHROOMS-Rev.5.pdf",
+      "size": 1143467,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_801-BATHROOMS-Rev.5.pdf",
+      "name": "A_801-BATHROOMS-Rev.5.pdf",
+      "size": 1120718,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_802-BATHROOMS-Rev.5.pdf",
+      "name": "A_802-BATHROOMS-Rev.5.pdf",
+      "size": 476527,
+      "sizeLabel": "465.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_810-KITCHENS-Rev.5.pdf",
+      "name": "A_810-KITCHENS-Rev.5.pdf",
+      "size": 457026,
+      "sizeLabel": "446.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_811-KITCHENS-Rev.4.pdf",
+      "name": "A_811-KITCHENS-Rev.4.pdf",
+      "size": 407247,
+      "sizeLabel": "397.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_970-RESTROOM-&-CASEWORK-DETAILS-Rev.2.pdf",
+      "name": "A_970-RESTROOM-&-CASEWORK-DETAILS-Rev.2.pdf",
+      "size": 221208,
+      "sizeLabel": "216.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_971-RESTROOM-&-CASEWORK-DETAILS-Rev.4.pdf",
+      "name": "A_971-RESTROOM-&-CASEWORK-DETAILS-Rev.4.pdf",
+      "size": 200648,
+      "sizeLabel": "195.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_974-RESTROOM-DETAILS-Rev.1.pdf",
+      "name": "A_974-RESTROOM-DETAILS-Rev.1.pdf",
+      "size": 276497,
+      "sizeLabel": "270.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_975-RESTROOM-DETAILS-Rev.1.pdf",
+      "name": "A_975-RESTROOM-DETAILS-Rev.1.pdf",
+      "size": 184395,
+      "sizeLabel": "180.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Architectural/A_980-ELEVATOR-DETAILS-Rev.1.pdf",
+      "name": "A_980-ELEVATOR-DETAILS-Rev.1.pdf",
+      "size": 209329,
+      "sizeLabel": "204.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Civil/C_100-BMP-PLAN-Rev.1.pdf",
+      "name": "C_100-BMP-PLAN-Rev.1.pdf",
+      "size": 573841,
+      "sizeLabel": "560.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Civil/C_200-DS-560-Rev.1.pdf",
+      "name": "C_200-DS-560-Rev.1.pdf",
+      "size": 2341033,
+      "sizeLabel": "2.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Civil/C_300-EROSION-CONTROL-PLAN-Rev.1.pdf",
+      "name": "C_300-EROSION-CONTROL-PLAN-Rev.1.pdf",
+      "size": 431570,
+      "sizeLabel": "421.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Drawing Log.csv",
+      "name": "Drawing Log.csv",
+      "size": 38553,
+      "sizeLabel": "37.6 KB",
+      "extension": "csv",
+      "modifiedAt": "2026-05-06T11:30:22.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E001-ELECTRICAL-NOTE-SHEET-Rev.4.pdf",
+      "name": "E001-ELECTRICAL-NOTE-SHEET-Rev.4.pdf",
+      "size": 274476,
+      "sizeLabel": "268.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E002-LIGHT-FIXTURE-SCHEDULE-Rev.3.pdf",
+      "name": "E002-LIGHT-FIXTURE-SCHEDULE-Rev.3.pdf",
+      "size": 228577,
+      "sizeLabel": "223.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E003-LIGHTING-CONTROL-DIAGRAMS-Rev.2.pdf",
+      "name": "E003-LIGHTING-CONTROL-DIAGRAMS-Rev.2.pdf",
+      "size": 296061,
+      "sizeLabel": "289.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E004-INDOOR-TITLE-24-Rev.2.pdf",
+      "name": "E004-INDOOR-TITLE-24-Rev.2.pdf",
+      "size": 1074190,
+      "sizeLabel": "1.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E005-EXTERIOR-TITLE-24-Rev.2.pdf",
+      "name": "E005-EXTERIOR-TITLE-24-Rev.2.pdf",
+      "size": 1013912,
+      "sizeLabel": "990.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E006-SOLAR-READY-TITLE-24-Rev.2.pdf",
+      "name": "E006-SOLAR-READY-TITLE-24-Rev.2.pdf",
+      "size": 733923,
+      "sizeLabel": "716.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E007-POWER-DISTRIBUTION-TITLE-24-Rev.2.pdf",
+      "name": "E007-POWER-DISTRIBUTION-TITLE-24-Rev.2.pdf",
+      "size": 719387,
+      "sizeLabel": "702.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E100-SITE-PLAN-Rev.2.pdf",
+      "name": "E100-SITE-PLAN-Rev.2.pdf",
+      "size": 316872,
+      "sizeLabel": "309.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E202-1ST-FLOOR-LIGHTING-PLAN-Rev.7.pdf",
+      "name": "E202-1ST-FLOOR-LIGHTING-PLAN-Rev.7.pdf",
+      "size": 472527,
+      "sizeLabel": "461.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E203-2ND-FLOOR-LIGHTING-PLAN-Rev.5.pdf",
+      "name": "E203-2ND-FLOOR-LIGHTING-PLAN-Rev.5.pdf",
+      "size": 316592,
+      "sizeLabel": "309.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E204-3RD-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "name": "E204-3RD-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "size": 309018,
+      "sizeLabel": "301.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E205-4TH-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "name": "E205-4TH-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "size": 309711,
+      "sizeLabel": "302.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E206-5TH-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "name": "E206-5TH-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "size": 310872,
+      "sizeLabel": "303.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E207-6TH-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "name": "E207-6TH-FLOOR-LIGHTING-PLAN-Rev.6.pdf",
+      "size": 312851,
+      "sizeLabel": "305.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E208-7TH-FLOOR-LIGHTING-PLAN-Rev.7.pdf",
+      "name": "E208-7TH-FLOOR-LIGHTING-PLAN-Rev.7.pdf",
+      "size": 477080,
+      "sizeLabel": "465.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E209-8TH-FLOOR-LIGHTING-PLAN-Rev.3.pdf",
+      "name": "E209-8TH-FLOOR-LIGHTING-PLAN-Rev.3.pdf",
+      "size": 530309,
+      "sizeLabel": "517.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E210-1ST-FLOOR-EGRESS-LIGHTING-PHOTOMETRICS-Rev.2.pdf",
+      "name": "E210-1ST-FLOOR-EGRESS-LIGHTING-PHOTOMETRICS-Rev.2.pdf",
+      "size": 336960,
+      "sizeLabel": "329.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E211-2ND-FLOOR-EGRESS-LIGHTING-PHOTOMETRICS-Rev.2.pdf",
+      "name": "E211-2ND-FLOOR-EGRESS-LIGHTING-PHOTOMETRICS-Rev.2.pdf",
+      "size": 422478,
+      "sizeLabel": "412.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E212-3RD-6TH-FLOOR-TYPICAL-EGRESS-PHOTOMETRICS-Rev.2.pdf",
+      "name": "E212-3RD-6TH-FLOOR-TYPICAL-EGRESS-PHOTOMETRICS-Rev.2.pdf",
+      "size": 423756,
+      "sizeLabel": "413.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E213-7TH-FLOOR-EGRESS-PHOTOMETRICS-Rev.2.pdf",
+      "name": "E213-7TH-FLOOR-EGRESS-PHOTOMETRICS-Rev.2.pdf",
+      "size": 380901,
+      "sizeLabel": "372.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E214-8TH-FLOOR-EGRESS-PHOTOMETRICS-Rev.2.pdf",
+      "name": "E214-8TH-FLOOR-EGRESS-PHOTOMETRICS-Rev.2.pdf",
+      "size": 372400,
+      "sizeLabel": "363.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E301-1ST-FLOOR-POWER-PLAN-Rev.10.pdf",
+      "name": "E301-1ST-FLOOR-POWER-PLAN-Rev.10.pdf",
+      "size": 544578,
+      "sizeLabel": "531.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E302-2ND-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "name": "E302-2ND-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "size": 404292,
+      "sizeLabel": "394.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E303-3RD-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "name": "E303-3RD-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "size": 391601,
+      "sizeLabel": "382.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E304-4TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "name": "E304-4TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "size": 379662,
+      "sizeLabel": "370.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E305-5TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "name": "E305-5TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "size": 386502,
+      "sizeLabel": "377.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E306-6TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "name": "E306-6TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "size": 383784,
+      "sizeLabel": "374.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E307-7TH-FLOOR-POWER-PLAN-Rev.8.pdf",
+      "name": "E307-7TH-FLOOR-POWER-PLAN-Rev.8.pdf",
+      "size": 572837,
+      "sizeLabel": "559.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E308-8TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "name": "E308-8TH-FLOOR-POWER-PLAN-Rev.3.pdf",
+      "size": 290665,
+      "sizeLabel": "283.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E309-ROOF-PLAN-Rev.5.pdf",
+      "name": "E309-ROOF-PLAN-Rev.5.pdf",
+      "size": 268170,
+      "sizeLabel": "261.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E400-ENLARGED-PLANS-Rev.10.pdf",
+      "name": "E400-ENLARGED-PLANS-Rev.10.pdf",
+      "size": 279816,
+      "sizeLabel": "273.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E401-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E401-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 357678,
+      "sizeLabel": "349.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E402-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E402-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 371119,
+      "sizeLabel": "362.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E403-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E403-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 363970,
+      "sizeLabel": "355.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E404-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E404-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 348348,
+      "sizeLabel": "340.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E405-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "name": "E405-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "size": 398847,
+      "sizeLabel": "389.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E406-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "name": "E406-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "size": 308716,
+      "sizeLabel": "301.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E407-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "name": "E407-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "size": 340346,
+      "sizeLabel": "332.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E408-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E408-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 368228,
+      "sizeLabel": "359.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E409-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E409-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 379677,
+      "sizeLabel": "370.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E410-TYPICAL-UNIT-PLANS-Rev.10.pdf",
+      "name": "E410-TYPICAL-UNIT-PLANS-Rev.10.pdf",
+      "size": 322112,
+      "sizeLabel": "314.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E411-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "name": "E411-TYPICAL-UNIT-PLANS-Rev.8.pdf",
+      "size": 321792,
+      "sizeLabel": "314.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E412-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "name": "E412-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "size": 335415,
+      "sizeLabel": "327.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E413-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "name": "E413-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "size": 327915,
+      "sizeLabel": "320.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E414-TYPICAL-UNIT-PLANS-Rev.10.pdf",
+      "name": "E414-TYPICAL-UNIT-PLANS-Rev.10.pdf",
+      "size": 386457,
+      "sizeLabel": "377.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E415-TYPICAL-UNIT-PLANS-Rev.10.pdf",
+      "name": "E415-TYPICAL-UNIT-PLANS-Rev.10.pdf",
+      "size": 365988,
+      "sizeLabel": "357.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E416-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "name": "E416-TYPICAL-UNIT-PLANS-Rev.9.pdf",
+      "size": 309440,
+      "sizeLabel": "302.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E417-TYPICAL-UNIT-PLANS-Rev.1.pdf",
+      "name": "E417-TYPICAL-UNIT-PLANS-Rev.1.pdf",
+      "size": 352634,
+      "sizeLabel": "344.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E418-TYPICAL-UNIT-PLANS-Rev.0.pdf",
+      "name": "E418-TYPICAL-UNIT-PLANS-Rev.0.pdf",
+      "size": 370779,
+      "sizeLabel": "362.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E501-ELECTRICAL-DETAILS-Rev.2.pdf",
+      "name": "E501-ELECTRICAL-DETAILS-Rev.2.pdf",
+      "size": 264320,
+      "sizeLabel": "258.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E601-SINGLE-LINE-DIAGRAM---MAIN-SERVICE-DISTRIBUTION-Rev.5.pdf",
+      "name": "E601-SINGLE-LINE-DIAGRAM---MAIN-SERVICE-DISTRIBUTION-Rev.5.pdf",
+      "size": 247044,
+      "sizeLabel": "241.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E602-SINGLE-LINE-DIAGRAM---TENANT-DISTRIBUTION-Rev.5.pdf",
+      "name": "E602-SINGLE-LINE-DIAGRAM---TENANT-DISTRIBUTION-Rev.5.pdf",
+      "size": 248884,
+      "sizeLabel": "243.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E603-TELECOM-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "E603-TELECOM-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 228154,
+      "sizeLabel": "222.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E604-PANEL-SCHEDULES-Rev.5.pdf",
+      "name": "E604-PANEL-SCHEDULES-Rev.5.pdf",
+      "size": 229499,
+      "sizeLabel": "224.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E605-PANEL-SCHEDULES-Rev.16.pdf",
+      "name": "E605-PANEL-SCHEDULES-Rev.16.pdf",
+      "size": 242830,
+      "sizeLabel": "237.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E606-PANEL-SCHEDULES-Rev.4.pdf",
+      "name": "E606-PANEL-SCHEDULES-Rev.4.pdf",
+      "size": 232882,
+      "sizeLabel": "227.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E607-PANEL-SCHEDULES-Rev.2.pdf",
+      "name": "E607-PANEL-SCHEDULES-Rev.2.pdf",
+      "size": 219165,
+      "sizeLabel": "214.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E608-PANEL-SCHEDULES-Rev.4.pdf",
+      "name": "E608-PANEL-SCHEDULES-Rev.4.pdf",
+      "size": 234652,
+      "sizeLabel": "229.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E609-PANEL-SCHEDULES-Rev.6.pdf",
+      "name": "E609-PANEL-SCHEDULES-Rev.6.pdf",
+      "size": 222090,
+      "sizeLabel": "216.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E610-FAULT-AND-VOLTAGE-DROP-CALCULATIONS-Rev.4.pdf",
+      "name": "E610-FAULT-AND-VOLTAGE-DROP-CALCULATIONS-Rev.4.pdf",
+      "size": 245666,
+      "sizeLabel": "239.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E701-ELECTRICAL-SPECIFICATIONS-Rev.2.pdf",
+      "name": "E701-ELECTRICAL-SPECIFICATIONS-Rev.2.pdf",
+      "size": 675343,
+      "sizeLabel": "659.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Electrical/E702-ELECTRICAL-SPECIFICATIONS-Rev.2.pdf",
+      "name": "E702-ELECTRICAL-SPECIFICATIONS-Rev.2.pdf",
+      "size": 677156,
+      "sizeLabel": "661.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-100-FIRE-ALARM-SYSTEM-COVER-SHEET-Rev.1.pdf",
+      "name": "FA-100-FIRE-ALARM-SYSTEM-COVER-SHEET-Rev.1.pdf",
+      "size": 537284,
+      "sizeLabel": "524.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-200-FIRE-ALARM-SYSTEM-1ST-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-200-FIRE-ALARM-SYSTEM-1ST-FLOOR-PLAN-Rev.1.pdf",
+      "size": 892580,
+      "sizeLabel": "871.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-201-FIRE-ALARM-SYSTEM-2ND-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-201-FIRE-ALARM-SYSTEM-2ND-FLOOR-PLAN-Rev.1.pdf",
+      "size": 753820,
+      "sizeLabel": "736.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-202-FIRE-ALARM-SYSTEM-3RD-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-202-FIRE-ALARM-SYSTEM-3RD-FLOOR-PLAN-Rev.1.pdf",
+      "size": 696307,
+      "sizeLabel": "680.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-203-FIRE-ALARM-SYSTEM-4TH-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-203-FIRE-ALARM-SYSTEM-4TH-FLOOR-PLAN-Rev.1.pdf",
+      "size": 693644,
+      "sizeLabel": "677.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-204-FIRE-ALARM-SYSTEM-5TH-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-204-FIRE-ALARM-SYSTEM-5TH-FLOOR-PLAN-Rev.1.pdf",
+      "size": 696106,
+      "sizeLabel": "679.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-205-FIRE-ALARM-SYSTEM-6TH-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-205-FIRE-ALARM-SYSTEM-6TH-FLOOR-PLAN-Rev.1.pdf",
+      "size": 700326,
+      "sizeLabel": "683.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-206-FIRE-ALARM-SYSTEM-7TH-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-206-FIRE-ALARM-SYSTEM-7TH-FLOOR-PLAN-Rev.1.pdf",
+      "size": 682241,
+      "sizeLabel": "666.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-207-FIRE-ALARM-SYSTEM-8TH-FLOOR-PLAN-Rev.1.pdf",
+      "name": "FA-207-FIRE-ALARM-SYSTEM-8TH-FLOOR-PLAN-Rev.1.pdf",
+      "size": 2251174,
+      "sizeLabel": "2.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-300-FIRE-ALARM-SYSTEM-RISER-DIAGRAM-&-CALCS-Rev.1.pdf",
+      "name": "FA-300-FIRE-ALARM-SYSTEM-RISER-DIAGRAM-&-CALCS-Rev.1.pdf",
+      "size": 448416,
+      "sizeLabel": "437.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-301-FIRE-ALARM-SYSTEM-CALCULATIONS-Rev.1.pdf",
+      "name": "FA-301-FIRE-ALARM-SYSTEM-CALCULATIONS-Rev.1.pdf",
+      "size": 1458850,
+      "sizeLabel": "1.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Alarm/FA-400-FIRE-ALARM-SYSTEM--WIRING-DETAILS-Rev.1.pdf",
+      "name": "FA-400-FIRE-ALARM-SYSTEM--WIRING-DETAILS-Rev.1.pdf",
+      "size": 1064573,
+      "sizeLabel": "1.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F01-SITE-PLAN-GENERAL-NOTES-Rev.1.pdf",
+      "name": "F01-SITE-PLAN-GENERAL-NOTES-Rev.1.pdf",
+      "size": 4890254,
+      "sizeLabel": "4.7 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F02-DETAILS-&-CEILING-ASSEMBLIES-Rev.1.pdf",
+      "name": "F02-DETAILS-&-CEILING-ASSEMBLIES-Rev.1.pdf",
+      "size": 5089086,
+      "sizeLabel": "4.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F03-SEISMIC-DETAILS-Rev.1.pdf",
+      "name": "F03-SEISMIC-DETAILS-Rev.1.pdf",
+      "size": 4647543,
+      "sizeLabel": "4.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F04-FIRE-PUMP-DETAILS-Rev.1.pdf",
+      "name": "F04-FIRE-PUMP-DETAILS-Rev.1.pdf",
+      "size": 5739308,
+      "sizeLabel": "5.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F05-BASEMENT-LEVEL---PIPING-PLAN-Rev.1.pdf",
+      "name": "F05-BASEMENT-LEVEL---PIPING-PLAN-Rev.1.pdf",
+      "size": 4438097,
+      "sizeLabel": "4.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F06-LEVEL-01---PIPING-PLAN-Rev.1.pdf",
+      "name": "F06-LEVEL-01---PIPING-PLAN-Rev.1.pdf",
+      "size": 7964982,
+      "sizeLabel": "7.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F07-LEVEL-2---PIPING-PLAN-Rev.1.pdf",
+      "name": "F07-LEVEL-2---PIPING-PLAN-Rev.1.pdf",
+      "size": 4893545,
+      "sizeLabel": "4.7 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F08-LEVEL-3---PIPING-PLAN-Rev.1.pdf",
+      "name": "F08-LEVEL-3---PIPING-PLAN-Rev.1.pdf",
+      "size": 4633471,
+      "sizeLabel": "4.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F09-LEVEL-04---PIPING-PLAN-Rev.1.pdf",
+      "name": "F09-LEVEL-04---PIPING-PLAN-Rev.1.pdf",
+      "size": 4635888,
+      "sizeLabel": "4.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F10-LEVEL-5---PIPING-PLAN-Rev.1.pdf",
+      "name": "F10-LEVEL-5---PIPING-PLAN-Rev.1.pdf",
+      "size": 4575431,
+      "sizeLabel": "4.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F11-LEVEL-6---PIPING-PLAN-Rev.1.pdf",
+      "name": "F11-LEVEL-6---PIPING-PLAN-Rev.1.pdf",
+      "size": 4706855,
+      "sizeLabel": "4.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F12-LEVEL-7---PIPING-PLAN-Rev.1.pdf",
+      "name": "F12-LEVEL-7---PIPING-PLAN-Rev.1.pdf",
+      "size": 5755880,
+      "sizeLabel": "5.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F13-LEVEL-8---PIPING-PLAN-Rev.1.pdf",
+      "name": "F13-LEVEL-8---PIPING-PLAN-Rev.1.pdf",
+      "size": 5292063,
+      "sizeLabel": "5.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F14-ROOF---PIPING-PLAN-Rev.1.pdf",
+      "name": "F14-ROOF---PIPING-PLAN-Rev.1.pdf",
+      "size": 2338647,
+      "sizeLabel": "2.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F15-BUILDING-SECTIONS-Rev.1.pdf",
+      "name": "F15-BUILDING-SECTIONS-Rev.1.pdf",
+      "size": 4083234,
+      "sizeLabel": "3.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/F16-STANDPIPE-ISO-Rev.1.pdf",
+      "name": "F16-STANDPIPE-ISO-Rev.1.pdf",
+      "size": 3495532,
+      "sizeLabel": "3.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/FS-01-FIRE-SERVICE-Rev.0.pdf",
+      "name": "FS-01-FIRE-SERVICE-Rev.0.pdf",
+      "size": 1167475,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Fire-Protection/FS-02-FIRE-SERVICE-Rev.0.pdf",
+      "name": "FS-02-FIRE-SERVICE-Rev.0.pdf",
+      "size": 3180143,
+      "sizeLabel": "3.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_000-TITLE-SHEET-Rev.7.pdf",
+      "name": "G_000-TITLE-SHEET-Rev.7.pdf",
+      "size": 678425,
+      "sizeLabel": "662.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_001-PROJECT-NOTES-Rev.1.pdf",
+      "name": "G_001-PROJECT-NOTES-Rev.1.pdf",
+      "size": 243015,
+      "sizeLabel": "237.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_002-CODE-SUMMARY-Rev.1.pdf",
+      "name": "G_002-CODE-SUMMARY-Rev.1.pdf",
+      "size": 326766,
+      "sizeLabel": "319.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_003-FORMS-Rev.1.pdf",
+      "name": "G_003-FORMS-Rev.1.pdf",
+      "size": 786030,
+      "sizeLabel": "767.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_004-FAA-AND-AMMR-Rev.2.pdf",
+      "name": "G_004-FAA-AND-AMMR-Rev.2.pdf",
+      "size": 3860229,
+      "sizeLabel": "3.7 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_005-AREAS-&-SCHEDULES-Rev.1.pdf",
+      "name": "G_005-AREAS-&-SCHEDULES-Rev.1.pdf",
+      "size": 236869,
+      "sizeLabel": "231.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_010-SPECIFICATIONS-Rev.1.pdf",
+      "name": "G_010-SPECIFICATIONS-Rev.1.pdf",
+      "size": 252095,
+      "sizeLabel": "246.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_011-SPECIFICATIONS-Rev.1.pdf",
+      "name": "G_011-SPECIFICATIONS-Rev.1.pdf",
+      "size": 237995,
+      "sizeLabel": "232.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_012-SPECIFICATIONS-Rev.3.pdf",
+      "name": "G_012-SPECIFICATIONS-Rev.3.pdf",
+      "size": 242799,
+      "sizeLabel": "237.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_020-PARTITION-TYPES-Rev.4.pdf",
+      "name": "G_020-PARTITION-TYPES-Rev.4.pdf",
+      "size": 401158,
+      "sizeLabel": "391.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_020B-PARTITION-TYPES-Rev.2.pdf",
+      "name": "G_020B-PARTITION-TYPES-Rev.2.pdf",
+      "size": 254949,
+      "sizeLabel": "249.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_021-FIRE-TEST-ASSEMBLIES-Rev.1.pdf",
+      "name": "G_021-FIRE-TEST-ASSEMBLIES-Rev.1.pdf",
+      "size": 643570,
+      "sizeLabel": "628.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_025-HORIZONTAL-ASSEMBLY-TYPES-Rev.1.pdf",
+      "name": "G_025-HORIZONTAL-ASSEMBLY-TYPES-Rev.1.pdf",
+      "size": 426212,
+      "sizeLabel": "416.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_050-GENERAL-ACCESSIBILITY-GUIDELINES-(11B)-Rev.1.pdf",
+      "name": "G_050-GENERAL-ACCESSIBILITY-GUIDELINES-(11B)-Rev.1.pdf",
+      "size": 670547,
+      "sizeLabel": "654.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_051-GENERAL-ACCESSIBILITY-GUIDELINES-(11B)-Rev.1.pdf",
+      "name": "G_051-GENERAL-ACCESSIBILITY-GUIDELINES-(11B)-Rev.1.pdf",
+      "size": 422068,
+      "sizeLabel": "412.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_052-HOUSING-ACCESSIBILITY-GUIDELINES-(11A)-Rev.1.pdf",
+      "name": "G_052-HOUSING-ACCESSIBILITY-GUIDELINES-(11A)-Rev.1.pdf",
+      "size": 598313,
+      "sizeLabel": "584.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_053-ACCESSIBILITY-DIAGRAMS_PARKING-Rev.1.pdf",
+      "name": "G_053-ACCESSIBILITY-DIAGRAMS_PARKING-Rev.1.pdf",
+      "size": 871958,
+      "sizeLabel": "851.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_054-ACCESSIBILITY-DIAGRAMS_DOORS-Rev.1.pdf",
+      "name": "G_054-ACCESSIBILITY-DIAGRAMS_DOORS-Rev.1.pdf",
+      "size": 225682,
+      "sizeLabel": "220.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_056-ACCESSIBILITY-DIAGRAMS_STAIRS-Rev.1.pdf",
+      "name": "G_056-ACCESSIBILITY-DIAGRAMS_STAIRS-Rev.1.pdf",
+      "size": 174371,
+      "sizeLabel": "170.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_057-ACCESSIBILITY-DIAGRAMS_RAMPS-Rev.1.pdf",
+      "name": "G_057-ACCESSIBILITY-DIAGRAMS_RAMPS-Rev.1.pdf",
+      "size": 177750,
+      "sizeLabel": "173.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_058-ACCESSIBILITY-DIAGRAMS_MANEUVERING-Rev.1.pdf",
+      "name": "G_058-ACCESSIBILITY-DIAGRAMS_MANEUVERING-Rev.1.pdf",
+      "size": 223669,
+      "sizeLabel": "218.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_060-ACCESSIBILITY_ELEVATOR-&-SIGNAGE-Rev.1.pdf",
+      "name": "G_060-ACCESSIBILITY_ELEVATOR-&-SIGNAGE-Rev.1.pdf",
+      "size": 184904,
+      "sizeLabel": "180.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_061-SIGNAGE-DETAILS-Rev.1.pdf",
+      "name": "G_061-SIGNAGE-DETAILS-Rev.1.pdf",
+      "size": 194294,
+      "sizeLabel": "189.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_110-HORIZONTAL-EXIT-Rev.1.pdf",
+      "name": "G_110-HORIZONTAL-EXIT-Rev.1.pdf",
+      "size": 2636783,
+      "sizeLabel": "2.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_111-CODE-PLANS-Rev.6.pdf",
+      "name": "G_111-CODE-PLANS-Rev.6.pdf",
+      "size": 713936,
+      "sizeLabel": "697.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_112-CODE-PLANS-Rev.1.pdf",
+      "name": "G_112-CODE-PLANS-Rev.1.pdf",
+      "size": 593749,
+      "sizeLabel": "579.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_113-CODE-PLANS-Rev.1.pdf",
+      "name": "G_113-CODE-PLANS-Rev.1.pdf",
+      "size": 588357,
+      "sizeLabel": "574.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_114-CODE-PLANS-Rev.1.pdf",
+      "name": "G_114-CODE-PLANS-Rev.1.pdf",
+      "size": 589983,
+      "sizeLabel": "576.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_115-CODE-PLANS-Rev.1.pdf",
+      "name": "G_115-CODE-PLANS-Rev.1.pdf",
+      "size": 591314,
+      "sizeLabel": "577.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_116-CODE-PLANS-Rev.1.pdf",
+      "name": "G_116-CODE-PLANS-Rev.1.pdf",
+      "size": 596949,
+      "sizeLabel": "583.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_117-CODE-PLANS-Rev.1.pdf",
+      "name": "G_117-CODE-PLANS-Rev.1.pdf",
+      "size": 576452,
+      "sizeLabel": "562.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_118-CODE-PLANS-Rev.1.pdf",
+      "name": "G_118-CODE-PLANS-Rev.1.pdf",
+      "size": 509799,
+      "sizeLabel": "497.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_119-CODE-ELEVATION-EAST-Rev.1.pdf",
+      "name": "G_119-CODE-ELEVATION-EAST-Rev.1.pdf",
+      "size": 1061469,
+      "sizeLabel": "1.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_120-CODE-ELEVATION-NORTH-Rev.1.pdf",
+      "name": "G_120-CODE-ELEVATION-NORTH-Rev.1.pdf",
+      "size": 1242922,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_121-CODE-ELEVATION-WEST-Rev.1.pdf",
+      "name": "G_121-CODE-ELEVATION-WEST-Rev.1.pdf",
+      "size": 2023219,
+      "sizeLabel": "1.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_122-BUILDING-ARTICULATION-Rev.1.pdf",
+      "name": "G_122-BUILDING-ARTICULATION-Rev.1.pdf",
+      "size": 5513686,
+      "sizeLabel": "5.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_140-FIRE-ACCESS-PLAN-Rev.1.pdf",
+      "name": "G_140-FIRE-ACCESS-PLAN-Rev.1.pdf",
+      "size": 1004684,
+      "sizeLabel": "981.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_141-75'-HEIGHT-LIMIT-Rev.1.pdf",
+      "name": "G_141-75'-HEIGHT-LIMIT-Rev.1.pdf",
+      "size": 3582889,
+      "sizeLabel": "3.4 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_150-PHOTO-SURVEY-Rev.1.pdf",
+      "name": "G_150-PHOTO-SURVEY-Rev.1.pdf",
+      "size": 5910561,
+      "sizeLabel": "5.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/General/G_200-GRIDS-Rev.1.pdf",
+      "name": "G_200-GRIDS-Rev.1.pdf",
+      "size": 175668,
+      "sizeLabel": "171.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_001-INFO-+-SCHEDULES-Rev.1.pdf",
+      "name": "I_001-INFO-+-SCHEDULES-Rev.1.pdf",
+      "size": 172566,
+      "sizeLabel": "168.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_100-L01_LOBBY-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "name": "I_100-L01_LOBBY-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "size": 543779,
+      "sizeLabel": "531.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_101-L01_LOBBY-BATHROOM-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "name": "I_101-L01_LOBBY-BATHROOM-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "size": 175009,
+      "sizeLabel": "170.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_110-L07_AMENITY-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "name": "I_110-L07_AMENITY-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "size": 179684,
+      "sizeLabel": "175.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_111-LO7_AMENITY-BATHROOMS-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "name": "I_111-LO7_AMENITY-BATHROOMS-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "size": 200345,
+      "sizeLabel": "195.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_112-L07_POOL-DECK-Rev.1.pdf",
+      "name": "I_112-L07_POOL-DECK-Rev.1.pdf",
+      "size": 190888,
+      "sizeLabel": "186.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_120-APARTMENT-CORRIDORS-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "name": "I_120-APARTMENT-CORRIDORS-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "size": 373666,
+      "sizeLabel": "364.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_121-APARTMENT-CORRIDORS-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "name": "I_121-APARTMENT-CORRIDORS-INTERIOR-ELEVATIONS-Rev.1.pdf",
+      "size": 340220,
+      "sizeLabel": "332.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_200-L01_LOBBY-+-BATH-RCP-Rev.1.pdf",
+      "name": "I_200-L01_LOBBY-+-BATH-RCP-Rev.1.pdf",
+      "size": 199364,
+      "sizeLabel": "194.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_210-L07_LOBBY-+-BATH-RCP-Rev.1.pdf",
+      "name": "I_210-L07_LOBBY-+-BATH-RCP-Rev.1.pdf",
+      "size": 184546,
+      "sizeLabel": "180.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_300-INTERIOR-DETAILS-I-Rev.1.pdf",
+      "name": "I_300-INTERIOR-DETAILS-I-Rev.1.pdf",
+      "size": 207774,
+      "sizeLabel": "202.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_301-INTERIOR-DETAILS-II-Rev.1.pdf",
+      "name": "I_301-INTERIOR-DETAILS-II-Rev.1.pdf",
+      "size": 156987,
+      "sizeLabel": "153.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_400-L01_LOBBY-FURNITURE-PLAN-Rev.1.pdf",
+      "name": "I_400-L01_LOBBY-FURNITURE-PLAN-Rev.1.pdf",
+      "size": 171753,
+      "sizeLabel": "167.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Interior/I_410-L07_AMENITY-+-POOL-DECK-FURNITURE-PLAN-Rev.1.pdf",
+      "name": "I_410-L07_AMENITY-+-POOL-DECK-FURNITURE-PLAN-Rev.1.pdf",
+      "size": 265278,
+      "sizeLabel": "259.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-1.01-GROUND-FLOOR-LANDSCAPE-&-HARDSCAPE-PLAN-Rev.6.pdf",
+      "name": "L-1.01-GROUND-FLOOR-LANDSCAPE-&-HARDSCAPE-PLAN-Rev.6.pdf",
+      "size": 2096645,
+      "sizeLabel": "2.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-1.02-2ND-FLOOR-LANDSCAPE-PLAN-Rev.7.pdf",
+      "name": "L-1.02-2ND-FLOOR-LANDSCAPE-PLAN-Rev.7.pdf",
+      "size": 398843,
+      "sizeLabel": "389.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-1.07-7TH-FLOOR-LANDSCAPE-PLAN-Rev.6.pdf",
+      "name": "L-1.07-7TH-FLOOR-LANDSCAPE-PLAN-Rev.6.pdf",
+      "size": 632166,
+      "sizeLabel": "617.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-1.07B-7TH-FLOOR-LANDSCAPE-PLAN-Rev.3.pdf",
+      "name": "L-1.07B-7TH-FLOOR-LANDSCAPE-PLAN-Rev.3.pdf",
+      "size": 589098,
+      "sizeLabel": "575.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-1.08-8TH-FLOOR-LANDSCAPE-PLAN-Rev.6.pdf",
+      "name": "L-1.08-8TH-FLOOR-LANDSCAPE-PLAN-Rev.6.pdf",
+      "size": 515288,
+      "sizeLabel": "503.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-2.00-NOTES-Rev.5.pdf",
+      "name": "L-2.00-NOTES-Rev.5.pdf",
+      "size": 1896346,
+      "sizeLabel": "1.8 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-2.01-CALCULATIONS-&-WORKSHEET-Rev.5.pdf",
+      "name": "L-2.01-CALCULATIONS-&-WORKSHEET-Rev.5.pdf",
+      "size": 3483407,
+      "sizeLabel": "3.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-3.00-DETAILS-Rev.6.pdf",
+      "name": "L-3.00-DETAILS-Rev.6.pdf",
+      "size": 392852,
+      "sizeLabel": "383.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-3.01-DETAILS-Rev.3.pdf",
+      "name": "L-3.01-DETAILS-Rev.3.pdf",
+      "size": 602440,
+      "sizeLabel": "588.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.00-GROUND-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "name": "L-4.00-GROUND-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "size": 398969,
+      "sizeLabel": "389.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.01-2ND-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "name": "L-4.01-2ND-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "size": 461006,
+      "sizeLabel": "450.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.02-7TH-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "name": "L-4.02-7TH-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "size": 410432,
+      "sizeLabel": "400.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.03-8TH-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "name": "L-4.03-8TH-FLOOR-IRRIGATION-PLAN-Rev.2.pdf",
+      "size": 389049,
+      "sizeLabel": "379.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.04-IRRIGATION-LEGEND-AND-NOTES-Rev.2.pdf",
+      "name": "L-4.04-IRRIGATION-LEGEND-AND-NOTES-Rev.2.pdf",
+      "size": 420066,
+      "sizeLabel": "410.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.05-IRRIGATION-DETAILS-Rev.2.pdf",
+      "name": "L-4.05-IRRIGATION-DETAILS-Rev.2.pdf",
+      "size": 366538,
+      "sizeLabel": "357.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.06-IRRIGATION-DETAILS-Rev.2.pdf",
+      "name": "L-4.06-IRRIGATION-DETAILS-Rev.2.pdf",
+      "size": 494219,
+      "sizeLabel": "482.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.07-IRRIGATION-DETAILS-Rev.2.pdf",
+      "name": "L-4.07-IRRIGATION-DETAILS-Rev.2.pdf",
+      "size": 512238,
+      "sizeLabel": "500.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.08-IRRIGATION-LEGEND-AND-NOTES-Rev.1.pdf",
+      "name": "L-4.08-IRRIGATION-LEGEND-AND-NOTES-Rev.1.pdf",
+      "size": 789701,
+      "sizeLabel": "771.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.09-IRRIGATION-DETAILS-Rev.1.pdf",
+      "name": "L-4.09-IRRIGATION-DETAILS-Rev.1.pdf",
+      "size": 275512,
+      "sizeLabel": "269.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.10-IRRIGATION-DETAILS-Rev.1.pdf",
+      "name": "L-4.10-IRRIGATION-DETAILS-Rev.1.pdf",
+      "size": 405272,
+      "sizeLabel": "395.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Landscape/L-4.11-IRRIGATION-DETAILS-Rev.1.pdf",
+      "name": "L-4.11-IRRIGATION-DETAILS-Rev.1.pdf",
+      "size": 420049,
+      "sizeLabel": "410.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M001-MECHANICAL-LEGEND,-NOTES-&-ABBREVIATIONS-Rev.1.pdf",
+      "name": "M001-MECHANICAL-LEGEND,-NOTES-&-ABBREVIATIONS-Rev.1.pdf",
+      "size": 343941,
+      "sizeLabel": "335.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M002-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.2.pdf",
+      "name": "M002-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.2.pdf",
+      "size": 152630,
+      "sizeLabel": "149.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M003-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.4.pdf",
+      "name": "M003-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.4.pdf",
+      "size": 215843,
+      "sizeLabel": "210.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M004-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.1.pdf",
+      "name": "M004-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.1.pdf",
+      "size": 1792872,
+      "sizeLabel": "1.7 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M005-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.1.pdf",
+      "name": "M005-MECHANICAL-EQUIPMENT-SCHEDULES-Rev.1.pdf",
+      "size": 1663008,
+      "sizeLabel": "1.6 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M006-MECHANICAL-TITLE-24-Rev.1.pdf",
+      "name": "M006-MECHANICAL-TITLE-24-Rev.1.pdf",
+      "size": 334264,
+      "sizeLabel": "326.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M007-MECHANICAL-TITLE-24-Rev.0.pdf",
+      "name": "M007-MECHANICAL-TITLE-24-Rev.0.pdf",
+      "size": 1596310,
+      "sizeLabel": "1.5 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M008-MECHANICAL-TITLE-24-Rev.0.pdf",
+      "name": "M008-MECHANICAL-TITLE-24-Rev.0.pdf",
+      "size": 269392,
+      "sizeLabel": "263.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M200-MECHANICAL-NEW-WORK-BASEMENT-PLAN-Rev.0.pdf",
+      "name": "M200-MECHANICAL-NEW-WORK-BASEMENT-PLAN-Rev.0.pdf",
+      "size": 360535,
+      "sizeLabel": "352.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M201-MECHANICAL-NEW-WORK-1ST-FLOORPLAN-Rev.8.pdf",
+      "name": "M201-MECHANICAL-NEW-WORK-1ST-FLOORPLAN-Rev.8.pdf",
+      "size": 599906,
+      "sizeLabel": "585.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M202-MECHANICAL-NEW-WORK-2ND-FLOOR-PLAN-Rev.5.pdf",
+      "name": "M202-MECHANICAL-NEW-WORK-2ND-FLOOR-PLAN-Rev.5.pdf",
+      "size": 548849,
+      "sizeLabel": "536.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M203-MECHANICAL-NEW-WORK-3RD-FLOOR-PLAN-Rev.5.pdf",
+      "name": "M203-MECHANICAL-NEW-WORK-3RD-FLOOR-PLAN-Rev.5.pdf",
+      "size": 535253,
+      "sizeLabel": "522.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M204-MECHANICAL-NEW-WORK-4TH-FLOOR-PLAN-Rev.4.pdf",
+      "name": "M204-MECHANICAL-NEW-WORK-4TH-FLOOR-PLAN-Rev.4.pdf",
+      "size": 529098,
+      "sizeLabel": "516.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M205-MECHANICAL-NEW-WORK-5TH-FLOOR-PLAN-Rev.4.pdf",
+      "name": "M205-MECHANICAL-NEW-WORK-5TH-FLOOR-PLAN-Rev.4.pdf",
+      "size": 541244,
+      "sizeLabel": "528.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M206-MECHANICAL-NEW-WORK-6TH-FLOOR-PLAN-Rev.5.pdf",
+      "name": "M206-MECHANICAL-NEW-WORK-6TH-FLOOR-PLAN-Rev.5.pdf",
+      "size": 536587,
+      "sizeLabel": "524.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M207-MECHANICAL-NEW-WORK-7TH-FLOOR-PLAN-Rev.7.pdf",
+      "name": "M207-MECHANICAL-NEW-WORK-7TH-FLOOR-PLAN-Rev.7.pdf",
+      "size": 566832,
+      "sizeLabel": "553.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M208-MECHANICAL-NEW-WORK-8TH-FLOOR-PLAN-Rev.4.pdf",
+      "name": "M208-MECHANICAL-NEW-WORK-8TH-FLOOR-PLAN-Rev.4.pdf",
+      "size": 535256,
+      "sizeLabel": "522.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M209-MECHANICAL-NEW-WORK-ROOF-PLAN-Rev.6.pdf",
+      "name": "M209-MECHANICAL-NEW-WORK-ROOF-PLAN-Rev.6.pdf",
+      "size": 790078,
+      "sizeLabel": "771.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M301-MECHANICAL-1ST-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M301-MECHANICAL-1ST-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 424885,
+      "sizeLabel": "414.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M302-MECHANICAL-2ND-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M302-MECHANICAL-2ND-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 471516,
+      "sizeLabel": "460.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M303-MECHANICAL-3RD-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M303-MECHANICAL-3RD-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 450428,
+      "sizeLabel": "439.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M304-MECHANICAL-4TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M304-MECHANICAL-4TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 452807,
+      "sizeLabel": "442.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M305-MECHANICAL-5TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M305-MECHANICAL-5TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 454177,
+      "sizeLabel": "443.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M306-MECHANICAL-6TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M306-MECHANICAL-6TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 450906,
+      "sizeLabel": "440.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M307-MECHANICAL-7TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M307-MECHANICAL-7TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 602831,
+      "sizeLabel": "588.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M308-MECHANICAL-8TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "name": "M308-MECHANICAL-8TH-FLOOR-ZONE-PLAN-Rev.2.pdf",
+      "size": 463311,
+      "sizeLabel": "452.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M401-MECHANICAL-DETAILS-Rev.1.pdf",
+      "name": "M401-MECHANICAL-DETAILS-Rev.1.pdf",
+      "size": 271356,
+      "sizeLabel": "265.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M402-MECHANICAL-DETAILS-Rev.1.pdf",
+      "name": "M402-MECHANICAL-DETAILS-Rev.1.pdf",
+      "size": 262184,
+      "sizeLabel": "256.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M403-MECHANICAL-DETAILS-Rev.1.pdf",
+      "name": "M403-MECHANICAL-DETAILS-Rev.1.pdf",
+      "size": 3486245,
+      "sizeLabel": "3.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Mechanical/M501-MECHANICAL-SPECIFICATIONS-Rev.1.pdf",
+      "name": "M501-MECHANICAL-SPECIFICATIONS-Rev.1.pdf",
+      "size": 242394,
+      "sizeLabel": "236.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P001-PLUMBING-LEGEND-&-GENERAL-NOTES-Rev.2.pdf",
+      "name": "P001-PLUMBING-LEGEND-&-GENERAL-NOTES-Rev.2.pdf",
+      "size": 224659,
+      "sizeLabel": "219.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P002-PLUMBING-NOTES-&-SCHEDULES-Rev.6.pdf",
+      "name": "P002-PLUMBING-NOTES-&-SCHEDULES-Rev.6.pdf",
+      "size": 695355,
+      "sizeLabel": "679.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P003-PLUMBING-NOTES-&-SCHEDULES-Rev.2.pdf",
+      "name": "P003-PLUMBING-NOTES-&-SCHEDULES-Rev.2.pdf",
+      "size": 223972,
+      "sizeLabel": "218.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P004-PLUMBING-ISOMETRIC-Rev.3.pdf",
+      "name": "P004-PLUMBING-ISOMETRIC-Rev.3.pdf",
+      "size": 212971,
+      "sizeLabel": "208.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P005-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.4.pdf",
+      "name": "P005-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.4.pdf",
+      "size": 219523,
+      "sizeLabel": "214.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P006-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.4.pdf",
+      "name": "P006-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.4.pdf",
+      "size": 228041,
+      "sizeLabel": "222.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P007-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.4.pdf",
+      "name": "P007-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.4.pdf",
+      "size": 216554,
+      "sizeLabel": "211.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P008-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.2.pdf",
+      "name": "P008-PLUMBING-DOMESTIC-WATER-DIAGRAM-Rev.2.pdf",
+      "size": 199182,
+      "sizeLabel": "194.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P009-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "P009-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 218399,
+      "sizeLabel": "213.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P010-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "P010-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 224779,
+      "sizeLabel": "219.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P011-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "P011-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 225903,
+      "sizeLabel": "220.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P012-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "P012-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 225246,
+      "sizeLabel": "220.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P013-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "P013-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 225771,
+      "sizeLabel": "220.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P014-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "name": "P014-PLUMBING-WASTE-AND-VENT-RISER-DIAGRAM-Rev.2.pdf",
+      "size": 235081,
+      "sizeLabel": "229.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P100-PLUMBING-SITE-PLAN-Rev.5.pdf",
+      "name": "P100-PLUMBING-SITE-PLAN-Rev.5.pdf",
+      "size": 239003,
+      "sizeLabel": "233.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P200-PLUMBING-NEW-WORK-UNDERGROUND-FLOOR-PLAN-Rev.6.pdf",
+      "name": "P200-PLUMBING-NEW-WORK-UNDERGROUND-FLOOR-PLAN-Rev.6.pdf",
+      "size": 532950,
+      "sizeLabel": "520.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P201-PLUMBING-NEW-WORK-1ST-FLOOR-PLAN-Rev.12.pdf",
+      "name": "P201-PLUMBING-NEW-WORK-1ST-FLOOR-PLAN-Rev.12.pdf",
+      "size": 609749,
+      "sizeLabel": "595.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P202-PLUMBING-NEW-WORK-2ND-FLOOR-PLAN-Rev.6.pdf",
+      "name": "P202-PLUMBING-NEW-WORK-2ND-FLOOR-PLAN-Rev.6.pdf",
+      "size": 596717,
+      "sizeLabel": "582.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P203-PLUMBING-NEW-WORK-3RD-FLOOR-PLAN-Rev.6.pdf",
+      "name": "P203-PLUMBING-NEW-WORK-3RD-FLOOR-PLAN-Rev.6.pdf",
+      "size": 529893,
+      "sizeLabel": "517.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P204-PLUMBING-NEW-WORK-4TH-FLOOR-PLAN-Rev.6.pdf",
+      "name": "P204-PLUMBING-NEW-WORK-4TH-FLOOR-PLAN-Rev.6.pdf",
+      "size": 535632,
+      "sizeLabel": "523.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P205-PLUMBING-NEW-WORK-5TH-FLOOR-PLAN-Rev.7.pdf",
+      "name": "P205-PLUMBING-NEW-WORK-5TH-FLOOR-PLAN-Rev.7.pdf",
+      "size": 539613,
+      "sizeLabel": "527.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P206-PLUMBING-NEW-WORK-6TH-FLOOR-PLAN-Rev.8.pdf",
+      "name": "P206-PLUMBING-NEW-WORK-6TH-FLOOR-PLAN-Rev.8.pdf",
+      "size": 504977,
+      "sizeLabel": "493.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P207-PLUMBING-NEW-WORK-7TH-FLOOR-PLAN-Rev.8.pdf",
+      "name": "P207-PLUMBING-NEW-WORK-7TH-FLOOR-PLAN-Rev.8.pdf",
+      "size": 524139,
+      "sizeLabel": "511.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P208-PLUMBING-NEW-WORK-8TH-FLOOR-PLAN-Rev.6.pdf",
+      "name": "P208-PLUMBING-NEW-WORK-8TH-FLOOR-PLAN-Rev.6.pdf",
+      "size": 480499,
+      "sizeLabel": "469.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P209-PLUMBING-NEW-WORK-1ST-FLOOR-PLAN-Rev.6.pdf",
+      "name": "P209-PLUMBING-NEW-WORK-1ST-FLOOR-PLAN-Rev.6.pdf",
+      "size": 937524,
+      "sizeLabel": "915.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P210-PLUMBING-NEW-WORK-2ND-FLOOR-PLAN-Rev.4.pdf",
+      "name": "P210-PLUMBING-NEW-WORK-2ND-FLOOR-PLAN-Rev.4.pdf",
+      "size": 602801,
+      "sizeLabel": "588.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P211-PLUMBING-NEW-WORK-3RD-FLOOR-PLAN-Rev.4.pdf",
+      "name": "P211-PLUMBING-NEW-WORK-3RD-FLOOR-PLAN-Rev.4.pdf",
+      "size": 579224,
+      "sizeLabel": "565.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P212-PLUMBING-NEW-WORK-4TH-FLOOR-PLAN-Rev.4.pdf",
+      "name": "P212-PLUMBING-NEW-WORK-4TH-FLOOR-PLAN-Rev.4.pdf",
+      "size": 591581,
+      "sizeLabel": "577.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P213-PLUMBING-NEW-WORK-5TH-FLOOR-PLAN-Rev.4.pdf",
+      "name": "P213-PLUMBING-NEW-WORK-5TH-FLOOR-PLAN-Rev.4.pdf",
+      "size": 591048,
+      "sizeLabel": "577.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P214-PLUMBING-NEW-WORK-6TH-FLOOR-PLAN-Rev.4.pdf",
+      "name": "P214-PLUMBING-NEW-WORK-6TH-FLOOR-PLAN-Rev.4.pdf",
+      "size": 550196,
+      "sizeLabel": "537.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P215-PLUMBING-NEW-WORK-7TH-FLOOR-PLAN-Rev.5.pdf",
+      "name": "P215-PLUMBING-NEW-WORK-7TH-FLOOR-PLAN-Rev.5.pdf",
+      "size": 626488,
+      "sizeLabel": "611.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P216-PLUMBING-NEW-WORK-8TH-FLOOR-PLAN-Rev.5.pdf",
+      "name": "P216-PLUMBING-NEW-WORK-8TH-FLOOR-PLAN-Rev.5.pdf",
+      "size": 518733,
+      "sizeLabel": "506.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P217-PLUMBING-NEW-WORK-ROOF-PLAN-Rev.2.pdf",
+      "name": "P217-PLUMBING-NEW-WORK-ROOF-PLAN-Rev.2.pdf",
+      "size": 728932,
+      "sizeLabel": "711.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P401-PLUMBING-DETAILS-Rev.2.pdf",
+      "name": "P401-PLUMBING-DETAILS-Rev.2.pdf",
+      "size": 283876,
+      "sizeLabel": "277.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P402-PLUMBING-DETAILS-Rev.2.pdf",
+      "name": "P402-PLUMBING-DETAILS-Rev.2.pdf",
+      "size": 463165,
+      "sizeLabel": "452.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P403-PLUMBING-DETAILS-Rev.2.pdf",
+      "name": "P403-PLUMBING-DETAILS-Rev.2.pdf",
+      "size": 238783,
+      "sizeLabel": "233.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Plumbing/P501-PLUMBING-SPECIFICATIONS-Rev.2.pdf",
+      "name": "P501-PLUMBING-SPECIFICATIONS-Rev.2.pdf",
+      "size": 207399,
+      "sizeLabel": "202.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461--T07--D-TRAFFIC-CONTROL-CURB-RAMP-PLAN-Rev.1.pdf",
+      "name": "100461--T07--D-TRAFFIC-CONTROL-CURB-RAMP-PLAN-Rev.1.pdf",
+      "size": 578311,
+      "sizeLabel": "564.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461--T12-D-TRAFFIC-CONTROL-SDGE-WORK-FOR-C-STREET-AND-25TH-STREET-Rev.0.pdf",
+      "name": "100461--T12-D-TRAFFIC-CONTROL-SDGE-WORK-FOR-C-STREET-AND-25TH-STREET-Rev.0.pdf",
+      "size": 1123788,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-1--D-TITLE-SHEET-Rev.3.pdf",
+      "name": "100461-1--D-TITLE-SHEET-Rev.3.pdf",
+      "size": 2046721,
+      "sizeLabel": "2.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-2--D-NOTES-FOR-C-STREET-AND-25TH-STREET-Rev.3.pdf",
+      "name": "100461-2--D-NOTES-FOR-C-STREET-AND-25TH-STREET-Rev.3.pdf",
+      "size": 2030447,
+      "sizeLabel": "1.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-3--D-NOTES-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-3--D-NOTES-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 901822,
+      "sizeLabel": "880.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-4--D-IMPROVEMENT-PLANS-FOR-25TH-STREET-Rev.3.pdf",
+      "name": "100461-4--D-IMPROVEMENT-PLANS-FOR-25TH-STREET-Rev.3.pdf",
+      "size": 2124108,
+      "sizeLabel": "2.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-5--D-IMPROVEMENT-PLANS-FOR-C-STREET-Rev.2.pdf",
+      "name": "100461-5--D-IMPROVEMENT-PLANS-FOR-C-STREET-Rev.2.pdf",
+      "size": 655637,
+      "sizeLabel": "640.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-6--D-IMPROVEMENT-PLANS-FOR-ALLEY-BETWEEN-STREET-AND-C-STREET-Rev.3.pdf",
+      "name": "100461-6--D-IMPROVEMENT-PLANS-FOR-ALLEY-BETWEEN-STREET-AND-C-STREET-Rev.3.pdf",
+      "size": 1129236,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-7--D-EROSION-CONTROL-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-7--D-EROSION-CONTROL-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 675289,
+      "sizeLabel": "659.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-8--D-LANDSCAPE-PLANS-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-8--D-LANDSCAPE-PLANS-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 1406521,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-9--D-LANDSCAPE-PLANS-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-9--D-LANDSCAPE-PLANS-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 934350,
+      "sizeLabel": "912.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-10-D-LANDSCAPE-PLANS-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-10-D-LANDSCAPE-PLANS-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 1322725,
+      "sizeLabel": "1.3 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-11--D-IRRIGATIONS-PLANS-FOR-Rev.0.pdf",
+      "name": "100461-11--D-IRRIGATIONS-PLANS-FOR-Rev.0.pdf",
+      "size": 891234,
+      "sizeLabel": "870.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-11-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "name": "100461-11-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "size": 1187021,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-12-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-12-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 1098966,
+      "sizeLabel": "1.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-13-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "name": "100461-13-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "size": 1127849,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-14--D-NOTE-ALL-LANDSCAPING-AND-IRRIGATION-SHOWN-IS-PRIVATE-Rev.0.pdf",
+      "name": "100461-14--D-NOTE-ALL-LANDSCAPING-AND-IRRIGATION-SHOWN-IS-PRIVATE-Rev.0.pdf",
+      "size": 917556,
+      "sizeLabel": "896.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-14-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "name": "100461-14-D-IRRIGATION-PLAN-SHEET-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "size": 1103256,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T0-5-D-TRAFFIC-CONTROL-25TH-STREET-UTILITIES---PHASE-II-Rev.2.pdf",
+      "name": "100461-T0-5-D-TRAFFIC-CONTROL-25TH-STREET-UTILITIES---PHASE-II-Rev.2.pdf",
+      "size": 535128,
+      "sizeLabel": "522.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T01-D-TRAFFIC-CONTROL-NOTES-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-T01-D-TRAFFIC-CONTROL-NOTES-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 778450,
+      "sizeLabel": "760.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T02-D-TRAFFIC-CONTROL-INSTALLATION-OF-BASE-PLAN-Rev.2.pdf",
+      "name": "100461-T02-D-TRAFFIC-CONTROL-INSTALLATION-OF-BASE-PLAN-Rev.2.pdf",
+      "size": 568951,
+      "sizeLabel": "555.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T03-D-TRAFFIC-CONTROL-BASE-PLAN-Rev.2.pdf",
+      "name": "100461-T03-D-TRAFFIC-CONTROL-BASE-PLAN-Rev.2.pdf",
+      "size": 618127,
+      "sizeLabel": "603.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T04-D-TRAFFIC-CONTROL-25TH-STREET-UTILITIES---PHASE-I-Rev.2.pdf",
+      "name": "100461-T04-D-TRAFFIC-CONTROL-25TH-STREET-UTILITIES---PHASE-I-Rev.2.pdf",
+      "size": 564465,
+      "sizeLabel": "551.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T05-D-TRAFFIC-CONTROL---C-STREET-WATER-PLAN-Rev.0.pdf",
+      "name": "100461-T05-D-TRAFFIC-CONTROL---C-STREET-WATER-PLAN-Rev.0.pdf",
+      "size": 1112753,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T06-D-TRAFFIC-CONTROL---C-STREET-WATER-PLAN-Rev.2.pdf",
+      "name": "100461-T06-D-TRAFFIC-CONTROL---C-STREET-WATER-PLAN-Rev.2.pdf",
+      "size": 524702,
+      "sizeLabel": "512.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T07-D-TRAFFIC-CONTROL-SEWER-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.0.pdf",
+      "name": "100461-T07-D-TRAFFIC-CONTROL-SEWER-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.0.pdf",
+      "size": 325263,
+      "sizeLabel": "317.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T08-D-TRAFFIC-CONTROL-GAS-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-T08-D-TRAFFIC-CONTROL-GAS-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 551084,
+      "sizeLabel": "538.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T09-D-TRAFFIC-CONTROL-CURB-RAMP-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "name": "100461-T09-D-TRAFFIC-CONTROL-CURB-RAMP-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.1.pdf",
+      "size": 562608,
+      "sizeLabel": "549.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T10-D-TRAFFIC-CONTROL-ALLEY-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "name": "100461-T10-D-TRAFFIC-CONTROL-ALLEY-PLAN-FOR-C-STREET-AND-25TH-STREET-Rev.2.pdf",
+      "size": 1169229,
+      "sizeLabel": "1.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Right-Of-Way/100461-T11-D-TRAFFIC-CONTROL-ALLEY-APRON-Rev.1.pdf",
+      "name": "100461-T11-D-TRAFFIC-CONTROL-ALLEY-APRON-Rev.1.pdf",
+      "size": 558654,
+      "sizeLabel": "545.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/475326-TEMP-POWER-REMOV-Rev.0.pdf",
+      "name": "475326-TEMP-POWER-REMOV-Rev.0.pdf",
+      "size": 187634,
+      "sizeLabel": "183.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/487162-PERMANENT-POWER-UG-Rev.0.pdf",
+      "name": "487162-PERMANENT-POWER-UG-Rev.0.pdf",
+      "size": 288795,
+      "sizeLabel": "282.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/592195-2512-C-ST---GAS-KILL-Rev.0.pdf",
+      "name": "592195-2512-C-ST---GAS-KILL-Rev.0.pdf",
+      "size": 721180,
+      "sizeLabel": "704.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/599227-2522-C-ST---GAS-KILL-Rev.0.pdf",
+      "name": "599227-2522-C-ST---GAS-KILL-Rev.0.pdf",
+      "size": 723085,
+      "sizeLabel": "706.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/UD01-2-TEMP-POWER-INSTALL-Rev.0.pdf",
+      "name": "UD01-2-TEMP-POWER-INSTALL-Rev.0.pdf",
+      "size": 209230,
+      "sizeLabel": "204.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/UD01-TEMP-POWER-INSTALL-Rev.0.pdf",
+      "name": "UD01-TEMP-POWER-INSTALL-Rev.0.pdf",
+      "size": 424711,
+      "sizeLabel": "414.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/SDGE-/UDG-GAS-SERVICE-AND-METER-INSTALL-Rev.0.pdf",
+      "name": "UDG-GAS-SERVICE-AND-METER-INSTALL-Rev.0.pdf",
+      "size": 733848,
+      "sizeLabel": "716.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH1-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH1-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 866059,
+      "sizeLabel": "845.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH2-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH2-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 463485,
+      "sizeLabel": "452.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH3-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH3-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 460303,
+      "sizeLabel": "449.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH4-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH4-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 417887,
+      "sizeLabel": "408.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH5-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH5-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 504844,
+      "sizeLabel": "493.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH6-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH6-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 289010,
+      "sizeLabel": "282.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH7-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH7-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 334991,
+      "sizeLabel": "327.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Shoring/SH8-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "name": "SH8-TEMPORARY-SHORING-FOR-Rev.1.pdf",
+      "size": 275417,
+      "sizeLabel": "269.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S0.00-COVER-SHEET-Rev.2.pdf",
+      "name": "S0.00-COVER-SHEET-Rev.2.pdf",
+      "size": 2026618,
+      "sizeLabel": "1.9 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S0.01-PERSPECTIVE-VIEW---SOUTH-EAST-Rev.1.pdf",
+      "name": "S0.01-PERSPECTIVE-VIEW---SOUTH-EAST-Rev.1.pdf",
+      "size": 5337878,
+      "sizeLabel": "5.1 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S0.02-PERSPECTIVE-VIEW---NORTH-WEST-Rev.1.pdf",
+      "name": "S0.02-PERSPECTIVE-VIEW---NORTH-WEST-Rev.1.pdf",
+      "size": 4404727,
+      "sizeLabel": "4.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1-TOWER-CRANE-FOUNDATION-Rev.0.pdf",
+      "name": "S1-TOWER-CRANE-FOUNDATION-Rev.0.pdf",
+      "size": 362839,
+      "sizeLabel": "354.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.01-GENERAL-NOTES-Rev.1.pdf",
+      "name": "S1.01-GENERAL-NOTES-Rev.1.pdf",
+      "size": 157433,
+      "sizeLabel": "153.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.02-GENERAL-NOTES-Rev.2.pdf",
+      "name": "S1.02-GENERAL-NOTES-Rev.2.pdf",
+      "size": 233283,
+      "sizeLabel": "227.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.03-GENERAL-NOTES-Rev.2.pdf",
+      "name": "S1.03-GENERAL-NOTES-Rev.2.pdf",
+      "size": 227635,
+      "sizeLabel": "222.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.04-GENERAL-NOTES-Rev.1.pdf",
+      "name": "S1.04-GENERAL-NOTES-Rev.1.pdf",
+      "size": 153631,
+      "sizeLabel": "150.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.05-TYPICAL-DETAILS-Rev.1.pdf",
+      "name": "S1.05-TYPICAL-DETAILS-Rev.1.pdf",
+      "size": 192764,
+      "sizeLabel": "188.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.06-TYPICAL-DETAILS-Rev.1.pdf",
+      "name": "S1.06-TYPICAL-DETAILS-Rev.1.pdf",
+      "size": 185350,
+      "sizeLabel": "181.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.07-TYPICAL-DETAILS-Rev.1.pdf",
+      "name": "S1.07-TYPICAL-DETAILS-Rev.1.pdf",
+      "size": 234259,
+      "sizeLabel": "228.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.08-TYPICAL-DETAILS-Rev.2.pdf",
+      "name": "S1.08-TYPICAL-DETAILS-Rev.2.pdf",
+      "size": 249217,
+      "sizeLabel": "243.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S1.11-TABLES-AND-SCHEDULES-Rev.2.pdf",
+      "name": "S1.11-TABLES-AND-SCHEDULES-Rev.2.pdf",
+      "size": 282340,
+      "sizeLabel": "275.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.01.1-LEVEL-P1-PLAN---CAR-PIT---CONCRETE-OUTLINE-Rev.7.pdf",
+      "name": "S2.01.1-LEVEL-P1-PLAN---CAR-PIT---CONCRETE-OUTLINE-Rev.7.pdf",
+      "size": 450726,
+      "sizeLabel": "440.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.01.2-LEVEL-P1-PLAN---CAR-PIT---REINFORCING-Rev.6.pdf",
+      "name": "S2.01.2-LEVEL-P1-PLAN---CAR-PIT---REINFORCING-Rev.6.pdf",
+      "size": 271453,
+      "sizeLabel": "265.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.01.3-LEVEL-P1---STIRRUP-REINFORCING-PLAN-Rev.6.pdf",
+      "name": "S2.01.3-LEVEL-P1---STIRRUP-REINFORCING-PLAN-Rev.6.pdf",
+      "size": 434151,
+      "sizeLabel": "424.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.02.1-LEVEL-1-PLAN---CONCRETE-OUTLINE-Rev.9.pdf",
+      "name": "S2.02.1-LEVEL-1-PLAN---CONCRETE-OUTLINE-Rev.9.pdf",
+      "size": 308909,
+      "sizeLabel": "301.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.03.1-LEVEL-2-PLAN---CONCRETE-OUTLINE-&-SHEAR-REINFORCEMENT-Rev.5.pdf",
+      "name": "S2.03.1-LEVEL-2-PLAN---CONCRETE-OUTLINE-&-SHEAR-REINFORCEMENT-Rev.5.pdf",
+      "size": 281935,
+      "sizeLabel": "275.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.03.2-LEVEL-2-PLAN---REINFORCING-Rev.4.pdf",
+      "name": "S2.03.2-LEVEL-2-PLAN---REINFORCING-Rev.4.pdf",
+      "size": 295685,
+      "sizeLabel": "288.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.03.3-LEVEL-2-PLAN---DIAPHRAGM-REINFORCING-Rev.4.pdf",
+      "name": "S2.03.3-LEVEL-2-PLAN---DIAPHRAGM-REINFORCING-Rev.4.pdf",
+      "size": 548402,
+      "sizeLabel": "535.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.03.4-LEVEL-2-PLAN---DIAPHRAGM-REINFORCING-Rev.3.pdf",
+      "name": "S2.03.4-LEVEL-2-PLAN---DIAPHRAGM-REINFORCING-Rev.3.pdf",
+      "size": 255601,
+      "sizeLabel": "249.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.04.1-LEVEL-3-PLAN---CONCRETE-OUTLINE-Rev.4.pdf",
+      "name": "S2.04.1-LEVEL-3-PLAN---CONCRETE-OUTLINE-Rev.4.pdf",
+      "size": 272413,
+      "sizeLabel": "266.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.04.2-LEVEL-3-PLAN---REINFORCING-Rev.5.pdf",
+      "name": "S2.04.2-LEVEL-3-PLAN---REINFORCING-Rev.5.pdf",
+      "size": 298028,
+      "sizeLabel": "291.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.04.3-LEVEL-3-PLAN---DIAPHRAGM-REINFORCING-Rev.4.pdf",
+      "name": "S2.04.3-LEVEL-3-PLAN---DIAPHRAGM-REINFORCING-Rev.4.pdf",
+      "size": 246366,
+      "sizeLabel": "240.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.05.1-LEVEL-4-PLAN---CONCRETE-OUTLINE-Rev.4.pdf",
+      "name": "S2.05.1-LEVEL-4-PLAN---CONCRETE-OUTLINE-Rev.4.pdf",
+      "size": 266578,
+      "sizeLabel": "260.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.05.2-LEVEL-4-PLAN---REINFORCING-Rev.5.pdf",
+      "name": "S2.05.2-LEVEL-4-PLAN---REINFORCING-Rev.5.pdf",
+      "size": 289411,
+      "sizeLabel": "282.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.05.3-LEVEL-4-PLAN---DIAPHRAGM-REINFORCING-Rev.4.pdf",
+      "name": "S2.05.3-LEVEL-4-PLAN---DIAPHRAGM-REINFORCING-Rev.4.pdf",
+      "size": 241485,
+      "sizeLabel": "235.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.06.1-LEVEL-5-PLAN---CONCRETE-OUTLINE-Rev.4.pdf",
+      "name": "S2.06.1-LEVEL-5-PLAN---CONCRETE-OUTLINE-Rev.4.pdf",
+      "size": 268347,
+      "sizeLabel": "262.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.07.1-LEVEL-6-PLAN---CONCRETE-OUTLINE-Rev.5.pdf",
+      "name": "S2.07.1-LEVEL-6-PLAN---CONCRETE-OUTLINE-Rev.5.pdf",
+      "size": 237069,
+      "sizeLabel": "231.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.08.1-LEVEL-7-PLAN---CONCRETE-OUTLINE-Rev.7.pdf",
+      "name": "S2.08.1-LEVEL-7-PLAN---CONCRETE-OUTLINE-Rev.7.pdf",
+      "size": 232093,
+      "sizeLabel": "226.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.08.2-LEVEL-7-PLAN---REINFORCING-Rev.7.pdf",
+      "name": "S2.08.2-LEVEL-7-PLAN---REINFORCING-Rev.7.pdf",
+      "size": 271068,
+      "sizeLabel": "264.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.08.3-LEVEL-7-PLAN---DIAPHRAGM-REINFORCING-Rev.6.pdf",
+      "name": "S2.08.3-LEVEL-7-PLAN---DIAPHRAGM-REINFORCING-Rev.6.pdf",
+      "size": 212371,
+      "sizeLabel": "207.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.09.1-LEVEL-8-PLAN---CONCRETE-OUTLINE-Rev.5.pdf",
+      "name": "S2.09.1-LEVEL-8-PLAN---CONCRETE-OUTLINE-Rev.5.pdf",
+      "size": 215749,
+      "sizeLabel": "210.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.09.2-LEVEL-8-PLAN---REINFORCING-Rev.6.pdf",
+      "name": "S2.09.2-LEVEL-8-PLAN---REINFORCING-Rev.6.pdf",
+      "size": 267486,
+      "sizeLabel": "261.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.09.3-LEVEL-8-PLAN---DIAPHRAGM-REINFORCING-Rev.5.pdf",
+      "name": "S2.09.3-LEVEL-8-PLAN---DIAPHRAGM-REINFORCING-Rev.5.pdf",
+      "size": 212433,
+      "sizeLabel": "207.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S2.10-ROOF-PLAN-Rev.5.pdf",
+      "name": "S2.10-ROOF-PLAN-Rev.5.pdf",
+      "size": 319046,
+      "sizeLabel": "311.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.01-SHEAR-WALL-SCHEDULE---ZONES-Rev.6.pdf",
+      "name": "S3.01-SHEAR-WALL-SCHEDULE---ZONES-Rev.6.pdf",
+      "size": 261078,
+      "sizeLabel": "255.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.02-SHEAR-WALL-SCHEDULE---WALLS-Rev.4.pdf",
+      "name": "S3.02-SHEAR-WALL-SCHEDULE---WALLS-Rev.4.pdf",
+      "size": 289206,
+      "sizeLabel": "282.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.03-SHEARWALL-DETAILS-Rev.1.pdf",
+      "name": "S3.03-SHEARWALL-DETAILS-Rev.1.pdf",
+      "size": 163457,
+      "sizeLabel": "159.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.04-SHEAR-WALL-DETAILS-Rev.3.pdf",
+      "name": "S3.04-SHEAR-WALL-DETAILS-Rev.3.pdf",
+      "size": 267351,
+      "sizeLabel": "261.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.05-SHEAR-WALL-DETAILS-Rev.3.pdf",
+      "name": "S3.05-SHEAR-WALL-DETAILS-Rev.3.pdf",
+      "size": 333713,
+      "sizeLabel": "325.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.11-SHEAR-WALL-ELEVATIONS-Rev.2.pdf",
+      "name": "S3.11-SHEAR-WALL-ELEVATIONS-Rev.2.pdf",
+      "size": 230584,
+      "sizeLabel": "225.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.12-SHEAR-WALL-ELEVATIONS-Rev.4.pdf",
+      "name": "S3.12-SHEAR-WALL-ELEVATIONS-Rev.4.pdf",
+      "size": 239640,
+      "sizeLabel": "234.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S3.13-WALL-ELEVATIONS-Rev.3.pdf",
+      "name": "S3.13-WALL-ELEVATIONS-Rev.3.pdf",
+      "size": 236517,
+      "sizeLabel": "231.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S4.01-COLUMN-KEY-PLAN,-NOTES-AND-TYPICAL-COLUMN-DETAILS-Rev.1.pdf",
+      "name": "S4.01-COLUMN-KEY-PLAN,-NOTES-AND-TYPICAL-COLUMN-DETAILS-Rev.1.pdf",
+      "size": 172468,
+      "sizeLabel": "168.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S4.02-COLUMN-DETAILS-Rev.1.pdf",
+      "name": "S4.02-COLUMN-DETAILS-Rev.1.pdf",
+      "size": 154584,
+      "sizeLabel": "151.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S4.03-COLUMN-DETAILS-Rev.1.pdf",
+      "name": "S4.03-COLUMN-DETAILS-Rev.1.pdf",
+      "size": 122685,
+      "sizeLabel": "119.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S6.01-DETAILS-Rev.4.pdf",
+      "name": "S6.01-DETAILS-Rev.4.pdf",
+      "size": 246612,
+      "sizeLabel": "240.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S6.02-DETAILS-Rev.5.pdf",
+      "name": "S6.02-DETAILS-Rev.5.pdf",
+      "size": 287259,
+      "sizeLabel": "280.5 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S6.03-DETAILS-Rev.4.pdf",
+      "name": "S6.03-DETAILS-Rev.4.pdf",
+      "size": 280435,
+      "sizeLabel": "273.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S6.04-DETAILS-Rev.7.pdf",
+      "name": "S6.04-DETAILS-Rev.7.pdf",
+      "size": 252633,
+      "sizeLabel": "246.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S6.05-DETAILS-Rev.3.pdf",
+      "name": "S6.05-DETAILS-Rev.3.pdf",
+      "size": 322888,
+      "sizeLabel": "315.3 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S6.06-DETAILS-Rev.1.pdf",
+      "name": "S6.06-DETAILS-Rev.1.pdf",
+      "size": 226199,
+      "sizeLabel": "220.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S7.01-SEISMIC-INSTRUMENTATION-NOTES-Rev.1.pdf",
+      "name": "S7.01-SEISMIC-INSTRUMENTATION-NOTES-Rev.1.pdf",
+      "size": 191338,
+      "sizeLabel": "186.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S7.02-SEISMIC-INSTRUMENTATION-LAYOUT---PLANS-Rev.3.pdf",
+      "name": "S7.02-SEISMIC-INSTRUMENTATION-LAYOUT---PLANS-Rev.3.pdf",
+      "size": 1247227,
+      "sizeLabel": "1.2 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Structural/S7.03-SEISMIC-SENSOR-LAYOUT---SECTIONS-Rev.2.pdf",
+      "name": "S7.03-SEISMIC-SENSOR-LAYOUT---SECTIONS-Rev.2.pdf",
+      "size": 242587,
+      "sizeLabel": "236.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Survey/2504-C-ST---1-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "name": "2504-C-ST---1-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "size": 339523,
+      "sizeLabel": "331.6 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Survey/2504-C-ST--2-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "name": "2504-C-ST--2-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "size": 230601,
+      "sizeLabel": "225.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Survey/2520-C-ST---1-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "name": "2520-C-ST---1-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "size": 287817,
+      "sizeLabel": "281.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Survey/2520-C-ST---2-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "name": "2520-C-ST---2-ALTA-NPSP-LAND-TITLE-SURVEY-Rev.1.pdf",
+      "size": 200800,
+      "sizeLabel": "196.1 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-100-COVER-SHEET-Rev.0.pdf",
+      "name": "TW-100-COVER-SHEET-Rev.0.pdf",
+      "size": 2108549,
+      "sizeLabel": "2.0 MB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-200-LEVEL-1---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-200-LEVEL-1---FLOOR-PLAN-Rev.0.pdf",
+      "size": 749564,
+      "sizeLabel": "732.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-201-LEVEL-2---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-201-LEVEL-2---FLOOR-PLAN-Rev.0.pdf",
+      "size": 761228,
+      "sizeLabel": "743.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-202-LEVEL-3---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-202-LEVEL-3---FLOOR-PLAN-Rev.0.pdf",
+      "size": 706514,
+      "sizeLabel": "690.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-203-LEVEL-4---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-203-LEVEL-4---FLOOR-PLAN-Rev.0.pdf",
+      "size": 703454,
+      "sizeLabel": "687.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-204-LEVEL-5---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-204-LEVEL-5---FLOOR-PLAN-Rev.0.pdf",
+      "size": 704904,
+      "sizeLabel": "688.4 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-205-LEVEL-6---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-205-LEVEL-6---FLOOR-PLAN-Rev.0.pdf",
+      "size": 703360,
+      "sizeLabel": "686.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-206-LEVEL-7---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-206-LEVEL-7---FLOOR-PLAN-Rev.0.pdf",
+      "size": 713773,
+      "sizeLabel": "697.0 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-207-LEVEL-8---FLOOR-PLAN-Rev.0.pdf",
+      "name": "TW-207-LEVEL-8---FLOOR-PLAN-Rev.0.pdf",
+      "size": 623513,
+      "sizeLabel": "608.9 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "Current Drawings/Telecommunications/TW-400-DEVICE-DETAILS-Rev.0.pdf",
+      "name": "TW-400-DEVICE-DETAILS-Rev.0.pdf",
+      "size": 825136,
+      "sizeLabel": "805.8 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-06T11:45:40.000Z",
+      "topFolder": "Current Drawings"
+    },
+    {
+      "path": "RFIs/rfi_list.csv",
+      "name": "rfi_list.csv",
+      "size": 90900,
+      "sizeLabel": "88.8 KB",
+      "extension": "csv",
+      "modifiedAt": "2026-05-05T16:27:11.000Z",
+      "topFolder": "RFIs"
+    },
+    {
+      "path": "RFIs/rfi_list.pdf",
+      "name": "rfi_list.pdf",
+      "size": 670904,
+      "sizeLabel": "655.2 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-05T16:27:06.000Z",
+      "topFolder": "RFIs"
+    },
+    {
+      "path": "Submittals/submittal_logs.pdf",
+      "name": "submittal_logs.pdf",
+      "size": 296685,
+      "sizeLabel": "289.7 KB",
+      "extension": "pdf",
+      "modifiedAt": "2026-05-05T16:27:18.000Z",
+      "topFolder": "Submittals"
+    },
+    {
+      "path": "Submittals/submittal_logs.xlsx",
+      "name": "submittal_logs.xlsx",
+      "size": 105297,
+      "sizeLabel": "102.8 KB",
+      "extension": "xlsx",
+      "modifiedAt": "2026-05-05T16:27:21.000Z",
+      "topFolder": "Submittals"
+    }
+  ]
+}

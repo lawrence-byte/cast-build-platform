@@ -10,7 +10,7 @@ function render(){
 }
 async function init(){
  const [idx,quality,inspections,safety]=await Promise.all([
-  fetch('/data/projects/golden-hill/alum-data-room-index.json').then(r=>r.json()),
+  fetch('/safe-data/projects/golden-hill/alum-data-room-index.json').then(r=>r.json()),
   fetch('/safe-data/projects/golden-hill/folder-registers/quality-folder-index.json').then(r=>r.ok?r.json():null).catch(()=>null),
   fetch('/safe-data/projects/golden-hill/folder-registers/inspections-folder-index.json').then(r=>r.ok?r.json():null).catch(()=>null),
   fetch('/safe-data/projects/golden-hill/folder-registers/safety-folder-index.json').then(r=>r.ok?r.json():null).catch(()=>null)

@@ -25,9 +25,9 @@ function render(){
 }
 (async()=>{
   const [s,c,o]=await Promise.all([
-    fetch('/data/projects/golden-hill/document-intelligence/summary.json').then(r=>r.json()),
-    fetch('/data/projects/golden-hill/document-intelligence/ocr-candidates.json').then(r=>r.json()),
-    fetch('/data/projects/golden-hill/document-intelligence/ocr-samples.json').then(r=>r.json())
+    fetch('/safe-data/projects/golden-hill/document-intelligence/summary.json').then(r=>r.json()),
+    fetch('/safe-data/projects/golden-hill/document-intelligence/ocr-candidates.json').then(r=>r.json()),
+    fetch('/safe-data/projects/golden-hill/document-intelligence/ocr-samples.json').then(r=>r.json())
   ]);
   summary=s; candidates=c; samples=o; render();
-})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="note">${esc(e.message)}</div>`));
+})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="note">Refresh the page or check the latest deployment.</div>`));

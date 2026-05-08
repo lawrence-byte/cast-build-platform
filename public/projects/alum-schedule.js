@@ -227,5 +227,5 @@ function bind() {
   schedule = await loadJson('/safe-data/projects/golden-hill/schedule/superintendent-schedule.json');
   populateFilters(); bind(); renderFieldUpdates(); renderConstraints(); selectedId = allTasks()[0]?.id; renderAll();
 })().catch((error) => {
-  document.body.insertAdjacentHTML('afterbegin', `<div class="wide-note"><strong>Schedule dashboard failed to load:</strong> ${esc(error.message)}</div>`);
+  document.body.insertAdjacentHTML('afterbegin', `<div class="wide-note"><strong>Schedule metadata unavailable:</strong> ${esc(error.message)}</div>`);
 });

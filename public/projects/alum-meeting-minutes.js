@@ -81,11 +81,11 @@ let cached={agenda:[],risks:[],decisions:[]};
 function renderAllWindowState(){renderNotes(); renderAttendees(); cached.decisions=buildDecisions(cached.agenda,getLocal('alumMeetingMinutesNotes')); document.querySelector('[data-decision-rows]').innerHTML=cached.decisions.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join(''); set('[data-decision-count]',`${cached.decisions.length} items`); renderPacket(cached.agenda,cached.risks,cached.decisions);}
 (async()=>{
   const [rfi,sub,budget,changes,acct]=await Promise.all([
-    loadJson('/data/projects/golden-hill/rfi-summary.json'),
-    loadJson('/data/projects/golden-hill/submittal-summary.json'),
-    loadJson('/data/projects/golden-hill/procore-information/budget/budget-summary.json'),
-    loadJson('/data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json'),
-    loadJson('/data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json')
+    loadJson('/safe-data/projects/golden-hill/rfi-summary.json'),
+    loadJson('/safe-data/projects/golden-hill/submittal-summary.json'),
+    loadJson('/safe-data/projects/golden-hill/procore-information/budget/budget-summary.json'),
+    loadJson('/safe-data/projects/golden-hill/procore-information/budget-changes/budget-revisions-register.json'),
+    loadJson('/safe-data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json')
   ]);
   const agenda=buildAgenda(rfi,sub,budget,changes,acct);
   const risks=buildRisks(rfi,sub,budget,acct);
@@ -101,4 +101,4 @@ function renderAllWindowState(){renderNotes(); renderAttendees(); cached.decisio
   document.querySelector('[data-reset-attendees]').addEventListener('click',()=>{localStorage.removeItem('alumMeetingAttendees'); renderAllWindowState();});
   document.querySelector('[data-copy-package]').addEventListener('click',async()=>{await navigator.clipboard.writeText(currentPacket); set('[data-copy-status]','Meeting prep packet copied to clipboard. No external send was performed.');});
   renderAllWindowState();
-})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note"><strong>Meeting minutes failed to load:</strong> ${esc(e.message)}</div>`));
+})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note"><strong>Meeting minutes metadata unavailable:</strong> Refresh the page or check the latest deployment.</div>`));

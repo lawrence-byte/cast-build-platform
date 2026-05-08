@@ -31,13 +31,13 @@ async function fetchJson(url){
 }
 async function loadBudget(){
   if(window.__ALUM_BUDGET_SUMMARY__) return window.__ALUM_BUDGET_SUMMARY__;
-  const urls=['/data/projects/golden-hill/procore-information/budget/budget-summary.json','../data/projects/golden-hill/procore-information/budget/budget-summary.json'];
+  const urls=['/safe-data/projects/golden-hill/procore-information/budget/budget-summary.json','../safe-data/projects/golden-hill/procore-information/budget/budget-summary.json'];
   let lastErr;
   for(const url of urls){try{return await fetchJson(url)}catch(e){lastErr=e}}
   throw lastErr||new Error('Budget summary missing');
 }
-async function loadAudit(){try{return await fetchJson('/data/projects/golden-hill/procore-information/budget/budget-audit.json')}catch(_){return null}}
-(async()=>{[data,audit]=await Promise.all([loadBudget(),loadAudit()]);rows=data.rows||[];renderSummary();renderBreakdowns();renderAudit();opts(document.querySelector('#divisionFilter'),data.byDivision||[],'All divisions');opts(document.querySelector('#typeFilter'),data.byCostType||[],'All cost types');['q','divisionFilter','typeFilter'].forEach(id=>document.querySelector('#'+id).addEventListener('input',renderRows));renderRows();initEditableBudget();})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="note"><strong>Budget failed to load:</strong> ${esc(e.message)}</div>`));
+async function loadAudit(){try{return await fetchJson('/safe-data/projects/golden-hill/procore-information/budget/budget-audit.json')}catch(_){return null}}
+(async()=>{[data,audit]=await Promise.all([loadBudget(),loadAudit()]);rows=data.rows||[];renderSummary();renderBreakdowns();renderAudit();opts(document.querySelector('#divisionFilter'),data.byDivision||[],'All divisions');opts(document.querySelector('#typeFilter'),data.byCostType||[],'All cost types');['q','divisionFilter','typeFilter'].forEach(id=>document.querySelector('#'+id).addEventListener('input',renderRows));renderRows();initEditableBudget();})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="note"><strong>Budget metadata unavailable:</strong> Refresh the page or check the latest deployment.</div>`));
 
 // Local editable budget planning layer. This intentionally does not write back to CAST BUILD A.O.
 const budgetEditStoreKey='alum.editableBudget.v1';

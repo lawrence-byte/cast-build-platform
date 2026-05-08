@@ -9,7 +9,7 @@
   // ---------- helpers ----------
   async function loadJson(path) {
     const r = await fetch(path);
-    if (!r.ok) throw new Error(`HTTP ${r.status} ${path}`);
+    if (!r.ok) throw new Error('metadata unavailable');
     return r.json();
   }
   function esc(s) {
@@ -204,16 +204,16 @@
     let rfi, sub, pcc;
     try {
       [rfi, sub, pcc] = await Promise.all([
-        loadJson('/data/projects/golden-hill/rfi-summary.json'),
-        loadJson('/data/projects/golden-hill/submittal-summary.json'),
-        loadJson('/data/projects/golden-hill/project-control-center.json'),
+        loadJson('/safe-data/projects/golden-hill/rfi-summary.json'),
+        loadJson('/safe-data/projects/golden-hill/submittal-summary.json'),
+        loadJson('/safe-data/projects/golden-hill/project-control-center.json'),
       ]);
     } catch (err) {
       console.error('[home] data load failed', err);
       const main = document.querySelector('.project-main-content');
       if (main) {
         main.insertAdjacentHTML('afterbegin',
-          `<div class="cb-callout cb-callout--danger"><strong>Could not load metadata</strong> ${esc(err.message)}</div>`);
+          `<div class="cb-callout cb-callout--danger"><strong>Metadata unavailable</strong> Refresh the page or check the latest deployment.</div>`);
       }
       return;
     }

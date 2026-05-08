@@ -37,19 +37,23 @@ fs.cpSync(publicDir, distDir, {
   },
 });
 
-const safeDataAllowlist = [
-  'projects/golden-hill/accounting-budget/accounting-budget-tieout.json',
-  'projects/golden-hill/procore-information/budget/budget-summary.json',
-  'projects/golden-hill/procore-information/budget/budget-audit.json',
-];
-for (const rel of safeDataAllowlist) {
-  const publicDataFile = path.join(distDir, 'data', rel);
-  const safeDataFile = path.join(distDir, 'safe-data', rel);
-  if (fs.existsSync(publicDataFile) && !fs.existsSync(safeDataFile)) {
-    fs.mkdirSync(path.dirname(safeDataFile), { recursive: true });
-    fs.copyFileSync(publicDataFile, safeDataFile);
+function mirrorJsonToSafeData(srcDir, relBase = '') {
+  if (!fs.existsSync(srcDir)) return;
+  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+    const full = path.join(srcDir, entry.name);
+    const rel = path.join(relBase, entry.name);
+    if (entry.isDirectory()) {
+      mirrorJsonToSafeData(full, rel);
+    } else if (path.extname(entry.name).toLowerCase() === '.json') {
+      const safeDataFile = path.join(distDir, 'safe-data', rel);
+      if (!isPrivateDeployPath(full)) {
+        fs.mkdirSync(path.dirname(safeDataFile), { recursive: true });
+        fs.copyFileSync(full, safeDataFile);
+      }
+    }
   }
 }
+mirrorJsonToSafeData(path.join(distDir, 'data'));
 
 const textDeployExtensions = new Set(['.html', '.js', '.css', '.json', '.txt', '.md', '.svg']);
 function scrubPrivateSourceStrings(file) {

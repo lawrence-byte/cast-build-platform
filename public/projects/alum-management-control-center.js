@@ -3,7 +3,7 @@ const set=(sel,v)=>{const el=document.querySelector(sel); if(el) el.textContent=
 async function loadJson(path){const r=await fetch(path,{credentials:'same-origin',cache:'no-store'}); if(!r.ok) throw new Error(`${path} ${r.status}`); return r.json();}
 function list(items){return `<ul>${(items||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`}
 function money(v){return typeof v==='number' ? v.toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}) : '—'}
-(async()=>{const d=await loadJson('/data/projects/golden-hill/project-control-center.json');
+(async()=>{const d=await loadJson('/safe-data/projects/golden-hill/project-control-center.json');
  const s=d.management_snapshot||{};
  set('[data-generated]',`Generated ${d.generated_at?.slice(0,10)||'locally'} · ${d.source_basis}`); set('[data-source-status]',String(d.source_status||'—').replaceAll('_',' ')); set('[data-file-count]',(d.scan_scope?.file_count||0).toLocaleString()); set('[data-folder-count]',(d.scan_scope?.folder_count||0).toLocaleString()); set('[data-area-count]',d.management_areas?.length||0); set('[data-priority-count]',d.control_priorities?.length||0); set('[data-area-summary]',`${d.management_areas?.length||0} areas from full-folder scan`);
  set('[data-active-work]',s.active_work_packages||0); set('[data-verify-work]',s.verify_complete_work_packages||0); set('[data-rfi-pressure]',`${s.open_rfis||0} / ${s.overdue_rfis||0}`); set('[data-submittal-pressure]',`${s.open_or_draft_submittals||0} / ${s.revise_resubmit_submittals||0}`); set('[data-budget-pressure]',money(s.projected_over_under)); set('[data-closeout-pressure]',s.closeout_submittal_signals||0);
@@ -14,4 +14,4 @@ function money(v){return typeof v==='number' ? v.toLocaleString(undefined,{style
  document.querySelector('[data-recent-rows]').innerHTML=(d.recent_activity||[]).map(r=>`<tr><td>${esc(r.area)}</td><td>${esc(r.title)}</td><td>${esc(r.kind)}</td><td>${esc(r.updated_at)}</td></tr>`).join('');
  document.querySelector('[data-guardrails]').innerHTML=(d.guardrails||[]).map(g=>`<li>${esc(g)}</li>`).join('');
  document.querySelector('[data-copy-priorities]').addEventListener('click',async()=>{const text=(d.control_priorities||[]).map(p=>`${p.priority}\nOwner: ${p.owner}\nSignal: ${p.signal}\nAction: ${p.action}`).join('\n\n'); await navigator.clipboard?.writeText(text); set('[data-copy-status]','Management priorities copied.');});
-})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note"><strong>Management control center failed to load:</strong> ${esc(e.message)}</div>`));
+})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note"><strong>Management center metadata unavailable:</strong> Refresh the page or check the latest deployment.</div>`));
