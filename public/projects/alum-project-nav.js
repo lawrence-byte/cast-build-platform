@@ -13,61 +13,61 @@
       label: 'Dashboard',
       summary: 'Important project signals',
       items: [
-        ['Project Home', HOME],
-        ['Command Center', '/projects/alum-command-center.html'],
-        ['Open Items', '/projects/alum-open-items.html'],
-        ['Management Center', '/projects/alum-management-control-center.html'],
+        ['Project Home', HOME, 'i-home'],
+        ['Command Center', '/projects/alum-command-center.html', 'i-dashboard'],
+        ['Open Items', '/projects/alum-open-items.html', 'i-list'],
+        ['Management Center', '/projects/alum-management-control-center.html', 'i-cog'],
       ],
     },
     {
       label: 'Top Level Items',
       summary: 'Core action queues',
       items: [
-        ['RFIs', '/projects/alum-rfis.html'],
-        ['Submittals', '/projects/alum-submittals.html'],
-        ['Change Events', '/projects/alum-change-events.html'],
-        ['Meeting Minutes', '/projects/alum-meeting-minutes.html'],
+        ['RFIs', '/projects/alum-rfis.html', 'i-help'],
+        ['Submittals', '/projects/alum-submittals.html', 'i-clipboard'],
+        ['Change Events', '/projects/alum-change-events.html', 'i-swap'],
+        ['Meeting Minutes', '/projects/alum-meeting-minutes.html', 'i-clock'],
       ],
     },
     {
       label: 'Documents',
       summary: 'Drawings, specs, data room',
       items: [
-        ['Documents', '/projects/golden-hill-documents.html'],
-        ['Doc Intelligence', '/projects/alum-document-intelligence.html'],
-        ['Specifications', '/projects/alum-specifications.html'],
-        ['Data Room', '/projects/alum-data-room.html'],
-        ['Closeout', '/projects/alum-closeout.html'],
+        ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
+        ['Doc Intelligence', '/projects/alum-document-intelligence.html', 'i-search'],
+        ['Specifications', '/projects/alum-specifications.html', 'i-spec'],
+        ['Data Room', '/projects/alum-data-room.html', 'i-data'],
+        ['Closeout', '/projects/alum-closeout.html', 'i-flag'],
       ],
     },
     {
       label: 'Financials',
       summary: 'Budget and cost controls',
       items: [
-        ['Budget', '/projects/alum-budget.html'],
-        ['Budget Review', '/projects/alum-budget-exceptions.html'],
-        ['Commitments', '/projects/alum-commitments.html'],
-        ['Forecast', '/projects/alum-dynamic-forecast.html'],
-        ['Accounting Tie-Out', '/projects/alum-accounting-tieout.html'],
+        ['Budget', '/projects/alum-budget.html', 'i-money'],
+        ['Budget Review', '/projects/alum-budget-exceptions.html', 'i-alert'],
+        ['Commitments', '/projects/alum-commitments.html', 'i-link'],
+        ['Forecast', '/projects/alum-dynamic-forecast.html', 'i-trend-up'],
+        ['Accounting Tie-Out', '/projects/alum-accounting-tieout.html', 'i-check'],
       ],
     },
     {
       label: 'Field',
       summary: 'Site execution',
       items: [
-        ['Schedule', '/projects/alum-schedule.html'],
-        ['Daily Log', '/projects/alum-daily-log.html'],
-        ['Punch List', '/projects/alum-punch-list.html'],
-        ['Quality', '/projects/alum-quality.html'],
+        ['Schedule', '/projects/alum-schedule.html', 'i-calendar'],
+        ['Daily Log', '/projects/alum-daily-log.html', 'i-sun'],
+        ['Punch List', '/projects/alum-punch-list.html', 'i-check'],
+        ['Quality', '/projects/alum-quality.html', 'i-star'],
       ],
     },
     {
       label: 'Reporting / Operations',
       summary: 'Reports, people, operating view',
       items: [
-        ['Reports', '/projects/alum-reports.html'],
-        ['Directory', '/projects/alum-directory.html'],
-        ['Status Report', '/projects/alum-executive-report.html'],
+        ['Reports', '/projects/alum-reports.html', 'i-report'],
+        ['Directory', '/projects/alum-directory.html', 'i-users'],
+        ['Status Report', '/projects/alum-executive-report.html', 'i-dashboard'],
       ],
     },
   ];
@@ -100,6 +100,9 @@
     .alum-section-rail__summary{margin:0 8px 7px;color:rgba(247,243,232,.42);font:600 10px/1.35 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.07em;text-transform:uppercase}
     .alum-section-rail__tabs{display:grid;gap:2px;margin-bottom:6px}
     .alum-section-rail__link{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:0;border-left:2px solid transparent;color:rgba(247,243,232,.74);text-decoration:none;font:700 11px/1.15 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase}
+    .alum-section-rail__label{display:inline-flex;align-items:center;gap:9px;min-width:0}
+    .alum-section-rail__icon{width:15px;height:15px;flex:0 0 15px;color:rgba(207,199,177,.84)}
+    .alum-section-rail__text{overflow:hidden;text-overflow:ellipsis}
     .alum-section-rail__link:hover{background:rgba(255,255,255,.055);color:#fff;border-left-color:rgba(207,199,177,.42)}
     .alum-section-rail__link.is-active{background:rgba(207,199,177,.12);border-left-color:#cfc7b1;color:#fff}
     .alum-section-rail__link.is-active::after{content:'•';color:#cfc7b1;font-size:18px;line-height:0}
@@ -126,11 +129,21 @@
   `;
   document.head.appendChild(css);
 
-  function link(label, href, className) {
+  function iconMarkup(icon) {
+    if (!icon) return '';
+    return `<svg class="alum-section-rail__icon" aria-hidden="true"><use href="/assets/brand/icons.svg#${icon}"></use></svg>`;
+  }
+
+  function link(label, href, className, icon) {
     const a = document.createElement('a');
     a.href = href;
-    a.textContent = label;
     a.className = className || '';
+    if (icon) {
+      a.innerHTML = `<span class="alum-section-rail__label">${iconMarkup(icon)}<span class="alum-section-rail__text"></span></span>`;
+      a.querySelector('.alum-section-rail__text').textContent = label;
+    } else {
+      a.textContent = label;
+    }
     if (path === href) a.classList.add('is-active');
     return a;
   }
@@ -170,7 +183,7 @@
     }
     const tabs = document.createElement('div');
     tabs.className = 'alum-section-rail__tabs';
-    for (const [label, href] of group.items) tabs.appendChild(link(label, href, 'alum-section-rail__link'));
+    for (const [label, href, icon] of group.items) tabs.appendChild(link(label, href, 'alum-section-rail__link', icon));
     rail.appendChild(tabs);
   }
   const note = document.createElement('p');

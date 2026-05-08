@@ -93,6 +93,8 @@ for (const requiredRail of [
   'Field',
   'Reporting / Operations',
   'alum-section-rail__tabs',
+  'alum-section-rail__icon',
+  '/assets/brand/icons.svg#',
 ]) {
   if (!nav.includes(requiredRail)) fail(`persistent Alüm nav missing left section rail item: ${requiredRail}`);
 }
