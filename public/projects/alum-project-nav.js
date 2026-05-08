@@ -88,17 +88,17 @@
 
   const css = document.createElement('style');
   css.textContent = `
-    .alum-project-nav{position:sticky;top:0;z-index:1300;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 22px 10px 296px;background:rgba(24,24,22,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(207,199,177,.18);box-shadow:0 10px 30px rgba(0,0,0,.18)}
-    .alum-project-nav__brand{display:flex;align-items:center;justify-content:center;min-width:260px;color:#f7f3e8;text-decoration:none;border-color:transparent!important;background:transparent!important;padding-inline:0!important}
-    .alum-project-nav__brand img{width:260px;max-width:100%;height:auto;display:block;object-fit:contain}
+    .alum-project-nav{position:sticky;top:0;z-index:1300;display:flex;align-items:center;justify-content:flex-start;gap:18px;min-height:70px;padding:10px 22px;background:rgba(24,24,22,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(207,199,177,.18);box-shadow:0 10px 30px rgba(0,0,0,.18)}
+    .alum-project-nav__brand{display:flex;align-items:center;justify-content:flex-start;flex:0 0 auto;min-width:238px;color:#f7f3e8;text-decoration:none;border-color:transparent!important;background:transparent!important;padding-inline:0!important}
+    .alum-project-nav__brand img{width:238px;max-width:100%;height:auto;display:block;object-fit:contain}
     .alum-project-mark__name{display:none}
-    .alum-project-nav__links{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-width:0;overflow:auto;scrollbar-width:none;width:100%}
+    .alum-project-nav__links{display:flex;align-items:center;justify-content:flex-start;gap:6px;min-width:0;overflow:auto;scrollbar-width:none;width:100%}
     .alum-project-nav__links::-webkit-scrollbar{display:none}
     .alum-project-nav a{white-space:nowrap;border:1px solid transparent;background:transparent;color:rgba(247,243,232,.72);text-decoration:none;padding:8px 10px;font:700 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.13em;text-transform:uppercase}
     .alum-project-nav a:hover{color:#fff;border-color:rgba(207,199,177,.28);background:rgba(255,255,255,.05)}
     .alum-project-nav a.is-active{color:#fff;border-color:rgba(207,199,177,.42);background:rgba(207,199,177,.12)}
 
-    .alum-section-rail{position:fixed;inset:0 auto 0 0;z-index:1250;width:272px;background:#181816;color:#f7f3e8;border-right:1px solid rgba(207,199,177,.18);overflow:auto;padding:24px 18px 28px;box-shadow:16px 0 38px rgba(0,0,0,.12);scrollbar-width:thin;scrollbar-color:rgba(207,199,177,.28) transparent}
+    .alum-section-rail{position:fixed;inset:70px auto 0 0;z-index:1250;width:272px;background:#181816;color:#f7f3e8;border-right:1px solid rgba(207,199,177,.18);overflow:auto;padding:24px 18px 28px;box-shadow:16px 0 38px rgba(0,0,0,.12);scrollbar-width:thin;scrollbar-color:rgba(207,199,177,.28) transparent}
     .alum-section-rail__brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 0 20px;margin-bottom:16px;border-bottom:1px solid rgba(207,199,177,.16);color:#f7f3e8;text-decoration:none;text-align:center;overflow:visible}
     .alum-section-rail__brand img{width:238px;max-width:calc(100% + 14px);height:auto;object-fit:contain;display:block;margin:0 auto}
     .alum-section-rail__project-name{display:block;width:100%;color:#f7f3e8;font:400 36px/1.05 "Cormorant Garamond",Georgia,"Times New Roman",serif;letter-spacing:.24em;text-transform:uppercase;text-align:center;text-indent:.24em}
@@ -126,7 +126,7 @@
       .alum-section-rail{position:relative;width:auto;inset:auto;height:auto;padding:18px 14px;box-shadow:none;border-right:none;border-bottom:1px solid rgba(207,199,177,.18)}
       .alum-section-rail__brand{padding-bottom:14px;margin-bottom:12px}
       .alum-section-rail__group{margin-top:14px}
-      .alum-project-nav{padding:10px 14px;position:sticky}.alum-project-nav__links{justify-content:flex-start}
+      .alum-project-nav{padding:10px 14px;position:sticky;min-height:64px}.alum-project-nav__links{justify-content:flex-start}
       .alum-project-nav__brand{min-width:170px}
       .alum-project-nav__brand img{width:170px}
       .alum-section-rail__brand img{width:220px;max-width:100%}

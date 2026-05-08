@@ -101,6 +101,15 @@ for (const requiredRail of [
 if (!nav.includes("brand.href = HOME") || !nav.includes("railBrand.href = HOME")) {
   fail('top-left and left-rail home links must target project home constant');
 }
+if (!/\.alum-project-nav\{[^}]*justify-content:flex-start;[^}]*padding:10px 22px;/.test(nav)) {
+  fail('CAST Build top nav brand must stay left-aligned without the old sidebar-offset padding');
+}
+if (/padding:10px 22px 10px 296px/.test(nav)) {
+  fail('CAST Build top nav must not use old centered/sidebar-offset padding');
+}
+if (!/\.alum-section-rail\{[^}]*inset:70px auto 0 0;/.test(nav)) {
+  fail('Alüm section rail must start below the sticky top bar so ALÜM umlaut is visible');
+}
 
 if (failed) process.exit(1);
 console.log('Alüm portal link-flow audit passed.');
