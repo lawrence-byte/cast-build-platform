@@ -7,11 +7,11 @@
 //   <img data-brand-role="wordmark-light" alt="CAST BUILD">
 //
 // Optional fallback (rendered until manifest loads):
-//   <img data-brand-role="wordmark-light" src="/assets/brand/cast-build-stacked-white-on-charcoal.png" alt="CAST BUILD">
+//   <img data-brand-role="wordmark-light" src="/assets/brand/cast-build-logo-transparent.png" alt="CAST BUILD">
 //
 // API:
 //   await window.CASTBrand.ready;
-//   window.CASTBrand.resolve('wordmark-light')   // → '/assets/brand/cast-build-stacked-white-on-charcoal.png'
+//   window.CASTBrand.resolve('wordmark-light')   // → '/assets/brand/cast-build-logo-transparent.png'
 
 (function () {
   'use strict';

@@ -84,7 +84,7 @@
   ];
 
   const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
-  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/cast-build-main-logo-supplied-transparent.png';
+  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/cast-build-logo-transparent.png';
 
   const css = document.createElement('style');
   css.textContent = `
