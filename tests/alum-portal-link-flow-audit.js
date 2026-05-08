@@ -85,14 +85,19 @@ for (const requiredCleanup of [
 }
 for (const requiredRail of [
   'alum-section-rail',
-  'Project',
-  'Controls',
-  'Field',
+  'Project Home',
+  'Dashboard',
+  'Top Level Items',
+  'Documents',
   'Financials',
-  'Documents + Closeout',
-  'Team',
+  'Field',
+  'Reporting / Operations',
+  'alum-section-rail__tabs',
 ]) {
   if (!nav.includes(requiredRail)) fail(`persistent Alüm nav missing left section rail item: ${requiredRail}`);
+}
+if (!nav.includes("brand.href = HOME") || !nav.includes("railBrand.href = HOME")) {
+  fail('top-left and left-rail home links must target project home constant');
 }
 
 if (failed) process.exit(1);
