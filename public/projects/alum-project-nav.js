@@ -36,6 +36,7 @@
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
         ['Doc Intelligence', '/projects/alum-document-intelligence.html', 'i-search'],
         ['Specifications', '/projects/alum-specifications.html', 'i-spec'],
+        ['Folder Registers', '/projects/alum-folder-registers.html', 'i-data'],
         ['Data Room', '/projects/alum-data-room.html', 'i-data'],
         ['Closeout', '/projects/alum-closeout.html', 'i-flag'],
       ],
