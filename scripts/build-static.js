@@ -37,6 +37,20 @@ fs.cpSync(publicDir, distDir, {
   },
 });
 
+const safeDataAllowlist = [
+  'projects/golden-hill/accounting-budget/accounting-budget-tieout.json',
+  'projects/golden-hill/procore-information/budget/budget-summary.json',
+  'projects/golden-hill/procore-information/budget/budget-audit.json',
+];
+for (const rel of safeDataAllowlist) {
+  const publicDataFile = path.join(distDir, 'data', rel);
+  const safeDataFile = path.join(distDir, 'safe-data', rel);
+  if (fs.existsSync(publicDataFile) && !fs.existsSync(safeDataFile)) {
+    fs.mkdirSync(path.dirname(safeDataFile), { recursive: true });
+    fs.copyFileSync(publicDataFile, safeDataFile);
+  }
+}
+
 const textDeployExtensions = new Set(['.html', '.js', '.css', '.json', '.txt', '.md', '.svg']);
 function scrubPrivateSourceStrings(file) {
   if (!textDeployExtensions.has(path.extname(file).toLowerCase())) return;

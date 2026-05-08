@@ -2,7 +2,16 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const money=n=>Number(n||0).toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0});
 const metric=(sel,val)=>{const el=document.querySelector(sel);if(el)el.textContent=val};
 const row=(k,v)=>`<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`;
-async function fetchJson(url){const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw new Error(`${url} returned ${r.status}`);return r.json()}
+async function fetchJson(url){
+  const candidates=url.startsWith('/data/')?[url.replace('/data/','/safe-data/'),url]:[url];
+  let lastErr;
+  for(const candidate of candidates){
+    const r=await fetch(candidate,{credentials:'same-origin',cache:'no-store'});
+    if(r.ok)return r.json();
+    lastErr=new Error(`${candidate} returned ${r.status}`);
+  }
+  throw lastErr;
+}
 (async()=>{const data=await fetchJson('/data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');const checks=data.checks||[], exceptions=data.exceptions||[];metric('[data-generated]',`${data.guardrail} Generated ${data.generatedAt}.`);metric('[data-pass]',`${checks.filter(c=>c.status==='pass').length}/${checks.length}`);metric('[data-review]',exceptions.length);metric('[data-import]',money(data.budgetImport?.total));metric('[data-files]',data.fileInventory?.budgetRelatedFiles||0);metric('[data-check-count]',`${checks.length} checks`);metric('[data-exception-count]',`${exceptions.length} exceptions`);
 document.querySelector('[data-check-rows]').innerHTML=checks.map(c=>`<tr><td>${esc(c.name)}</td><td><span class="review-pill ${c.status==='pass'?'ok':'warning'}">${esc(c.status)}</span></td><td class="money">${money(c.source)}</td><td class="money">${money(c.target)}</td><td class="money ${Number(c.delta)<0?'bad':Number(c.delta)>0?'warn':''}">${money(c.delta)}</td></tr>`).join('');
 document.querySelector('[data-exception-rows]').innerHTML=exceptions.length?exceptions.map(e=>`<tr><td><span class="review-pill ${e.severity==='high'?'critical':'warning'}">${esc(e.severity)}</span></td><td>${esc(e.check)}</td><td class="money bad">${money(e.delta)}</td><td>${esc(e.nextStep)}</td></tr>`).join(''):'<tr><td colspan="4">No accounting tie-out exceptions.</td></tr>';

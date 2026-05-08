@@ -19,7 +19,16 @@ function renderAudit(){
 }
 function renderRows(){const q=document.querySelector('#q').value.toLowerCase();const div=document.querySelector('#divisionFilter').value;const type=document.querySelector('#typeFilter').value;let out=rows.filter(r=>(!div||r.division===div)&&(!type||r.costTypeCode===type)&&(!q||[r['Budget Code'],r['Budget Code Description'],r['Cost Code Tier 1'],r['Sub Job'],r['Cost Type']].join(' ').toLowerCase().includes(q)));document.querySelector('#rowCount').textContent=`${out.length} of ${rows.length} rows`;document.querySelector('#budgetRows').innerHTML=out.map(r=>`<tr><td><strong>${esc(r['Budget Code'])}</strong><br><span class="caption">${esc(r['Budget Code Description'])}</span></td><td>${esc(r['Cost Code Tier 1'])}</td><td><span class="pill">${esc(r.costTypeCode)}</span><br><span class="caption">${esc(r.costTypeName)}</span></td><td class="money">${money(r['Revised Budget'])}</td><td class="money">${money(r['Committed Costs'])}</td><td class="money">${money(r['Job to Date Costs'])}</td><td class="money">${money(r['Estimated Cost at Completion'])}</td><td class="money ${cls(r['Projected over Under'])}">${money(r['Projected over Under'])}</td></tr>`).join('')}
 function opts(sel,arr,label){sel.innerHTML=`<option value="">${label}</option>`+arr.map(x=>`<option value="${esc(x.key||x)}">${esc(x.key||x)}${x.name?' - '+esc(x.name):''}</option>`).join('')}
-async function fetchJson(url){const r=await fetch(url,{credentials:'same-origin',cache:'no-store'}); if(!r.ok) throw new Error(`${url} returned ${r.status}`); return r.json();}
+async function fetchJson(url){
+  const candidates=url.startsWith('/data/')?[url.replace('/data/','/safe-data/'),url]:[url];
+  let lastErr;
+  for(const candidate of candidates){
+    const r=await fetch(candidate,{credentials:'same-origin',cache:'no-store'});
+    if(r.ok)return r.json();
+    lastErr=new Error(`${candidate} returned ${r.status}`);
+  }
+  throw lastErr;
+}
 async function loadBudget(){
   if(window.__ALUM_BUDGET_SUMMARY__) return window.__ALUM_BUDGET_SUMMARY__;
   const urls=['/data/projects/golden-hill/procore-information/budget/budget-summary.json','../data/projects/golden-hill/procore-information/budget/budget-summary.json'];

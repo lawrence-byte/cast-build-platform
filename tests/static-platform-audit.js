@@ -204,6 +204,7 @@ for (const requiredForecastControl of ['Cost Mapping', 'ETC Override', 'risk', '
 }
 const accountingTieoutPath = path.join(root, 'data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
 const publicAccountingTieoutPath = path.join(root, 'public/data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
+const safeAccountingTieoutPath = path.join(root, 'public/safe-data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json');
 const budgetExceptionsPage = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.html'), 'utf8');
 const budgetExceptionsScript = fs.readFileSync(path.join(root, 'public/projects/alum-budget-exceptions.js'), 'utf8');
 if (!/Budget Exceptions \/ Needs Review/.test(budgetExceptionsPage) || !/Read-first/.test(budgetExceptionsPage)) {
@@ -319,8 +320,8 @@ for (const requiredDailyLogControl of ['data-save', 'data-export', 'data-reset',
     failed = true;
   }
 }
-if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath)) {
-  console.error('Accounting budget tie-out JSON must be generated for private and public metadata views.');
+if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieoutPath) || !fs.existsSync(safeAccountingTieoutPath)) {
+  console.error('Accounting budget tie-out JSON must be generated for private, public, and safe deployed metadata views.');
   failed = true;
 } else {
   const accountingTieout = JSON.parse(fs.readFileSync(accountingTieoutPath, 'utf8'));
@@ -335,8 +336,13 @@ if (!fs.existsSync(accountingTieoutPath) || !fs.existsSync(publicAccountingTieou
   }
 }
 const accountingTieoutPage = fs.readFileSync(path.join(root, 'public/projects/alum-accounting-tieout.html'), 'utf8');
+const accountingTieoutScript = fs.readFileSync(path.join(root, 'public/projects/alum-accounting-tieout.js'), 'utf8');
 if (!/Accounting Budget Tie-Out/.test(accountingTieoutPage) || !/data-check-rows/.test(accountingTieoutPage)) {
   console.error('Accounting tie-out page must include tie-out checks.');
+  failed = true;
+}
+if (!accountingTieoutScript.includes('/safe-data/')) {
+  console.error('Accounting tie-out page must prefer safe-data JSON so live deployments do not 404 on /data paths.');
   failed = true;
 }
 const commitmentsPage = fs.readFileSync(path.join(root, 'public/projects/alum-commitments.html'), 'utf8');
