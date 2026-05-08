@@ -110,6 +110,12 @@ if (/padding:10px 22px 10px 296px/.test(nav)) {
 if (!/\.alum-section-rail\{[^}]*inset:70px auto 0 0;/.test(nav)) {
   fail('Alüm section rail must start below the sticky top bar so ALÜM umlaut is visible');
 }
+if (!/\.alum-section-rail__brand img\{display:none!important\}/.test(nav)) {
+  fail('left rail must not render a duplicate CAST Build logo below the top bar');
+}
+if (!/railBrand\.innerHTML = `<span class="alum-section-rail__project-name">\$\{projectName\}<\/span>`;/.test(nav)) {
+  fail('left rail brand should render only the project name');
+}
 
 if (failed) process.exit(1);
 console.log('Alüm portal link-flow audit passed.');
