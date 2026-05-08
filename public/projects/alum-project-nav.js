@@ -45,7 +45,9 @@
     .alum-project-nav__menu{position:absolute;right:0;top:calc(100% + 8px);display:none;min-width:240px;padding:8px;background:#181816;border:1px solid rgba(207,199,177,.2);box-shadow:0 18px 48px rgba(0,0,0,.32)}
     .alum-project-nav__more.is-open .alum-project-nav__menu{display:grid;gap:4px}
     .alum-project-nav__menu a{display:block;padding:11px 12px}
-    .alum-project-nav-spacer .app .top,.alum-project-nav-spacer .app .tabs{display:none!important}
+    .alum-project-nav-spacer .app .top,.alum-project-nav-spacer .app .tabs,.alum-project-nav-spacer .project-sidebar{display:none!important}
+    .alum-project-nav-spacer .project-dashboard-wrapper{display:block!important}
+    .alum-project-nav-spacer .project-main-content{margin-left:0!important;width:100%!important}
     @media(max-width:860px){.alum-project-nav{align-items:flex-start;flex-direction:column;padding:10px 14px}.alum-project-nav__links{justify-content:flex-start;width:100%}.alum-project-nav__brand img{width:52px}}
   `;
   document.head.appendChild(css);
