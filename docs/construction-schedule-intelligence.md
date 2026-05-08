@@ -37,3 +37,16 @@ Drywall level 3 behind and needs recovery manpower.
 - Add correspondence log with approval trail.
 - Add recovery-plan response parser.
 - Tie constraints to RFIs, submittals, inspections, materials, and manpower commitments.
+
+
+## Private source folder
+
+The Alüm Schedule Brain is designed to index the private Dropbox schedule folder through the `ALUM_SCHEDULE_SOURCE_DIR` environment variable. The platform should publish only sanitized schedule metadata: source status, artifact counts, safe titles, update timestamps, and next actions.
+
+Do not publish raw schedule files, private local paths, Dropbox paths, PDFs, spreadsheets, XML/XER/MPP files, or correspondence artifacts in `public/` or `dist/`.
+
+Refresh command on a machine that can access the private folder:
+
+```bash
+ALUM_SCHEDULE_SOURCE_DIR="<private Alüm schedule folder>" npm run intake:schedule
+```

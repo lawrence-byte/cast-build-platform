@@ -72,10 +72,13 @@
 
       <section class="grid">
         <article class="card"><h3>Current Workbench</h3><p>Alüm now has the first Schedule Brain workbench with voice/typed updates, behind-plan watch, constraints, lookahead, and recovery drafts.</p><p><a class="small-action" href="/projects/alum-schedule.html">Open Alüm Schedule Brain</a></p></article>
+        <article class="card"><h3>Schedule Source</h3><p><strong data-schedule-source-status>Loading…</strong></p><p data-schedule-source-read>Checking sanitized schedule metadata.</p><p><a class="small-action" href="/projects/alum-schedule.html">Use field workbench</a></p></article>
         <article class="card"><h3>Next Layer</h3><p>Add verified trade directory, baseline schedule import, correspondence log, mobile voice notes, and recovery-plan response parsing.</p></article>
         <article class="card"><h3>Why It Matters</h3><p>Construction schedule problems usually show up first in field language. CAST Build turns that into timely, structured action.</p></article>
       </section>
     </main>
   </div>
-</body>
+<script>
+(async()=>{try{const r=await fetch('/data/projects/golden-hill/schedule/schedule-source-index.json',{cache:'no-store'});const d=await r.json();document.querySelector('[data-schedule-source-status]').textContent=d.source_status.replaceAll('_',' ');const counts=Object.entries(d.artifact_counts||{}).map(([k,v])=>`${v} ${k}`).join(' · ');document.querySelector('[data-schedule-source-read]').textContent=counts||d.notes||d.publish_guardrail;}catch(e){document.querySelector('[data-schedule-source-status]').textContent='not indexed';}})();
+</script></body>
 </html>

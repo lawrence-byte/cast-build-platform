@@ -117,6 +117,17 @@ for (const requiredScheduleBrainSignal of ['CAST Build Schedule Brain', 'Open Al
     failed = true;
   }
 }
+for (const requiredScheduleSourceSignal of ['schedule-source-index.json', 'data-schedule-source-status']) {
+  if (!scheduleBrainPage.includes(requiredScheduleSourceSignal)) {
+    console.error(`Schedule Brain platform page missing source-index signal: ${requiredScheduleSourceSignal}`);
+    failed = true;
+  }
+}
+const scheduleSourceIndex = JSON.parse(fs.readFileSync(path.join(root, 'public/data/projects/golden-hill/schedule/schedule-source-index.json'), 'utf8'));
+if (!scheduleSourceIndex.source_status || !scheduleSourceIndex.publish_guardrail || /\/Users\/|CAST Community Dropbox|\.pdf|\.xlsx|\.mpp|\.xml|\.xer/i.test(JSON.stringify(scheduleSourceIndex))) {
+  console.error('Schedule source index must be sanitized and avoid private paths/raw artifact extensions.');
+  failed = true;
+}
 if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain\.html/.test(fs.readFileSync(path.join(root, 'public/index.html'), 'utf8'))) {
   console.error('CAST Build landing must link to Schedule Brain and Schedule Brain must link to Alüm workbench.');
   failed = true;
@@ -395,7 +406,7 @@ if (!/Field-First Schedule Intelligence/.test(schedulePage) || !/Voice Field Upd
   console.error('Schedule intelligence must include voice intake, constraints, lookahead, and draft-only correspondence posture.');
   failed = true;
 }
-for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'alumScheduleFieldUpdates', 'alumScheduleLookahead', 'SpeechRecognition', 'Recovery Plan Required', 'localStorage']) {
+for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'schedule-source-index.json', 'data-source-index-status', 'alumScheduleFieldUpdates', 'alumScheduleLookahead', 'SpeechRecognition', 'Recovery Plan Required', 'localStorage']) {
   if (!scheduleScript.includes(requiredScheduleSignal) && !schedulePage.includes(requiredScheduleSignal)) {
     console.error(`Schedule control missing signal/control: ${requiredScheduleSignal}`);
     failed = true;
