@@ -134,12 +134,6 @@ if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain
 }
 const pricingModelsPage = fs.readFileSync(path.join(root, 'public/pricing-models.html'), 'utf8');
 
-const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
-const rewriteMap = new Map((vercelConfig.rewrites || []).map((r) => [r.source, r.destination]));
-if (rewriteMap.get('/schedule-brain') !== '/schedule-brain.html' || rewriteMap.get('/schedule') !== '/schedule-brain.html') {
-  console.error('Missing schedule-brain rewrite routes.');
-  failed = true;
-}
 
 for (const [forecastFile, forecastText] of [['public/construction-cost-forecasting.html', constructionForecastPage], ['public/pricing-models.html', pricingModelsPage]]) {
   for (const requiredSignal of ['Construction Cost Forecasting', 'Revised budget', 'Approved commitments', 'Job to date', 'Cost to complete', 'Pending changes', 'Schedule risk allowance', 'Next draw request', 'RFI/submittal risk', 'localStorage']) {
@@ -517,10 +511,12 @@ if (brokenLinks.length) {
 
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
 const rewrites = vercelConfig.rewrites || [];
-for (const source of ['/admin', '/projects', '/procore', '/document-tools', '/projects/golden-hill', '/projects/overlook']) {
+for (const source of ['/admin', '/projects', '/procore', '/document-tools', '/schedule-brain', '/schedule', '/projects/golden-hill', '/projects/overlook']) {
   const rewrite = rewrites.find((row) => row.source === source);
   if (!rewrite || !routeExists(rewrite.destination)) fail(`Missing or invalid Vercel rewrite for ${source}`);
 }
+const scheduleTypoRewrite = rewrites.find((row) => row.source === '/schdule-brain');
+if (!scheduleTypoRewrite || scheduleTypoRewrite.destination !== '/schedule-brain.html') fail('Missing typo-tolerant /schdule-brain rewrite');
 
 if (fs.existsSync(distDir)) {
   const leaked = [];
