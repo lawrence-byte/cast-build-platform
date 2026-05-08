@@ -93,7 +93,7 @@ const procoreSystemPages = [
   ['public/projects/alum-contracts.html', 'Prime Contract'],
   ['public/projects/alum-owner-billings.html', 'Owner Billings'],
   ['public/projects/alum-specifications.html', 'Specifications'],
-  ['public/projects/alum-reports.html', 'Reports Hub'],
+  ['public/projects/alum-reports.html', 'Reports'],
 ];
 for (const [moduleFile, label] of procoreSystemPages) {
   const text = fs.readFileSync(path.join(root, moduleFile), 'utf8');
@@ -261,8 +261,8 @@ if (!/alum-dynamic-forecast\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to the dynamic forecast control center.');
   failed = true;
 }
-if (!/alum-executive-report\.html/.test(alumReplicaPage)) {
-  console.error('Alüm replica page must link to the executive reporting layer.');
+if (!/alum-management-control-center\.html/.test(alumReplicaPage) || !/alum-schedule\.html/.test(alumReplicaPage)) {
+  console.error('Alüm replica page must link to the management center and schedule controls.');
   failed = true;
 }
 if (!/alum-command-center\.html/.test(alumReplicaPage) || !/alum-meeting-minutes\.html/.test(alumReplicaPage) || !/alum-schedule\.html/.test(alumReplicaPage) || !/alum-closeout\.html/.test(alumReplicaPage)) {
@@ -367,11 +367,11 @@ if (/source-logs\//i.test(openItemsPage)) {
 }
 const executiveReportPage = fs.readFileSync(path.join(root, 'public/projects/alum-executive-report.html'), 'utf8');
 const executiveReportScript = fs.readFileSync(path.join(root, 'public/projects/alum-executive-report.js'), 'utf8');
-if (!/Executive Report/.test(executiveReportPage) || !/Cross-Module Action Drilldowns/.test(executiveReportPage) || !/Read-first executive report/i.test(executiveReportPage)) {
-  console.error('Executive report page must state reporting purpose, drilldowns, and read-first posture.');
+if (!/Status Report/.test(executiveReportPage) || !/Cross-Module Action Drilldowns/.test(executiveReportPage) || !/metadata-only control layer/i.test(executiveReportPage)) {
+  console.error('Status report page must state reporting purpose, drilldowns, and metadata-only posture.');
   failed = true;
 }
-for (const requiredExecutiveSignal of ['rfi-summary.json', 'submittal-summary.json', 'budget-revisions-register.json', 'budget-summary.json', 'accounting-budget-tieout.json', 'Executive Risk Board']) {
+for (const requiredExecutiveSignal of ['rfi-summary.json', 'submittal-summary.json', 'budget-revisions-register.json', 'budget-summary.json', 'accounting-budget-tieout.json', 'Risk Board']) {
   if (!executiveReportScript.includes(requiredExecutiveSignal) && !executiveReportPage.includes(requiredExecutiveSignal)) {
     console.error(`Executive report missing signal: ${requiredExecutiveSignal}`);
     failed = true;
