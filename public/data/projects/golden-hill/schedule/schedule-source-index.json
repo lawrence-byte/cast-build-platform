@@ -2,15 +2,93 @@
   "project_id": "golden-hill",
   "module": "schedule-brain",
   "source_label": "Alüm private schedule folder",
-  "source_status": "source_unavailable",
-  "generated_at": "2026-05-08T04:43:32.799Z",
+  "source_status": "indexed",
+  "generated_at": "2026-05-08T15:46:29.622Z",
   "publish_guardrail": "Sanitized schedule metadata only. No raw artifacts, private paths, or source files are published.",
-  "artifact_counts": {},
-  "latest_artifacts": [],
-  "next_actions": [
-    "Set ALUM_SCHEDULE_SOURCE_DIR to the private Alüm schedule folder on the machine that can access Dropbox.",
-    "Run npm run intake:schedule to refresh sanitized schedule metadata.",
-    "Review extracted schedule artifacts before enabling baseline comparisons or correspondence automation."
+  "artifact_counts": {
+    "microsoft-project": 41,
+    "pdf-snapshot": 47,
+    "spreadsheet": 13,
+    "project-xml": 3
+  },
+  "latest_artifacts": [
+    {
+      "title": "CAST Joe's schedule 2025 4 30",
+      "kind": "microsoft-project",
+      "size_bytes": 2454016,
+      "updated_at": "2026-05-05T20:36:16.000Z"
+    },
+    {
+      "title": "2026 05 04 GHA Schedule Update",
+      "kind": "pdf-snapshot",
+      "size_bytes": 247978,
+      "updated_at": "2026-05-04T20:57:33.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 14",
+      "kind": "microsoft-project",
+      "size_bytes": 2557952,
+      "updated_at": "2026-05-04T20:50:45.000Z"
+    },
+    {
+      "title": "2026.04.30 GHA Schedule Update",
+      "kind": "pdf-snapshot",
+      "size_bytes": 547983,
+      "updated_at": "2026-05-01T01:08:44.000Z"
+    },
+    {
+      "title": "2026.04.30 GHA Lookahead",
+      "kind": "pdf-snapshot",
+      "size_bytes": 190185,
+      "updated_at": "2026-05-01T01:07:46.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 30",
+      "kind": "pdf-snapshot",
+      "size_bytes": 181113,
+      "updated_at": "2026-05-01T01:03:48.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 29)",
+      "kind": "microsoft-project",
+      "size_bytes": 2392576,
+      "updated_at": "2026-04-29T20:11:11.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 14 (Jackie Villanueva's conflicted copy 2026 04 27)",
+      "kind": "microsoft-project",
+      "size_bytes": 2273792,
+      "updated_at": "2026-04-24T19:38:00.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 21)",
+      "kind": "microsoft-project",
+      "size_bytes": 2380800,
+      "updated_at": "2026-04-21T18:06:42.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 17)",
+      "kind": "microsoft-project",
+      "size_bytes": 2162688,
+      "updated_at": "2026-04-17T22:42:52.000Z"
+    },
+    {
+      "title": "2026.04.17 GHA Schedule Update",
+      "kind": "pdf-snapshot",
+      "size_bytes": 1274949,
+      "updated_at": "2026-04-17T21:18:56.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 13)",
+      "kind": "microsoft-project",
+      "size_bytes": 2151424,
+      "updated_at": "2026-04-13T20:33:07.000Z"
+    }
   ],
-  "notes": "Configured private schedule source was not reachable from this runtime."
+  "next_actions": [
+    "Identify the current baseline schedule artifact and latest update artifact.",
+    "Convert baseline activities into trade/location/sequence milestones.",
+    "Compare superintendent voice updates against baseline and 3-week lookahead commitments.",
+    "Keep recovery-plan notices draft-only until recipients and approval log are verified."
+  ]
 }

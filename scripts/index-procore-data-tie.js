@@ -4,8 +4,8 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const defaultLocalPath = '/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm/00_PROCORE DATA TIE';
-const currentBudgetPath = path.join(defaultLocalPath, '001_CURRENT BUDGET');
 const sourceRoot = process.env.PROCORE_DATA_TIE_PATH || defaultLocalPath;
+const currentBudgetPath = path.join(sourceRoot, '001_CURRENT BUDGET');
 const outData = path.join(root, 'data/projects/golden-hill/procore-information/procore-data-tie-index.json');
 const outPublic = path.join(root, 'public/data/projects/golden-hill/procore-information/procore-data-tie-index.json');
 
@@ -45,8 +45,8 @@ if (!exists) {
   const index = {
     projectName: 'Alüm',
     source: 'Local Dropbox sync folder for CAST BUILD A.O exports',
-    localPath: sourceRoot,
-    currentBudgetPath,
+    localPath: 'private-dropbox-path-redacted',
+    currentBudgetPath: 'private-dropbox-path-redacted',
     currentBudgetStatus: fs.existsSync(currentBudgetPath) ? 'available' : 'not_mounted_or_not_available_on_this_host',
     status: 'not_mounted_or_not_available_on_this_host',
     generatedAt: new Date().toISOString(),
@@ -71,8 +71,8 @@ const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
 const index = {
   projectName: 'Alüm',
   source: 'Local Dropbox sync folder for CAST BUILD A.O exports',
-  localPath: sourceRoot,
-  currentBudgetPath,
+  localPath: 'private-dropbox-path-redacted',
+  currentBudgetPath: 'private-dropbox-path-redacted',
   currentBudgetStatus: fs.existsSync(currentBudgetPath) ? 'available' : 'not_found_under_data_tie',
   status: 'indexed',
   generatedAt: new Date().toISOString(),

@@ -14,6 +14,13 @@ function listDirs(dir) {
 }
 
 function latestExtractionRoot() {
+  if (process.env.ALUM_DATA_ROOM_SOURCE_DIR) {
+    const configured = path.resolve(process.env.ALUM_DATA_ROOM_SOURCE_DIR);
+    if (!fs.existsSync(configured) || !fs.statSync(configured).isDirectory()) {
+      throw new Error(`Configured ALUM_DATA_ROOM_SOURCE_DIR is not available: ${configured}`);
+    }
+    return configured;
+  }
   const candidates = listDirs(intakeBase)
     .filter((p) => path.basename(p).startsWith('extracted-'))
     .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
@@ -22,6 +29,7 @@ function latestExtractionRoot() {
 }
 
 function findProjectRoot(extractRoot) {
+  if (fs.existsSync(path.join(extractRoot, '08. RFI\'s')) || fs.existsSync(path.join(extractRoot, '00_PROCORE DATA TIE'))) return extractRoot;
   const candidate = path.join(extractRoot, 'Alüm');
   if (fs.existsSync(candidate)) return candidate;
   const found = listDirs(extractRoot).find((p) => /Al/i.test(path.basename(p)));
@@ -41,6 +49,9 @@ function walk(dir, base = dir) {
   return out;
 }
 
+function sanitizePublishedRel(rel) {
+  return rel.replace(/^00_PROCORE DATA TIE(?=\/|$)/, '00. Project Data Tie');
+}
 function firstSegment(rel) { return rel.split('/')[0] || 'root'; }
 function extension(rel) { return path.extname(rel).replace(/^\./, '').toLowerCase() || 'none'; }
 function topSectionFrom(seg) {
@@ -72,19 +83,20 @@ function main() {
   const projectRoot = findProjectRoot(extractRoot);
   const rawFiles = walk(projectRoot);
   const files = rawFiles.map(({ rel, stat }, idx) => {
-    const seg = firstSegment(rel);
+    const publishedRel = sanitizePublishedRel(rel);
+    const seg = firstSegment(publishedRel);
     const top = topSectionFrom(seg);
-    const trade = tradeCodeFromRel(rel);
+    const trade = tradeCodeFromRel(publishedRel);
     return {
       id: idx + 1,
-      path: rel,
-      name: path.basename(rel),
+      path: publishedRel,
+      name: path.basename(publishedRel),
       topFolder: seg,
       topNumber: top.number,
       topName: top.name,
       topKey: top.key,
-      subpath: rel.split('/').slice(1).join('/'),
-      extension: extension(rel),
+      subpath: publishedRel.split('/').slice(1).join('/'),
+      extension: extension(publishedRel),
       size: stat.size,
       sizeLabel: humanBytes(stat.size),
       modifiedAt: stat.mtime.toISOString(),
@@ -119,10 +131,10 @@ function main() {
     projectName: 'Alüm',
     formerName: 'Golden Hill Apartments',
     generatedAt: new Date().toISOString(),
-    source: 'CAST Automation Storage Dropbox shared-folder ZIP',
+    source: process.env.ALUM_DATA_ROOM_SOURCE_DIR ? 'Private synced Alüm project data room' : 'CAST Automation Storage Dropbox shared-folder ZIP',
     approvedBoundary,
-    extractionRoot: path.relative(root, extractRoot).split(path.sep).join('/'),
-    projectRoot: path.relative(root, projectRoot).split(path.sep).join('/'),
+    extractionRoot: process.env.ALUM_DATA_ROOM_SOURCE_DIR ? 'private-dropbox-path-redacted' : path.relative(root, extractRoot).split(path.sep).join('/'),
+    projectRoot: process.env.ALUM_DATA_ROOM_SOURCE_DIR ? 'private-dropbox-path-redacted' : path.relative(root, projectRoot).split(path.sep).join('/'),
     totalFiles: files.length,
     totalBytes: files.reduce((sum, f) => sum + f.size, 0),
     totalSizeLabel: humanBytes(files.reduce((sum, f) => sum + f.size, 0)),
