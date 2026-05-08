@@ -1,87 +1,231 @@
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const set=(sel,v)=>{document.querySelectorAll(sel).forEach(el=>{el.textContent=v});};
-async function loadJson(path){let r=await fetch(path,{credentials:'same-origin',cache:'no-store'}); if(!r.ok&&path.startsWith('/data/')) r=await fetch(path.replace('/data/','/safe-data/'),{credentials:'same-origin',cache:'no-store'}); if(!r.ok) throw new Error(`${path} ${r.status}`); return r.json();}
-function getRows(key,defaults=[]){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(defaults));}catch{return defaults;}}
-function saveRows(key,rows){localStorage.setItem(key,JSON.stringify(rows));}
-function pctFrom(text){const m=String(text).match(/(\d{1,3})\s*(?:%|percent)/i); return m?Math.min(100,Number(m[1])):'';}
-function locationFrom(text){const m=String(text).match(/(?:on|at|in)\s+((?:level|floor|area|unit|building|pod|zone)\s*[a-z0-9-]+)/i); return m?m[1]:'';}
-function tradeFrom(text){const trades=['framing','drywall','electrical','plumbing','mechanical','hvac','concrete','roofing','waterproofing','paint','fire alarm','fire sprinkler','low voltage','flooring','doors','windows','sitework']; const lower=String(text).toLowerCase(); return trades.find(t=>lower.includes(t))||'';}
-function readUpdate(row){const blockers=/blocked|delay|behind|late|cannot|waiting|rfi|submittal|material|inspection/i.test(row.note||row.raw||''); const percent=Number(row.percent); if(blockers) return 'Blocked / needs superintendent follow-up.'; if(Number.isFinite(percent)&&percent<80) return 'Progress captured; watch against lookahead commitments.'; if(Number.isFinite(percent)&&percent>=80) return 'Near completion; verify punch/inspection handoff.'; return 'Unstructured update captured; needs review.';}
-function defaultUpdates(){return [{createdAt:new Date().toISOString(),trade:'Framing',location:'Level 2',percent:90,contractor:'Framing contractor',note:'Example voice update: framing on level 2 at 90 percent.',raw:'framing on level 2 at 90 percent'}];}
-function renderFieldUpdates(){const rows=getRows('alumScheduleFieldUpdates',defaultUpdates()); document.querySelectorAll('[data-field-update-rows]').forEach(tbody=>tbody.innerHTML=rows.map((r,i)=>`<tr><td>${esc(new Date(r.createdAt).toLocaleString())}</td><td><strong>${esc(r.trade||'Unassigned trade')}</strong><br>${esc(r.location||'No location')} · ${esc(r.contractor||'No contractor')}</td><td>${esc(r.percent!==''?`${r.percent}%`:'Needs parse')}</td><td>${esc(readUpdate(r))}</td><td><button class="tinybtn" data-draft-from-update="${i}">Draft Notice</button> <button class="tinybtn" data-del-update="${i}">Remove</button></td></tr>`).join('')); document.querySelectorAll('[data-del-update]').forEach(btn=>btn.addEventListener('click',()=>{saveRows('alumScheduleFieldUpdates',rows.filter((_,i)=>i!==Number(btn.dataset.delUpdate))); renderAllDerived();})); document.querySelectorAll('[data-draft-from-update]').forEach(btn=>btn.addEventListener('click',()=>{const r=rows[Number(btn.dataset.draftFromUpdate)]; fillNoticeFromUpdate(r); generateNotice(); location.hash='correspondence';}));}
-function addFieldUpdate(){const raw=document.querySelector('[data-field-update-text]').value.trim(); const row={createdAt:new Date().toISOString(),raw,trade:document.querySelector('[data-update-trade]').value.trim()||tradeFrom(raw),location:document.querySelector('[data-update-location]').value.trim()||locationFrom(raw),percent:document.querySelector('[data-update-percent]').value.trim()||pctFrom(raw),contractor:document.querySelector('[data-update-contractor]').value.trim(),note:document.querySelector('[data-update-blocker]').value.trim()||raw}; if(!raw&&!row.trade&&!row.location) return; const rows=getRows('alumScheduleFieldUpdates',defaultUpdates()); rows.unshift(row); saveRows('alumScheduleFieldUpdates',rows.slice(0,80)); ['[data-field-update-text]','[data-update-trade]','[data-update-location]','[data-update-percent]','[data-update-contractor]','[data-update-blocker]'].forEach(sel=>document.querySelector(sel).value=''); renderAllDerived();}
-function renderLookahead(){const rows=getRows('alumScheduleLookahead',[{work:'Clear overdue RFIs',owner:'PM / design team',week:'Week 1',note:'Confirm owner, response target, and field impact.'},{work:'Revise/resubmit submittal cleanup',owner:'Submittal manager',week:'Week 1',note:'Prioritize responsible contractors with multiple open items.'},{work:'Frame-to-MEP handoff check',owner:'Superintendent',week:'Week 2',note:'Use voice updates to confirm percent complete and blockers by level.'},{work:'Recovery-plan pressure test',owner:'Project controls',week:'Week 3',note:'Issue approval-gated recovery requests for lagging trades.'}]); const byWeek=['Week 1','Week 2','Week 3'].map(week=>[week,rows.filter(r=>r.week===week)]); document.querySelector('[data-lookahead-cards]').innerHTML=byWeek.map(([week,items])=>`<a href="#lookahead"><strong>${esc(week)}</strong><span>${items.map(x=>`${x.work} — ${x.owner}: ${x.note}`).join(' · ')||'No local work packages yet.'}</span></a>`).join('');}
-function riskRank(risk){return {Critical:0,Warning:1,Review:2}[risk]??3;}
-function constraintsFrom(rfi,sub){const out=[];(rfi.openItems||rfi.recentItems||[]).filter(x=>/open|draft/i.test(x.Status||'')).forEach(x=>out.push({name:`RFI ${x.Number||'—'} · ${x.Subject||''}`,source:'RFI',owner:x['Ball In Court']||x['Assigned Id']||x['RFI Manager']||'Unassigned',risk:String(x.Aging||'').includes('Overdue')?'Critical':'Review',step:String(x.Aging||'').includes('Overdue')?'Escalate response date and decide field workaround.':'Confirm due date and responsible reviewer.'}));(sub.sampleItems||[]).filter(x=>/open|draft|revise/i.test(x.Status||'')).forEach(x=>out.push({name:`Submittal ${x['Submittal Number']||'—'} · ${x.Title||''}`,source:'Submittal',owner:x['Responsible Contractor']||x['Ball In Court']||'Unassigned',risk:/revise/i.test(x.Status||'')?'Warning':'Review',step:/revise/i.test(x.Status||'')?'Confirm revision scope and resubmittal target.':'Complete routing metadata and reviewer target.'}));return out.sort((a,b)=>riskRank(a.risk)-riskRank(b.risk)).slice(0,36);}
-function delinquencyRows(){const updates=getRows('alumScheduleFieldUpdates',defaultUpdates()); return updates.map(r=>{const percent=Number(r.percent); const blocked=/blocked|delay|behind|late|cannot|waiting|rfi|submittal|material|inspection/i.test(r.note||r.raw||''); const behind=(Number.isFinite(percent)&&percent<75)||blocked; return {...r,blocked,behind,action:behind?'Request written recovery plan and date-certain manpower/material correction.':'Monitor in next field update.'};}).filter(r=>r.behind).slice(0,20);}
-function renderDelinquency(){const rows=delinquencyRows(); const blocked=rows.filter(r=>r.blocked).length; set('[data-delinquency-count]',`${rows.length} watch items`); set('[data-behind-count]',rows.length); set('[data-blocker-count]',blocked); set('[data-recovery-needed]',rows.length); document.querySelector('[data-delinquency-rows]').innerHTML=rows.map((r,i)=>`<tr><td><strong>${esc(r.trade||'Trade')}</strong> · ${esc(r.location||'Location')}</td><td>${esc(r.percent!==''?`${r.percent}%`:'No percent')} ${r.blocked?'· blocker mentioned':''}</td><td><button class="tinybtn" data-draft-delinquency="${i}">Draft recovery request</button></td></tr>`).join('')||'<tr><td colspan="3">No behind-plan field updates yet.</td></tr>'; document.querySelectorAll('[data-draft-delinquency]').forEach(btn=>btn.addEventListener('click',()=>{fillNoticeFromUpdate(rows[Number(btn.dataset.draftDelinquency)]); generateNotice();}));}
-function fillNoticeFromUpdate(r){document.querySelector('[data-notice-to]').value=r.contractor||r.trade||'Trade contractor'; document.querySelector('[data-notice-work]').value=`${r.trade||'Work package'} ${r.location?`at ${r.location}`:''}`.trim(); document.querySelector('[data-notice-context]').value=`Latest field update: ${r.raw||r.note||'progress update'}${r.percent!==''?` (${r.percent}% complete)`:''}. ${r.note||''}`.trim();}
-function generateNotice(){const to=document.querySelector('[data-notice-to]').value.trim()||'Trade Contractor'; const work=document.querySelector('[data-notice-work]').value.trim()||'identified work package'; const due=document.querySelector('[data-notice-due]').value.trim()||'end of next business day'; const context=document.querySelector('[data-notice-context]').value.trim()||'Field update indicates the work is behind the current plan or blocked by unresolved constraints.'; const draft=`Subject: Recovery Plan Required — ${work}\n\n${to},\n\nCAST Build's current schedule review indicates ${work} is not tracking to the required field plan. ${context}\n\nPlease provide a written recovery plan by ${due} that includes:\n1. Current percent complete by area/location.\n2. Root cause of delay or constraint.\n3. Manpower/material/equipment correction.\n4. Date-certain recovery milestones for the next 3 weeks.\n5. Any required decisions, RFIs, submittals, inspections, or access needs blocking recovery.\n\nThis notice is intended to preserve schedule flow and create a clear path back to plan. No change in contract time or cost is accepted by this correspondence.\n\nRegards,\nCAST Build`; document.querySelector('[data-notice-draft]').value=draft; return draft;}
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const set = (sel, value) => $$(sel).forEach((el) => { el.textContent = value; });
 
-function currentWorkPackages(){return superintendentSchedule?.work_packages||[];}
-function visibleWorkPackages(){
-  const trade=document.querySelector('[data-schedule-filter]')?.value||'';
-  const rows=currentWorkPackages();
-  return trade?rows.filter(p=>p.trade===trade):rows;
+const STATE_KEY = 'castBuildAlumScheduleScenarios';
+const UPDATE_KEY = 'alumScheduleFieldUpdates';
+const LOOKAHEAD_KEY = 'alumScheduleLookahead';
+// Data dependencies: rfi-summary.json, submittal-summary.json, schedule-source-index.json. Optional browser dictation: SpeechRecognition.
+let schedule = null;
+let selectedId = null;
+
+async function loadJson(path) {
+  let response = await fetch(path, { credentials: 'same-origin', cache: 'no-store' });
+  if (!response.ok && path.startsWith('/data/')) response = await fetch(path.replace('/data/', '/safe-data/'), { credentials: 'same-origin', cache: 'no-store' });
+  if (!response.ok) throw new Error(`${path} ${response.status}`);
+  return response.json();
 }
-function statusLabel(status){return String(status||'active').replaceAll('_',' ');}
-function populateScheduleFilter(rows){
-  document.querySelectorAll('[data-schedule-filter]').forEach(select=>{
-    const current=select.value;
-    const trades=[...new Set(rows.map(p=>p.trade).filter(Boolean))].sort();
-    select.innerHTML='<option value="">All trades</option>'+trades.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
-    if(trades.includes(current)) select.value=current;
+function readStore(key, fallback) { try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch { return fallback; } }
+function writeStore(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+function scenarios() { return readStore(STATE_KEY, {}); }
+function saveScenario(id, patch) { const all = scenarios(); all[id] = { ...(all[id] || {}), ...patch, adjustedAt: new Date().toISOString() }; writeStore(STATE_KEY, all); }
+function clearScenario(id) { const all = scenarios(); delete all[id]; writeStore(STATE_KEY, all); }
+function taskWithScenario(task) { return { ...task, ...(scenarios()[task.id] || {}) }; }
+function statusText(status) { return String(status || 'upcoming').replaceAll('_', ' '); }
+function parseDate(value) { const d = new Date(value); return Number.isNaN(d.getTime()) ? null : d; }
+function daysBetween(a, b) { const da = parseDate(a); const db = parseDate(b); if (!da || !db) return 1; return Math.max(1, Math.round((db - da) / 86400000) + 1); }
+function pctFrom(text) { const m = String(text).match(/(\d{1,3})\s*(?:%|percent)/i); return m ? Math.min(100, Number(m[1])) : ''; }
+function tradeFrom(text) { const trades = ['framing', 'drywall', 'electrical', 'plumbing', 'mechanical', 'hvac', 'concrete', 'roofing', 'waterproofing', 'paint', 'fire alarm', 'fire sprinkler', 'low voltage', 'flooring', 'doors', 'windows', 'sitework', 'sdge']; const lower = String(text).toLowerCase(); return trades.find((t) => lower.includes(t)) || ''; }
+function locationFrom(text) { const m = String(text).match(/(?:on|at|in)\s+((?:level|floor|area|unit|building|pod|zone|corridor|roof)\s*[a-z0-9-]*)/i); return m ? m[1] : ''; }
+
+function allTasks() { return (schedule?.work_packages || []).map(taskWithScenario); }
+function currentFilters() {
+  return {
+    search: $('[data-search]')?.value.trim().toLowerCase() || '',
+    status: $('[data-status-filter]')?.value || '',
+    trade: $('[data-trade-filter]')?.value || '',
+    phase: $('[data-phase-filter]')?.value || '',
+    sort: $('[data-sort]')?.value || 'start',
+  };
+}
+function filteredTasks() {
+  const f = currentFilters();
+  const rows = allTasks().filter((t) => {
+    const hay = [t.id, t.wbs, t.title, t.trade, t.location, t.phase, t.predecessors, t.successors, t.status].join(' ').toLowerCase();
+    return (!f.search || hay.includes(f.search)) && (!f.status || t.status === f.status) && (!f.trade || t.trade === f.trade) && (!f.phase || t.phase === f.phase);
   });
-}
-function renderScheduleRows(){
-  const rows=visibleWorkPackages().slice(0,80);
-  document.querySelectorAll('[data-jamas-schedule-rows]').forEach(body=>{
-    body.innerHTML=rows.map(p=>`<tr><td>${esc(p.trade)}</td><td>${esc(p.location)}</td><td>${esc(p.title)}</td><td>${esc(p.start_label)} – ${esc(p.finish_label)}</td><td><span class="pill ${p.status==='verify_complete'?'draft':''}">${esc(statusLabel(p.status))}</span></td><td>${esc(p.ask)}</td></tr>`).join('')||'<tr><td colspan="6">No schedule items found for this filter.</td></tr>';
+  rows.sort((a, b) => {
+    if (f.sort === 'finish') return String(a.finish).localeCompare(String(b.finish));
+    if (f.sort === 'trade') return String(a.trade).localeCompare(String(b.trade)) || String(a.start).localeCompare(String(b.start));
+    if (f.sort === 'status') return String(a.status).localeCompare(String(b.status)) || String(a.start).localeCompare(String(b.start));
+    return String(a.start).localeCompare(String(b.start));
   });
+  return rows;
 }
-function renderScheduleSummary(d){
-  const rows=d.work_packages||[];
-  const verify=rows.filter(p=>p.status==='verify_complete').length;
-  const trades=new Set(rows.map(p=>p.trade).filter(Boolean));
-  set('[data-total-work-packages]',rows.length);
-  set('[data-verify-complete-count]',verify);
-  set('[data-active-trade-count]',trades.size);
-  populateScheduleFilter(rows);
-  renderScheduleRows();
-  renderHuddleRows(rows);
+function populateFilters() {
+  const tasks = allTasks();
+  const trades = [...new Set(tasks.map((t) => t.trade).filter(Boolean))].sort();
+  const phases = [...new Set(tasks.map((t) => t.phase).filter(Boolean))].sort();
+  $('[data-trade-filter]').innerHTML = '<option value="">All trades</option>' + trades.map((t) => `<option>${esc(t)}</option>`).join('');
+  $('[data-phase-filter]').innerHTML = '<option value="">All phases</option>' + phases.map((p) => `<option>${esc(p)}</option>`).join('');
 }
-function renderHuddleRows(rows=currentWorkPackages()){
-  const focus=(rows||[]).filter(p=>p.status==='verify_complete').slice(0,12);
-  document.querySelectorAll('[data-huddle-rows]').forEach(body=>{
-    body.innerHTML=focus.map(p=>`<tr><td><strong>${esc(p.trade)}</strong><br>${esc(p.location)}</td><td>${esc(p.title)} · ${esc(p.start_label)}–${esc(p.finish_label)}</td><td>${esc(p.ask)}</td></tr>`).join('')||'<tr><td colspan="3">No huddle items generated yet.</td></tr>';
+function timelineWidth(task) { return Math.min(100, Math.max(8, daysBetween(task.start, task.finish) * 3)); }
+function renderList() {
+  const rows = filteredTasks();
+  set('[data-visible-count]', `${rows.length} shown`);
+  set('[data-filter-readout]', rows.length === allTasks().length ? 'All work packages' : `${rows.length} filtered work packages`);
+  const list = $('[data-activity-list]');
+  list.innerHTML = rows.map((t) => `
+    <article class="schedule-row status-${esc(t.status)} ${String(t.id) === String(selectedId) ? 'active' : ''}" data-activity-id="${esc(t.id)}">
+      <div><span class="status-dot"></span><span class="label">${esc(t.wbs || `#${t.id}`)}</span></div>
+      <div><strong>${esc(t.title)}</strong><small>${esc(t.trade)} · ${esc(t.location)} · ${esc(t.phase)}</small></div>
+      <div>${esc(t.start_label || t.start)} – ${esc(t.finish_label || t.finish)}</div>
+      <div>${esc(t.percent_complete ?? 0)}%</div>
+      <div><span class="pill ${t.status === 'active_now' ? 'open' : t.status === 'verify_complete' ? 'draft' : ''}">${esc(statusText(t.status))}</span>${scenarios()[t.id] ? '<br><span class="scenario-pill">adjusted</span>' : ''}</div>
+      <div class="timeline-cell" aria-hidden="true"><span style="width:${timelineWidth(t)}%"></span></div>
+    </article>`).join('') || '<div class="empty"><div><h3>No work packages match this filter</h3><p>Clear filters or search a different task/trade.</p></div></div>';
+  $$('[data-activity-id]').forEach((row) => row.addEventListener('click', () => selectTask(row.dataset.activityId)));
+}
+function selectTask(id) { selectedId = id; renderList(); renderDrawer(); }
+function selectedTask() { return allTasks().find((t) => String(t.id) === String(selectedId)) || filteredTasks()[0] || allTasks()[0]; }
+function renderDrawer() {
+  const t = selectedTask();
+  const drawer = $('[data-activity-drawer]');
+  if (!t) { drawer.innerHTML = '<p class="source">No schedule task selected.</p>'; return; }
+  selectedId = t.id;
+  set('[data-selected-status]', statusText(t.status));
+  drawer.innerHTML = `
+    <h3 class="drawer-title">${esc(t.title)}</h3>
+    <div class="source">WBS ${esc(t.wbs || t.id)} · ${esc(t.trade)} · ${esc(t.location)} · ${esc(t.phase)}</div>
+    <div class="drawer-grid">
+      <label>Start <input type="date" data-drawer-start value="${esc(t.start || '')}"></label>
+      <label>Finish <input type="date" data-drawer-finish value="${esc(t.finish || '')}"></label>
+      <label>Status <select data-drawer-status><option value="complete">Complete</option><option value="verify_complete">Verify complete</option><option value="active_now">Active now</option><option value="starts_soon">Starts soon</option><option value="upcoming">Upcoming</option></select></label>
+      <label>% Complete <input type="number" min="0" max="100" data-drawer-percent value="${esc(t.percent_complete ?? 0)}"></label>
+    </div>
+    <label class="label">Scenario / Field Note</label>
+    <textarea class="scenario-note" data-drawer-note placeholder="Add local superintendent note, blocker, manpower plan, or date-change reason.">${esc(t.scenario_note || '')}</textarea>
+    <div class="hero-actions" style="margin-top:14px">
+      <button class="tinybtn" data-save-scenario>Save Local Adjustment</button>
+      <button class="tinybtn" data-clear-scenario>Clear Adjustment</button>
+      <button class="tinybtn" data-draft-activity>Draft Recovery</button>
+      <button class="tinybtn" data-copy-activity>Copy Task Brief</button>
+    </div>
+    <div class="wide-note compact"><strong>Ask:</strong> ${esc(t.ask || 'Confirm start, finish, manpower, blockers, and recovery plan if needed.')}</div>
+    <div class="source compact"><strong>Predecessors:</strong> ${esc(t.predecessors || '—')}<br><strong>Successors:</strong> ${esc(t.successors || '—')}<br><strong>Duration:</strong> ${esc(t.duration || '—')} · <strong>Critical:</strong> ${t.critical ? 'Yes' : 'No'}</div>
+  `;
+  $('[data-drawer-status]').value = t.status || 'upcoming';
+  $('[data-save-scenario]').addEventListener('click', () => {
+    saveScenario(t.id, { start: $('[data-drawer-start]').value, finish: $('[data-drawer-finish]').value, status: $('[data-drawer-status]').value, percent_complete: Number($('[data-drawer-percent]').value || 0), scenario_note: $('[data-drawer-note]').value.trim() });
+    renderAll();
   });
+  $('[data-clear-scenario]').addEventListener('click', () => { clearScenario(t.id); renderAll(); selectTask(t.id); });
+  $('[data-draft-activity]').addEventListener('click', () => draftNoticeFromTask(t));
+  $('[data-copy-activity]').addEventListener('click', async () => navigator.clipboard?.writeText(activityBrief(t)));
 }
-function scheduleCsv(){
-  const rows=visibleWorkPackages();
-  const header=['Trade','Location','Schedule Item','Start','Finish','Status','Required Field Check'];
-  return [header,...rows.map(p=>[p.trade,p.location,p.title,p.start_label,p.finish_label,statusLabel(p.status),p.ask])].map(cols=>cols.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');
+function activityBrief(t) { return `${t.trade} / ${t.location}\n${t.title}\nWindow: ${t.start_label || t.start} – ${t.finish_label || t.finish}\nStatus: ${statusText(t.status)} · ${t.percent_complete ?? 0}%\nAsk: ${t.ask || ''}`; }
+function draftNoticeFromTask(t) {
+  $('[data-notice-to]').value = t.trade;
+  $('[data-notice-work]').value = `${t.title} (${t.location})`;
+  $('[data-notice-due]').value = 'end of next business day';
+  $('[data-notice-context]').value = `${t.title} is scheduled ${t.start_label || t.start} to ${t.finish_label || t.finish}. Current local read: ${statusText(t.status)} at ${t.percent_complete ?? 0}% complete. ${t.ask || ''}`;
+  generateNotice();
+  location.hash = 'correspondence';
 }
-function exportScheduleCsv(){
-  const blob=new Blob([scheduleCsv()],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download='alum-schedule-items.csv'; a.click(); URL.revokeObjectURL(url);
+function generateNotice() {
+  const to = $('[data-notice-to]').value.trim() || 'Trade Contractor';
+  const work = $('[data-notice-work]').value.trim() || 'identified schedule activity';
+  const due = $('[data-notice-due]').value.trim() || 'end of next business day';
+  const context = $('[data-notice-context]').value.trim() || 'Current schedule review indicates this activity needs confirmation or recovery action.';
+  const draft = `Subject: Schedule Confirmation / Recovery Plan Required — ${work}\n\n${to},\n\nCAST Build is reviewing the active Alüm schedule window. ${context}\n\nPlease provide by ${due}:\n1. Current percent complete by area/location.\n2. Crew count and manpower plan.\n3. Material/equipment status.\n4. Inspection or access needs.\n5. Any blocker that prevents the scheduled finish.\n6. If dates cannot be met, a date-certain recovery plan.\n\nThis is a planning and coordination request only. No change in contract time, cost, acceleration, or change-order rights is accepted by this correspondence.`;
+  $('[data-notice-draft]').value = draft;
+  return draft;
 }
-async function copyHuddleBoard(){
-  const rows=(currentWorkPackages()||[]).filter(p=>p.status==='verify_complete').slice(0,12);
-  const text=rows.map((p,i)=>`${i+1}. ${p.trade} / ${p.location}\n   Item: ${p.title}\n   Window: ${p.start_label}-${p.finish_label}\n   Needed: ${p.ask}`).join('\n\n');
-  if(text) await navigator.clipboard?.writeText(text);
-  set('[data-huddle-copy-status]', text?'Huddle board copied.':'No huddle items available.');
+function defaultUpdates() { return [{ createdAt: new Date().toISOString(), trade: 'Electrical / SDGE', location: 'Corridors', percent: 70, contractor: 'Electrical contractor', note: 'Example: waiting on inspection release.', raw: 'Electrical feeders at corridors are 70 percent complete; waiting on inspection release.' }]; }
+function readUpdate(row) { if (/blocked|delay|behind|late|cannot|waiting|rfi|submittal|material|inspection/i.test(row.note || row.raw || '')) return 'Blocked / needs superintendent follow-up.'; if (Number(row.percent) >= 80) return 'Near completion; verify punch/inspection handoff.'; return 'Progress captured; watch against lookahead commitments.'; }
+function renderFieldUpdates() {
+  const rows = readStore(UPDATE_KEY, defaultUpdates());
+  $('[data-field-update-rows]').innerHTML = rows.map((r, i) => `<tr><td>${esc(new Date(r.createdAt).toLocaleString())}</td><td><strong>${esc(r.trade || 'Trade')}</strong><br>${esc(r.location || 'Location')} · ${esc(r.contractor || 'No contractor')}</td><td>${esc(r.percent !== '' ? `${r.percent}%` : 'Needs parse')}</td><td>${esc(readUpdate(r))}</td><td><button class="tinybtn" data-draft-update="${i}">Draft</button> <button class="tinybtn" data-delete-update="${i}">Remove</button></td></tr>`).join('');
+  $$('[data-delete-update]').forEach((b) => b.addEventListener('click', () => { writeStore(UPDATE_KEY, rows.filter((_, i) => i !== Number(b.dataset.deleteUpdate))); renderFieldUpdates(); renderRecovery(); }));
+  $$('[data-draft-update]').forEach((b) => b.addEventListener('click', () => { const r = rows[Number(b.dataset.draftUpdate)]; $('[data-notice-to]').value = r.contractor || r.trade; $('[data-notice-work]').value = `${r.trade} ${r.location}`.trim(); $('[data-notice-context]').value = `Field update: ${r.raw || r.note}. ${r.note || ''}`; generateNotice(); }));
+}
+function addFieldUpdate() {
+  const raw = $('[data-field-update-text]').value.trim();
+  const row = { createdAt: new Date().toISOString(), raw, trade: $('[data-update-trade]').value.trim() || tradeFrom(raw), location: $('[data-update-location]').value.trim() || locationFrom(raw), percent: $('[data-update-percent]').value.trim() || pctFrom(raw), contractor: $('[data-update-contractor]').value.trim(), note: $('[data-update-blocker]').value.trim() || raw };
+  if (!raw && !row.trade && !row.location) return;
+  const rows = readStore(UPDATE_KEY, defaultUpdates()); rows.unshift(row); writeStore(UPDATE_KEY, rows.slice(0, 80));
+  ['[data-field-update-text]', '[data-update-trade]', '[data-update-location]', '[data-update-percent]', '[data-update-contractor]', '[data-update-blocker]'].forEach((sel) => { $(sel).value = ''; });
+  renderFieldUpdates(); renderRecovery();
+}
+function renderLookahead() {
+  const tasks = allTasks();
+  const lanes = [
+    ['active_now', 'Active Now'], ['starts_soon', 'Starts Soon'], ['verify_complete', 'Verify Complete'], ['upcoming', 'Upcoming']
+  ];
+  $('[data-lookahead-board]').innerHTML = lanes.map(([status, label]) => `<div class="lane"><h3>${esc(label)}</h3>${tasks.filter((t) => t.status === status).slice(0, 8).map((t) => `<div class="lane-card"><strong>${esc(t.title)}</strong><span>${esc(t.trade)} · ${esc(t.location)}</span><br><small>${esc(t.start_label || t.start)} – ${esc(t.finish_label || t.finish)}</small></div>`).join('') || '<div class="lane-card">No tasks in this lane.</div>'}</div>`).join('');
 }
 
-function startVoice(){const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SpeechRecognition){set('[data-voice-status]','Voice dictation is not supported in this browser. Type the update instead.'); return;} const rec=new SpeechRecognition(); window.__castScheduleRec=rec; rec.continuous=true; rec.interimResults=true; rec.onresult=e=>{let text=''; for(let i=e.resultIndex;i<e.results.length;i++) text+=e.results[i][0].transcript; document.querySelector('[data-field-update-text]').value=text.trim(); const raw=text.trim(); document.querySelector('[data-update-trade]').value=tradeFrom(raw); document.querySelector('[data-update-location]').value=locationFrom(raw); document.querySelector('[data-update-percent]').value=pctFrom(raw);}; rec.onerror=e=>set('[data-voice-status]',`Dictation error: ${e.error}. Typed updates still work.`); rec.onstart=()=>set('[data-voice-status]','Listening. Speak the field update naturally.'); rec.onend=()=>set('[data-voice-status]','Dictation stopped. Review and add the update.'); rec.start();}
+function renderHuddle() {
+  const rows = allTasks().filter((t) => ['active_now', 'verify_complete', 'starts_soon'].includes(t.status)).slice(0, 12);
+  const body = $('[data-huddle-rows]');
+  if (!body) return;
+  body.innerHTML = rows.map((t) => `<tr><td><strong>${esc(t.trade)}</strong><br>${esc(t.location)}</td><td>${esc(t.title)} · ${esc(t.start_label || t.start)}–${esc(t.finish_label || t.finish)}</td><td>${esc(t.ask || 'Confirm manpower, blockers, and recovery path.')}</td></tr>`).join('') || '<tr><td colspan="3">No huddle items available.</td></tr>';
+}
+async function renderConstraints() {
+  try {
+    const [rfi, sub, source] = await Promise.all([
+      loadJson('/safe-data/projects/golden-hill/rfi-summary.json'),
+      loadJson('/safe-data/projects/golden-hill/submittal-summary.json'),
+      loadJson('/safe-data/projects/golden-hill/schedule/schedule-source-index.json')
+    ]);
+    set('[data-source-index-status]', source.source_status || 'indexed');
+    const rows = [];
+    (rfi.openItems || rfi.recentItems || []).filter((x) => /open|draft/i.test(x.Status || '')).slice(0, 12).forEach((x) => rows.push({ name: `RFI ${x.Number || '—'} · ${x.Subject || ''}`, source: 'RFI', owner: x['Ball In Court'] || x['RFI Manager'] || 'Unassigned', risk: String(x.Aging || '').includes('Overdue') ? 'Critical' : 'Review', step: String(x.Aging || '').includes('Overdue') ? 'Escalate response date and field workaround.' : 'Confirm due date and responsible reviewer.' }));
+    (sub.sampleItems || []).filter((x) => /open|draft|revise/i.test(x.Status || '')).slice(0, 12).forEach((x) => rows.push({ name: `Submittal ${x['Submittal Number'] || '—'} · ${x.Title || ''}`, source: 'Submittal', owner: x['Responsible Contractor'] || x['Ball In Court'] || 'Unassigned', risk: /revise/i.test(x.Status || '') ? 'Warning' : 'Review', step: /revise/i.test(x.Status || '') ? 'Confirm resubmittal target.' : 'Complete routing and reviewer target.' }));
+    set('[data-constraint-count]', `${rows.length} shown`);
+    const body = $('[data-constraint-rows]');
+    if (body) body.innerHTML = rows.map((x) => `<tr><td>${esc(x.name)}</td><td>${esc(x.source)}</td><td>${esc(x.owner)}</td><td><span class="pill ${x.risk === 'Critical' ? 'open' : x.risk === 'Warning' ? 'draft' : ''}">${esc(x.risk)}</span></td><td class="nextstep">${esc(x.step)}</td></tr>`).join('') || '<tr><td colspan="5">No RFI/submittal constraints found.</td></tr>';
+  } catch (error) {
+    set('[data-constraint-count]', 'metadata unavailable');
+    const body = $('[data-constraint-rows]');
+    if (body) body.innerHTML = `<tr><td colspan="5">Constraint metadata unavailable: ${esc(error.message)}</td></tr>`;
+  }
+}
 
+function renderRecovery() {
+  const recovery = (schedule?.recovery_watch || []).slice(0, 18).map(taskWithScenario);
+  set('[data-recovery-count]', `${recovery.length} watch items`);
+  $('[data-recovery-rows]').innerHTML = recovery.map((t) => `<tr><td><strong>${esc(t.title)}</strong><br>${esc(t.trade)} · ${esc(t.location)}</td><td>${esc(statusText(t.status))} · ${esc(t.finish_label || t.finish)}</td><td><button class="tinybtn" data-recovery-task="${esc(t.id)}">Draft recovery</button></td></tr>`).join('') || '<tr><td colspan="3">No recovery items found.</td></tr>';
+  $$('[data-recovery-task]').forEach((b) => b.addEventListener('click', () => draftNoticeFromTask(allTasks().find((t) => String(t.id) === String(b.dataset.recoveryTask)))));
+}
 
-let superintendentSchedule = null;
-async function renderSuperintendentSchedule(){try{const d=await loadJson('/safe-data/projects/golden-hill/schedule/superintendent-schedule.json'); superintendentSchedule=d; set('[data-jamas-schedule-status]',`${(d.work_packages||[]).length} work packages · ${(d.sub_directives||[]).length} sub directives`); set('[data-jamas-current-read]',(d.current_read||[]).join(' ')); renderScheduleSummary(d); document.querySelectorAll('[data-sub-directive-cards]').forEach(cards=>{cards.innerHTML=(d.sub_directives||[]).slice(0,18).map(x=>`<a href="#correspondence"><strong>${esc(x.trade)} · ${esc(x.location)}</strong><span>${esc(x.window)} — ${esc(x.message)}</span></a>`).join('')||'<a href="#voice"><strong>No directives yet</strong><span>Generate trade-ready directives from the schedule data.</span></a>';}); }catch(e){set('[data-jamas-schedule-status]','not generated'); document.querySelectorAll('[data-jamas-schedule-rows]').forEach(body=>body.innerHTML='<tr><td colspan="6">Superintendent schedule has not been generated.</td></tr>');}}
-function copySubDirectives(){const d=superintendentSchedule; const text=(d?.sub_directives||[]).slice(0,18).map(x=>`[${x.trade} / ${x.location}] ${x.message}`).join('\n\n'); if(!text) return; navigator.clipboard?.writeText(text); set('[data-directive-copy-status]','Subcontractor directives copied. Verify recipients before sending.');}
+function startVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  return SpeechRecognition;
+}
 
-async function renderSourceIndex(){try{const d=await loadJson('/safe-data/projects/golden-hill/schedule/schedule-source-index.json'); set('[data-source-index-status]',String(d.source_status||'not indexed').replaceAll('_',' ')); set('[data-source-index-read]',d.publish_guardrail||'Sanitized metadata only.'); const rows=d.latest_artifacts||[]; const body=document.querySelector('[data-source-index-rows]'); if(body) body.innerHTML=rows.map(a=>`<tr><td>${esc(a.title)}</td><td>${esc(a.kind)}</td><td>${esc(a.updated_at||'—')}</td><td>${esc(a.size_bytes?`${Math.round(a.size_bytes/1024)} KB`:'—')}</td></tr>`).join('')||`<tr><td colspan="4">${esc(d.notes||'No schedule artifacts indexed yet.')}</td></tr>`;}catch(e){set('[data-source-index-status]','not indexed'); const body=document.querySelector('[data-source-index-rows]'); if(body) body.innerHTML='<tr><td colspan="4">Schedule source index has not been generated.</td></tr>';}}
-
-function renderAllDerived(){renderFieldUpdates(); renderDelinquency();}
-(async()=>{const [rfi,sub]=await Promise.all([loadJson('/safe-data/projects/golden-hill/rfi-summary.json'),loadJson('/safe-data/projects/golden-hill/submittal-summary.json')]); set('[data-generated]',`Generated from sanitized RFI/submittal metadata · ${rfi.generatedAt||sub.generatedAt||'local exports'}`); set('[data-sched-impact]',rfi.scheduleImpactYes||0); const constraints=constraintsFrom(rfi,sub); set('[data-constraint-count]',`${constraints.length} shown`); document.querySelector('[data-constraint-rows]').innerHTML=constraints.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.source)}</td><td>${esc(x.owner)}</td><td><span class="pill ${x.risk==='Critical'?'open':x.risk==='Warning'?'draft':''}">${esc(x.risk)}</span></td><td class="nextstep">${esc(x.step)}</td></tr>`).join('')||'<tr><td colspan="5">No metadata constraints found.</td></tr>'; const handoffs=[['Superintendent','Submit daily percent-complete and blocker updates by trade/location','Updates feed the schedule item table, recovery watch, and huddle board.'],['Trade contractor','Provide recovery plan when behind or blocked','Recovery requests require current percent complete, cause, crew/material correction, and date-certain milestones.'],['Design team','Clear RFIs/submittals blocking field sequence','Open design/procurement items are listed as constraints against schedule work.'],['Project controls','Review drafts before external correspondence is sent','No external sends from this dashboard without approval and recipient verification.']]; set('[data-handoff-count]',`${handoffs.length} handoffs`); document.querySelector('[data-handoff-rows]').innerHTML=handoffs.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join(''); renderAllDerived(); renderLookahead(); renderSourceIndex(); renderSuperintendentSchedule(); document.querySelectorAll('[data-add-field-update]').forEach(el=>el.addEventListener('click',addFieldUpdate)); document.querySelectorAll('[data-start-voice]').forEach(el=>el.addEventListener('click',startVoice)); document.querySelectorAll('[data-stop-voice]').forEach(el=>el.addEventListener('click',()=>window.__castScheduleRec?.stop())); document.querySelector('[data-generate-notice]').addEventListener('click',generateNotice); document.querySelector('[data-clear-notice]').addEventListener('click',()=>['[data-notice-to]','[data-notice-work]','[data-notice-due]','[data-notice-context]','[data-notice-draft]'].forEach(sel=>document.querySelector(sel).value='')); document.querySelectorAll('[data-copy-directives]').forEach(el=>el.addEventListener('click',copySubDirectives)); document.querySelectorAll('[data-schedule-filter]').forEach(el=>el.addEventListener('change',renderScheduleRows)); document.querySelectorAll('[data-export-schedule]').forEach(el=>el.addEventListener('click',exportScheduleCsv)); document.querySelectorAll('[data-copy-huddle]').forEach(el=>el.addEventListener('click',copyHuddleBoard)); document.querySelector('[data-copy-notice]').addEventListener('click',async()=>{const draft=document.querySelector('[data-notice-draft]').value||generateNotice(); await navigator.clipboard?.writeText(draft); set('[data-copy-status]','Draft copied. Sending remains approval-gated.');}); document.querySelector('[data-add-lookahead]').addEventListener('click',()=>{const work=document.querySelector('[data-la-work]').value.trim(),owner=document.querySelector('[data-la-owner]').value.trim(),week=document.querySelector('[data-la-week]').value,note=document.querySelector('[data-la-note]').value.trim(); if(!work) return; const rows=getRows('alumScheduleLookahead',[]); rows.unshift({work,owner,week,note}); saveRows('alumScheduleLookahead',rows.slice(0,60)); document.querySelector('[data-la-work]').value=''; document.querySelector('[data-la-owner]').value=''; document.querySelector('[data-la-note]').value=''; renderLookahead();}); document.querySelector('[data-reset-lookahead]').addEventListener('click',()=>{localStorage.removeItem('alumScheduleLookahead'); renderLookahead();});})().catch(e=>document.body.insertAdjacentHTML('afterbegin',`<div class="wide-note"><strong>Schedule dashboard failed to load:</strong> ${esc(e.message)}</div>`));
+function renderDirectives() {
+  const directives = schedule?.sub_directives || [];
+  $('[data-sub-directive-cards]').innerHTML = directives.slice(0, 12).map((x) => `<a href="#correspondence"><strong>${esc(x.trade)} · ${esc(x.location)}</strong><span>${esc(x.window)} — ${esc(x.message)}</span></a>`).join('') || '<a><strong>No directives</strong><span>No subcontractor directives are available.</span></a>';
+}
+function scheduleCsv() {
+  const header = ['WBS', 'Trade', 'Location', 'Task', 'Start', 'Finish', 'Status', 'Percent', 'Ask'];
+  return [header, ...filteredTasks().map((t) => [t.wbs, t.trade, t.location, t.title, t.start, t.finish, statusText(t.status), t.percent_complete, t.ask])].map((cols) => cols.map((v) => `"${String(v ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+}
+async function copyHuddleBoard() {
+  const text = allTasks().filter((t) => ['active_now', 'verify_complete', 'starts_soon'].includes(t.status)).slice(0, 15).map((t, i) => `${i + 1}. ${activityBrief(t)}`).join('\n\n');
+  await navigator.clipboard?.writeText(text);
+}
+function exportScheduleCsv() { const blob = new Blob([scheduleCsv()], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'cast-build-alum-schedule-current-view.csv'; a.click(); URL.revokeObjectURL(url); }
+function renderSummary() {
+  const tasks = allTasks(); const summary = schedule?.summary || {};
+  set('[data-total-work-packages]', tasks.length); set('[data-active-count]', tasks.filter((t) => t.status === 'active_now').length); set('[data-starts-soon-count]', tasks.filter((t) => t.status === 'starts_soon').length); set('[data-verify-complete-count]', tasks.filter((t) => t.status === 'verify_complete').length); set('[data-scenario-count]', Object.keys(scenarios()).length); set('[data-imported-tasks]', summary.total_imported_tasks || '—'); set('[data-critical-count]', summary.critical_path_items || tasks.filter((t) => t.critical).length); set('[data-source-basis]', schedule?.source_basis || 'Sanitized schedule metadata'); set('[data-source-index-status]', schedule?.source_status || 'loaded'); set('[data-current-read]', (schedule?.current_read || []).join(' '));
+}
+function renderAll() { renderSummary(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderRecovery(); renderDirectives(); }
+function bind() {
+  ['[data-search]', '[data-status-filter]', '[data-trade-filter]', '[data-phase-filter]', '[data-sort]'].forEach((sel) => $$(sel).forEach((el) => el.addEventListener('input', renderAll)));
+  $$('[data-view-preset]').forEach((b) => b.addEventListener('click', () => { $('[data-status-filter]').value = b.dataset.viewPreset; renderAll(); }));
+  $$('[data-export-schedule]').forEach((b) => b.addEventListener('click', exportScheduleCsv));
+  $$('[data-copy-huddle]').forEach((b) => b.addEventListener('click', copyHuddleBoard));
+  $$('[data-add-field-update]').forEach((b) => b.addEventListener('click', addFieldUpdate));
+  $('[data-generate-notice]').addEventListener('click', generateNotice);
+  $('[data-copy-notice]').addEventListener('click', async () => { await navigator.clipboard?.writeText($('[data-notice-draft]').value || generateNotice()); set('[data-copy-status]', 'Draft copied. Sending remains approval-gated.'); });
+  $('[data-copy-directives]').addEventListener('click', async () => { const text = (schedule?.sub_directives || []).map((x) => `[${x.trade} / ${x.location}] ${x.message}`).join('\n\n'); await navigator.clipboard?.writeText(text); set('[data-directive-copy-status]', 'Subcontractor directives copied. Verify recipients before sending.'); });
+}
+(async function init() {
+  schedule = await loadJson('/safe-data/projects/golden-hill/schedule/superintendent-schedule.json');
+  populateFilters(); bind(); renderFieldUpdates(); renderConstraints(); selectedId = allTasks()[0]?.id; renderAll();
+})().catch((error) => {
+  document.body.insertAdjacentHTML('afterbegin', `<div class="wide-note"><strong>Schedule dashboard failed to load:</strong> ${esc(error.message)}</div>`);
+});
