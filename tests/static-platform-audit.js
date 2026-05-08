@@ -3,7 +3,7 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -402,6 +402,25 @@ for (const requiredCommandSignal of ['rfi-summary.json', 'submittal-summary.json
     failed = true;
   }
 }
+
+const managementCenterPage = fs.readFileSync(path.join(root, 'public/projects/alum-management-control-center.html'), 'utf8');
+const managementCenterScript = fs.readFileSync(path.join(root, 'public/projects/alum-management-control-center.js'), 'utf8');
+for (const requiredMgmtSignal of ['Comprehensive Project Dashboard', 'Management Priorities', 'Project Controls by Management Area', 'Management Needs / Next Actions', 'project-control-center.json']) {
+  if (!managementCenterPage.includes(requiredMgmtSignal) && !managementCenterScript.includes(requiredMgmtSignal)) {
+    console.error(`Management control center missing signal: ${requiredMgmtSignal}`);
+    failed = true;
+  }
+}
+const managementCenterData = JSON.parse(fs.readFileSync(path.join(root, 'public/data/projects/golden-hill/project-control-center.json'), 'utf8'));
+if (!managementCenterData.scan_scope?.file_count || !managementCenterData.management_areas?.length || !managementCenterData.control_priorities?.length) {
+  console.error('Management control center data must include scan scope, management areas, and priorities.');
+  failed = true;
+}
+if (/\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|\.pdf|\.xlsx|\.mpp|\.xml|source-logs|dropbox-intake/i.test(JSON.stringify(managementCenterData))) {
+  console.error('Management control center data must not leak private paths or raw artifact extensions.');
+  failed = true;
+}
+
 const schedulePage = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.html'), 'utf8');
 const scheduleScript = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.js'), 'utf8');
 if (!/Field-First Schedule Intelligence/.test(schedulePage) || !/Voice Field Updates/.test(schedulePage) || !/3-Week Lookahead/.test(schedulePage) || !/Constraint Log/.test(schedulePage) || !/Draft-only/i.test(schedulePage)) {
@@ -511,7 +530,7 @@ if (brokenLinks.length) {
 
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
 const rewrites = vercelConfig.rewrites || [];
-for (const source of ['/admin', '/projects', '/procore', '/document-tools', '/schedule-brain', '/schedule', '/projects/golden-hill', '/projects/overlook']) {
+for (const source of ['/admin', '/projects', '/procore', '/document-tools', '/schedule-brain', '/schedule', '/projects/alum-management-control-center', '/projects/alum-management', '/projects/golden-hill', '/projects/overlook']) {
   const rewrite = rewrites.find((row) => row.source === source);
   if (!rewrite || !routeExists(rewrite.destination)) fail(`Missing or invalid Vercel rewrite for ${source}`);
 }

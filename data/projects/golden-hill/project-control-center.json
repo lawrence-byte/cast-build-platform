@@ -1,0 +1,1282 @@
+{
+  "project_id": "golden-hill",
+  "project_name": "Alüm / Golden Hill",
+  "generated_at": "2026-05-08T04:54:48.531Z",
+  "source_status": "indexed",
+  "source_basis": "Full private Alüm project folder scan. Published output is sanitized metadata only: counts, categories, safe titles, management reads, and next actions.",
+  "scan_scope": {
+    "folder_count": 1595,
+    "file_count": 10992,
+    "total_bytes": 36741911568
+  },
+  "management_areas": [
+    {
+      "id": "financial",
+      "label": "Budget / Commitments / Accounting",
+      "modules": [
+        "Forecast",
+        "Commitment coverage",
+        "Change exposure"
+      ],
+      "folder_count": 968,
+      "file_count": 6283,
+      "total_bytes": 7994267612,
+      "kinds": {
+        "portable-document": 5240,
+        "word-document": 402,
+        "spreadsheet": 345,
+        "image": 115,
+        "other": 79,
+        "archive": 38,
+        "model-or-cad": 30,
+        "schedule-source": 1,
+        "tabular-export": 33
+      },
+      "recent_items": [
+        {
+          "title": "15. Ephoca 2972 (1) REV) $7040.25",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-28",
+          "size_kb": 78
+        },
+        {
+          "title": "Marjan Invoice 1 2026 04 28 (draft)",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-28",
+          "size_kb": 111
+        },
+        {
+          "title": "2117 10",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-27",
+          "size_kb": 117
+        },
+        {
+          "title": "2117 11 (Jan Pay App 11)",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-27",
+          "size_kb": 117
+        },
+        {
+          "title": "2117 4 (Feb Pay App 12)",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-27",
+          "size_kb": 117
+        },
+        {
+          "title": "2117 5 (March Pay App 13)",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-27",
+          "size_kb": 117
+        },
+        {
+          "title": "2117 6",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-27",
+          "size_kb": 117
+        },
+        {
+          "title": "2117 7",
+          "kind": "portable-document",
+          "area": "Budget / Commitments / Accounting",
+          "updated_at": "2026-04-27",
+          "size_kb": 117
+        }
+      ],
+      "management_read": "Budget and forecast data are indexed; tie-out exceptions should feed management priorities before commitments are treated as stable.",
+      "next_actions": [
+        "Review budget exceptions.",
+        "Tie commitments and pending changes to forecast.",
+        "Escalate accounting tie-out mismatches."
+      ]
+    },
+    {
+      "id": "drawings",
+      "label": "Drawings / Specs",
+      "modules": [
+        "Current set control",
+        "ASI/bulletin tracking",
+        "Field reference"
+      ],
+      "folder_count": 185,
+      "file_count": 1637,
+      "total_bytes": 10456622100,
+      "kinds": {
+        "portable-document": 1108,
+        "word-document": 60,
+        "spreadsheet": 8,
+        "archive": 17,
+        "image": 57,
+        "other": 51,
+        "model-or-cad": 336
+      },
+      "recent_items": [
+        {
+          "title": "Golden Hill Common Areas Revised 04 14 26 Floorplans",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-23",
+          "size_kb": 4857
+        },
+        {
+          "title": "[SeamlessDocs] DS 311 March 2024",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-22",
+          "size_kb": 190
+        },
+        {
+          "title": "Commercial Cooking Oil 2022",
+          "kind": "word-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-21",
+          "size_kb": 52
+        },
+        {
+          "title": "2026.04.17 GHA CLT Erection",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-20",
+          "size_kb": 14984
+        },
+        {
+          "title": "2026.03.31 GHA CONCRETE CORE 7 DAY",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-17",
+          "size_kb": 229
+        },
+        {
+          "title": "2026.04.01 GHA PH Rebar + Welding",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-17",
+          "size_kb": 10409
+        },
+        {
+          "title": "2026.04.07 GHA L8 Welding at Timber",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-17",
+          "size_kb": 8748
+        },
+        {
+          "title": "2026.04.09 GHA L8 Knife Plate Welding + Rebar",
+          "kind": "portable-document",
+          "area": "Drawings / Specs",
+          "updated_at": "2026-04-17",
+          "size_kb": 9611
+        }
+      ],
+      "management_read": "Drawing/spec folders should drive current-set control and field decision clarity.",
+      "next_actions": [
+        "Identify current drawing set.",
+        "Track ASIs/bulletins/addenda.",
+        "Prevent field use of stale sheets."
+      ]
+    },
+    {
+      "id": "submittals",
+      "label": "Submittals / Procurement",
+      "modules": [
+        "Submittal register",
+        "Long-lead material status",
+        "Revise/resubmit pressure"
+      ],
+      "folder_count": 213,
+      "file_count": 961,
+      "total_bytes": 5841302301,
+      "kinds": {
+        "portable-document": 657,
+        "model-or-cad": 5,
+        "image": 288,
+        "spreadsheet": 2,
+        "word-document": 1,
+        "archive": 2,
+        "other": 6
+      },
+      "recent_items": [
+        {
+          "title": "VCON CO 4 equipment sales submittals",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-24",
+          "size_kb": 96
+        },
+        {
+          "title": "260318 TIMBERLAB GOLDEN HILLS LOD350 REV2",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-23",
+          "size_kb": 6895
+        },
+        {
+          "title": "08 14 16 4.0 WOOD DOORS (COMMON AREAS) SHOP DRAWINGS",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-23",
+          "size_kb": 1636
+        },
+        {
+          "title": "12 32 10 5.0 CASEWORK (COMMON AREAS) SHOP DRAWING",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-23",
+          "size_kb": 4424
+        },
+        {
+          "title": "26 56 19 8.0 LED EXTERIOR LIGHTING (TERRACES) PRODUCT DATA",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-17",
+          "size_kb": 4172
+        },
+        {
+          "title": "23 00 00 8.0 RR EXH FAN PRODUCT DATA",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-15",
+          "size_kb": 1535
+        },
+        {
+          "title": "12 24 00 4.0 WINDOW SHADES SAMPLES APP",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-13",
+          "size_kb": 25045
+        },
+        {
+          "title": "12 24 00 4.0 WINDOW SHADES SAMPLES",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-13",
+          "size_kb": 24922
+        }
+      ],
+      "management_read": "66 submittals plus 43 revise/resubmit items need procurement pressure.",
+      "next_actions": [
+        "Separate true procurement blockers from paperwork cleanup.",
+        "Assign responsible contractor/date for revise-resubmit items.",
+        "Flag long-lead materials against schedule windows."
+      ]
+    },
+    {
+      "id": "documents",
+      "label": "Documents / Data Room",
+      "modules": [
+        "Document control"
+      ],
+      "folder_count": 55,
+      "file_count": 594,
+      "total_bytes": 3067221148,
+      "kinds": {
+        "spreadsheet": 15,
+        "portable-document": 524,
+        "tabular-export": 8,
+        "word-document": 14,
+        "archive": 1,
+        "image": 25,
+        "other": 7
+      },
+      "recent_items": [
+        {
+          "title": "Voluntary Audit Cast Build Inc MP0082001009757",
+          "kind": "portable-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-22",
+          "size_kb": 180
+        },
+        {
+          "title": "PL + EL CLT Cores 2026 04 16",
+          "kind": "portable-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-16",
+          "size_kb": 1498
+        },
+        {
+          "title": "Project Makeup Sheet",
+          "kind": "word-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-15",
+          "size_kb": 114
+        },
+        {
+          "title": "CC2",
+          "kind": "portable-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-13",
+          "size_kb": 8808
+        },
+        {
+          "title": "665b4b5c 4a7f 4786 89a5 b173ee111913 production merged",
+          "kind": "portable-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-03",
+          "size_kb": 22259
+        },
+        {
+          "title": "golden hill dashboard",
+          "kind": "other",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-01",
+          "size_kb": 283
+        },
+        {
+          "title": "golden hill procore data snapshot",
+          "kind": "other",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-01",
+          "size_kb": 20
+        },
+        {
+          "title": "LC Driveway LOI 2026 03 31",
+          "kind": "portable-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-03-31",
+          "size_kb": 5961
+        }
+      ],
+      "management_read": "",
+      "next_actions": []
+    },
+    {
+      "id": "quality",
+      "label": "Quality / Punch / Inspections",
+      "modules": [
+        "QA/QC",
+        "Punch readiness",
+        "Inspection queue"
+      ],
+      "folder_count": 64,
+      "file_count": 487,
+      "total_bytes": 3856000452,
+      "kinds": {
+        "word-document": 39,
+        "portable-document": 426,
+        "image": 9,
+        "spreadsheet": 9,
+        "other": 4
+      },
+      "recent_items": [
+        {
+          "title": "2026.04.27 Site Readiness Checklist",
+          "kind": "word-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-27",
+          "size_kb": 5893
+        },
+        {
+          "title": "GHA Concrete As Builts",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-27",
+          "size_kb": 63752
+        },
+        {
+          "title": "GHA MEP BOPs",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-27",
+          "size_kb": 3553
+        },
+        {
+          "title": "GHA Concrete As Builts",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-27",
+          "size_kb": 63752
+        },
+        {
+          "title": "GHA MEP BOPs",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-27",
+          "size_kb": 3553
+        },
+        {
+          "title": "Unit 215 S1 (signed)",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-24",
+          "size_kb": 18942
+        },
+        {
+          "title": "Unit 216 A5 (signed)",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-24",
+          "size_kb": 19546
+        },
+        {
+          "title": "Unit 217 S1 (signed)",
+          "kind": "portable-document",
+          "area": "Quality / Punch / Inspections",
+          "updated_at": "2026-04-24",
+          "size_kb": 19253
+        }
+      ],
+      "management_read": "Quality, inspections, and punch items should be connected to turnover windows by floor/area.",
+      "next_actions": [
+        "Create inspection readiness queue.",
+        "Link punch/open observations to responsible trade.",
+        "Track reinspection/backwalk dates."
+      ]
+    },
+    {
+      "id": "rfi",
+      "label": "RFIs / Design Decisions",
+      "modules": [
+        "Open design questions",
+        "Field blockers",
+        "Decision turnaround"
+      ],
+      "folder_count": 11,
+      "file_count": 369,
+      "total_bytes": 769097349,
+      "kinds": {
+        "model-or-cad": 7,
+        "other": 9,
+        "spreadsheet": 1,
+        "portable-document": 350,
+        "word-document": 2
+      },
+      "recent_items": [
+        {
+          "title": "GHA RFI #279 Collector Straps at Window Washing Anchors",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-27",
+          "size_kb": 1017
+        },
+        {
+          "title": "1 Overlay Pages 1",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-27",
+          "size_kb": 1826
+        },
+        {
+          "title": "GHA RFI #269 L2 BMP Drain",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-24",
+          "size_kb": 1229
+        },
+        {
+          "title": "GHA RFI #281 Collector Strap Slot Corrections",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-24",
+          "size_kb": 1932
+        },
+        {
+          "title": "RFI #220 RCP Update for Exposed Plumbing L3 7",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-24",
+          "size_kb": 20058
+        },
+        {
+          "title": "GHA RFI #274 L2 Terrace Lighting",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-21",
+          "size_kb": 128
+        },
+        {
+          "title": "GHA RFI #275 Unit C1 Corridor Wall Type",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-21",
+          "size_kb": 6595
+        },
+        {
+          "title": "GHA RFI #277 Plumbing & Electrical CLT Penetrations",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-20",
+          "size_kb": 2166
+        }
+      ],
+      "management_read": "7 RFI items should be treated as schedule constraints until cleared.",
+      "next_actions": [
+        "Rank RFIs by field impact.",
+        "Push overdue design decisions into weekly OAC agenda.",
+        "Connect blocker RFIs to affected trade work packages."
+      ]
+    },
+    {
+      "id": "schedule",
+      "label": "Schedule / Lookahead",
+      "modules": [
+        "Schedule Brain",
+        "Trade recovery",
+        "Lookahead planning"
+      ],
+      "folder_count": 15,
+      "file_count": 209,
+      "total_bytes": 217264328,
+      "kinds": {
+        "portable-document": 129,
+        "spreadsheet": 25,
+        "model-or-cad": 2,
+        "other": 3,
+        "word-document": 2,
+        "structured-schedule": 3,
+        "schedule-source": 44,
+        "image": 1
+      },
+      "recent_items": [
+        {
+          "title": "CAST Joe's schedule 2025 4 14 (Jackie Villanueva's conflicted copy 2026 04 27)",
+          "kind": "schedule-source",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-24",
+          "size_kb": 2221
+        },
+        {
+          "title": "CAST Joe's schedule 2025 4 14",
+          "kind": "schedule-source",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-24",
+          "size_kb": 2240
+        },
+        {
+          "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 21)",
+          "kind": "schedule-source",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-21",
+          "size_kb": 2325
+        },
+        {
+          "title": "2026.04.17 GHA Schedule Update",
+          "kind": "portable-document",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-17",
+          "size_kb": 1245
+        },
+        {
+          "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 17)",
+          "kind": "schedule-source",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-17",
+          "size_kb": 2112
+        },
+        {
+          "title": "CAST Joe's schedule 2025 4 13)",
+          "kind": "schedule-source",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-13",
+          "size_kb": 2101
+        },
+        {
+          "title": "2026 04 06 GHA Schedule Update 4 week lookahead",
+          "kind": "portable-document",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-08",
+          "size_kb": 93
+        },
+        {
+          "title": "2026 04 06 GHA Schedule Update",
+          "kind": "portable-document",
+          "area": "Schedule / Lookahead",
+          "updated_at": "2026-04-07",
+          "size_kb": 404
+        }
+      ],
+      "management_read": "220 superintendent work packages and 30 subcontractor directives are available.",
+      "next_actions": [
+        "Run daily voice updates by trade/location/percent complete.",
+        "Use recovery-watch drafts for trades that cannot meet current windows.",
+        "Keep a verified correspondence log before sending notices."
+      ]
+    },
+    {
+      "id": "daily",
+      "label": "Daily Logs / Field Reports",
+      "modules": [
+        "Daily report intelligence",
+        "Manpower signals",
+        "Weather / field constraints"
+      ],
+      "folder_count": 17,
+      "file_count": 199,
+      "total_bytes": 4334279828,
+      "kinds": {
+        "portable-document": 35,
+        "word-document": 10,
+        "other": 78,
+        "spreadsheet": 2,
+        "image": 74
+      },
+      "recent_items": [
+        {
+          "title": "CAST Logo",
+          "kind": "portable-document",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-10-07",
+          "size_kb": 116
+        },
+        {
+          "title": "CAST Logo",
+          "kind": "other",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-10-07",
+          "size_kb": 29
+        },
+        {
+          "title": "BH25 Avgust (1 of 40)",
+          "kind": "image",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-09-03",
+          "size_kb": 25558
+        },
+        {
+          "title": "BH25 Avgust (10 of 40)",
+          "kind": "image",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-09-03",
+          "size_kb": 23986
+        },
+        {
+          "title": "BH25 Avgust (12 of 40)",
+          "kind": "image",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-09-03",
+          "size_kb": 33019
+        },
+        {
+          "title": "BH25 Avgust (13 of 40)",
+          "kind": "image",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-09-03",
+          "size_kb": 32898
+        },
+        {
+          "title": "BH25 Avgust (14 of 40)",
+          "kind": "image",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-09-03",
+          "size_kb": 32443
+        },
+        {
+          "title": "BH25 Avgust (15 of 40)",
+          "kind": "image",
+          "area": "Daily Logs / Field Reports",
+          "updated_at": "2025-09-03",
+          "size_kb": 30747
+        }
+      ],
+      "management_read": "Daily logs should become field intelligence: manpower, weather, delays, deliveries, and superintendent notes.",
+      "next_actions": [
+        "Capture voice daily logs.",
+        "Extract manpower by trade.",
+        "Compare field notes to Schedule Brain work windows."
+      ]
+    },
+    {
+      "id": "safety",
+      "label": "Safety / Logistics / Site Control",
+      "modules": [
+        "Safety docs",
+        "Site logistics",
+        "Access constraints"
+      ],
+      "folder_count": 45,
+      "file_count": 199,
+      "total_bytes": 180785184,
+      "kinds": {
+        "image": 2,
+        "portable-document": 90,
+        "archive": 8,
+        "spreadsheet": 5,
+        "word-document": 93,
+        "other": 1
+      },
+      "recent_items": [
+        {
+          "title": "Actuators OrdAck1117064 $3,672",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-24",
+          "size_kb": 120
+        },
+        {
+          "title": "001 Golden Hill Apartments PO 001 011 Water Detection Equipment 2026 04 17",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-17",
+          "size_kb": 219
+        },
+        {
+          "title": "RG3 Quote 2026 04 13T155141.987 (2inch) $1985.30",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-17",
+          "size_kb": 110
+        },
+        {
+          "title": "Electric Actuators 2 Denise Swift Outlook",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-14",
+          "size_kb": 385
+        },
+        {
+          "title": "Electric Actuators Denise Swift Outlook",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 258
+        },
+        {
+          "title": "Electric Actuator HP datasheet",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 2620
+        },
+        {
+          "title": "RG3 Quote 2026 04 13T155141.987",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 113
+        },
+        {
+          "title": "Valve Actuator S4 datasheet",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 438
+        }
+      ],
+      "management_read": "Safety and logistics folders should be converted into crane/pump/access/site-flow constraints.",
+      "next_actions": [
+        "Track logistics plans by date.",
+        "Confirm crane/pump/scaffold access windows.",
+        "Surface OSHA/site constraints in lookahead."
+      ]
+    },
+    {
+      "id": "directory",
+      "label": "Directory / Correspondence",
+      "modules": [
+        "Contacts",
+        "Meeting minutes",
+        "Correspondence log"
+      ],
+      "folder_count": 21,
+      "file_count": 43,
+      "total_bytes": 9877603,
+      "kinds": {
+        "portable-document": 14,
+        "word-document": 29
+      },
+      "recent_items": [
+        {
+          "title": "Golden Hill OAC 2026 03 16",
+          "kind": "portable-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2026-03-16",
+          "size_kb": 227
+        },
+        {
+          "title": "Golden Hill OAC 2026 03 10",
+          "kind": "portable-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2026-03-11",
+          "size_kb": 228
+        },
+        {
+          "title": "Golden Hill OAC 2026 03 02",
+          "kind": "portable-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2026-03-03",
+          "size_kb": 222
+        },
+        {
+          "title": "Golden Hill OAC 2026 02 23",
+          "kind": "portable-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2026-02-23",
+          "size_kb": 165
+        },
+        {
+          "title": "GHA Foremans Meeting Minutes 2024.12.03",
+          "kind": "portable-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2025-12-03",
+          "size_kb": 550
+        },
+        {
+          "title": "GHA Foremans Meeting Minutes 2024.11.24",
+          "kind": "portable-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2025-12-01",
+          "size_kb": 2370
+        },
+        {
+          "title": "FOREMANS MEETING GHA 11 26 25",
+          "kind": "word-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2025-11-26",
+          "size_kb": 27
+        },
+        {
+          "title": "FOREMANS MEETING GHA 12 03 25",
+          "kind": "word-document",
+          "area": "Directory / Correspondence",
+          "updated_at": "2025-11-26",
+          "size_kb": 27
+        }
+      ],
+      "management_read": "Directory, meeting, and correspondence controls should define who gets which requests and who can approve sends.",
+      "next_actions": [
+        "Build verified recipient map.",
+        "Create OAC/owner agenda from open controls.",
+        "Log approved outbound correspondence."
+      ]
+    },
+    {
+      "id": "utilities",
+      "label": "Utilities / Energization",
+      "modules": [
+        "Utility releases",
+        "Meter/gear path",
+        "Energization blockers"
+      ],
+      "folder_count": 0,
+      "file_count": 9,
+      "total_bytes": 2832399,
+      "kinds": {
+        "spreadsheet": 2,
+        "portable-document": 6,
+        "word-document": 1
+      },
+      "recent_items": [
+        {
+          "title": "GH Appliance & WU Power Requirements",
+          "kind": "spreadsheet",
+          "area": "Utilities / Energization",
+          "updated_at": "2026-01-23",
+          "size_kb": 191
+        },
+        {
+          "title": "Temp Power (Power Plus)",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-05-30",
+          "size_kb": 741
+        },
+        {
+          "title": "Waterproofing Deck Coating (Mark Beamish)",
+          "kind": "word-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-05-06",
+          "size_kb": 59
+        },
+        {
+          "title": "Temp Power",
+          "kind": "spreadsheet",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-05-01",
+          "size_kb": 10
+        },
+        {
+          "title": "Nasland Staking Request water & sewer 4 29 25",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-04-29",
+          "size_kb": 98
+        },
+        {
+          "title": "P005 PLUMBING MESTIC WATER DIAGRA Overlay Pages P005 PLUMBING MESTIC WATER DIAGRA",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-03-06",
+          "size_kb": 421
+        },
+        {
+          "title": "P006 PLUMBING MESTIC WATER DIAGRA Overlay Pages P006 PLUMBING MESTIC WATER DIAGRA",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-03-06",
+          "size_kb": 448
+        },
+        {
+          "title": "P007 PLUMBING MESTIC WATER DIAGRA Overlay Pages P007 PLUMBING MESTIC WATER DIAGRA",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-03-06",
+          "size_kb": 418
+        }
+      ],
+      "management_read": "Utilities and energization are critical turnover constraints and should stay visible until meter/gear/power release is complete.",
+      "next_actions": [
+        "Track SDGE dates.",
+        "Track transformer/gear/meter inspection dependencies.",
+        "Tie energization blockers to floor turnover."
+      ]
+    },
+    {
+      "id": "closeout",
+      "label": "Closeout / Turnover",
+      "modules": [
+        "O&M / warranties",
+        "Record drawings",
+        "Turnover checklist"
+      ],
+      "folder_count": 1,
+      "file_count": 2,
+      "total_bytes": 12361264,
+      "kinds": {
+        "portable-document": 2
+      },
+      "recent_items": [
+        {
+          "title": "Valve Actuator S4 Manual",
+          "kind": "portable-document",
+          "area": "Closeout / Turnover",
+          "updated_at": "2026-04-13",
+          "size_kb": 8753
+        },
+        {
+          "title": "LUMACAST Product Manual",
+          "kind": "portable-document",
+          "area": "Closeout / Turnover",
+          "updated_at": "2026-02-12",
+          "size_kb": 3319
+        }
+      ],
+      "management_read": "Closeout signals should be tracked before turnover pressure begins.",
+      "next_actions": [
+        "Start O&M/warranty matrix.",
+        "Track attic stock/spares.",
+        "Request record drawing status by trade."
+      ]
+    }
+  ],
+  "recent_activity": [
+    {
+      "title": "15. Ephoca 2972 (1) REV) $7040.25",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-28",
+      "size_kb": 78
+    },
+    {
+      "title": "Marjan Invoice 1 2026 04 28 (draft)",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-28",
+      "size_kb": 111
+    },
+    {
+      "title": "GHA RFI #279 Collector Straps at Window Washing Anchors",
+      "kind": "portable-document",
+      "area": "RFIs / Design Decisions",
+      "updated_at": "2026-04-27",
+      "size_kb": 1017
+    },
+    {
+      "title": "2117 10",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 11 (Jan Pay App 11)",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 4 (Feb Pay App 12)",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 5 (March Pay App 13)",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 6",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 7",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 8",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 117
+    },
+    {
+      "title": "2117 9",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 118
+    },
+    {
+      "title": "2972 (3)",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 130
+    },
+    {
+      "title": "2972 2",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 76
+    },
+    {
+      "title": "EST 003671",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 120
+    },
+    {
+      "title": "1101 25th Street Client Spreadsheet",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 73
+    },
+    {
+      "title": "CP Atlas $14,158.97",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 667
+    },
+    {
+      "title": "CP Calportland RVSD $81,966.31",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 79
+    },
+    {
+      "title": "CP PSG $18,953.46",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 293
+    },
+    {
+      "title": "CP Sunbelt $9,856.90",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 80
+    },
+    {
+      "title": "CP Team Finish $20,956.25",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 186
+    },
+    {
+      "title": "CP Van Matre zero",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 568
+    },
+    {
+      "title": "CP Western Concrete $42,279.75",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 61
+    },
+    {
+      "title": "CP White Cap $1,373.29",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 151
+    },
+    {
+      "title": "UP Western Structural Shotcrete zero",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 277
+    }
+  ],
+  "control_priorities": [
+    {
+      "priority": "Schedule recovery / trade pressure",
+      "owner": "Superintendent + Project Controls",
+      "signal": "30 trade directives",
+      "action": "Use Schedule Brain as daily trade directive/recovery-plan tool."
+    },
+    {
+      "priority": "Design and submittal constraint clearing",
+      "owner": "PM / Design Team",
+      "signal": "7 RFIs; 66 submittals",
+      "action": "Clear items blocking rough-in, inspections, procurement, and turnover."
+    },
+    {
+      "priority": "Budget / commitment / change control",
+      "owner": "Project Controls + Accounting",
+      "signal": "Budget metadata indexed",
+      "action": "Reconcile forecast, commitments, pending changes, and accounting tie-out."
+    },
+    {
+      "priority": "Turnover readiness",
+      "owner": "Superintendent + Closeout Lead",
+      "signal": "Closeout/QA docs present in project folder",
+      "action": "Build floor-by-floor closeout and inspection matrix."
+    },
+    {
+      "priority": "Verified communication map",
+      "owner": "CAST Build",
+      "signal": "Correspondence should become approval-gated",
+      "action": "Map each trade/company/contact before any automated notice leaves CAST Build."
+    }
+  ],
+  "management_needs": [
+    {
+      "area": "Budget / Commitments / Accounting",
+      "need": "Budget and forecast data are indexed; tie-out exceptions should feed management priorities before commitments are treated as stable.",
+      "next_actions": [
+        "Review budget exceptions.",
+        "Tie commitments and pending changes to forecast.",
+        "Escalate accounting tie-out mismatches."
+      ]
+    },
+    {
+      "area": "Drawings / Specs",
+      "need": "Drawing/spec folders should drive current-set control and field decision clarity.",
+      "next_actions": [
+        "Identify current drawing set.",
+        "Track ASIs/bulletins/addenda.",
+        "Prevent field use of stale sheets."
+      ]
+    },
+    {
+      "area": "Submittals / Procurement",
+      "need": "66 submittals plus 43 revise/resubmit items need procurement pressure.",
+      "next_actions": [
+        "Separate true procurement blockers from paperwork cleanup.",
+        "Assign responsible contractor/date for revise-resubmit items.",
+        "Flag long-lead materials against schedule windows."
+      ]
+    },
+    {
+      "area": "Documents / Data Room",
+      "need": "Review source folder and assign control owner.",
+      "next_actions": []
+    },
+    {
+      "area": "Quality / Punch / Inspections",
+      "need": "Quality, inspections, and punch items should be connected to turnover windows by floor/area.",
+      "next_actions": [
+        "Create inspection readiness queue.",
+        "Link punch/open observations to responsible trade.",
+        "Track reinspection/backwalk dates."
+      ]
+    },
+    {
+      "area": "RFIs / Design Decisions",
+      "need": "7 RFI items should be treated as schedule constraints until cleared.",
+      "next_actions": [
+        "Rank RFIs by field impact.",
+        "Push overdue design decisions into weekly OAC agenda.",
+        "Connect blocker RFIs to affected trade work packages."
+      ]
+    },
+    {
+      "area": "Schedule / Lookahead",
+      "need": "220 superintendent work packages and 30 subcontractor directives are available.",
+      "next_actions": [
+        "Run daily voice updates by trade/location/percent complete.",
+        "Use recovery-watch drafts for trades that cannot meet current windows.",
+        "Keep a verified correspondence log before sending notices."
+      ]
+    },
+    {
+      "area": "Daily Logs / Field Reports",
+      "need": "Daily logs should become field intelligence: manpower, weather, delays, deliveries, and superintendent notes.",
+      "next_actions": [
+        "Capture voice daily logs.",
+        "Extract manpower by trade.",
+        "Compare field notes to Schedule Brain work windows."
+      ]
+    },
+    {
+      "area": "Safety / Logistics / Site Control",
+      "need": "Safety and logistics folders should be converted into crane/pump/access/site-flow constraints.",
+      "next_actions": [
+        "Track logistics plans by date.",
+        "Confirm crane/pump/scaffold access windows.",
+        "Surface OSHA/site constraints in lookahead."
+      ]
+    },
+    {
+      "area": "Directory / Correspondence",
+      "need": "Directory, meeting, and correspondence controls should define who gets which requests and who can approve sends.",
+      "next_actions": [
+        "Build verified recipient map.",
+        "Create OAC/owner agenda from open controls.",
+        "Log approved outbound correspondence."
+      ]
+    },
+    {
+      "area": "Utilities / Energization",
+      "need": "Utilities and energization are critical turnover constraints and should stay visible until meter/gear/power release is complete.",
+      "next_actions": [
+        "Track SDGE dates.",
+        "Track transformer/gear/meter inspection dependencies.",
+        "Tie energization blockers to floor turnover."
+      ]
+    },
+    {
+      "area": "Closeout / Turnover",
+      "need": "Closeout signals should be tracked before turnover pressure begins.",
+      "next_actions": [
+        "Start O&M/warranty matrix.",
+        "Track attic stock/spares.",
+        "Request record drawing status by trade."
+      ]
+    }
+  ],
+  "source_gaps": [],
+  "guardrails": [
+    "No raw project files are published.",
+    "No private folder paths are published.",
+    "External correspondence stays draft-only until approved.",
+    "CAST Build stays construction/project-controls only."
+  ]
+}

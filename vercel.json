@@ -20,6 +20,14 @@
   ],
   "rewrites": [
     {
+      "source": "/projects/alum-management",
+      "destination": "/projects/alum-management-control-center.html"
+    },
+    {
+      "source": "/projects/alum-management-control-center",
+      "destination": "/projects/alum-management-control-center.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin.html"
     },
