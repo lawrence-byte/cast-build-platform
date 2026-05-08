@@ -18,7 +18,8 @@
     "intake:accounting-budget": "node scripts/index-accounting-budget-tieout.js",
     "intake:schedule": "node scripts/index-alum-schedule.js",
     "schedule:brain": "node scripts/build-schedule-brain.js",
-    "intake:control-center": "node scripts/build-alum-control-center.js"
+    "intake:control-center": "node scripts/build-alum-control-center.js",
+    "intake:folder-registers": "node scripts/index-alum-folder-registers.js"
   },
   "keywords": [
     "cast-build",

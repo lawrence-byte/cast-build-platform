@@ -1,0 +1,126 @@
+{
+  "projectName": "Alüm",
+  "generatedAt": "2026-05-08T16:18:44.505Z",
+  "source": "Private synced Alüm project folder metadata",
+  "guardrails": [
+    "Publish sanitized metadata only.",
+    "Do not expose raw accounting, insurance, banking, vendor, staff, or project PDFs publicly.",
+    "Folder-derived statuses require log/source tie-out before acting."
+  ],
+  "modules": [
+    {
+      "id": "rfis",
+      "label": "RFIs",
+      "sourceFiles": 285,
+      "extractedItems": 255,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Tie every folder PDF to the exported RFI log and expose missing/log mismatch queue."
+    },
+    {
+      "id": "submittals",
+      "label": "Submittals",
+      "sourceFiles": 828,
+      "extractedItems": 799,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Merge folder documents with exported submittal register and procurement log."
+    },
+    {
+      "id": "commitments",
+      "label": "Commitments",
+      "sourceFiles": 1535,
+      "extractedItems": 1535,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "accounting",
+      "label": "Accounting",
+      "sourceFiles": 3938,
+      "extractedItems": 2000,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "permits",
+      "label": "Permits",
+      "sourceFiles": 140,
+      "extractedItems": 140,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "quality",
+      "label": "Quality Control",
+      "sourceFiles": 394,
+      "extractedItems": 394,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "inspections",
+      "label": "Inspections",
+      "sourceFiles": 212,
+      "extractedItems": 212,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "safety",
+      "label": "Safety",
+      "sourceFiles": 182,
+      "extractedItems": 182,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "punchlist",
+      "label": "Punchlist",
+      "sourceFiles": 8,
+      "extractedItems": 8,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    },
+    {
+      "id": "closeout",
+      "label": "Closeout",
+      "sourceFiles": 0,
+      "extractedItems": 0,
+      "status": "missing_or_empty",
+      "nextAction": "Generate closeout gap matrix from submittals, commitments, inspections, permits, warranties, O&M, and attic stock signals."
+    },
+    {
+      "id": "correspondence",
+      "label": "Correspondence",
+      "sourceFiles": 8,
+      "extractedItems": 8,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
+    }
+  ],
+  "missingOrWeak": [
+    {
+      "id": "rfis",
+      "label": "RFIs",
+      "sourceFiles": 285,
+      "extractedItems": 255,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Tie every folder PDF to the exported RFI log and expose missing/log mismatch queue."
+    },
+    {
+      "id": "submittals",
+      "label": "Submittals",
+      "sourceFiles": 828,
+      "extractedItems": 799,
+      "status": "folder_metadata_indexed",
+      "nextAction": "Merge folder documents with exported submittal register and procurement log."
+    },
+    {
+      "id": "closeout",
+      "label": "Closeout",
+      "sourceFiles": 0,
+      "extractedItems": 0,
+      "status": "missing_or_empty",
+      "nextAction": "Generate closeout gap matrix from submittals, commitments, inspections, permits, warranties, O&M, and attic stock signals."
+    }
+  ]
+}

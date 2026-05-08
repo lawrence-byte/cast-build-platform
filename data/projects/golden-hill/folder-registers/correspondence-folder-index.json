@@ -1,0 +1,202 @@
+{
+  "projectName": "Alüm",
+  "section": "Correspondence",
+  "generatedAt": "2026-05-08T16:18:44.505Z",
+  "source": "Private synced Alüm Correspondence folder metadata",
+  "guardrail": "Sanitized file/register metadata only; raw source documents are not published.",
+  "totalFiles": 8,
+  "totalBytes": 4026956,
+  "totalSizeLabel": "3.8 MB",
+  "extensionCounts": {
+    "pdf": 8
+  },
+  "folderCounts": {
+    "30e. Correspondence.Structural Eng - IN": 4,
+    "30k. Correspondence.Consultant - IN": 3,
+    "30o. Correspondence.RE. - IN": 1
+  },
+  "recentFiles": [
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/2025-07-18 Splicing Plan.pdf",
+      "name": "2025-07-18 Splicing Plan.pdf",
+      "title": "2025-07-18 Splicing Plan",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 257496,
+      "sizeLabel": "251.5 KB",
+      "modifiedAt": "2025-07-18T22:26:11.000Z",
+      "inferredDate": "2025-07-18"
+    },
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/Concrete pour sequence R1 - KOR.pdf",
+      "name": "Concrete pour sequence R1 - KOR.pdf",
+      "title": "Concrete pour sequence R1 - KOR",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 949746,
+      "sizeLabel": "927.5 KB",
+      "modifiedAt": "2025-07-18T22:23:59.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "30k. Correspondence.Consultant - IN/2025-06-23 Geotech Slurry Backfill - Pea Gravel.pdf",
+      "name": "2025-06-23 Geotech Slurry Backfill - Pea Gravel.pdf",
+      "title": "2025-06-23 Geotech Slurry Backfill - Pea Gravel",
+      "folder": "30k. Correspondence.Consultant - IN",
+      "extension": "pdf",
+      "sizeBytes": 345092,
+      "sizeLabel": "337.0 KB",
+      "modifiedAt": "2025-06-26T14:26:39.000Z",
+      "inferredDate": "2025-06-23"
+    },
+    {
+      "path": "30k. Correspondence.Consultant - IN/2025-06-23 Geotech Slurry Backfill.pdf",
+      "name": "2025-06-23 Geotech Slurry Backfill.pdf",
+      "title": "2025-06-23 Geotech Slurry Backfill",
+      "folder": "30k. Correspondence.Consultant - IN",
+      "extension": "pdf",
+      "sizeBytes": 381773,
+      "sizeLabel": "372.8 KB",
+      "modifiedAt": "2025-06-26T14:26:04.000Z",
+      "inferredDate": "2025-06-23"
+    },
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/S2.02.1_ LEVEL 1 PLAN - CONCRETE OUTLINE Rev.4 markup KOR.pdf",
+      "name": "S2.02.1_ LEVEL 1 PLAN - CONCRETE OUTLINE Rev.4 markup KOR.pdf",
+      "title": "S2.02.1 LEVEL 1 PLAN - CONCRETE OUTLINE Rev.4 markup KOR",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 700680,
+      "sizeLabel": "684.3 KB",
+      "modifiedAt": "2025-06-23T23:37:07.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "30o. Correspondence.RE. - IN/2025-06-11 Traffic Loop Damage.pdf",
+      "name": "2025-06-11 Traffic Loop Damage.pdf",
+      "title": "2025-06-11 Traffic Loop Damage",
+      "folder": "30o. Correspondence.RE. - IN",
+      "extension": "pdf",
+      "sizeBytes": 1005375,
+      "sizeLabel": "981.8 KB",
+      "modifiedAt": "2025-06-11T19:09:59.000Z",
+      "inferredDate": "2025-06-11"
+    },
+    {
+      "path": "30k. Correspondence.Consultant - IN/Geotech/2025-03-20 Geotech Confirmation of Foundation Drainage.pdf",
+      "name": "2025-03-20 Geotech Confirmation of Foundation Drainage.pdf",
+      "title": "2025-03-20 Geotech Confirmation of Foundation Drainage",
+      "folder": "30k. Correspondence.Consultant - IN",
+      "extension": "pdf",
+      "sizeBytes": 124750,
+      "sizeLabel": "121.8 KB",
+      "modifiedAt": "2025-03-21T00:20:47.000Z",
+      "inferredDate": "2025-03-20"
+    },
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/2025-03-20 Foundation Hydrostatic Pressure.pdf",
+      "name": "2025-03-20 Foundation Hydrostatic Pressure.pdf",
+      "title": "2025-03-20 Foundation Hydrostatic Pressure",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 262044,
+      "sizeLabel": "255.9 KB",
+      "modifiedAt": "2025-03-20T23:50:52.000Z",
+      "inferredDate": "2025-03-20"
+    }
+  ],
+  "keywordCounts": {
+    "cor": 8,
+    "concrete": 2
+  },
+  "files": [
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/2025-03-20 Foundation Hydrostatic Pressure.pdf",
+      "name": "2025-03-20 Foundation Hydrostatic Pressure.pdf",
+      "title": "2025-03-20 Foundation Hydrostatic Pressure",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 262044,
+      "sizeLabel": "255.9 KB",
+      "modifiedAt": "2025-03-20T23:50:52.000Z",
+      "inferredDate": "2025-03-20"
+    },
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/2025-07-18 Splicing Plan.pdf",
+      "name": "2025-07-18 Splicing Plan.pdf",
+      "title": "2025-07-18 Splicing Plan",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 257496,
+      "sizeLabel": "251.5 KB",
+      "modifiedAt": "2025-07-18T22:26:11.000Z",
+      "inferredDate": "2025-07-18"
+    },
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/Concrete pour sequence R1 - KOR.pdf",
+      "name": "Concrete pour sequence R1 - KOR.pdf",
+      "title": "Concrete pour sequence R1 - KOR",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 949746,
+      "sizeLabel": "927.5 KB",
+      "modifiedAt": "2025-07-18T22:23:59.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "30e. Correspondence.Structural Eng - IN/S2.02.1_ LEVEL 1 PLAN - CONCRETE OUTLINE Rev.4 markup KOR.pdf",
+      "name": "S2.02.1_ LEVEL 1 PLAN - CONCRETE OUTLINE Rev.4 markup KOR.pdf",
+      "title": "S2.02.1 LEVEL 1 PLAN - CONCRETE OUTLINE Rev.4 markup KOR",
+      "folder": "30e. Correspondence.Structural Eng - IN",
+      "extension": "pdf",
+      "sizeBytes": 700680,
+      "sizeLabel": "684.3 KB",
+      "modifiedAt": "2025-06-23T23:37:07.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "30k. Correspondence.Consultant - IN/2025-06-23 Geotech Slurry Backfill - Pea Gravel.pdf",
+      "name": "2025-06-23 Geotech Slurry Backfill - Pea Gravel.pdf",
+      "title": "2025-06-23 Geotech Slurry Backfill - Pea Gravel",
+      "folder": "30k. Correspondence.Consultant - IN",
+      "extension": "pdf",
+      "sizeBytes": 345092,
+      "sizeLabel": "337.0 KB",
+      "modifiedAt": "2025-06-26T14:26:39.000Z",
+      "inferredDate": "2025-06-23"
+    },
+    {
+      "path": "30k. Correspondence.Consultant - IN/2025-06-23 Geotech Slurry Backfill.pdf",
+      "name": "2025-06-23 Geotech Slurry Backfill.pdf",
+      "title": "2025-06-23 Geotech Slurry Backfill",
+      "folder": "30k. Correspondence.Consultant - IN",
+      "extension": "pdf",
+      "sizeBytes": 381773,
+      "sizeLabel": "372.8 KB",
+      "modifiedAt": "2025-06-26T14:26:04.000Z",
+      "inferredDate": "2025-06-23"
+    },
+    {
+      "path": "30k. Correspondence.Consultant - IN/Geotech/2025-03-20 Geotech Confirmation of Foundation Drainage.pdf",
+      "name": "2025-03-20 Geotech Confirmation of Foundation Drainage.pdf",
+      "title": "2025-03-20 Geotech Confirmation of Foundation Drainage",
+      "folder": "30k. Correspondence.Consultant - IN",
+      "extension": "pdf",
+      "sizeBytes": 124750,
+      "sizeLabel": "121.8 KB",
+      "modifiedAt": "2025-03-21T00:20:47.000Z",
+      "inferredDate": "2025-03-20"
+    },
+    {
+      "path": "30o. Correspondence.RE. - IN/2025-06-11 Traffic Loop Damage.pdf",
+      "name": "2025-06-11 Traffic Loop Damage.pdf",
+      "title": "2025-06-11 Traffic Loop Damage",
+      "folder": "30o. Correspondence.RE. - IN",
+      "extension": "pdf",
+      "sizeBytes": 1005375,
+      "sizeLabel": "981.8 KB",
+      "modifiedAt": "2025-06-11T19:09:59.000Z",
+      "inferredDate": "2025-06-11"
+    }
+  ]
+}

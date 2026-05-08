@@ -1,0 +1,205 @@
+{
+  "projectName": "Alüm",
+  "section": "Punchlist",
+  "generatedAt": "2026-05-08T16:18:44.505Z",
+  "source": "Private synced Alüm Punchlist folder metadata",
+  "guardrail": "Sanitized file/register metadata only; raw source documents are not published.",
+  "totalFiles": 8,
+  "totalBytes": 1228469,
+  "totalSizeLabel": "1.2 MB",
+  "extensionCounts": {
+    "docx": 3,
+    "pdf": 2,
+    "msg": 1,
+    "doc": 1,
+    "xlsx": 1
+  },
+  "folderCounts": {
+    "26b. Owner Punch": 6,
+    "root": 2
+  },
+  "recentFiles": [
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/RE_ Simone LI - Punch Walk Standards.msg",
+      "name": "RE_ Simone LI - Punch Walk Standards.msg",
+      "title": "RE Simone LI - Punch Walk Standards",
+      "folder": "26b. Owner Punch",
+      "extension": "msg",
+      "sizeBytes": 210432,
+      "sizeLabel": "205.5 KB",
+      "modifiedAt": "2021-11-23T00:15:20.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/So Cal Glass - Painted finish inspections standards.pdf",
+      "name": "So Cal Glass - Painted finish inspections standards.pdf",
+      "title": "So Cal Glass - Painted finish inspections standards",
+      "folder": "26b. Owner Punch",
+      "extension": "pdf",
+      "sizeBytes": 15726,
+      "sizeLabel": "15.4 KB",
+      "modifiedAt": "2021-11-15T19:19:22.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/So Cal Glass - Glass Inspection Standards.pdf",
+      "name": "So Cal Glass - Glass Inspection Standards.pdf",
+      "title": "So Cal Glass - Glass Inspection Standards",
+      "folder": "26b. Owner Punch",
+      "extension": "pdf",
+      "sizeBytes": 639992,
+      "sizeLabel": "625.0 KB",
+      "modifiedAt": "2021-11-04T18:48:16.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/Simone Little Italy - Punch Process Rev1.docx",
+      "name": "Simone Little Italy - Punch Process Rev1.docx",
+      "title": "Simone Little Italy - Punch Process Rev1",
+      "folder": "26b. Owner Punch",
+      "extension": "docx",
+      "sizeBytes": 80905,
+      "sizeLabel": "79.0 KB",
+      "modifiedAt": "2021-11-03T19:57:30.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/Simone Little Italy - Punch Process DF.docx",
+      "name": "Simone Little Italy - Punch Process DF.docx",
+      "title": "Simone Little Italy - Punch Process DF",
+      "folder": "26b. Owner Punch",
+      "extension": "docx",
+      "sizeBytes": 81348,
+      "sizeLabel": "79.4 KB",
+      "modifiedAt": "2021-10-19T18:00:34.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "Simone LI - Unit Sign Off Schedule.xlsx",
+      "name": "Simone LI - Unit Sign Off Schedule.xlsx",
+      "title": "Simone LI - Unit Sign Off Schedule",
+      "folder": "root",
+      "extension": "xlsx",
+      "sizeBytes": 36815,
+      "sizeLabel": "36.0 KB",
+      "modifiedAt": "2021-10-18T23:22:28.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/Simone Little Italy - Punch Process.docx",
+      "name": "Simone Little Italy - Punch Process.docx",
+      "title": "Simone Little Italy - Punch Process",
+      "folder": "26b. Owner Punch",
+      "extension": "docx",
+      "sizeBytes": 80819,
+      "sizeLabel": "78.9 KB",
+      "modifiedAt": "2021-10-18T23:09:10.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "ACB - OM - RZ - Punch List Tips.doc",
+      "name": "ACB - OM - RZ - Punch List Tips.doc",
+      "title": "ACB - OM - RZ - Punch List Tips",
+      "folder": "root",
+      "extension": "doc",
+      "sizeBytes": 82432,
+      "sizeLabel": "80.5 KB",
+      "modifiedAt": "2021-10-18T22:08:22.000Z",
+      "inferredDate": null
+    }
+  ],
+  "keywordCounts": {
+    "punch": 7,
+    "inspection": 2
+  },
+  "files": [
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/RE_ Simone LI - Punch Walk Standards.msg",
+      "name": "RE_ Simone LI - Punch Walk Standards.msg",
+      "title": "RE Simone LI - Punch Walk Standards",
+      "folder": "26b. Owner Punch",
+      "extension": "msg",
+      "sizeBytes": 210432,
+      "sizeLabel": "205.5 KB",
+      "modifiedAt": "2021-11-23T00:15:20.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/Simone Little Italy - Punch Process DF.docx",
+      "name": "Simone Little Italy - Punch Process DF.docx",
+      "title": "Simone Little Italy - Punch Process DF",
+      "folder": "26b. Owner Punch",
+      "extension": "docx",
+      "sizeBytes": 81348,
+      "sizeLabel": "79.4 KB",
+      "modifiedAt": "2021-10-19T18:00:34.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/Simone Little Italy - Punch Process Rev1.docx",
+      "name": "Simone Little Italy - Punch Process Rev1.docx",
+      "title": "Simone Little Italy - Punch Process Rev1",
+      "folder": "26b. Owner Punch",
+      "extension": "docx",
+      "sizeBytes": 80905,
+      "sizeLabel": "79.0 KB",
+      "modifiedAt": "2021-11-03T19:57:30.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/Simone Little Italy - Punch Process.docx",
+      "name": "Simone Little Italy - Punch Process.docx",
+      "title": "Simone Little Italy - Punch Process",
+      "folder": "26b. Owner Punch",
+      "extension": "docx",
+      "sizeBytes": 80819,
+      "sizeLabel": "78.9 KB",
+      "modifiedAt": "2021-10-18T23:09:10.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/So Cal Glass - Glass Inspection Standards.pdf",
+      "name": "So Cal Glass - Glass Inspection Standards.pdf",
+      "title": "So Cal Glass - Glass Inspection Standards",
+      "folder": "26b. Owner Punch",
+      "extension": "pdf",
+      "sizeBytes": 639992,
+      "sizeLabel": "625.0 KB",
+      "modifiedAt": "2021-11-04T18:48:16.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26b. Owner Punch/Procedures & Standards/So Cal Glass - Painted finish inspections standards.pdf",
+      "name": "So Cal Glass - Painted finish inspections standards.pdf",
+      "title": "So Cal Glass - Painted finish inspections standards",
+      "folder": "26b. Owner Punch",
+      "extension": "pdf",
+      "sizeBytes": 15726,
+      "sizeLabel": "15.4 KB",
+      "modifiedAt": "2021-11-15T19:19:22.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "ACB - OM - RZ - Punch List Tips.doc",
+      "name": "ACB - OM - RZ - Punch List Tips.doc",
+      "title": "ACB - OM - RZ - Punch List Tips",
+      "folder": "root",
+      "extension": "doc",
+      "sizeBytes": 82432,
+      "sizeLabel": "80.5 KB",
+      "modifiedAt": "2021-10-18T22:08:22.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "Simone LI - Unit Sign Off Schedule.xlsx",
+      "name": "Simone LI - Unit Sign Off Schedule.xlsx",
+      "title": "Simone LI - Unit Sign Off Schedule",
+      "folder": "root",
+      "extension": "xlsx",
+      "sizeBytes": 36815,
+      "sizeLabel": "36.0 KB",
+      "modifiedAt": "2021-10-18T23:22:28.000Z",
+      "inferredDate": null
+    }
+  ]
+}

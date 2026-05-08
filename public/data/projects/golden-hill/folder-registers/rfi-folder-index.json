@@ -1,264 +1,465 @@
 {
-  "generatedAt": "2026-05-08",
-  "source": "CAST BUILD A.O exported RFI CSV attached by Lawrence",
-  "total": 303,
-  "statusCounts": {
-    "Closed - Draft": 3,
-    "Draft": 4,
-    "Closed": 279,
-    "Closed - Revised": 14,
-    "Open": 3
+  "projectName": "Alüm",
+  "generatedAt": "2026-05-08T16:18:44.505Z",
+  "source": "Private synced Alüm RFI folder metadata",
+  "guardrail": "Sanitized file/register metadata only; raw PDFs are not published.",
+  "totalFiles": 285,
+  "totalBytes": 607827572,
+  "totalSizeLabel": "579.7 MB",
+  "extensionCounts": {
+    "pdf": 284,
+    "xlsx": 1
   },
-  "openCount": 7,
-  "draftCount": 4,
-  "closedCount": 296,
-  "overdueOpen": 2,
-  "dueWithin7Days": 1,
-  "dueAfter7Days": 0,
-  "openNoDueDate": 4,
-  "costImpactYes": 8,
-  "scheduleImpactYes": 4,
-  "topManagers": [
-    [
-      "Carlos Gutierrez (Cast Build)",
-      191
-    ],
-    [
-      "Jackie Villanueva (Cast Build)",
-      112
-    ]
-  ],
-  "topContractors": [
-    [
-      "Unassigned",
-      184
-    ],
-    [
-      "Timberlab",
-      31
-    ],
-    [
-      "Ferrocrete Builders",
-      22
-    ],
-    [
-      "J Geyer Plumbing, Inc.",
-      19
-    ],
-    [
-      "Southern California Interiors, Inc.",
-      11
-    ],
-    [
-      "Strang Heating & Air Conditioning, Inc.",
-      7
-    ],
-    [
-      "Window Installation Specialists",
-      5
-    ],
-    [
-      "Symons Fire Protection, Inc.",
-      5
-    ]
-  ],
-  "recentItems": [
+  "folderCounts": {
+    "root": 226,
+    "RFI Attachments": 30,
+    "+RFI Log": 29
+  },
+  "recentFiles": [
     {
-      "Number": "199",
-      "Revision": "2",
-      "Subject": "AC Condensers Relocation",
-      "Status": "Open",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "Gergievski, Michael (H+W Engineering, Inc.); Evans, Scott (H+W Engineering, Inc.)",
-      "Ball In Court": "Gergievski, Michael",
-      "Due Date": "05/06/26",
-      "Closed Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "+RFI Log/2025-05-04 RFI LOG.pdf",
+      "name": "2025-05-04 RFI LOG.pdf",
+      "title": "2025-05-04 RFI LOG",
+      "folder": "+RFI Log",
+      "extension": "pdf",
+      "sizeBytes": 67691,
+      "sizeLabel": "66.1 KB",
+      "modifiedAt": "2026-05-04T16:48:32.000Z",
+      "inferredDate": "2025-05-04"
     },
     {
-      "Number": "284",
-      "Revision": "0",
-      "Subject": "EF-5 / SF-3 Dampers Clarification",
-      "Status": "Open",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "Evans, Scott (H+W Engineering, Inc.); Wagner, Travis (H+W Engineering, Inc.)",
-      "Ball In Court": "Evans, Scott; Wagner, Travis",
-      "Due Date": "05/05/26",
-      "Closed Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #283 Elevator PH Embeds Correction.pdf",
+      "name": "GHA - RFI #283 Elevator PH Embeds Correction.pdf",
+      "title": "RFI #283 Elevator PH Embeds Correction",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 436683,
+      "sizeLabel": "426.4 KB",
+      "modifiedAt": "2026-05-01T17:10:03.000Z",
+      "inferredDate": null
     },
     {
-      "Number": "282",
-      "Revision": "0",
-      "Subject": "Gap at CLT and Elevator Core",
-      "Status": "Open",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "Villanueva, Jackie",
-      "Due Date": "05/04/26",
-      "Closed Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #278 Collector Strap CS29 Relocation.pdf",
+      "name": "GHA - RFI #278 Collector Strap CS29 Relocation.pdf",
+      "title": "RFI #278 Collector Strap CS29 Relocation",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1568817,
+      "sizeLabel": "1.5 MB",
+      "modifiedAt": "2026-04-29T15:12:30.000Z",
+      "inferredDate": null
     },
     {
-      "Number": "283",
-      "Revision": "0",
-      "Subject": "Elevator PH Embeds Correction",
-      "Status": "Closed",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "",
-      "Due Date": "05/04/26",
-      "Closed Date": "05/01/2026",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #274 L2 Terrace Lighting.pdf",
+      "name": "GHA - RFI #274 L2 Terrace Lighting.pdf",
+      "title": "RFI #274 L2 Terrace Lighting",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 9056314,
+      "sizeLabel": "8.6 MB",
+      "modifiedAt": "2026-04-29T14:36:45.000Z",
+      "inferredDate": null
     },
     {
-      "Number": "281",
-      "Revision": "0",
-      "Subject": "Collector Strap Slot Corrections",
-      "Status": "Closed",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "",
-      "Due Date": "04/29/26",
-      "Closed Date": "04/24/2026",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #280 Window Washing Drop Thru Sleeves.pdf",
+      "name": "GHA - RFI #280 Window Washing Drop Thru Sleeves.pdf",
+      "title": "RFI #280 Window Washing Drop Thru Sleeves",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 354724,
+      "sizeLabel": "346.4 KB",
+      "modifiedAt": "2026-04-29T13:56:44.000Z",
+      "inferredDate": null
     },
     {
-      "Number": "278",
-      "Revision": "0",
-      "Subject": "Collector Strap CS29 Relocation",
-      "Status": "Closed",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "",
-      "Due Date": "04/28/26",
-      "Closed Date": "04/29/2026",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #279 Collector Straps at Window Washing Anchors.pdf",
+      "name": "GHA - RFI #279 Collector Straps at Window Washing Anchors.pdf",
+      "title": "RFI #279 Collector Straps at Window Washing Anchors",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1041701,
+      "sizeLabel": "1017.3 KB",
+      "modifiedAt": "2026-04-27T16:48:34.000Z",
+      "inferredDate": null
     },
     {
-      "Number": "279",
-      "Revision": "0",
-      "Subject": "Collector Straps at Window Washing Anchors ",
-      "Status": "Closed",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "",
-      "Due Date": "04/28/26",
-      "Closed Date": "04/27/2026",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #281 Collector Strap Slot Corrections.pdf",
+      "name": "GHA - RFI #281 Collector Strap Slot Corrections.pdf",
+      "title": "RFI #281 Collector Strap Slot Corrections",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1978440,
+      "sizeLabel": "1.9 MB",
+      "modifiedAt": "2026-04-24T20:45:36.000Z",
+      "inferredDate": null
     },
     {
-      "Number": "280",
-      "Revision": "0",
-      "Subject": "Window Washing Drop Thru Sleeves",
-      "Status": "Closed",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "",
-      "Due Date": "04/28/26",
-      "Closed Date": "04/29/2026",
-      "Cost Impact": "",
-      "Schedule Impact": ""
+      "path": "GHA - RFI #269 L2 BMP Drain.pdf",
+      "name": "GHA - RFI #269 L2 BMP Drain.pdf",
+      "title": "RFI #269 L2 BMP Drain",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1258032,
+      "sizeLabel": "1.2 MB",
+      "modifiedAt": "2026-04-24T20:03:02.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #275 Unit C1 Corridor Wall Type.pdf",
+      "name": "GHA - RFI #275 Unit C1 Corridor Wall Type.pdf",
+      "title": "RFI #275 Unit C1 Corridor Wall Type",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 6753044,
+      "sizeLabel": "6.4 MB",
+      "modifiedAt": "2026-04-21T17:17:19.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #277 Plumbing & Electrical CLT Penetrations.pdf",
+      "name": "GHA - RFI #277 Plumbing & Electrical CLT Penetrations.pdf",
+      "title": "RFI #277 Plumbing & Electrical CLT Penetrations",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2217762,
+      "sizeLabel": "2.1 MB",
+      "modifiedAt": "2026-04-20T22:32:54.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #267 Booster Pump for Landscape Irrigation.pdf",
+      "name": "GHA - RFI #267 Booster Pump for Landscape Irrigation.pdf",
+      "title": "RFI #267 Booster Pump for Landscape Irrigation",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1483356,
+      "sizeLabel": "1.4 MB",
+      "modifiedAt": "2026-04-17T19:27:03.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #276 Window Washing Embed Corrections.pdf",
+      "name": "GHA - RFI #276 Window Washing Embed Corrections.pdf",
+      "title": "RFI #276 Window Washing Embed Corrections",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 163053,
+      "sizeLabel": "159.2 KB",
+      "modifiedAt": "2026-04-16T22:30:35.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #273 Ramp Elevation Fix.pdf",
+      "name": "GHA - RFI #273 Ramp Elevation Fix.pdf",
+      "title": "RFI #273 Ramp Elevation Fix",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 753333,
+      "sizeLabel": "735.7 KB",
+      "modifiedAt": "2026-04-15T19:43:42.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #271 RCP Updates.pdf",
+      "name": "GHA - RFI #271 RCP Updates.pdf",
+      "title": "RFI #271 RCP Updates",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 4432767,
+      "sizeLabel": "4.2 MB",
+      "modifiedAt": "2026-04-08T19:03:34.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "+RFI Log/2026-04-02 Golden Hill RFI Log.pdf",
+      "name": "2026-04-02 Golden Hill RFI Log.pdf",
+      "title": "2026-04-02 Golden Hill RFI Log",
+      "folder": "+RFI Log",
+      "extension": "pdf",
+      "sizeBytes": 74956,
+      "sizeLabel": "73.2 KB",
+      "modifiedAt": "2026-04-02T16:21:38.000Z",
+      "inferredDate": "2026-04-02"
+    },
+    {
+      "path": "GHA - RFI #270 Light Fixtures at Concrete Ceilings.pdf",
+      "name": "GHA - RFI #270 Light Fixtures at Concrete Ceilings.pdf",
+      "title": "RFI #270 Light Fixtures at Concrete Ceilings",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2594830,
+      "sizeLabel": "2.5 MB",
+      "modifiedAt": "2026-04-01T22:30:25.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #268 L8 Column Embed Correction Detail R1.pdf",
+      "name": "GHA - RFI #268 L8 Column Embed Correction Detail R1.pdf",
+      "title": "RFI #268 L8 Column Embed Correction Detail R1",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 684905,
+      "sizeLabel": "668.9 KB",
+      "modifiedAt": "2026-03-30T22:30:18.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #250 Roof Equipment Support Confirmation.pdf",
+      "name": "GHA - RFI #250 Roof Equipment Support Confirmation.pdf",
+      "title": "RFI #250 Roof Equipment Support Confirmation",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2779315,
+      "sizeLabel": "2.7 MB",
+      "modifiedAt": "2026-03-26T20:40:12.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #222.1 L8 HVAC Venting.pdf",
+      "name": "GHA - RFI #222.1 L8 HVAC Venting.pdf",
+      "title": "RFI #222.1 L8 HVAC Venting",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 780569,
+      "sizeLabel": "762.3 KB",
+      "modifiedAt": "2026-03-24T21:43:13.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #233 Exhaust Louvers Relocations.pdf",
+      "name": "GHA - RFI #233 Exhaust Louvers Relocations.pdf",
+      "title": "RFI #233 Exhaust Louvers Relocations",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 4581062,
+      "sizeLabel": "4.4 MB",
+      "modifiedAt": "2026-03-23T23:11:04.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #265 CBH Over Bolt Holes B0943.pdf",
+      "name": "GHA - RFI #265 CBH Over Bolt Holes B0943.pdf",
+      "title": "RFI #265 CBH Over Bolt Holes B0943",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2246710,
+      "sizeLabel": "2.1 MB",
+      "modifiedAt": "2026-03-23T23:01:04.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #237 Unit Entry Door Lights.pdf",
+      "name": "GHA - RFI #237 Unit Entry Door Lights.pdf",
+      "title": "RFI #237 Unit Entry Door Lights",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2888751,
+      "sizeLabel": "2.8 MB",
+      "modifiedAt": "2026-03-23T22:23:44.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #264 L6 Demising Wall at Unit S5.pdf",
+      "name": "GHA - RFI #264 L6 Demising Wall at Unit S5.pdf",
+      "title": "RFI #264 L6 Demising Wall at Unit S5",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1773040,
+      "sizeLabel": "1.7 MB",
+      "modifiedAt": "2026-03-23T21:34:00.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #261 L8 Scupper Relocation.pdf",
+      "name": "GHA - RFI #261 L8 Scupper Relocation.pdf",
+      "title": "RFI #261 L8 Scupper Relocation",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1442677,
+      "sizeLabel": "1.4 MB",
+      "modifiedAt": "2026-03-23T21:19:30.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #258 Units 504 & 505 Ceiling Height Mods.pdf",
+      "name": "GHA - RFI #258 Units 504 & 505 Ceiling Height Mods.pdf",
+      "title": "RFI #258 Units 504 & 505 Ceiling Height Mods",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1567240,
+      "sizeLabel": "1.5 MB",
+      "modifiedAt": "2026-03-23T20:49:45.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #255 Fire Sprinklers at Electric Room.pdf",
+      "name": "GHA - RFI #255 Fire Sprinklers at Electric Room.pdf",
+      "title": "RFI #255 Fire Sprinklers at Electric Room",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 798953,
+      "sizeLabel": "780.2 KB",
+      "modifiedAt": "2026-03-23T20:33:54.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #240 Roof Edge Detail.pdf",
+      "name": "GHA - RFI #240 Roof Edge Detail.pdf",
+      "title": "RFI #240 Roof Edge Detail",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1351986,
+      "sizeLabel": "1.3 MB",
+      "modifiedAt": "2026-03-23T20:22:16.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #244 Flashing for Exterior Waterproofing.pdf",
+      "name": "GHA - RFI #244 Flashing for Exterior Waterproofing.pdf",
+      "title": "RFI #244 Flashing for Exterior Waterproofing",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 635460,
+      "sizeLabel": "620.6 KB",
+      "modifiedAt": "2026-03-23T19:56:44.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #252 L1 Lighting Change.pdf",
+      "name": "GHA - RFI #252 L1 Lighting Change.pdf",
+      "title": "RFI #252 L1 Lighting Change",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 816200,
+      "sizeLabel": "797.1 KB",
+      "modifiedAt": "2026-03-20T00:42:55.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #262 CBH Over Connection Plate Bolt Hole.pdf",
+      "name": "GHA - RFI #262 CBH Over Connection Plate Bolt Hole.pdf",
+      "title": "RFI #262 CBH Over Connection Plate Bolt Hole",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1702879,
+      "sizeLabel": "1.6 MB",
+      "modifiedAt": "2026-03-16T23:31:40.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #263 Concrete Connection in Beam B0905.pdf",
+      "name": "GHA - RFI #263 Concrete Connection in Beam B0905.pdf",
+      "title": "RFI #263 Concrete Connection in Beam B0905",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1632548,
+      "sizeLabel": "1.6 MB",
+      "modifiedAt": "2026-03-16T23:29:26.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #259 CBH Edge Distance Confirmation.pdf",
+      "name": "GHA - RFI #259 CBH Edge Distance Confirmation.pdf",
+      "title": "RFI #259 CBH Edge Distance Confirmation",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 3338128,
+      "sizeLabel": "3.2 MB",
+      "modifiedAt": "2026-03-16T23:26:27.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #257 Mass Timber Washers Requirement.pdf",
+      "name": "GHA - RFI #257 Mass Timber Washers Requirement.pdf",
+      "title": "RFI #257 Mass Timber Washers Requirement",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 490159,
+      "sizeLabel": "478.7 KB",
+      "modifiedAt": "2026-03-16T23:23:00.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #260 MPOE Room Exhaust Duct.pdf",
+      "name": "GHA - RFI #260 MPOE Room Exhaust Duct.pdf",
+      "title": "RFI #260 MPOE Room Exhaust Duct",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 128688,
+      "sizeLabel": "125.7 KB",
+      "modifiedAt": "2026-03-11T19:57:09.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #220 RCP Update for Exposed Plumbing.pdf",
+      "name": "GHA - RFI #220 RCP Update for Exposed Plumbing.pdf",
+      "title": "RFI #220 RCP Update for Exposed Plumbing",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 6205183,
+      "sizeLabel": "5.9 MB",
+      "modifiedAt": "2026-03-10T23:09:08.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "+RFI Log/2026-03-09 Golden Hill RFI Log.pdf",
+      "name": "2026-03-09 Golden Hill RFI Log.pdf",
+      "title": "2026-03-09 Golden Hill RFI Log",
+      "folder": "+RFI Log",
+      "extension": "pdf",
+      "sizeBytes": 80790,
+      "sizeLabel": "78.9 KB",
+      "modifiedAt": "2026-03-09T17:48:35.000Z",
+      "inferredDate": "2026-03-09"
+    },
+    {
+      "path": "GHA - RFI #246 Elevator Penthouse Elevations & Details.pdf",
+      "name": "GHA - RFI #246 Elevator Penthouse Elevations & Details.pdf",
+      "title": "RFI #246 Elevator Penthouse Elevations & Details",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2486186,
+      "sizeLabel": "2.4 MB",
+      "modifiedAt": "2026-03-09T15:48:12.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #251 Amenity Room Power.pdf",
+      "name": "GHA - RFI #251 Amenity Room Power.pdf",
+      "title": "RFI #251 Amenity Room Power",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 958864,
+      "sizeLabel": "936.4 KB",
+      "modifiedAt": "2026-03-09T15:09:19.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #243 Breeze Block Concrete Curb Detail.pdf",
+      "name": "GHA - RFI #243 Breeze Block Concrete Curb Detail.pdf",
+      "title": "RFI #243 Breeze Block Concrete Curb Detail",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 2735068,
+      "sizeLabel": "2.6 MB",
+      "modifiedAt": "2026-03-05T21:28:30.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "GHA - RFI #254 L8 Power Modifications & Clarifications.pdf",
+      "name": "GHA - RFI #254 L8 Power Modifications & Clarifications.pdf",
+      "title": "RFI #254 L8 Power Modifications & Clarifications",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 1395907,
+      "sizeLabel": "1.3 MB",
+      "modifiedAt": "2026-03-03T23:39:45.000Z",
+      "inferredDate": null
     }
   ],
-  "openItems": [
-    {
-      "Number": "",
-      "Revision": "0",
-      "Subject": "Exterior Lighting at Pump Room and Transformer",
-      "Status": "Draft",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "Unassigned",
-      "Ball In Court": "Villanueva, Jackie",
-      "Due Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    },
-    {
-      "Number": "",
-      "Revision": "0",
-      "Subject": "BBQ area ",
-      "Status": "Draft",
-      "RFI Manager": "Carlos Gutierrez (Cast Build)",
-      "Assigned Id": "Unassigned",
-      "Ball In Court": "Gutierrez, Carlos",
-      "Due Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    },
-    {
-      "Number": "",
-      "Revision": "0",
-      "Subject": "L7 Amenity Lighting",
-      "Status": "Draft",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "Unassigned",
-      "Ball In Court": "Villanueva, Jackie",
-      "Due Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    },
-    {
-      "Number": "",
-      "Revision": "0",
-      "Subject": "Lighting Submittal",
-      "Status": "Draft",
-      "RFI Manager": "Carlos Gutierrez (Cast Build)",
-      "Assigned Id": "Unassigned",
-      "Ball In Court": "Gutierrez, Carlos",
-      "Due Date": "",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    },
-    {
-      "Number": "199",
-      "Revision": "2",
-      "Subject": "AC Condensers Relocation",
-      "Status": "Open",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "Gergievski, Michael (H+W Engineering, Inc.); Evans, Scott (H+W Engineering, Inc.)",
-      "Ball In Court": "Gergievski, Michael",
-      "Due Date": "05/06/26",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    },
-    {
-      "Number": "282",
-      "Revision": "0",
-      "Subject": "Gap at CLT and Elevator Core",
-      "Status": "Open",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "DesRoches, Jim (KOR Structural)",
-      "Ball In Court": "Villanueva, Jackie",
-      "Due Date": "05/04/26",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    },
-    {
-      "Number": "284",
-      "Revision": "0",
-      "Subject": "EF-5 / SF-3 Dampers Clarification",
-      "Status": "Open",
-      "RFI Manager": "Jackie Villanueva (Cast Build)",
-      "Assigned Id": "Evans, Scott (H+W Engineering, Inc.); Wagner, Travis (H+W Engineering, Inc.)",
-      "Ball In Court": "Evans, Scott; Wagner, Travis",
-      "Due Date": "05/05/26",
-      "Cost Impact": "",
-      "Schedule Impact": ""
-    }
-  ],
-  "folderSource": "Private synced Alüm RFI folder metadata",
-  "folderRfiPdfCount": 255,
-  "folderLogFileCount": 30,
-  "folderMissingTieOutCount": 255,
-  "latestFolderLogs": [
+  "rfiPdfCount": 255,
+  "logFileCount": 30,
+  "latestLogs": [
     {
       "path": "+RFI Log/2026-04-02 Golden Hill RFI Log.pdf",
       "name": "2026-04-02 Golden Hill RFI Log.pdf",
@@ -3287,5 +3488,5 @@
       "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
     }
   ],
-  "totalFolderFiles": 285
+  "missingTieOutCount": 255
 }

@@ -132,7 +132,7 @@
     if (genEl) genEl.textContent = `Generated ${rfi.generatedAt || 'from local metadata'} · Source: ${rfi.source || 'CAST BUILD A.O export'}`;
 
     // KPIs
-    setText('[data-total]', rfi.total);
+    setText('[data-total]', rfi.folderRfiPdfCount || rfi.total);
     setText('[data-open]', (rfi.openCount || 0) + (rfi.draftCount || 0));
     setText('[data-overdue]', rfi.overdueOpen);
     setText('[data-seven]', rfi.dueWithin7Days);
@@ -156,7 +156,7 @@
 
     // Action queue rows — annotate with overdue/due7 flags for filtering
     const today = new Date();
-    const queueRaw = (rfi.openItems || rfi.recentItems || []).slice(0);
+    const queueRaw = ((rfi.openItems && rfi.openItems.length) ? rfi.openItems : (rfi.folderItems || rfi.recentItems || [])).slice(0);
     queueRaw.forEach((x) => {
       const d = x['Due Date'] ? new Date(x['Due Date']) : null;
       x._overdue = d && d < today && /open|draft/i.test(x.Status || '');
@@ -177,7 +177,7 @@
         const due = x['Due Date']
           ? `<span style="color:${x._overdue ? 'var(--danger)' : x._due7 ? 'var(--warning)' : 'inherit'}">${esc(x['Due Date'])}</span>`
           : '<span class="cb-td-muted">—</span>';
-        const ball = x['Ball In Court'] || x['Assigned Id'] || x['RFI Manager'] || '—';
+        const ball = x['Ball In Court'] || x['Assigned Id'] || x['RFI Manager'] || x.sourceKind || '—';
         return `<tr>
           <td>${num}</td>
           <td><strong style="color:var(--dark)">${esc(x.Subject || '')}</strong></td>

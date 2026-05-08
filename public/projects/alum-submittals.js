@@ -14,13 +14,13 @@ function pairRows(pairs){return (pairs||[]).map(([name,count])=>`<tr><td>${esc(n
   const statuses=sub.statusCounts||{};
   const types=Object.entries(sub.typeCounts||{}).sort((a,b)=>b[1]-a[1]);
   document.querySelector('[data-generated]').textContent=`Generated ${esc(sub.generatedAt||'from local metadata')}`;
-  document.querySelector('[data-queue-summary]').textContent=`${sub.openOrDraftCount||0} open/draft of ${sub.total||0}; ${statuses['Revise & Resubmit']||0} revise/resubmit.`;
-  document.querySelector('[data-spec-summary]').textContent=`Top section: ${esc(sub.topSpecSections?.[0]?.[0]||'not available')}.`;
+  document.querySelector('[data-queue-summary]').textContent=`${sub.openOrDraftCount||0} open/draft of ${sub.total||0}; ${sub.folderDocumentCount||0} folder documents indexed; ${statuses['Revise & Resubmit']||0} revise/resubmit.`;
+  document.querySelector('[data-spec-summary]').textContent=`Top section: ${esc((sub.folderTopSpecSections||sub.topSpecSections)?.[0]?.[0]||'not available')}.`;
   document.querySelector('[data-type-summary]').textContent=`${types.length} type buckets; largest is ${esc(types[0]?.[0]||'not available')}.`;
-  for (const [sel,val] of Object.entries({'[data-total]':sub.total,'[data-open]':sub.openOrDraftCount,'[data-draft]':statuses.Draft,'[data-revise]':statuses['Revise & Resubmit'],'[data-approved]':(statuses['Approved/No Exceptions']||0)+(statuses['Approved with Comments/Exceptions Noted']||0),'[data-void]':statuses.Void,'[data-bic]':sub.pendingBallInCourtCount,'[data-types]':types.length})) document.querySelector(sel).textContent=val??0;
-  const queue=(sub.sampleItems||[]).filter(x=>/open|draft|revise/i.test(x.Status||'')).slice(0,40);
+  for (const [sel,val] of Object.entries({'[data-total]':sub.folderDocumentCount||sub.total,'[data-open]':sub.openOrDraftCount,'[data-draft]':statuses.Draft,'[data-revise]':statuses['Revise & Resubmit'],'[data-approved]':(statuses['Approved/No Exceptions']||0)+(statuses['Approved with Comments/Exceptions Noted']||0),'[data-void]':statuses.Void,'[data-bic]':sub.pendingBallInCourtCount,'[data-types]':types.length})) document.querySelector(sel).textContent=val??0;
+  const queue=(sub.folderItems&&sub.folderItems.length?sub.folderItems:(sub.sampleItems||[])).filter(x=>/open|draft|revise|filed|approved/i.test(x.Status||'')).slice(0,120);
   document.querySelector('[data-submittal-count]').textContent=`${queue.length} shown`;
-  document.querySelector('[data-submittal-rows]').innerHTML=queue.map(x=>`<tr><td>${esc(x['Submittal Number']||'—')}${x['Rev.']&&x['Rev.']!=='0'?'.'+esc(x['Rev.']):''}</td><td>${esc(x.Title||'')}</td><td>${esc(x.Type||'—')}</td><td>${statusPill(x.Status)}</td><td>${esc(x['Responsible Contractor']||x['Ball In Court']||'—')}</td><td>${esc(x['Final Due Date']||'—')}</td><td class="nextstep">${esc(safeStep(x))}</td></tr>`).join('') || '<tr><td colspan="7">No open submittal items found in sample metadata.</td></tr>';
+  document.querySelector('[data-submittal-rows]').innerHTML=queue.map(x=>`<tr><td>${esc(x['Submittal Number']||'—')}${x['Rev.']&&x['Rev.']!=='0'?'.'+esc(x['Rev.']):''}</td><td>${esc(x.Title||'')}</td><td>${esc(x.Type||'—')}</td><td>${statusPill(x.Status)}</td><td>${esc(x['Responsible Contractor']||x['Ball In Court']||x.Division||'—')}</td><td>${esc(x['Final Due Date']||x.modifiedAt?.slice?.(0,10)||'—')}</td><td class="nextstep">${esc(x.nextStep||safeStep(x))}</td></tr>`).join('') || '<tr><td colspan="7">No open submittal items found in sample metadata.</td></tr>';
   document.querySelector('[data-spec-rows]').innerHTML=pairRows(sub.topSpecSections);
   document.querySelector('[data-type-count]').textContent=`${types.length} types`;
   document.querySelector('[data-type-rows]').innerHTML=pairRows(types);
