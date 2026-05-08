@@ -379,11 +379,11 @@ for (const requiredCommandSignal of ['rfi-summary.json', 'submittal-summary.json
 }
 const schedulePage = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.html'), 'utf8');
 const scheduleScript = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.js'), 'utf8');
-if (!/Schedule Control Board/.test(schedulePage) || !/3-Week Lookahead/.test(schedulePage) || !/Constraint Log/.test(schedulePage) || !/Read-first schedule planner/i.test(schedulePage)) {
-  console.error('Schedule control must include constraints, lookahead, and read-first posture.');
+if (!/Field-First Schedule Intelligence/.test(schedulePage) || !/Voice Field Updates/.test(schedulePage) || !/3-Week Lookahead/.test(schedulePage) || !/Constraint Log/.test(schedulePage) || !/Draft-only/i.test(schedulePage)) {
+  console.error('Schedule intelligence must include voice intake, constraints, lookahead, and draft-only correspondence posture.');
   failed = true;
 }
-for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'alumScheduleMilestones', 'alumScheduleLookahead', 'localStorage']) {
+for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'alumScheduleFieldUpdates', 'alumScheduleLookahead', 'SpeechRecognition', 'Recovery Plan Required', 'localStorage']) {
   if (!scheduleScript.includes(requiredScheduleSignal) && !schedulePage.includes(requiredScheduleSignal)) {
     console.error(`Schedule control missing signal/control: ${requiredScheduleSignal}`);
     failed = true;
