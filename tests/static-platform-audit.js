@@ -449,6 +449,13 @@ for (const requiredCommandSignal of ['rfi-summary.json', 'submittal-summary.json
     failed = true;
   }
 }
+const projectHomeScript = fs.readFileSync(path.join(root, 'public/projects/golden-hill-procore.js'), 'utf8');
+for (const requiredTimelineSignal of ['Activity over time — bucket by day', 'timelineKeys', 'buckets[k] || 0']) {
+  if (!projectHomeScript.includes(requiredTimelineSignal)) {
+    console.error(`Project home activity timeline missing visible daily bucket guard: ${requiredTimelineSignal}`);
+    failed = true;
+  }
+}
 
 const managementCenterPage = fs.readFileSync(path.join(root, 'public/projects/alum-management-control-center.html'), 'utf8');
 const managementCenterScript = fs.readFileSync(path.join(root, 'public/projects/alum-management-control-center.js'), 'utf8');

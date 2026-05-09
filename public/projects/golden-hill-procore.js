@@ -287,26 +287,33 @@
           Chart);
       }
 
-      // Activity over time — bucket by week
+      // Activity over time — bucket by day and zero-fill the visible window.
+      // The sanitized source metadata often arrives in single-day batches; weekly
+      // grouping made that look empty because Chart.js only had one point to draw.
       if (recent.length) {
         const buckets = {};
         recent.forEach((r) => {
           const d = new Date(r.updated_at);
           if (isNaN(d)) return;
-          const weekStart = new Date(d);
-          weekStart.setDate(d.getDate() - d.getDay()); // Sunday start
-          const key = weekStart.toISOString().slice(0, 10);
+          const key = d.toISOString().slice(0, 10);
           buckets[key] = (buckets[key] || 0) + 1;
         });
-        const sortedKeys = Object.keys(buckets).sort();
+        const keys = Object.keys(buckets).sort();
         const timeCanvas = document.getElementById('chart-activity-time');
-        if (timeCanvas && sortedKeys.length) {
+        if (timeCanvas && keys.length) {
+          const latest = new Date(keys[keys.length - 1]);
+          const start = new Date(latest);
+          start.setDate(latest.getDate() - 13);
+          const timelineKeys = [];
+          for (let d = new Date(start); d <= latest; d.setDate(d.getDate() + 1)) {
+            timelineKeys.push(d.toISOString().slice(0, 10));
+          }
           lineChart(timeCanvas,
-            sortedKeys.map((k) => {
-              const d = new Date(k);
+            timelineKeys.map((k) => {
+              const d = new Date(k + 'T00:00:00');
               return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }),
-            sortedKeys.map((k) => buckets[k]),
+            timelineKeys.map((k) => buckets[k] || 0),
             Chart);
         }
       }
