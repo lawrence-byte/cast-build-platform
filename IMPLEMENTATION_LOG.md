@@ -220,3 +220,12 @@ Validation:
 - `npm test`
 - `npm run build`
 - `git diff --check`
+
+## 2026-05-09 — Landing page operating-platform copy
+
+- Updated the landing page eyebrow from “Construction management operating layer” to `CONSTRUCTION MANAGEMENT OPERATING PLATFORM`.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
