@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
+const XLSX = require('xlsx');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -108,7 +110,7 @@ for (const [moduleFile, label] of procoreSystemPages) {
 const rfiTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-rfi-tracker.html'), 'utf8');
 const rfiTrackerScript = fs.readFileSync(path.join(root, 'public/projects/cast-rfi-tracker.js'), 'utf8');
 const controlsDataScript = fs.readFileSync(path.join(root, 'public/projects/cast-project-controls-data.js'), 'utf8');
-for (const requiredRfiMvpSignal of ['RFI Tracking and Completion', 'data-rfi-form', 'data-rfi-rows', 'data-detail', 'Export RFI Log CSV']) {
+for (const requiredRfiMvpSignal of ['RFI Tracking and Completion', 'data-rfi-form', 'data-rfi-rows', 'data-detail', 'Export RFI Log Excel']) {
   if (!rfiTrackerPage.includes(requiredRfiMvpSignal)) {
     console.error(`CAST RFI tracker page missing MVP signal: ${requiredRfiMvpSignal}`);
     failed = true;
@@ -130,7 +132,7 @@ for (const requiredRfiUiSignal of ['Add Response', 'Mark Last Response Official'
 const submittalTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.html'), 'utf8');
 const submittalTrackerScript = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.js'), 'utf8');
 const submittalDataScript = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-controls-data.js'), 'utf8');
-for (const requiredSubmittalSignal of ['Submittal Tracking', 'data-form', 'data-rows', 'data-detail', 'Export Submittal Log CSV']) {
+for (const requiredSubmittalSignal of ['Submittal Tracking', 'data-form', 'data-rows', 'data-detail', 'Export Submittal Log Excel']) {
   if (!submittalTrackerPage.includes(requiredSubmittalSignal)) {
     console.error(`CAST submittal tracker page missing MVP signal: ${requiredSubmittalSignal}`);
     failed = true;
@@ -165,7 +167,7 @@ if (!/no CAST BUILD A.O authentication/i.test(procorePage) || !/write API calls/
 const constructionForecastPage = fs.readFileSync(path.join(root, 'public/construction-cost-forecasting.html'), 'utf8');
 
 const scheduleBrainPage = fs.readFileSync(path.join(root, 'public/schedule-brain.html'), 'utf8');
-for (const requiredScheduleBrainSignal of ['Schedule Dashboard', 'Current Schedule Items', 'Daily Superintendent Huddle', 'Recovery Watch', 'Field Update Intake', 'Recovery Request Draft', 'RFI / Submittal Constraints', '3-Week Lookahead', 'Export CSV', 'Copy Huddle Board']) {
+for (const requiredScheduleBrainSignal of ['Schedule Dashboard', 'Current Schedule Items', 'Daily Superintendent Huddle', 'Recovery Watch', 'Field Update Intake', 'Recovery Request Draft', 'RFI / Submittal Constraints', '3-Week Lookahead', 'Export Excel', 'Copy Huddle Board']) {
   if (!scheduleBrainPage.includes(requiredScheduleBrainSignal)) {
     console.error(`Schedule Brain platform page missing signal: ${requiredScheduleBrainSignal}`);
     failed = true;
@@ -183,6 +185,40 @@ for (const requiredScheduleSourceSignal of ['schedule-source-index.json', 'data-
     failed = true;
   }
 }
+
+try {
+  let capturedXlsxBlob;
+  class AuditBlob {
+    constructor(parts, options = {}) {
+      this.parts = parts;
+      this.type = options.type || '';
+    }
+    toBuffer() {
+      return Buffer.concat(this.parts.map((part) => {
+        if (Buffer.isBuffer(part)) return part;
+        if (ArrayBuffer.isView(part)) return Buffer.from(part.buffer, part.byteOffset, part.byteLength);
+        return Buffer.from(String(part));
+      }));
+    }
+  }
+  const xlsxContext = {
+    window: {},
+    TextEncoder,
+    Blob: AuditBlob,
+    URL: { createObjectURL(blob) { capturedXlsxBlob = blob; return 'blob:audit'; }, revokeObjectURL() {} },
+    document: { createElement() { return { click() {} }; } },
+    setTimeout(fn) { fn(); },
+  };
+  vm.createContext(xlsxContext);
+  vm.runInContext(fs.readFileSync(path.join(root, 'public/cast-xlsx-export.js'), 'utf8'), xlsxContext);
+  xlsxContext.window.CastXlsxExport.downloadXlsx('audit.csv', 'Audit', [{ key: 'label', header: 'Label' }, { key: 'amount', header: 'Amount' }], [{ label: 'Excel export', amount: 42 }]);
+  const workbook = XLSX.read(capturedXlsxBlob.toBuffer(), { type: 'buffer' });
+  const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+  if (rows[0][0] !== 'Label' || rows[1][1] !== 42) fail('XLSX export helper produced an unreadable workbook.');
+} catch (err) {
+  fail(`XLSX export helper validation failed: ${err.message}`);
+}
+
 const scheduleSourceIndex = JSON.parse(fs.readFileSync(path.join(root, 'public/data/projects/golden-hill/schedule/schedule-source-index.json'), 'utf8'));
 if (!scheduleSourceIndex.source_status || !scheduleSourceIndex.publish_guardrail || /\/Users\/|CAST Community Dropbox|\.pdf|\.xlsx|\.mpp|\.xml|\.xer/i.test(JSON.stringify(scheduleSourceIndex))) {
   console.error('Schedule source index must be sanitized and avoid private paths/raw artifact extensions.');
@@ -656,6 +692,7 @@ walk(publicDir, (full) => {
 for (const full of htmlFiles) {
   const rel = path.relative(publicDir, full).replace(/\\/g, '/');
   const text = fs.readFileSync(full, 'utf8');
+  if (/Export\s+(?:[^<]{0,40}\s)?CSV/i.test(text)) fail(`User-facing spreadsheet export label must be Excel, not CSV: ${rel}`);
   const attrs = text.matchAll(/\b(?:href|src)=["']([^"']+)["']/gi);
   for (const [, value] of attrs) {
     if (!routeExists(value)) brokenLinks.push(`${rel} -> ${value}`);
