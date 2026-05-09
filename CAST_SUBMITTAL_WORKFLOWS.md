@@ -50,3 +50,7 @@ Admins review server/local conflicts in the Submittal Reconciliation Review scre
 Submittal assignment uses `CAST_ASSIGNABILITY_SPEC.md`.
 
 Submittal Manager, Submitter, Reviewer, Approver, Ball in Court, Responsible Contractor, and Package Manager should all be selected through the shared assignability picker. Workflow-step participants become `EntityAssignments`; BIC is derived from active workflow-step/record assignments. Assigning an unregistered contact creates an invitation and the least required access role unless private-record approval is required.
+
+## Directory/contact sync workflow
+
+Submittal Manager, Submitter, Reviewer, Responsible Contractor, workflow participant, package manager, and distribution recipient pickers should read from the shared AssignableParty/Contact index generated from the project directory. Submittal distribution must store `contact_id` for unregistered recipients and later link the contact to `user_id` after login.

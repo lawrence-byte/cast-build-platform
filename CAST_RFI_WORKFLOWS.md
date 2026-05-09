@@ -47,3 +47,7 @@ Issued and Responded RFI package links are stored as `ExternalLinks` records. Th
 ## RFI distribution workflow
 
 Issued and responded RFI distributions create `RFIDistributions`, `RFIDistributionRecipients`, access invitations, audit events, and last-distributed timestamps. Distribution emails include a secure authenticated system record link plus the relevant Dropbox/external package link.
+
+## Directory/contact sync workflow
+
+RFI Manager, Ball in Court, assignees, responsible contractor, and distribution recipient pickers should read from the shared AssignableParty/Contact index generated from the project directory. RFI distribution must store `contact_id` for unregistered recipients and later link the contact to `user_id` after login.

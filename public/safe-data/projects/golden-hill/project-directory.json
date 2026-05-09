@@ -1,6 +1,7 @@
 {
   "project": "Alüm / Golden Hill",
-  "source": "Project_Directory CSV provided by Lawrence via Telegram on 2026-05-09",
+  "project_id": "golden-hill",
+  "source": "Project_Directory---1b57babc-e08d-476c-9432-6d210d714361.csv",
   "generatedAt": "2026-05-09",
   "summary": {
     "people": 186,
@@ -22,6 +23,7 @@
   },
   "companies": [
     {
+      "id": "company_fdcc04b4386b",
       "company": "Aron Nussbaum Design Studio",
       "category": "Design / Engineering",
       "people": [
@@ -39,6 +41,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_9a03b450dabc",
       "company": "Gerard Brown Consulting",
       "category": "Design / Engineering",
       "people": [
@@ -56,6 +59,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_430afc679d6f",
       "company": "H+W Engineering, Inc.",
       "category": "Design / Engineering",
       "people": [
@@ -81,6 +85,7 @@
       "contactCount": 7
     },
     {
+      "id": "company_a918cc43c61a",
       "company": "Junker Gonzalez Engineering Group",
       "category": "Design / Engineering",
       "people": [
@@ -98,6 +103,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_58450da8e503",
       "company": "KOR Structural",
       "category": "Design / Engineering",
       "people": [
@@ -117,6 +123,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_42668b77528a",
       "company": "Nasland Engineering",
       "category": "Design / Engineering",
       "people": [
@@ -134,6 +141,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_3b5b1ebf97df",
       "company": "Shoring Design Group",
       "category": "Design / Engineering",
       "people": [
@@ -151,6 +159,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_4e1550b2f5c7",
       "company": "TFWA Architecture",
       "category": "Design / Engineering",
       "people": [
@@ -172,6 +181,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_c727139634bb",
       "company": "Verdantas",
       "category": "Design / Engineering",
       "people": [
@@ -189,6 +199,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_3c7a4507b352",
       "company": "CalPacific Electric & Cable, Inc.",
       "category": "External Project Management",
       "people": [
@@ -214,6 +225,7 @@
       "contactCount": 5
     },
     {
+      "id": "company_e286dee3607d",
       "company": "Sylvester",
       "category": "External Project Management",
       "people": [
@@ -234,6 +246,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_266952b0432e",
       "company": "Cast Build",
       "category": "Internal CAST Team",
       "people": [
@@ -260,6 +273,7 @@
       "contactCount": 6
     },
     {
+      "id": "company_740f9531e21b",
       "company": "AE Scaffold",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -279,6 +293,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_94b83fe42396",
       "company": "Affordable Frameless Shower Door, Inc",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -296,6 +311,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_19b446e871fa",
       "company": "AMG",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -314,6 +330,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_4c54eb7024aa",
       "company": "Anchor Coatings, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -339,6 +356,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_96acaa218b91",
       "company": "Antonio's Metal Works",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -356,6 +374,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_2eda348a2014",
       "company": "Apptek, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -375,6 +394,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_00390e568015",
       "company": "Aquatic Technologies",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -396,6 +416,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_aa550f9dc480",
       "company": "Bay Sheet Metal, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -416,6 +437,7 @@
       "contactCount": 4
     },
     {
+      "id": "company_efcad2e1ab8e",
       "company": "Brewer Crane & Rigging",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -437,6 +459,7 @@
       "contactCount": 5
     },
     {
+      "id": "company_2c7a145280ec",
       "company": "Condon-Johnson & Associates",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -454,6 +477,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_aa562ceb8c6a",
       "company": "Cox",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -471,6 +495,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_dfc5743208b5",
       "company": "Diversified",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -493,6 +518,7 @@
       "contactCount": 6
     },
     {
+      "id": "company_4d8f49b54b5b",
       "company": "Dudley Insulation",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -512,6 +538,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_0157f034915f",
       "company": "Fenceworks Rental Systems LLC",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -530,6 +557,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_1104a3333939",
       "company": "Ferrocrete Builders",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -564,6 +592,7 @@
       "contactCount": 16
     },
     {
+      "id": "company_c75560d9da14",
       "company": "Fire Testing Solutions",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -581,6 +610,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_be22b858af38",
       "company": "Integris Solutions, LLC",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -599,6 +629,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_a40ea615394f",
       "company": "J Geyer Plumbing, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -622,6 +653,7 @@
       "contactCount": 7
     },
     {
+      "id": "company_b0a144b13428",
       "company": "JW Blinds",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -639,6 +671,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_fedd77bc2184",
       "company": "Kember Kreative Interiors",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -658,6 +691,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_dbe88cd6d009",
       "company": "King Inspection LLC",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -677,6 +711,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_64c2d606ae6d",
       "company": "Kone Corporation",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -698,6 +733,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_bcc34f00ba3e",
       "company": "Marjan Stone",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -715,6 +751,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_107f67261d3c",
       "company": "Mark Beamish Waterproofing, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -736,6 +773,7 @@
       "contactCount": 5
     },
     {
+      "id": "company_169ba3a8ae76",
       "company": "MC Contracting",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -756,6 +794,7 @@
       "contactCount": 4
     },
     {
+      "id": "company_31ac39c3946c",
       "company": "Modern Masonry",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -778,6 +817,7 @@
       "contactCount": 6
     },
     {
+      "id": "company_6bd62a2d8d2d",
       "company": "Optimus Prime Trucking, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -795,6 +835,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_4c26707275eb",
       "company": "Pacific Steel Group",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -813,6 +854,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_fc4afb6448e9",
       "company": "Patterson Palm Builders Hardware, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -834,6 +876,7 @@
       "contactCount": 5
     },
     {
+      "id": "company_f4a87d3e8cfc",
       "company": "POGO Dog LLC",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -851,6 +894,7 @@
       "contactCount": 1
     },
     {
+      "id": "company_ac49c349db84",
       "company": "R & B Wholesale Distributors, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -869,6 +913,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_18dbed4b035a",
       "company": "Single Eagle, Inc. dba Concrete Contractors Interstate",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -890,6 +935,7 @@
       "contactCount": 5
     },
     {
+      "id": "company_914bdc0fcef9",
       "company": "Skyhook Stairs & Rails",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -908,6 +954,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_7be3809fc0f9",
       "company": "Southern California Interiors, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -930,6 +977,7 @@
       "contactCount": 6
     },
     {
+      "id": "company_6c928781fc30",
       "company": "Specialized Insulation",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -948,6 +996,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_67635735bc1e",
       "company": "Strang Heating & Air Conditioning, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -967,6 +1016,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_b05c5b6ac9ce",
       "company": "Superior Door",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -986,6 +1036,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_e5fe38a76d55",
       "company": "Symons Fire Protection, Inc.",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -1017,6 +1068,7 @@
       "contactCount": 12
     },
     {
+      "id": "company_2e674bd9110a",
       "company": "Team Fishel",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -1035,6 +1087,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_1281e505e35e",
       "company": "Timberlab",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -1055,6 +1108,7 @@
       "contactCount": 4
     },
     {
+      "id": "company_cfa26a92ae48",
       "company": "UTRON",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -1076,6 +1130,7 @@
       "contactCount": 3
     },
     {
+      "id": "company_e588302c614f",
       "company": "VCON Traffic Control",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -1094,6 +1149,7 @@
       "contactCount": 2
     },
     {
+      "id": "company_bc53d9f32bcb",
       "company": "Window Installation Specialists",
       "category": "Trade Partner / Vendor",
       "people": [
@@ -1125,6 +1181,7 @@
       "contactCount": 10
     },
     {
+      "id": "company_f86ab6b3df9d",
       "company": "No Company Listed",
       "category": "Unclassified",
       "people": [
@@ -1143,10 +1200,12 @@
   "people": [
     {
       "id": "598134333336888",
+      "contactId": "contact_d83936199960",
       "name": "Erica Jijon",
       "firstName": "Erica",
       "lastName": "Jijon",
       "company": "AE Scaffold",
+      "companyId": "company_740f9531e21b",
       "jobTitle": "",
       "email": "erica@aescaffold.com",
       "phones": [
@@ -1167,14 +1226,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333322522",
+      "contactId": "contact_f977291285fa",
       "name": "Candice Pigott",
       "firstName": "Candice",
       "lastName": "Pigott",
       "company": "Affordable Frameless Shower Door, Inc",
+      "companyId": "company_94b83fe42396",
       "jobTitle": "Project Manager",
       "email": "candice@affordableframeless.com",
       "phones": [
@@ -1199,14 +1265,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330977764",
+      "contactId": "contact_b528c132d4bd",
       "name": "Maria Bustos",
       "firstName": "Maria",
       "lastName": "Bustos",
       "company": "AMG",
+      "companyId": "company_19b446e871fa",
       "jobTitle": "Billing",
       "email": "maria@amgdemo.com",
       "phones": [],
@@ -1222,14 +1295,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330588500",
+      "contactId": "contact_0dab84f43708",
       "name": "Mike Gafa, Jr.",
       "firstName": "Mike",
       "lastName": "Gafa, Jr.",
       "company": "AMG",
+      "companyId": "company_19b446e871fa",
       "jobTitle": "Vice President",
       "email": "mgafajr@amgdemo.com",
       "phones": [
@@ -1258,14 +1338,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332303440",
+      "contactId": "contact_d350f14b5c77",
       "name": "Don Gililand",
       "firstName": "Don",
       "lastName": "Gililand",
       "company": "Anchor Coatings, Inc.",
+      "companyId": "company_4c54eb7024aa",
       "jobTitle": "",
       "email": "don@anchorcoatingsinc.com",
       "phones": [],
@@ -1281,14 +1368,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331684661",
+      "contactId": "contact_5d69db44a0bd",
       "name": "Andrew Taylor",
       "firstName": "Andrew",
       "lastName": "Taylor",
       "company": "Anchor Coatings, Inc.",
+      "companyId": "company_4c54eb7024aa",
       "jobTitle": "President",
       "email": "andy@anchorcoatingsinc.com",
       "phones": [
@@ -1317,14 +1411,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332303627",
+      "contactId": "contact_14a2a6d15b31",
       "name": "Jacqueline Valdez",
       "firstName": "Jacqueline",
       "lastName": "Valdez",
       "company": "Anchor Coatings, Inc.",
+      "companyId": "company_4c54eb7024aa",
       "jobTitle": "Accountant",
       "email": "jackie@bkbyalliance.com",
       "phones": [
@@ -1348,14 +1449,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330963598",
+      "contactId": "contact_ff8730d23212",
       "name": "Ramon Aguirre",
       "firstName": "Ramon",
       "lastName": "Aguirre",
       "company": "Antonio's Metal Works",
+      "companyId": "company_96acaa218b91",
       "jobTitle": "President",
       "email": "info@antoniosmetalworks.com",
       "phones": [
@@ -1376,14 +1484,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333574293",
+      "contactId": "contact_58d1da3eab08",
       "name": "Adam Campbell",
       "firstName": "Adam",
       "lastName": "Campbell",
       "company": "Apptek, Inc.",
+      "companyId": "company_2eda348a2014",
       "jobTitle": "",
       "email": "adam@apptekstucco.com",
       "phones": [],
@@ -1399,14 +1514,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333574287",
+      "contactId": "contact_42edd05e8a84",
       "name": "Ruddy Chavez",
       "firstName": "Ruddy",
       "lastName": "Chavez",
       "company": "Apptek, Inc.",
+      "companyId": "company_2eda348a2014",
       "jobTitle": "",
       "email": "ruddy@apptekstucco.com",
       "phones": [],
@@ -1422,14 +1544,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334153456",
+      "contactId": "contact_977a64df421e",
       "name": "Erica Jijon",
       "firstName": "Erica",
       "lastName": "Jijon",
       "company": "Apptek, Inc.",
+      "companyId": "company_2eda348a2014",
       "jobTitle": "",
       "email": "erica@apptekstucco.com",
       "phones": [],
@@ -1445,14 +1574,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331547983",
+      "contactId": "contact_93efc13d73c1",
       "name": "Kristin Driscoll",
       "firstName": "Kristin",
       "lastName": "Driscoll",
       "company": "Aquatic Technologies",
+      "companyId": "company_00390e568015",
       "jobTitle": "Billing Manager",
       "email": "kristin@aquatictechnologies.com",
       "phones": [
@@ -1473,14 +1609,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330863766",
+      "contactId": "contact_c1fc4c0ed295",
       "name": "Danny Hart",
       "firstName": "Danny",
       "lastName": "Hart",
       "company": "Aquatic Technologies",
+      "companyId": "company_00390e568015",
       "jobTitle": "",
       "email": "danny@aquatictechnologies.com",
       "phones": [
@@ -1507,14 +1650,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330863744",
+      "contactId": "contact_cdcfd53d0184",
       "name": "Kyle Shubin",
       "firstName": "Kyle",
       "lastName": "Shubin",
       "company": "Aquatic Technologies",
+      "companyId": "company_00390e568015",
       "jobTitle": "Project Engineer",
       "email": "kyle@aquatictechnologies.com",
       "phones": [
@@ -1537,14 +1687,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330967390",
+      "contactId": "contact_83345240b90d",
       "name": "Aron Nussbaum",
       "firstName": "Aron",
       "lastName": "Nussbaum",
       "company": "Aron Nussbaum Design Studio",
+      "companyId": "company_fdcc04b4386b",
       "jobTitle": "",
       "email": "aron@aronnussbaum.com",
       "phones": [],
@@ -1560,14 +1717,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333769878",
+      "contactId": "contact_2a852a89fc7e",
       "name": "Carlos Carlos",
       "firstName": "Carlos",
       "lastName": "Carlos",
       "company": "Bay Sheet Metal, Inc.",
+      "companyId": "company_aa550f9dc480",
       "jobTitle": "",
       "email": "carlosm.bsm@gmail.com",
       "phones": [],
@@ -1583,14 +1747,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332156764",
+      "contactId": "contact_4b789a011054",
       "name": "Sean Decker",
       "firstName": "Sean",
       "lastName": "Decker",
       "company": "Bay Sheet Metal, Inc.",
+      "companyId": "company_aa550f9dc480",
       "jobTitle": "",
       "email": "sean@baysheetmetalinc.sdcoxmail.com",
       "phones": [],
@@ -1606,14 +1777,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332156735",
+      "contactId": "contact_ca9c06f95866",
       "name": "Mike Hayes",
       "firstName": "Mike",
       "lastName": "Hayes",
       "company": "Bay Sheet Metal, Inc.",
+      "companyId": "company_aa550f9dc480",
       "jobTitle": "President",
       "email": "mike@bsm.sdcoxmail.com",
       "phones": [
@@ -1638,14 +1816,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334584375",
+      "contactId": "contact_d4e965b2bcdd",
       "name": "Maria Naccari",
       "firstName": "Maria",
       "lastName": "Naccari",
       "company": "Bay Sheet Metal, Inc.",
+      "companyId": "company_aa550f9dc480",
       "jobTitle": "",
       "email": "mariabaysheetmetalinc@gmail.com",
       "phones": [],
@@ -1661,14 +1846,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331436187",
+      "contactId": "contact_aebbdf4b2404",
       "name": "Karen Ackerland",
       "firstName": "Karen",
       "lastName": "Ackerland",
       "company": "Brewer Crane & Rigging",
+      "companyId": "company_efcad2e1ab8e",
       "jobTitle": "",
       "email": "karen@brewercrane.com",
       "phones": [],
@@ -1684,14 +1876,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331436250",
+      "contactId": "contact_ec62fab674f9",
       "name": "Heather Craft",
       "firstName": "Heather",
       "lastName": "Craft",
       "company": "Brewer Crane & Rigging",
+      "companyId": "company_efcad2e1ab8e",
       "jobTitle": "",
       "email": "heather@brewercrane.com",
       "phones": [],
@@ -1707,14 +1906,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331427482",
+      "contactId": "contact_972ffd683317",
       "name": "Brent Garcia",
       "firstName": "Brent",
       "lastName": "Garcia",
       "company": "Brewer Crane & Rigging",
+      "companyId": "company_efcad2e1ab8e",
       "jobTitle": "President",
       "email": "brentg@brewercrane.com",
       "phones": [],
@@ -1730,14 +1936,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331436169",
+      "contactId": "contact_0fa3ba11cf6b",
       "name": "Brian Robinson",
       "firstName": "Brian",
       "lastName": "Robinson",
       "company": "Brewer Crane & Rigging",
+      "companyId": "company_efcad2e1ab8e",
       "jobTitle": "",
       "email": "brian@brewercrane.com",
       "phones": [],
@@ -1753,14 +1966,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331428356",
+      "contactId": "contact_02c2f8e10704",
       "name": "Andre Silva",
       "firstName": "Andre",
       "lastName": "Silva",
       "company": "Brewer Crane & Rigging",
+      "companyId": "company_efcad2e1ab8e",
       "jobTitle": "Project Manager",
       "email": "andre@brewercrane.com",
       "phones": [],
@@ -1776,14 +1996,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333522681",
+      "contactId": "contact_5ff7326abfe0",
       "name": "Carlos Ayala",
       "firstName": "Carlos",
       "lastName": "Ayala",
       "company": "CalPacific Electric & Cable, Inc.",
+      "companyId": "company_3c7a4507b352",
       "jobTitle": "",
       "email": "carlosr.ayala2208@gmail.com",
       "phones": [],
@@ -1799,14 +2026,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330808301",
+      "contactId": "contact_92a2d7a1341b",
       "name": "Mike Goulet",
       "firstName": "Mike",
       "lastName": "Goulet",
       "company": "CalPacific Electric & Cable, Inc.",
+      "companyId": "company_3c7a4507b352",
       "jobTitle": "President",
       "email": "calpacificelectricsd@gmail.com",
       "phones": [
@@ -1830,14 +2064,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331140353",
+      "contactId": "contact_991c3ae252df",
       "name": "Chris Lebel",
       "firstName": "Chris",
       "lastName": "Lebel",
       "company": "CalPacific Electric & Cable, Inc.",
+      "companyId": "company_3c7a4507b352",
       "jobTitle": "",
       "email": "clebelcpe@gmail.com",
       "phones": [
@@ -1858,14 +2099,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Project Manager (Contractor)",
-      "category": "External Project Management"
+      "category": "External Project Management",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331137000",
+      "contactId": "contact_41390cbfd514",
       "name": "Jason Lind",
       "firstName": "Jason",
       "lastName": "Lind",
       "company": "CalPacific Electric & Cable, Inc.",
+      "companyId": "company_3c7a4507b352",
       "jobTitle": "Project Manager",
       "email": "jlindcpe@gmail.com",
       "phones": [
@@ -1886,14 +2134,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332902744",
+      "contactId": "contact_a8759455fe84",
       "name": "Daniel Naranjo",
       "firstName": "Daniel",
       "lastName": "Naranjo",
       "company": "CalPacific Electric & Cable, Inc.",
+      "companyId": "company_3c7a4507b352",
       "jobTitle": "",
       "email": "danieln61966@gmail.com",
       "phones": [],
@@ -1909,14 +2164,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330584316",
+      "contactId": "contact_0800db48b295",
       "name": "Joe Garza",
       "firstName": "Joe",
       "lastName": "Garza",
       "company": "Cast Build",
+      "companyId": "company_266952b0432e",
       "jobTitle": "General Superintendent",
       "email": "joe@cast-dev.com",
       "phones": [
@@ -1939,14 +2201,21 @@
       ],
       "trades": [],
       "permissionTemplate": "Internal - Site Manager/Superintendent",
-      "category": "Internal CAST Team"
+      "category": "Internal CAST Team",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330475359",
+      "contactId": "contact_cc04b020611e",
       "name": "Carlos Gutierrez",
       "firstName": "Carlos",
       "lastName": "Gutierrez",
       "company": "Cast Build",
+      "companyId": "company_266952b0432e",
       "jobTitle": "Project Manager",
       "email": "carlos@cast-dev.com",
       "phones": [],
@@ -1964,14 +2233,21 @@
       ],
       "trades": [],
       "permissionTemplate": "",
-      "category": "Unclassified"
+      "category": "Unclassified",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331312805",
+      "contactId": "contact_06f44c3a1327",
       "name": "Lawrence Howard",
       "firstName": "Lawrence",
       "lastName": "Howard",
       "company": "Cast Build",
+      "companyId": "company_266952b0432e",
       "jobTitle": "",
       "email": "lawrence@cast-dev.com",
       "phones": [],
@@ -1987,14 +2263,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "Internal - Project Manager",
-      "category": "Internal CAST Team"
+      "category": "Internal CAST Team",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330466960",
+      "contactId": "contact_14e24d5bfe88",
       "name": "Daniel Meeh",
       "firstName": "Daniel",
       "lastName": "Meeh",
       "company": "Cast Build",
+      "companyId": "company_266952b0432e",
       "jobTitle": "Owner",
       "email": "dan@cast-dev.com",
       "phones": [
@@ -2015,14 +2298,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "Internal - Project Manager",
-      "category": "Internal CAST Team"
+      "category": "Internal CAST Team",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330518768",
+      "contactId": "contact_e76dfccb1d14",
       "name": "Denise Swift",
       "firstName": "Denise",
       "lastName": "Swift",
       "company": "Cast Build",
+      "companyId": "company_266952b0432e",
       "jobTitle": "Project Accountant",
       "email": "denise@cast-dev.com",
       "phones": [
@@ -2047,14 +2337,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "",
-      "category": "Unclassified"
+      "category": "Unclassified",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333021522",
+      "contactId": "contact_50eda903811a",
       "name": "Jackie Villanueva",
       "firstName": "Jackie",
       "lastName": "Villanueva",
       "company": "Cast Build",
+      "companyId": "company_266952b0432e",
       "jobTitle": "",
       "email": "jackie@cast-dev.com",
       "phones": [],
@@ -2070,14 +2367,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "",
-      "category": "Unclassified"
+      "category": "Unclassified",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330653047",
+      "contactId": "contact_a266280eb1e6",
       "name": "Anthony Lucero",
       "firstName": "Anthony",
       "lastName": "Lucero",
       "company": "Condon-Johnson & Associates",
+      "companyId": "company_2c7a145280ec",
       "jobTitle": "Project Manager",
       "email": "alucero@condon-johnson.com",
       "phones": [],
@@ -2093,14 +2397,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334582688",
+      "contactId": "contact_77b525784cd7",
       "name": "Asael Salcido",
       "firstName": "Asael",
       "lastName": "Salcido",
       "company": "Cox",
+      "companyId": "company_aa562ceb8c6a",
       "jobTitle": "",
       "email": "asael.salcido@cox.com",
       "phones": [
@@ -2121,14 +2432,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331547930",
+      "contactId": "contact_bf3d102adc43",
       "name": "Brett Auerbach",
       "firstName": "Brett",
       "lastName": "Auerbach",
       "company": "Diversified",
+      "companyId": "company_dfc5743208b5",
       "jobTitle": "Estimating Manager",
       "email": "brett.auerbach@fallprotect.com",
       "phones": [
@@ -2149,14 +2467,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331548043",
+      "contactId": "contact_6aa7e031e1fe",
       "name": "Nichlas Darnell",
       "firstName": "Nichlas",
       "lastName": "Darnell",
       "company": "Diversified",
+      "companyId": "company_dfc5743208b5",
       "jobTitle": "Construction Manager/Safety",
       "email": "nicholas.darnell@fallprotect.com",
       "phones": [
@@ -2177,14 +2502,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331548041",
+      "contactId": "contact_b07d6cbab1b1",
       "name": "Diana Edwards",
       "firstName": "Diana",
       "lastName": "Edwards",
       "company": "Diversified",
+      "companyId": "company_dfc5743208b5",
       "jobTitle": "Closeout/Warranty",
       "email": "diana.edwards@fallprotect.com",
       "phones": [
@@ -2205,14 +2537,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331548033",
+      "contactId": "contact_e96727318ae1",
       "name": "Kaylin Haney",
       "firstName": "Kaylin",
       "lastName": "Haney",
       "company": "Diversified",
+      "companyId": "company_dfc5743208b5",
       "jobTitle": "Billing",
       "email": "kaylin.haney@fallprotect.com",
       "phones": [
@@ -2233,14 +2572,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331548053",
+      "contactId": "contact_c13a4b3deea0",
       "name": "Doreen Lowe",
       "firstName": "Doreen",
       "lastName": "Lowe",
       "company": "Diversified",
+      "companyId": "company_dfc5743208b5",
       "jobTitle": "Sr. Project Coordinator/Submittals",
       "email": "doreen.lowe@fallprotect.com",
       "phones": [
@@ -2261,14 +2607,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331548048",
+      "contactId": "contact_9c8d29c25a6a",
       "name": "Johnny Solorzano",
       "firstName": "Johnny",
       "lastName": "Solorzano",
       "company": "Diversified",
+      "companyId": "company_dfc5743208b5",
       "jobTitle": "Project Manager/Scheduling",
       "email": "johnny.solorzano@fallprotect.com",
       "phones": [
@@ -2289,14 +2642,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332668247",
+      "contactId": "contact_6e7206e3f3dd",
       "name": "Tammy Dipolito",
       "firstName": "Tammy",
       "lastName": "Dipolito",
       "company": "Dudley Insulation",
+      "companyId": "company_4d8f49b54b5b",
       "jobTitle": "",
       "email": "tammy@dudleyins.com",
       "phones": [
@@ -2317,14 +2677,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330978007",
+      "contactId": "contact_e3ec6e10e1b6",
       "name": "Corey Dudley",
       "firstName": "Corey",
       "lastName": "Dudley",
       "company": "Dudley Insulation",
+      "companyId": "company_4d8f49b54b5b",
       "jobTitle": "President",
       "email": "corey@dudleyins.com",
       "phones": [],
@@ -2340,14 +2707,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333815752",
+      "contactId": "contact_f25599c06916",
       "name": "Kent Wilson",
       "firstName": "Kent",
       "lastName": "Wilson",
       "company": "Dudley Insulation",
+      "companyId": "company_4d8f49b54b5b",
       "jobTitle": "",
       "email": "kent@dudleyins.com",
       "phones": [],
@@ -2363,14 +2737,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330977657",
+      "contactId": "contact_6c337d148a65",
       "name": "Jeremy Ryberg",
       "firstName": "Jeremy",
       "lastName": "Ryberg",
       "company": "Fenceworks Rental Systems LLC",
+      "companyId": "company_0157f034915f",
       "jobTitle": "Project Manager",
       "email": "jeremy.r@fwrs.us",
       "phones": [
@@ -2391,14 +2772,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330977694",
+      "contactId": "contact_f48e0d1ab6af",
       "name": "Jenna Schechtel",
       "firstName": "Jenna",
       "lastName": "Schechtel",
       "company": "Fenceworks Rental Systems LLC",
+      "companyId": "company_0157f034915f",
       "jobTitle": "",
       "email": "jenna.s@fwrs.us",
       "phones": [],
@@ -2414,14 +2802,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563237",
+      "contactId": "contact_f2a8d045490b",
       "name": "Shant Arshakian",
       "firstName": "Shant",
       "lastName": "Arshakian",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Field Director",
       "email": "shant@ferrocretebuilders.com",
       "phones": [
@@ -2442,14 +2837,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334564306",
+      "contactId": "contact_aaa01a01d9e6",
       "name": "Irene Cacace",
       "firstName": "Irene",
       "lastName": "Cacace",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "",
       "email": "irene@ferrocretebuilders.com",
       "phones": [],
@@ -2465,14 +2867,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563171",
+      "contactId": "contact_5861bbe957f3",
       "name": "Raz Danoukh",
       "firstName": "Raz",
       "lastName": "Danoukh",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "President",
       "email": "raz@ferrocretebuilders.com",
       "phones": [
@@ -2493,14 +2902,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563384",
+      "contactId": "contact_5ca199ea867e",
       "name": "Justin Fulton",
       "firstName": "Justin",
       "lastName": "Fulton",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "General Superintendent",
       "email": "justin@ferrocretebuilders.com",
       "phones": [
@@ -2521,14 +2937,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331423643",
+      "contactId": "contact_530569508ffa",
       "name": "Anthony Garcia",
       "firstName": "Anthony",
       "lastName": "Garcia",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "",
       "email": "anthony@ferrocretebuilders.com",
       "phones": [],
@@ -2544,14 +2967,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563350",
+      "contactId": "contact_ade733ac441a",
       "name": "Luis Gonzalez",
       "firstName": "Luis",
       "lastName": "Gonzalez",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "General Superintendent",
       "email": "luisg@ferrocretebuilders.com",
       "phones": [
@@ -2572,14 +3002,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563449",
+      "contactId": "contact_db91a765db0c",
       "name": "Sai Kudumala",
       "firstName": "Sai",
       "lastName": "Kudumala",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Project Engineer",
       "email": "sai@ferrocretebuilders.com",
       "phones": [
@@ -2600,14 +3037,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332494472",
+      "contactId": "contact_6e9c0c9be443",
       "name": "Vidal Lopez",
       "firstName": "Vidal",
       "lastName": "Lopez",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "",
       "email": "vidal@ferrocretebuilders.com",
       "phones": [
@@ -2628,14 +3072,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331244399",
+      "contactId": "contact_0b3c1162a674",
       "name": "Tony Maduena",
       "firstName": "Tony",
       "lastName": "Maduena",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "",
       "email": "tony@ferrocretebuilders.com",
       "phones": [],
@@ -2651,14 +3102,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563521",
+      "contactId": "contact_1117e701b828",
       "name": "Mina Mikhail",
       "firstName": "Mina",
       "lastName": "Mikhail",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Admin",
       "email": "mina@ferrocretebuilders.com",
       "phones": [
@@ -2679,14 +3137,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563287",
+      "contactId": "contact_894905ed2dc3",
       "name": "Parham Pe",
       "firstName": "Parham",
       "lastName": "Pe",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Project Executive",
       "email": "parham@ferrocretebuilders.com",
       "phones": [
@@ -2707,14 +3172,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332199977",
+      "contactId": "contact_b2bea599ad60",
       "name": "Celestino Salgado",
       "firstName": "Celestino",
       "lastName": "Salgado",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "",
       "email": "celestino@ferrocretebuilders.com",
       "phones": [],
@@ -2730,14 +3202,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331453139",
+      "contactId": "contact_6a714b9279a5",
       "name": "Jose Sanchez",
       "firstName": "Jose",
       "lastName": "Sanchez",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Foreman",
       "email": "jsanchez@ferrocretebuilders.com",
       "phones": [],
@@ -2753,14 +3232,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330563477",
+      "contactId": "contact_2215b59d2ae0",
       "name": "Sanket Thathe",
       "firstName": "Sanket",
       "lastName": "Thathe",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Project Engineer",
       "email": "sanket@ferrocretebuilders.com",
       "phones": [
@@ -2781,14 +3267,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333395501",
+      "contactId": "contact_c5522109734e",
       "name": "Gary Wainscott",
       "firstName": "Gary",
       "lastName": "Wainscott",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "Labor Foreman",
       "email": "wainscottgary73@gmail.com",
       "phones": [
@@ -2809,14 +3302,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333638490",
+      "contactId": "contact_327a52ab0105",
       "name": "John Yakhszyan",
       "firstName": "John",
       "lastName": "Yakhszyan",
       "company": "Ferrocrete Builders",
+      "companyId": "company_1104a3333939",
       "jobTitle": "",
       "email": "john@ferrocretebuilders.com",
       "phones": [],
@@ -2832,14 +3332,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332968913",
+      "contactId": "contact_fdbf15ce3b1d",
       "name": "Wendy Tovar",
       "firstName": "Wendy",
       "lastName": "Tovar",
       "company": "Fire Testing Solutions",
+      "companyId": "company_c75560d9da14",
       "jobTitle": "",
       "email": "wtovar@fts-inc.com",
       "phones": [],
@@ -2855,14 +3362,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331140425",
+      "contactId": "contact_8c5089e55758",
       "name": "Gerard Brown",
       "firstName": "Gerard",
       "lastName": "Brown",
       "company": "Gerard Brown Consulting",
+      "companyId": "company_9a03b450dabc",
       "jobTitle": "",
       "email": "gerardjbrown@outlook.com",
       "phones": [],
@@ -2878,14 +3392,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330789343",
+      "contactId": "contact_02b58e661d37",
       "name": "Scott Evans",
       "firstName": "Scott",
       "lastName": "Evans",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "PE Principal",
       "email": "scott@hwengr.com",
       "phones": [
@@ -2912,14 +3433,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330677644",
+      "contactId": "contact_74a880ed3087",
       "name": "Michael Gergievski",
       "firstName": "Michael",
       "lastName": "Gergievski",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "",
       "email": "michael@hwengr.com",
       "phones": [],
@@ -2935,14 +3463,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330854225",
+      "contactId": "contact_bc11ed55175a",
       "name": "Tom Harmon",
       "firstName": "Tom",
       "lastName": "Harmon",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "",
       "email": "tom@hwengr.com",
       "phones": [],
@@ -2958,14 +3493,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330854227",
+      "contactId": "contact_378ba0d0f135",
       "name": "Bryce Nay",
       "firstName": "Bryce",
       "lastName": "Nay",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "",
       "email": "bryce@hwengr.com",
       "phones": [],
@@ -2981,14 +3523,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330519087",
+      "contactId": "contact_c8a6efb68cf2",
       "name": "Eric Trafton",
       "firstName": "Eric",
       "lastName": "Trafton",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "Plumbing Engineer",
       "email": "eric@hwengr.com",
       "phones": [],
@@ -3004,14 +3553,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334134053",
+      "contactId": "contact_518522647691",
       "name": "Travis Wagner",
       "firstName": "Travis",
       "lastName": "Wagner",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "",
       "email": "travis@hwengr.com",
       "phones": [],
@@ -3027,14 +3583,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330519192",
+      "contactId": "contact_06cf9a8179b9",
       "name": "Bryan Wayne",
       "firstName": "Bryan",
       "lastName": "Wayne",
       "company": "H+W Engineering, Inc.",
+      "companyId": "company_430afc679d6f",
       "jobTitle": "Electrical Engineer",
       "email": "bryan@hwengr.com",
       "phones": [],
@@ -3050,14 +3613,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332526364",
+      "contactId": "contact_dc06507e2d9e",
       "name": "Dan Hallaran",
       "firstName": "Dan",
       "lastName": "Hallaran",
       "company": "Integris Solutions, LLC",
+      "companyId": "company_be22b858af38",
       "jobTitle": "",
       "email": "dhallaran@integrissolutions.com",
       "phones": [],
@@ -3073,14 +3643,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333841704",
+      "contactId": "contact_c6cdfb624ba6",
       "name": "Kevin Weseloh",
       "firstName": "Kevin",
       "lastName": "Weseloh",
       "company": "Integris Solutions, LLC",
+      "companyId": "company_be22b858af38",
       "jobTitle": "Asst Project Manager",
       "email": "kweseloh@integrissolutions.com",
       "phones": [
@@ -3101,14 +3678,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330687662",
+      "contactId": "contact_57a93bc4532d",
       "name": "Hailey Coleman",
       "firstName": "Hailey",
       "lastName": "Coleman",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "",
       "email": "hailey@jgeyerplumbing.com",
       "phones": [],
@@ -3124,14 +3708,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330687657",
+      "contactId": "contact_ffd821323ab0",
       "name": "Brett Geyer",
       "firstName": "Brett",
       "lastName": "Geyer",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "",
       "email": "brett@jgeyerplumbing.com",
       "phones": [],
@@ -3147,14 +3738,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331434746",
+      "contactId": "contact_6cdc95463586",
       "name": "Jack Geyer",
       "firstName": "Jack",
       "lastName": "Geyer",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "",
       "email": "jack@jgeyerplumbing.com",
       "phones": [],
@@ -3170,14 +3768,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333871422",
+      "contactId": "contact_83e441413283",
       "name": "Armando Maduena",
       "firstName": "Armando",
       "lastName": "Maduena",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "",
       "email": "armandolugoo@hotmail.com",
       "phones": [],
@@ -3193,14 +3798,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332618048",
+      "contactId": "contact_30c18834bd94",
       "name": "Chris Mello",
       "firstName": "Chris",
       "lastName": "Mello",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "",
       "email": "chrismello@jgeyerplumbing.com",
       "phones": [],
@@ -3216,14 +3828,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330520036",
+      "contactId": "contact_4ef3ae14d32b",
       "name": "Jesse Ratcliff",
       "firstName": "Jesse",
       "lastName": "Ratcliff",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "Designer",
       "email": "jesse@jgeyerplumbing.com",
       "phones": [],
@@ -3239,14 +3858,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334126082",
+      "contactId": "contact_6483d436acf8",
       "name": "Daniel Vasquez",
       "firstName": "Daniel",
       "lastName": "Vasquez",
       "company": "J Geyer Plumbing, Inc.",
+      "companyId": "company_a40ea615394f",
       "jobTitle": "",
       "email": "danielrayvasqueziii@gmail.com",
       "phones": [
@@ -3267,14 +3893,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333415435",
+      "contactId": "contact_28fed4ead172",
       "name": "Dan Junker",
       "firstName": "Dan",
       "lastName": "Junker",
       "company": "Junker Gonzalez Engineering Group",
+      "companyId": "company_a918cc43c61a",
       "jobTitle": "",
       "email": "djunker@junkergonzalez.com",
       "phones": [],
@@ -3290,14 +3923,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333231921",
+      "contactId": "contact_8cfb27984105",
       "name": "Jim White",
       "firstName": "Jim",
       "lastName": "White",
       "company": "JW Blinds",
+      "companyId": "company_b0a144b13428",
       "jobTitle": "",
       "email": "jim@jwblinds.com",
       "phones": [],
@@ -3313,14 +3953,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332617057",
+      "contactId": "contact_841c9987a1f2",
       "name": "Maura Coulter",
       "firstName": "Maura",
       "lastName": "Coulter",
       "company": "Kember Kreative Interiors",
+      "companyId": "company_fedd77bc2184",
       "jobTitle": "",
       "email": "maura@kemberinc.com",
       "phones": [],
@@ -3336,14 +3983,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332617091",
+      "contactId": "contact_2408a81edd17",
       "name": "Rhonda Greig",
       "firstName": "Rhonda",
       "lastName": "Greig",
       "company": "Kember Kreative Interiors",
+      "companyId": "company_fedd77bc2184",
       "jobTitle": "",
       "email": "rhonda@kemberinc.com",
       "phones": [],
@@ -3359,14 +4013,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "",
-      "category": "Unclassified"
+      "category": "Unclassified",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332617068",
+      "contactId": "contact_aaab9df949ac",
       "name": "Sam Nutting",
       "firstName": "Sam",
       "lastName": "Nutting",
       "company": "Kember Kreative Interiors",
+      "companyId": "company_fedd77bc2184",
       "jobTitle": "",
       "email": "sam@kemberinc.com",
       "phones": [],
@@ -3382,14 +4043,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331142513",
+      "contactId": "contact_cfcb17c79ac4",
       "name": "Desmond King",
       "firstName": "Desmond",
       "lastName": "King",
       "company": "King Inspection LLC",
+      "companyId": "company_dbe88cd6d009",
       "jobTitle": "",
       "email": "desmond@kingisi.com",
       "phones": [],
@@ -3405,14 +4073,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - No Access",
-      "category": "No Access / Reference"
+      "category": "No Access / Reference",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331665539",
+      "contactId": "contact_cebc89962e05",
       "name": "Nick Narbeth",
       "firstName": "Nick",
       "lastName": "Narbeth",
       "company": "King Inspection LLC",
+      "companyId": "company_dbe88cd6d009",
       "jobTitle": "",
       "email": "nan2270@hotmail.com",
       "phones": [],
@@ -3428,14 +4103,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330902537",
+      "contactId": "contact_89dc6397cbbe",
       "name": "Teresa Allison",
       "firstName": "Teresa",
       "lastName": "Allison",
       "company": "Kone Corporation",
+      "companyId": "company_64c2d606ae6d",
       "jobTitle": "",
       "email": "teresa.allison@kone.com",
       "phones": [],
@@ -3453,14 +4135,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331091032",
+      "contactId": "contact_f52bd03da03f",
       "name": "Dena Caldwell",
       "firstName": "Dena",
       "lastName": "Caldwell",
       "company": "Kone Corporation",
+      "companyId": "company_64c2d606ae6d",
       "jobTitle": "Project Administrator",
       "email": "dena.caldwell@kone.com",
       "phones": [
@@ -3485,14 +4174,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330642567",
+      "contactId": "contact_ad94905723a2",
       "name": "Jon Sellen",
       "firstName": "Jon",
       "lastName": "Sellen",
       "company": "Kone Corporation",
+      "companyId": "company_64c2d606ae6d",
       "jobTitle": "",
       "email": "jon.sellen@kone.com",
       "phones": [],
@@ -3508,14 +4204,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330519215",
+      "contactId": "contact_c913cc603356",
       "name": "Jim DesRoches",
       "firstName": "Jim",
       "lastName": "DesRoches",
       "company": "KOR Structural",
+      "companyId": "company_58450da8e503",
       "jobTitle": "Structural Engineer",
       "email": "jdesroches@korstructural.com",
       "phones": [],
@@ -3531,14 +4234,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332698702",
+      "contactId": "contact_e5025c35a0c3",
       "name": "Griffin Dow",
       "firstName": "Griffin",
       "lastName": "Dow",
       "company": "KOR Structural",
+      "companyId": "company_58450da8e503",
       "jobTitle": "",
       "email": "gdow@korstructural.com",
       "phones": [],
@@ -3554,14 +4264,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330642956",
+      "contactId": "contact_b3f7ca338e6c",
       "name": "Henry Xu",
       "firstName": "Henry",
       "lastName": "Xu",
       "company": "KOR Structural",
+      "companyId": "company_58450da8e503",
       "jobTitle": "",
       "email": "hxu@korstructural.com",
       "phones": [],
@@ -3577,14 +4294,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332938343",
+      "contactId": "contact_dd7692121085",
       "name": "Anna Johnson",
       "firstName": "Anna",
       "lastName": "Johnson",
       "company": "Marjan Stone",
+      "companyId": "company_bcc34f00ba3e",
       "jobTitle": "",
       "email": "anna@marjanstone.com",
       "phones": [],
@@ -3600,14 +4324,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331274688",
+      "contactId": "contact_8d90d1b954c0",
       "name": "Blake Fech",
       "firstName": "Blake",
       "lastName": "Fech",
       "company": "Mark Beamish Waterproofing, Inc.",
+      "companyId": "company_107f67261d3c",
       "jobTitle": "",
       "email": "blakef@markbeamish.com",
       "phones": [],
@@ -3623,14 +4354,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331373413",
+      "contactId": "contact_2a0a3add5216",
       "name": "Rob Gillman",
       "firstName": "Rob",
       "lastName": "Gillman",
       "company": "Mark Beamish Waterproofing, Inc.",
+      "companyId": "company_107f67261d3c",
       "jobTitle": "Project Manager",
       "email": "robg@markbeamish.com",
       "phones": [
@@ -3651,14 +4389,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333764465",
+      "contactId": "contact_39b8d112082d",
       "name": "Samantha Hoover",
       "firstName": "Samantha",
       "lastName": "Hoover",
       "company": "Mark Beamish Waterproofing, Inc.",
+      "companyId": "company_107f67261d3c",
       "jobTitle": "",
       "email": "samantha.hoover@markbeamish.com",
       "phones": [],
@@ -3674,14 +4419,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331218379",
+      "contactId": "contact_56305da523fb",
       "name": "Sharlie Mendez",
       "firstName": "Sharlie",
       "lastName": "Mendez",
       "company": "Mark Beamish Waterproofing, Inc.",
+      "companyId": "company_107f67261d3c",
       "jobTitle": "Sr. Project Coordinator",
       "email": "sharlie@markbeamish.com",
       "phones": [
@@ -3702,14 +4454,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331274678",
+      "contactId": "contact_923bad71ec7c",
       "name": "Sravan Pala",
       "firstName": "Sravan",
       "lastName": "Pala",
       "company": "Mark Beamish Waterproofing, Inc.",
+      "companyId": "company_107f67261d3c",
       "jobTitle": "",
       "email": "sravan.pala@markbeamish.com",
       "phones": [],
@@ -3725,14 +4484,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334458110",
+      "contactId": "contact_59ee7791e2f7",
       "name": "Ashley Hawkins",
       "firstName": "Ashley",
       "lastName": "Hawkins",
       "company": "MC Contracting",
+      "companyId": "company_169ba3a8ae76",
       "jobTitle": "",
       "email": "ashley@mc-contracting.com",
       "phones": [],
@@ -3748,14 +4514,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334050935",
+      "contactId": "contact_af44a6dc5b34",
       "name": "Christian Lewis",
       "firstName": "Christian",
       "lastName": "Lewis",
       "company": "MC Contracting",
+      "companyId": "company_169ba3a8ae76",
       "jobTitle": "",
       "email": "christian@mc-contracting.com",
       "phones": [],
@@ -3771,14 +4544,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334036190",
+      "contactId": "contact_b57237110749",
       "name": "Michael Lewis",
       "firstName": "Michael",
       "lastName": "Lewis",
       "company": "MC Contracting",
+      "companyId": "company_169ba3a8ae76",
       "jobTitle": "",
       "email": "michael@mc-contracting.com",
       "phones": [],
@@ -3794,14 +4574,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334050944",
+      "contactId": "contact_704d839896a5",
       "name": "Javier Picho",
       "firstName": "Javier",
       "lastName": "Picho",
       "company": "MC Contracting",
+      "companyId": "company_169ba3a8ae76",
       "jobTitle": "",
       "email": "javier@mc-contracting.com",
       "phones": [],
@@ -3817,14 +4604,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332521094",
+      "contactId": "contact_0c1b25de7edc",
       "name": "Mitch Byrd",
       "firstName": "Mitch",
       "lastName": "Byrd",
       "company": "Modern Masonry",
+      "companyId": "company_31ac39c3946c",
       "jobTitle": "",
       "email": "mitch@modernmasonry.com",
       "phones": [],
@@ -3840,14 +4634,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332521137",
+      "contactId": "contact_cf9f2a297eb7",
       "name": "Rigo Infante",
       "firstName": "Rigo",
       "lastName": "Infante",
       "company": "Modern Masonry",
+      "companyId": "company_31ac39c3946c",
       "jobTitle": "",
       "email": "rigo@modernmasonry.com",
       "phones": [],
@@ -3863,14 +4664,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332697188",
+      "contactId": "contact_9874fec25e15",
       "name": "Annie Loudermilk",
       "firstName": "Annie",
       "lastName": "Loudermilk",
       "company": "Modern Masonry",
+      "companyId": "company_31ac39c3946c",
       "jobTitle": "",
       "email": "annie@modernmasonry.com",
       "phones": [
@@ -3891,14 +4699,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333652769",
+      "contactId": "contact_f7312a281dfb",
       "name": "Uriel Nieto",
       "firstName": "Uriel",
       "lastName": "Nieto",
       "company": "Modern Masonry",
+      "companyId": "company_31ac39c3946c",
       "jobTitle": "",
       "email": "uriel@modernmasonry.com",
       "phones": [],
@@ -3914,14 +4729,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332521116",
+      "contactId": "contact_788a353ed4b1",
       "name": "Carlos Padilla",
       "firstName": "Carlos",
       "lastName": "Padilla",
       "company": "Modern Masonry",
+      "companyId": "company_31ac39c3946c",
       "jobTitle": "",
       "email": "carlos@modernmasonry.com",
       "phones": [],
@@ -3937,14 +4759,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332521111",
+      "contactId": "contact_bb3b3bf1d40b",
       "name": "kate waddington",
       "firstName": "kate",
       "lastName": "waddington",
       "company": "Modern Masonry",
+      "companyId": "company_31ac39c3946c",
       "jobTitle": "",
       "email": "kate@modernmasonry.com",
       "phones": [],
@@ -3960,14 +4789,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330520164",
+      "contactId": "contact_076bad2acf6d",
       "name": "Kayla Schewchuk",
       "firstName": "Kayla",
       "lastName": "Schewchuk",
       "company": "Nasland Engineering",
+      "companyId": "company_42668b77528a",
       "jobTitle": "",
       "email": "kaylas@nasland.com",
       "phones": [],
@@ -3983,14 +4819,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330534105",
+      "contactId": "contact_cc261788b204",
       "name": "Karla Mohnhaupt",
       "firstName": "Karla",
       "lastName": "Mohnhaupt",
       "company": "No Company Listed",
+      "companyId": "company_f86ab6b3df9d",
       "jobTitle": "",
       "email": "karla@cast-dev.com",
       "phones": [],
@@ -4006,14 +4849,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "",
-      "category": "Unclassified"
+      "category": "Unclassified",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330919523",
+      "contactId": "contact_144cd9d14fe4",
       "name": "Ella Huffman",
       "firstName": "Ella",
       "lastName": "Huffman",
       "company": "Optimus Prime Trucking, Inc.",
+      "companyId": "company_6bd62a2d8d2d",
       "jobTitle": "",
       "email": "office@optimusprimeinc.com",
       "phones": [],
@@ -4029,14 +4879,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331660201",
+      "contactId": "contact_937063db3afb",
       "name": "Jose Castillo",
       "firstName": "Jose",
       "lastName": "Castillo",
       "company": "Pacific Steel Group",
+      "companyId": "company_4c26707275eb",
       "jobTitle": "",
       "email": "castillojlpsg@gmail.com",
       "phones": [],
@@ -4052,14 +4909,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330649794",
+      "contactId": "contact_eec81f46ac45",
       "name": "Justin Kamoss",
       "firstName": "Justin",
       "lastName": "Kamoss",
       "company": "Pacific Steel Group",
+      "companyId": "company_4c26707275eb",
       "jobTitle": "",
       "email": "j.kamoss@pacificsteelgroup.com",
       "phones": [],
@@ -4075,14 +4939,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332156802",
+      "contactId": "contact_3a5ca51ccb05",
       "name": "Crystal Garrison",
       "firstName": "Crystal",
       "lastName": "Garrison",
       "company": "Patterson Palm Builders Hardware, Inc.",
+      "companyId": "company_fc4afb6448e9",
       "jobTitle": "",
       "email": "cgarrison@pattersonpalm.com",
       "phones": [
@@ -4107,14 +4978,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333225731",
+      "contactId": "contact_bbcb5adc0949",
       "name": "Scott Henige",
       "firstName": "Scott",
       "lastName": "Henige",
       "company": "Patterson Palm Builders Hardware, Inc.",
+      "companyId": "company_fc4afb6448e9",
       "jobTitle": "",
       "email": "scotth@jsidoor.com",
       "phones": [],
@@ -4130,14 +5008,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332156861",
+      "contactId": "contact_1df9516ca64e",
       "name": "Kelly Shafer",
       "firstName": "Kelly",
       "lastName": "Shafer",
       "company": "Patterson Palm Builders Hardware, Inc.",
+      "companyId": "company_fc4afb6448e9",
       "jobTitle": "",
       "email": "kellyshafer@pattersonpalm.com",
       "phones": [],
@@ -4153,14 +5038,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332106397",
+      "contactId": "contact_1c07f5c74190",
       "name": "Donny Shaffer",
       "firstName": "Donny",
       "lastName": "Shaffer",
       "company": "Patterson Palm Builders Hardware, Inc.",
+      "companyId": "company_fc4afb6448e9",
       "jobTitle": "",
       "email": "donnyshaffer@pattersonpalm.com",
       "phones": [],
@@ -4176,14 +5068,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333225722",
+      "contactId": "contact_2703e07f2a66",
       "name": "Chris Watkins",
       "firstName": "Chris",
       "lastName": "Watkins",
       "company": "Patterson Palm Builders Hardware, Inc.",
+      "companyId": "company_fc4afb6448e9",
       "jobTitle": "",
       "email": "watty619@gmail.com",
       "phones": [],
@@ -4199,14 +5098,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331249997",
+      "contactId": "contact_5ac784f90ab4",
       "name": "Jake Cattanach",
       "firstName": "Jake",
       "lastName": "Cattanach",
       "company": "POGO Dog LLC",
+      "companyId": "company_f4a87d3e8cfc",
       "jobTitle": "",
       "email": "jake@pogodevco.com",
       "phones": [
@@ -4227,14 +5133,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332455821",
+      "contactId": "contact_fd6325c4f4d2",
       "name": "Kelly Arton",
       "firstName": "Kelly",
       "lastName": "Arton",
       "company": "R & B Wholesale Distributors, Inc.",
+      "companyId": "company_ac49c349db84",
       "jobTitle": "Scheduling",
       "email": "kelly@rbdist.com",
       "phones": [],
@@ -4250,14 +5163,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332455802",
+      "contactId": "contact_975f94647b65",
       "name": "Kevin Kuske",
       "firstName": "Kevin",
       "lastName": "Kuske",
       "company": "R & B Wholesale Distributors, Inc.",
+      "companyId": "company_ac49c349db84",
       "jobTitle": "Account Manager",
       "email": "kevin@rbdist.com",
       "phones": [
@@ -4282,14 +5202,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331274294",
+      "contactId": "contact_02cd34df25f6",
       "name": "Roy Reed",
       "firstName": "Roy",
       "lastName": "Reed",
       "company": "Shoring Design Group",
+      "companyId": "company_3b5b1ebf97df",
       "jobTitle": "",
       "email": "rreed@shoringdesign.com",
       "phones": [],
@@ -4305,14 +5232,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331200147",
+      "contactId": "contact_e8ace3c6b458",
       "name": "Nick Geraldo",
       "firstName": "Nick",
       "lastName": "Geraldo",
       "company": "Single Eagle, Inc. dba Concrete Contractors Interstate",
+      "companyId": "company_18dbed4b035a",
       "jobTitle": "VP Project Management",
       "email": "nick@seicci.com",
       "phones": [
@@ -4337,14 +5271,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331250892",
+      "contactId": "contact_170dc8c791af",
       "name": "Kenny Okuniewicz",
       "firstName": "Kenny",
       "lastName": "Okuniewicz",
       "company": "Single Eagle, Inc. dba Concrete Contractors Interstate",
+      "companyId": "company_18dbed4b035a",
       "jobTitle": "Superintendent",
       "email": "kenny@seicci.com",
       "phones": [
@@ -4365,14 +5306,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331250808",
+      "contactId": "contact_5d52a7a20f8c",
       "name": "Dave Preston",
       "firstName": "Dave",
       "lastName": "Preston",
       "company": "Single Eagle, Inc. dba Concrete Contractors Interstate",
+      "companyId": "company_18dbed4b035a",
       "jobTitle": "Project Manager",
       "email": "dave@seicci.com",
       "phones": [
@@ -4397,14 +5345,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331250916",
+      "contactId": "contact_3381046acc49",
       "name": "Melissa Tidey",
       "firstName": "Melissa",
       "lastName": "Tidey",
       "company": "Single Eagle, Inc. dba Concrete Contractors Interstate",
+      "companyId": "company_18dbed4b035a",
       "jobTitle": "Project Administrator",
       "email": "melissa@seicci.com",
       "phones": [
@@ -4425,14 +5380,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331250963",
+      "contactId": "contact_a7b8bf86716d",
       "name": "JoLynn Trent",
       "firstName": "JoLynn",
       "lastName": "Trent",
       "company": "Single Eagle, Inc. dba Concrete Contractors Interstate",
+      "companyId": "company_18dbed4b035a",
       "jobTitle": "Controller",
       "email": "jolynn@seicci.com",
       "phones": [
@@ -4453,14 +5415,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332131887",
+      "contactId": "contact_f57583a2441e",
       "name": "Tim Boggs",
       "firstName": "Tim",
       "lastName": "Boggs",
       "company": "Skyhook Stairs & Rails",
+      "companyId": "company_914bdc0fcef9",
       "jobTitle": "",
       "email": "timb@stairbuilders.biz",
       "phones": [],
@@ -4476,14 +5445,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331230794",
+      "contactId": "contact_234638f4610c",
       "name": "Danny Vasquez",
       "firstName": "Danny",
       "lastName": "Vasquez",
       "company": "Skyhook Stairs & Rails",
+      "companyId": "company_914bdc0fcef9",
       "jobTitle": "",
       "email": "danny@stairbuilders.biz",
       "phones": [],
@@ -4499,14 +5475,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331897608",
+      "contactId": "contact_56509fe5cfca",
       "name": "Juan Manuel Ahumada",
       "firstName": "Juan Manuel",
       "lastName": "Ahumada",
       "company": "Southern California Interiors, Inc.",
+      "companyId": "company_7be3809fc0f9",
       "jobTitle": "Project Foreman",
       "email": "jahumada@southerncaliforniainteriors.com",
       "phones": [
@@ -4527,14 +5510,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331897616",
+      "contactId": "contact_a9aab741d85d",
       "name": "Emanuel Astorga",
       "firstName": "Emanuel",
       "lastName": "Astorga",
       "company": "Southern California Interiors, Inc.",
+      "companyId": "company_7be3809fc0f9",
       "jobTitle": "Project Lead",
       "email": "eastorga@southerncaliforniainteriors.com",
       "phones": [
@@ -4555,14 +5545,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331897590",
+      "contactId": "contact_387508bf11ed",
       "name": "Sofia Franco",
       "firstName": "Sofia",
       "lastName": "Franco",
       "company": "Southern California Interiors, Inc.",
+      "companyId": "company_7be3809fc0f9",
       "jobTitle": "Project Engineer",
       "email": "sfranco@southerncaliforniainteriors.com",
       "phones": [
@@ -4583,14 +5580,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331897599",
+      "contactId": "contact_d6cea988f1b8",
       "name": "Jeremy Gontang",
       "firstName": "Jeremy",
       "lastName": "Gontang",
       "company": "Southern California Interiors, Inc.",
+      "companyId": "company_7be3809fc0f9",
       "jobTitle": "Project Estimator",
       "email": "jgontang@southerncaliforniainteriors.com",
       "phones": [
@@ -4611,14 +5615,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331897475",
+      "contactId": "contact_30c0ee969ce3",
       "name": "Anjenette Rodriguez",
       "firstName": "Anjenette",
       "lastName": "Rodriguez",
       "company": "Southern California Interiors, Inc.",
+      "companyId": "company_7be3809fc0f9",
       "jobTitle": "Project Manager",
       "email": "aj@southerncaliforniainteriors.com",
       "phones": [
@@ -4639,14 +5650,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331897456",
+      "contactId": "contact_8170f3defb4b",
       "name": "Jesse Rodriguez",
       "firstName": "Jesse",
       "lastName": "Rodriguez",
       "company": "Southern California Interiors, Inc.",
+      "companyId": "company_7be3809fc0f9",
       "jobTitle": "CEO",
       "email": "jesse@southerncalifornainteriors.com",
       "phones": [
@@ -4667,14 +5685,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334126799",
+      "contactId": "contact_cea7174f215a",
       "name": "Chito Delara",
       "firstName": "Chito",
       "lastName": "Delara",
       "company": "Specialized Insulation",
+      "companyId": "company_6c928781fc30",
       "jobTitle": "",
       "email": "chito@specializedinsulation.com",
       "phones": [
@@ -4695,14 +5720,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334126749",
+      "contactId": "contact_f7ea978d0265",
       "name": "Kathy Wyckoff",
       "firstName": "Kathy",
       "lastName": "Wyckoff",
       "company": "Specialized Insulation",
+      "companyId": "company_6c928781fc30",
       "jobTitle": "",
       "email": "admin@specializedsystemsinsulation.com",
       "phones": [
@@ -4723,14 +5755,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331859763",
+      "contactId": "contact_f14aa6232b4b",
       "name": "Jimmy Carty",
       "firstName": "Jimmy",
       "lastName": "Carty",
       "company": "Strang Heating & Air Conditioning, Inc.",
+      "companyId": "company_67635735bc1e",
       "jobTitle": "Foreman",
       "email": "my4x4grey88@gmail.com",
       "phones": [],
@@ -4746,14 +5785,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331380943",
+      "contactId": "contact_c1b331c7d1af",
       "name": "Richard Strang",
       "firstName": "Richard",
       "lastName": "Strang",
       "company": "Strang Heating & Air Conditioning, Inc.",
+      "companyId": "company_67635735bc1e",
       "jobTitle": "",
       "email": "r.strang@sbcglobal.net",
       "phones": [],
@@ -4769,14 +5815,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333489191",
+      "contactId": "contact_542edc67a75c",
       "name": "Sharie West",
       "firstName": "Sharie",
       "lastName": "West",
       "company": "Strang Heating & Air Conditioning, Inc.",
+      "companyId": "company_67635735bc1e",
       "jobTitle": "Accounting Manager",
       "email": "strangheating@sbcglobal.net",
       "phones": [
@@ -4797,14 +5850,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332632079",
+      "contactId": "contact_464d7eb57311",
       "name": "Dan Allegro",
       "firstName": "Dan",
       "lastName": "Allegro",
       "company": "Superior Door",
+      "companyId": "company_b05c5b6ac9ce",
       "jobTitle": "Project Manager",
       "email": "dan@sdsystemsinc.com",
       "phones": [
@@ -4825,14 +5885,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332725682",
+      "contactId": "contact_eead03a99e9a",
       "name": "Donna Baker",
       "firstName": "Donna",
       "lastName": "Baker",
       "company": "Superior Door",
+      "companyId": "company_b05c5b6ac9ce",
       "jobTitle": "",
       "email": "donna@sdsystemsinc.com",
       "phones": [],
@@ -4848,14 +5915,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332632092",
+      "contactId": "contact_3150049ede79",
       "name": "Patrick Woodland",
       "firstName": "Patrick",
       "lastName": "Woodland",
       "company": "Superior Door",
+      "companyId": "company_b05c5b6ac9ce",
       "jobTitle": "",
       "email": "patrick@sdsystemsinc.com",
       "phones": [],
@@ -4871,14 +5945,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334580428",
+      "contactId": "contact_7a1a3e2b306a",
       "name": "Danna Lozada",
       "firstName": "Danna",
       "lastName": "Lozada",
       "company": "Sylvester",
+      "companyId": "company_e286dee3607d",
       "jobTitle": "",
       "email": "danna.l@sylvesterroofing.com",
       "phones": [
@@ -4903,14 +5984,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333048286",
+      "contactId": "contact_63591368b133",
       "name": "Francisco Morales",
       "firstName": "Francisco",
       "lastName": "Morales",
       "company": "Sylvester",
+      "companyId": "company_e286dee3607d",
       "jobTitle": "",
       "email": "francisco.m@sylvesterroofing.com",
       "phones": [],
@@ -4926,14 +6014,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Project Manager (Contractor)",
-      "category": "External Project Management"
+      "category": "External Project Management",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334471876",
+      "contactId": "contact_6df795b00317",
       "name": "Wesley Sylvester",
       "firstName": "Wesley",
       "lastName": "Sylvester",
       "company": "Sylvester",
+      "companyId": "company_e286dee3607d",
       "jobTitle": "CFO",
       "email": "wes@sylvesterroofing.com",
       "phones": [
@@ -4954,14 +6049,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333954680",
+      "contactId": "contact_232d3bcd35b1",
       "name": "Osvaldo Aguilar",
       "firstName": "Osvaldo",
       "lastName": "Aguilar",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "",
       "email": "oaguilar@symonsfp.com",
       "phones": [],
@@ -4977,14 +6079,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330937321",
+      "contactId": "contact_425c70b1a39d",
       "name": "Rebekah Catlett",
       "firstName": "Rebekah",
       "lastName": "Catlett",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Accounting/Pay Applications",
       "email": "receivables@symonsfp.com",
       "phones": [
@@ -5005,14 +6114,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334326232",
+      "contactId": "contact_38e4adb55721",
       "name": "Tony Chavez",
       "firstName": "Tony",
       "lastName": "Chavez",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "",
       "email": "tony.chavez95@icloud.com",
       "phones": [],
@@ -5028,14 +6144,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330937359",
+      "contactId": "contact_ee22cd0b9fe3",
       "name": "Stephania Coronado",
       "firstName": "Stephania",
       "lastName": "Coronado",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Insurance/Contracts",
       "email": "contracts@symonsfp.com",
       "phones": [
@@ -5056,14 +6179,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332052113",
+      "contactId": "contact_b0e55392f365",
       "name": "Noel Felix",
       "firstName": "Noel",
       "lastName": "Felix",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "",
       "email": "nfelix@symonsfp.com",
       "phones": [],
@@ -5079,14 +6209,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330937337",
+      "contactId": "contact_17b2bc516979",
       "name": "Ashly Fields",
       "firstName": "Ashly",
       "lastName": "Fields",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Accounting/Pay Applications",
       "email": "afields@symonsfp.com",
       "phones": [
@@ -5107,14 +6244,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330937243",
+      "contactId": "contact_655013ddbeab",
       "name": "Michael Gulino",
       "firstName": "Michael",
       "lastName": "Gulino",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Project Manager - Fire Alarm",
       "email": "mgulino@symonsfp.com",
       "phones": [
@@ -5137,14 +6281,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330600601",
+      "contactId": "contact_7009548b3f6a",
       "name": "Destiny Kassab",
       "firstName": "Destiny",
       "lastName": "Kassab",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "",
       "email": "dkassab@symonsfp.com",
       "phones": [],
@@ -5160,14 +6311,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330600595",
+      "contactId": "contact_be6d84e901a2",
       "name": "Ryan Rippstein",
       "firstName": "Ryan",
       "lastName": "Rippstein",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Project Manager - Fire Sprinkler",
       "email": "rrippstein@symonsfp.com",
       "phones": [
@@ -5190,14 +6348,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134332052138",
+      "contactId": "contact_cea6bbaf47de",
       "name": "Anthony Rivera",
       "firstName": "Anthony",
       "lastName": "Rivera",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "",
       "email": "anthonyrivera@symonsfp.com",
       "phones": [],
@@ -5213,14 +6378,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330937293",
+      "contactId": "contact_de3c6533715d",
       "name": "Brigitte Turi",
       "firstName": "Brigitte",
       "lastName": "Turi",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Project Manager - Fire Alarm",
       "email": "b.turi@symonsfp.com",
       "phones": [
@@ -5243,14 +6415,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330937376",
+      "contactId": "contact_7d36ca90ceba",
       "name": "Jenni Westerlund",
       "firstName": "Jenni",
       "lastName": "Westerlund",
       "company": "Symons Fire Protection, Inc.",
+      "companyId": "company_e5fe38a76d55",
       "jobTitle": "Insurance/Contracts",
       "email": "jwesterlund@symonsfp.com",
       "phones": [
@@ -5271,14 +6450,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334134154",
+      "contactId": "contact_7a7e325bdbf3",
       "name": "Aidan Costello",
       "firstName": "Aidan",
       "lastName": "Costello",
       "company": "Team Fishel",
+      "companyId": "company_2e674bd9110a",
       "jobTitle": "",
       "email": "ajcostello@teamfishel.com",
       "phones": [],
@@ -5294,14 +6480,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334134166",
+      "contactId": "contact_4410124ea902",
       "name": "Pastor",
       "firstName": "",
       "lastName": "Pastor",
       "company": "Team Fishel",
+      "companyId": "company_2e674bd9110a",
       "jobTitle": "",
       "email": "lepastor@teamfishel.com",
       "phones": [],
@@ -5317,14 +6510,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331143593",
+      "contactId": "contact_3d58271168e2",
       "name": "Luis Madrigal",
       "firstName": "Luis",
       "lastName": "Madrigal",
       "company": "TFWA Architecture",
+      "companyId": "company_4e1550b2f5c7",
       "jobTitle": "",
       "email": "luis@tfw-a.com",
       "phones": [
@@ -5345,14 +6545,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333011001",
+      "contactId": "contact_adb3b48439d7",
       "name": "Mariel Nunez-Collins",
       "firstName": "Mariel",
       "lastName": "Nunez-Collins",
       "company": "TFWA Architecture",
+      "companyId": "company_4e1550b2f5c7",
       "jobTitle": "",
       "email": "mariel@tfw-a.com",
       "phones": [],
@@ -5368,14 +6575,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330519043",
+      "contactId": "contact_bfa468b54e9b",
       "name": "Tyler Wallace",
       "firstName": "Tyler",
       "lastName": "Wallace",
       "company": "TFWA Architecture",
+      "companyId": "company_4e1550b2f5c7",
       "jobTitle": "",
       "email": "tyler@tfw-a.com",
       "phones": [],
@@ -5393,14 +6607,21 @@
       ],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333601619",
+      "contactId": "contact_86a6f4ddc59b",
       "name": "Conan Byman",
       "firstName": "Conan",
       "lastName": "Byman",
       "company": "Timberlab",
+      "companyId": "company_1281e505e35e",
       "jobTitle": "Project Manager",
       "email": "conan.byman@timberlab.com",
       "phones": [],
@@ -5416,14 +6637,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134334003006",
+      "contactId": "contact_b80b67a4f46b",
       "name": "Will Kersher",
       "firstName": "Will",
       "lastName": "Kersher",
       "company": "Timberlab",
+      "companyId": "company_1281e505e35e",
       "jobTitle": "",
       "email": "will.kershner@timberlab.com",
       "phones": [
@@ -5444,14 +6672,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333407593",
+      "contactId": "contact_8f7e26191c62",
       "name": "Harvey Smith",
       "firstName": "Harvey",
       "lastName": "Smith",
       "company": "Timberlab",
+      "companyId": "company_1281e505e35e",
       "jobTitle": "",
       "email": "harvey.smith@timberlab.com",
       "phones": [],
@@ -5467,14 +6702,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330807914",
+      "contactId": "contact_d72f37a263ec",
       "name": "Chad Tonge",
       "firstName": "Chad",
       "lastName": "Tonge",
       "company": "Timberlab",
+      "companyId": "company_1281e505e35e",
       "jobTitle": "",
       "email": "ctonge@timberlab.com",
       "phones": [],
@@ -5490,14 +6732,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330982488",
+      "contactId": "contact_ca8633179abe",
       "name": "Moti Baikin",
       "firstName": "Moti",
       "lastName": "Baikin",
       "company": "UTRON",
+      "companyId": "company_cfa26a92ae48",
       "jobTitle": "Project Engineer",
       "email": "moti.baikin@utron.com",
       "phones": [
@@ -5518,14 +6767,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330520506",
+      "contactId": "contact_30dd9e89d8c7",
       "name": "Danielle Huppert",
       "firstName": "Danielle",
       "lastName": "Huppert",
       "company": "UTRON",
+      "companyId": "company_cfa26a92ae48",
       "jobTitle": "",
       "email": "daniel.hupper@utron.com",
       "phones": [],
@@ -5541,14 +6797,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331130054",
+      "contactId": "contact_f6fbb0d08ac5",
       "name": "Monica Sanford",
       "firstName": "Monica",
       "lastName": "Sanford",
       "company": "UTRON",
+      "companyId": "company_cfa26a92ae48",
       "jobTitle": "",
       "email": "monica.sanford@utron.com",
       "phones": [],
@@ -5564,14 +6827,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330699314",
+      "contactId": "contact_773e62c355f6",
       "name": "Enrique Contreras",
       "firstName": "Enrique",
       "lastName": "Contreras",
       "company": "VCON Traffic Control",
+      "companyId": "company_e588302c614f",
       "jobTitle": "",
       "email": "vcontrafficcontrol@gmail.com",
       "phones": [],
@@ -5587,14 +6857,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330699332",
+      "contactId": "contact_c322586041da",
       "name": "Veronica Contreras",
       "firstName": "Veronica",
       "lastName": "Contreras",
       "company": "VCON Traffic Control",
+      "companyId": "company_e588302c614f",
       "jobTitle": "",
       "email": "veronica@vcontrafficcontrol.com",
       "phones": [],
@@ -5610,14 +6887,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330837978",
+      "contactId": "contact_0fc0e71455b1",
       "name": "Robert Stroh",
       "firstName": "Robert",
       "lastName": "Stroh",
       "company": "Verdantas",
+      "companyId": "company_c727139634bb",
       "jobTitle": "",
       "email": "rstroh@verdantas.com",
       "phones": [],
@@ -5633,14 +6917,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Architect/Engineer",
-      "category": "Design / Engineering"
+      "category": "Design / Engineering",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134333126535",
+      "contactId": "contact_a006e9501a5f",
       "name": "Sondra Curcio",
       "firstName": "Sondra",
       "lastName": "Curcio",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "AR Specialist",
       "email": "sondrac@advancedwindow.net",
       "phones": [],
@@ -5656,14 +6947,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330778932",
+      "contactId": "contact_daa2c6fa1eb4",
       "name": "Jason Glatt",
       "firstName": "Jason",
       "lastName": "Glatt",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "CFO",
       "email": "jasong@advancedwindow.net",
       "phones": [
@@ -5695,14 +6993,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330779033",
+      "contactId": "contact_bf48ae738051",
       "name": "Mike Harrison",
       "firstName": "Mike",
       "lastName": "Harrison",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "Contract Admin/Sales",
       "email": "mharrison@questwindows.com",
       "phones": [
@@ -5726,14 +7031,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331185238",
+      "contactId": "contact_10f069d7926e",
       "name": "Anton Khozeev",
       "firstName": "Anton",
       "lastName": "Khozeev",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "",
       "email": "akhozeev@questwindows.com",
       "phones": [
@@ -5754,14 +7066,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330562587",
+      "contactId": "contact_13d651430e37",
       "name": "Kira Koval",
       "firstName": "Kira",
       "lastName": "Koval",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "",
       "email": "kirak@advancedwindow.net",
       "phones": [],
@@ -5777,14 +7096,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330778968",
+      "contactId": "contact_d33862d2c419",
       "name": "Paul Koval",
       "firstName": "Paul",
       "lastName": "Koval",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "VP Field Ops",
       "email": "paulk@advancedwindow.net",
       "phones": [
@@ -5812,14 +7138,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330779125",
+      "contactId": "contact_d0771269f4cc",
       "name": "Laurel McMullin",
       "firstName": "Laurel",
       "lastName": "McMullin",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "Closeout/Warranty/Safety/Insurance",
       "email": "laurel@wisinc.biz",
       "phones": [
@@ -5840,14 +7173,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330562600",
+      "contactId": "contact_0e2d31a39ebd",
       "name": "Derek Meline",
       "firstName": "Derek",
       "lastName": "Meline",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "Director of Precon/ Precon PM",
       "email": "derekm@advancedwindow.net",
       "phones": [
@@ -5868,14 +7208,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134331218335",
+      "contactId": "contact_0501cc2be8f2",
       "name": "Rachel Robey",
       "firstName": "Rachel",
       "lastName": "Robey",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "Project Accounting Manager",
       "email": "rachelr@advancedwindow.net",
       "phones": [
@@ -5896,14 +7243,21 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     },
     {
       "id": "598134330779060",
+      "contactId": "contact_9e0bb2dc4c8e",
       "name": "Robin Wetzel",
       "firstName": "Robin",
       "lastName": "Wetzel",
       "company": "Window Installation Specialists",
+      "companyId": "company_bc53d9f32bcb",
       "jobTitle": "AR/Invoicing/COs",
       "email": "robinw@advancedwindow.net",
       "phones": [
@@ -5931,7 +7285,12 @@
       "projectRoles": [],
       "trades": [],
       "permissionTemplate": "External - Subcontractor/Vendor (Contractor)",
-      "category": "Trade Partner / Vendor"
+      "category": "Trade Partner / Vendor",
+      "source": "Imported CSV",
+      "userAccountLinked": false,
+      "lastLogin": null,
+      "lastSeen": null,
+      "duplicateEmailCount": 1
     }
   ]
 }

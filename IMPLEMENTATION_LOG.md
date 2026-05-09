@@ -116,3 +116,12 @@ Open risks:
 - Added `CAST_RFI_LOG_FIX_NOTES.md` diagnosing why the static RFI page is not a true active server/register query.
 - Expanded RFI specs for `RFIRegisters`, RFI register relationship fields, issued/responded RFI controlled links, Dropbox/external link storage, issued/responded email distributions, distribution recipients, secure login-required access, automatic contact/profile updates, ProjectAccess grants, private RFI approval, and audit events.
 - Updated RFI workflow documentation to require current active register defaulting, Show All Revisions, no hidden closed/revised/responded RFIs unless filtered, controlled ExternalLinks, and authenticated distribution links.
+
+## 2026-05-09 — Project directory contact sync spine
+
+- Re-imported Lawrence's latest Project Directory CSV (`Project_Directory---1b57babc-e08d-476c-9432-6d210d714361.csv`).
+- Regenerated `project-directory.json` with 186 people and 56 companies.
+- Added `project-contacts.json` as the normalized Contacts scaffold for login matching, ProjectAccess, contact management, distribution recipients, and duplicate prevention.
+- Added `assignable-parties.json` as the shared RFI/Submittal assignment picker source for managers, submitters, reviewers, responders, responsible contractors, package managers, watchers, and distribution-only recipients.
+- Added `CAST_PROJECT_CONTACT_SYNC_SPEC.md` to define how directory rows sync across Contacts, AssignableParties, AccessInvitations, ProjectAccess, RFIDistributionRecipients, SubmittalDistributionRecipients, and Project Contacts UI.
+- Updated Directory UI to show assignable-party counts and assignment-ready contacts so the directory is visibly tied into RFI/Submittal workflows.

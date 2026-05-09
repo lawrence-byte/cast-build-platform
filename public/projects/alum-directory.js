@@ -6,6 +6,7 @@ const phone = (number) => number ? `<a href="tel:${esc(number.replace(/[^+\d]/g,
 const chips = (items, fallback = '—') => (items || []).length ? items.map((x) => `<span class="directory-chip">${esc(x)}</span>`).join('') : `<span class="directory-muted">${esc(fallback)}</span>`;
 
 let directory = null;
+let assignability = null;
 let state = { q: '', category: 'All', company: 'All' };
 
 async function getJson(url) {
@@ -31,6 +32,9 @@ function renderKpis() {
   $('[data-person-count]').textContent = s.people;
   $('[data-internal-count]').textContent = s.internalContacts;
   $('[data-email-count]').textContent = s.withEmail;
+  const assignable = assignability?.summary?.assignableParties ?? '—';
+  const el = $('[data-assignable-count]');
+  if (el) el.textContent = assignable;
   $('[data-source-date]').textContent = directory.generatedAt;
 }
 
@@ -95,6 +99,9 @@ function renderPriorityLists() {
   const noEmail = directory.people.filter((p) => !p.email).slice(0, 10);
   $('[data-cast-team]').innerHTML = cast.map((p) => `<li><strong>${esc(p.name)}</strong><span>${esc(p.jobTitle || p.projectRoles?.join(', ') || 'CAST')}</span>${mail(p.email)}</li>`).join('');
   $('[data-design-team]').innerHTML = design.slice(0, 14).map((p) => `<li><strong>${esc(p.company)}</strong><span>${esc(p.name)}${p.jobTitle ? ` · ${esc(p.jobTitle)}` : ''}</span></li>`).join('');
+  const assignmentReady = (assignability?.assignableParties || []).filter((p) => p.assignability_status === 'Invite Required').slice(0, 8);
+  const assignmentEl = $('[data-assignment-list]');
+  if (assignmentEl) assignmentEl.innerHTML = assignmentReady.map((p) => `<li><strong>${esc(p.name)}</strong><span>${esc(p.company_name)} · ${esc((p.allowed_assignment_roles || []).slice(0, 3).join(', '))}</span></li>`).join('') || '<li><strong>No assignment data</strong><span>Assignable party index has not loaded.</span></li>';
   $('[data-cleanup-list]').innerHTML = noEmail.map((p) => `<li><strong>${esc(p.name)}</strong><span>${esc(p.company)} · missing email</span></li>`).join('') || '<li><strong>Clean</strong><span>Every listed contact has an email.</span></li>';
 }
 
@@ -105,7 +112,10 @@ function renderTables() {
 }
 
 (async () => {
-  directory = await getJson('/safe-data/projects/golden-hill/project-directory.json');
+  [directory, assignability] = await Promise.all([
+    getJson('/safe-data/projects/golden-hill/project-directory.json'),
+    getJson('/safe-data/projects/golden-hill/assignable-parties.json'),
+  ]);
   renderKpis();
   renderFilters();
   renderCategoryCards();

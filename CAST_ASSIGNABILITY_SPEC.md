@@ -255,3 +255,9 @@ When a party is assigned:
 - Duplicate contacts are flagged, not silently duplicated.
 - Reassignment preserves assignment history.
 - Ball in Court is derived from active EntityAssignments.
+
+## Directory import sync
+
+The Alüm / Golden Hill Procore project directory import generates `project-contacts.json` and `assignable-parties.json` as the static scaffold for this model. In production, those JSON files should be replaced by server-backed Contacts and AssignableParties tables.
+
+The assignment picker must not maintain its own separate contact list. It should read from the same normalized contact spine used by RFI distribution, Submittal distribution, ProjectAccess, and login matching.

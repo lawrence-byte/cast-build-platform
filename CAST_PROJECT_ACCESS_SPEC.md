@@ -171,3 +171,7 @@ Controlled external links for Dropbox/Drive/SharePoint/etc. These are package/re
 RFIs and Submittals use the shared assignability model in `CAST_ASSIGNABILITY_SPEC.md`.
 
 ProjectAccess answers whether a user may access the project. Assignability answers whether a user/contact/company can be selected for a specific RFI/Submittal responsibility. Assignments may create the least required ProjectAccess and AccessInvitation, but must not downgrade existing access and must pause for approval on private records.
+
+## Project directory sync
+
+The project directory import feeds Contacts, AssignableParties, AccessInvitations, ProjectAccess matching, RFI recipients, and Submittal recipients. `CAST_PROJECT_CONTACT_SYNC_SPEC.md` defines how imported directory rows become synchronized contact/access/assignment records.
