@@ -191,6 +191,58 @@ function renderLookaheadGantt() {
   }).join('');
   el.innerHTML = calendar + body;
 }
+function criticalReason(t) {
+  const hay = [t.title, t.trade, t.phase, t.ask].join(' ').toLowerCase();
+  if (t.critical) return 'Critical path';
+  if (/inspection|release|sdge|gear|feeder|fire alarm|fire sprinkler|errc/.test(hay)) return 'Inspection / utility / life-safety';
+  if (/elevator|roof|waterproof|tpo|window|glazing/.test(hay)) return 'Long-lead / envelope watch';
+  if (t.status === 'active_now') return 'Active work affecting near-term handoffs';
+  if (t.status === 'starts_soon') return 'Upcoming start to coordinate';
+  return 'Schedule watch item';
+}
+function criticalKind(t) {
+  const reason = criticalReason(t);
+  if (/Critical path/.test(reason)) return 'critical';
+  if (/Inspection|utility|life-safety|Active/.test(reason)) return 'watch';
+  return 'coordination';
+}
+function renderCriticalGantt() {
+  const el = $('[data-critical-gantt]');
+  if (!el) return;
+  const start = parseDate(schedule?.as_of) || new Date();
+  start.setHours(0, 0, 0, 0);
+  const weekStarts = Array.from({ length: 10 }, (_, i) => addDays(start, i * 7));
+  const end = addDays(start, 69);
+  set('[data-critical-range]', `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`);
+  const rows = allTasks()
+    .filter((t) => {
+      const s = parseDate(t.start); const f = parseDate(t.finish);
+      if (!s || !f || f < start || s > end) return false;
+      return t.critical || /inspection|release|sdge|gear|feeder|fire alarm|fire sprinkler|errc|elevator|roof|waterproof|tpo|window|glazing/i.test([t.title, t.trade, t.phase, t.ask].join(' '));
+    })
+    .sort((a, b) => (b.critical ? 1 : 0) - (a.critical ? 1 : 0) || String(a.start).localeCompare(String(b.start)) || String(a.trade).localeCompare(String(b.trade)))
+    .slice(0, 10);
+  if (!rows.length) {
+    el.innerHTML = '<div class="lookahead-gantt__empty">No critical/watch items overlap the next 10 weeks.</div>';
+    return;
+  }
+  const calendar = `<div class="lookahead-gantt__calendar"><div class="lookahead-gantt__day">Critical / watch item</div>${weekStarts.map((d, i) => `<div class="lookahead-gantt__day">W${i + 1}<br>${esc(d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }))}</div>`).join('')}</div>`;
+  const body = rows.map((t) => {
+    const s = parseDate(t.start); const f = parseDate(t.finish);
+    const barStart = Math.max(0, Math.floor((s - start) / 604800000));
+    const barEnd = Math.min(9, Math.floor((f - start) / 604800000));
+    const span = Math.max(1, barEnd - barStart + 1);
+    const kind = criticalKind(t);
+    const reason = criticalReason(t);
+    const cells = weekStarts.map((_, i) => {
+      if (i === barStart) return `<div class="lookahead-gantt__bar lookahead-gantt__bar--${kind}" style="grid-column:span ${span}" title="${esc(t.title)} · ${esc(reason)} · ${esc(t.start_label || t.start)}–${esc(t.finish_label || t.finish)}">${span >= 2 ? esc(reason) : ''}</div>`;
+      if (i > barStart && i <= barEnd) return '';
+      return '<div class="lookahead-gantt__cell"></div>';
+    }).join('');
+    return `<div class="lookahead-gantt__row"><div class="lookahead-gantt__label"><span class="lookahead-gantt__task">${esc(t.title)}</span><span class="lookahead-gantt__meta">${esc(t.trade)} · ${esc(t.location)} · ${esc(t.start_label || t.start)}–${esc(t.finish_label || t.finish)}</span><span class="critical-basis">${esc(reason)}</span></div>${cells}</div>`;
+  }).join('');
+  el.innerHTML = calendar + body;
+}
 function renderLookahead() {
   const tasks = allTasks();
   const lanes = [
@@ -255,7 +307,7 @@ function renderSummary() {
   const tasks = allTasks(); const summary = schedule?.summary || {};
   set('[data-total-work-packages]', tasks.length); set('[data-active-count]', tasks.filter((t) => t.status === 'active_now').length); set('[data-starts-soon-count]', tasks.filter((t) => t.status === 'starts_soon').length); set('[data-verify-complete-count]', tasks.filter((t) => t.status === 'verify_complete').length); set('[data-scenario-count]', Object.keys(scenarios()).length); set('[data-imported-tasks]', summary.total_imported_tasks || '—'); set('[data-critical-count]', summary.critical_path_items || tasks.filter((t) => t.critical).length); set('[data-source-basis]', schedule?.source_basis || 'Sanitized schedule metadata'); set('[data-source-index-status]', schedule?.source_status || 'loaded'); set('[data-current-read]', (schedule?.current_read || []).join(' '));
 }
-function renderAll() { renderSummary(); renderLookaheadGantt(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderRecovery(); renderDirectives(); }
+function renderAll() { renderSummary(); renderLookaheadGantt(); renderCriticalGantt(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderRecovery(); renderDirectives(); }
 function bind() {
   ['[data-search]', '[data-status-filter]', '[data-trade-filter]', '[data-phase-filter]', '[data-sort]'].forEach((sel) => $$(sel).forEach((el) => el.addEventListener('input', renderAll)));
   $$('[data-view-preset]').forEach((b) => b.addEventListener('click', () => { $('[data-status-filter]').value = b.dataset.viewPreset; renderAll(); }));
