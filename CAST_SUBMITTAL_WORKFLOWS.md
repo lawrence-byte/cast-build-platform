@@ -19,3 +19,28 @@ Owner Admin, CAST Admin, Project Manager, or Submittal Manager can mark official
 ## Return / close / revise
 
 Returned or Revise and Resubmit sends ball in court back to submitter/responsible contractor. Close requires official response unless closed as void/draft or overridden. Revision closes/supersedes the previous revision and starts a new revision under the same number.
+
+## Server reconciliation workflow
+
+1. Fetch server submittals for the active project and active current register.
+2. Fetch local submittal rows, folder metadata rows, comments, attachments, links, workflow history, and distribution history.
+3. Match by `server_submittal_id` first.
+4. Match remaining rows by `project_id + submittal_number + revision_number`.
+5. Use title/spec/package/company/date matching only to recommend manual matches.
+6. Assign missing `register_id` to the current active Submittal Register.
+7. Set `current_revision_flag` while preserving revision history.
+8. Mark duplicates and conflicts for admin review.
+9. Preserve local comments, attachments, Dropbox links, distribution history, and AI summaries.
+10. Write audit events and generate `CAST_SUBMITTAL_SERVER_RECONCILIATION_REPORT.md`.
+
+## Email distribution workflow
+
+Issued and returned distributions create immutable distribution records, recipient rows, access invitations, audit entries, and last-distributed timestamps. Emails include a secure authenticated system record link plus the relevant controlled external package link.
+
+## Login/contact workflow
+
+When an email recipient opens a secure submittal link, unauthenticated users are routed through magic-link/OAuth login. On successful login, the system matches by email, creates or updates `UserProfiles`, creates or updates the project `Contacts` row, grants `ProjectAccess` without downgrading existing roles, and redirects to the original submittal.
+
+## Reconciliation review workflow
+
+Admins review server/local conflicts in the Submittal Reconciliation Review screen. Available actions: Merge, Keep Server, Keep Local Draft, Flag for Review, Archive Duplicate. No duplicate is deleted automatically.

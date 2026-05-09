@@ -68,3 +68,17 @@
 - RFI statuses: Draft, Open, Closed, Closed Draft, Closed Revised, Void
 - Response statuses: Pending, Submitted, Returned, Official, Superseded
 - Impact statuses: No, Yes Known, Yes Unknown, To Be Determined, Not Applicable
+
+## Access/distribution/link additions
+
+RFIs use the shared `ExternalLinks`, `AccessInvitations`, `Contacts`, `UserProfiles`, and `ProjectAccess` tables. RFI records should support `issued_rfi_link_id`, `responded_rfi_link_id`, `last_issued_distribution_at`, and `last_response_distribution_at`.
+
+## RFIDistributionList
+
+Fields: id, rfi_id, user_id, contact_id, email, name, company, recipient_type, added_by_user_id, created_at, updated_at.
+
+Distribution recipients may be registered users or contacts. When a contact later logs in, the system links the contact to the user and updates distribution display automatically.
+
+## Audit event additions
+
+RFI assigned to current log, RFI log query fixed, issued/responded link added/changed, external link verified, issued/responded RFI distributed, recipient invited/logged in, contact auto created/updated, project access granted/revoked, distribution failed/resent.

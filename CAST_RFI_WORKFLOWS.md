@@ -19,3 +19,11 @@ Authorized user closes RFI. Open RFIs become Closed; Draft RFIs become Closed Dr
 ## Export/report flow
 
 Users filter log/report views and export CSV. PDF export is scaffolded for future backend/browser rendering.
+
+## Authenticated RFI access workflow
+
+All system RFI detail pages require authentication. Public email links route through a secure access page. After magic-link/OAuth login, the user is redirected to the requested RFI. If the user lacks permission, show access denied and allow request access. Distribution-recipient email matches may auto-grant RFI Viewer/Responder/Manager unless the RFI is private.
+
+## Issued/responded RFI email distribution workflow
+
+Issued RFI distribution requires an issued package/system link unless an authorized override reason is recorded. Responded RFI distribution requires a responded package/system link unless an authorized override reason is recorded. Each send creates distribution history, recipient rows, access invitations, and audit events.

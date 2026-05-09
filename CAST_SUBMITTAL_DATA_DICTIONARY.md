@@ -19,3 +19,48 @@ id, project_id, submittal_id, workflow_template_id, step_number, step_name, revi
 ## Participant fields
 
 id, workflow_step_id, user_id, company_id, role, response_status, response_id, due_date, sent_at, responded_at, created_at, updated_at.
+
+## Server reconciliation fields
+
+| Field | Type | Notes |
+|---|---|---|
+| server_submittal_id | string | Stable source-of-truth server id |
+| register_id | string | Current SubmittalRegisters id |
+| root_submittal_id | string | Root record for revisions |
+| previous_revision_id | string | Previous revision |
+| current_revision_flag | boolean | Default log shows true only unless all revisions selected |
+| server_sync_status | enum | Server Source, Local Draft, Pending Sync, Synced, Conflict, Duplicate, Archived, Failed |
+| server_last_synced_at | datetime | Last reconciliation timestamp |
+| server_created_at | datetime | Source server created timestamp |
+| server_updated_at | datetime | Source server updated timestamp |
+| issued_submittal_link_id | string | ExternalLinks id for issued package |
+| returned_submittal_link_id | string | ExternalLinks id for returned package |
+| last_issued_distribution_at | datetime | Last issued email distribution |
+| last_returned_distribution_at | datetime | Last returned email distribution |
+
+## SubmittalRegisters
+
+| Field | Type | Notes |
+|---|---|---|
+| id | string | Primary key |
+| server_register_id | string | Source server register id |
+| project_id | string | Project foreign key |
+| register_name | string | Display name |
+| register_type | enum | Current Submittal Log, Archived Submittal Log, Closeout Submittal Log, Owner Submittal Log, Internal Submittal Log |
+| status | enum | Active, Archived, Closed |
+| is_current | boolean | Default active log for project |
+| created_by_user_id | string | Creator |
+| created_at | datetime | Created timestamp |
+| updated_at | datetime | Updated timestamp |
+
+## ExternalLinks
+
+Shared controlled-link table for RFIs, Submittals, Drawings, Documents, Meeting Minutes, Transmittals, Change Events, and Closeout Items. Submittals use `Issued Submittal` and `Returned Submittal` as primary link types, with optional additional link types for shop drawings, product data, samples, specification references, drawing references, backup, consultant/architect/owner review, closeout, and other.
+
+## AccessInvitations / Contacts / UserProfiles / ProjectAccess
+
+These shared access tables support secure email distribution links, login-required record access, automatic contact creation, OAuth profile capture, and project-level access grants. Email is the primary match key. Invitation tokens are stored only as hashes.
+
+## SubmittalDistributions / SubmittalDistributionRecipients / SubmittalDistributionList
+
+Distribution tables track issued, returned, general update, overdue reminder, closeout, and package distributions. Recipients may be registered users or project contacts. When a contact later logs in, the distribution list updates to show the linked user profile.

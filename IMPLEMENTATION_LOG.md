@@ -94,3 +94,12 @@ Files changed:
 Open risks:
 - Attachment upload is metadata-only until secured storage exists.
 - Workflow enforcement is client-side only until backend/auth is added.
+
+## 2026-05-09 — Project directory + RFI/Submittal access/distribution specs
+
+- Created branch `feat/project-controls-access-distribution-20260509` before modifying project controls work.
+- Imported Lawrence-provided project directory CSV into `public/safe-data/projects/golden-hill/project-directory.json` with 186 contacts and 56 companies.
+- Upgraded `public/projects/alum-directory.html` and `public/projects/alum-directory.js` to show searchable/filterable companies, people, category cards, CAST team, design team, and cleanup watch.
+- Diagnosed Submittal Log source issue: current repo is static/read-first and `alum-submittals.js` reads local summary JSON rather than a server source-of-truth register. No backend/server schema was found in this repo.
+- Added/updated RFI and Submittal documentation for controlled external links, email distribution, access invitations, login-required record access, automatic contact/profile creation, ProjectAccess, distribution recipient linking, audit events, and server reconciliation requirements.
+- Added `CAST_SUBMITTAL_LOG_FIX_NOTES.md` and `CAST_SUBMITTAL_SERVER_RECONCILIATION_REPORT.md` documenting current blocker: live server reconciliation cannot run until the real server/API/database is connected to this repo.
