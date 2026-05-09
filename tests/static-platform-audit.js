@@ -154,8 +154,8 @@ for (const asset of ['cast-community-logo-transparent.png', 'cast-build-logo-tra
     failed = true;
   }
 }
-if (!/\.cast-family-top img\{width:380px;height:auto/.test(castBuildCss) || !/\.cast-access-logo\{[^}]*width:min\(380px,100%\)/.test(castBuildCss)) {
-  console.error('CAST Build landing must match CAST Community and reduced CAST Build desktop sizing.');
+if (!/\.cast-family-top img\{width:95px;height:auto/.test(castBuildCss) || !/\.cast-access-logo\{[^}]*width:min\(380px,100%\)/.test(castBuildCss)) {
+  console.error('CAST Build landing must use reduced CAST Community top-left sizing and reduced CAST Build desktop sizing.');
   failed = true;
 }
 if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,86vw\)/.test(castBuildCss)) {
