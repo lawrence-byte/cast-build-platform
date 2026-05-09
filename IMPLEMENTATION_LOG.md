@@ -278,3 +278,16 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Local desktop and mobile browser screenshot QA; mobile placement adjusted so the sketch does not interfere with the CTA.
+
+## 2026-05-09 — Landing sketch refinement pass
+
+- Refined the Alüm landing building asset to feel more hand-drawn with layered linen strokes and a taller building mass while keeping the sketch centered in its canvas.
+- Increased the sketch canvas height/dimensions from `921×857` to `937×1075` and removed high fetch priority because the image is decorative.
+- Applied design QA recommendations: nudged the desktop placement farther right, reduced opacity, kept mobile subtle, and preserved the no-street/no-sidewalk building-only treatment.
+- Strengthened static audit coverage for decorative image attributes: empty alt text, `aria-hidden`, explicit dimensions, and no high fetch priority.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Local desktop and mobile browser screenshot QA confirmed no content/CTA conflicts.
