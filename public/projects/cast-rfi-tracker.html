@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RFI Tracking — CAST Project Controls</title>
+  <link rel="stylesheet" href="/cast-build.css">
+  <link rel="stylesheet" href="/cast-build-components.css">
+  <style>
+    .controls-shell{max-width:1500px;margin:0 auto;padding:28px}.controls-nav{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}.controls-nav a{padding:9px 12px;border:1px solid var(--sand-light);background:var(--white);color:var(--graphite);text-decoration:none;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}.controls-nav a.active{background:var(--dark);color:white}.rfi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:20px 0}.rfi-card{background:white;border:1px solid var(--sand-light);padding:16px}.rfi-card strong{display:block;font-family:var(--font-heading);font-size:1.8rem;font-weight:400}.rfi-card span{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}.rfi-workspace{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:18px}.rfi-workspace>*{min-width:0}.rfi-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}.rfi-toolbar input,.rfi-toolbar select,.rfi-form input,.rfi-form select,.rfi-form textarea{border:1px solid var(--sand-light);padding:10px;background:white;color:var(--graphite);font:inherit}.rfi-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rfi-form label{display:grid;gap:5px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.rfi-form textarea,.rfi-form .wide{grid-column:1/-1}.rfi-table-wrap{overflow:auto;max-width:100%;background:white;border:1px solid var(--sand-light)}.rfi-table{width:100%;min-width:1320px;border-collapse:collapse}.rfi-table th{position:sticky;top:0;background:var(--ivory-alt);font-size:.68rem;text-align:left;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:10px;border-bottom:1px solid var(--sand-light);cursor:pointer}.rfi-table td{padding:10px;border-bottom:1px solid var(--sand-light);vertical-align:top;font-size:.82rem}.status-badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;background:#eee}.status-open{background:#fff3cd;color:#856404}.status-closed{background:#d9f3e5;color:#0f5132}.status-draft{background:#eceff4;color:#394150}.detail-panel{background:white;border:1px solid var(--sand-light);padding:18px;min-width:0;max-width:100%}.detail-panel h2{font-family:var(--font-heading);font-weight:400;margin:0 0 8px}.detail-block{border-top:1px solid var(--sand-light);padding-top:12px;margin-top:12px}.btn{border:1px solid var(--dark);background:var(--dark);color:white;padding:9px 11px;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.btn.secondary{background:white;color:var(--dark)}.btn.warn{background:#8a5a00;border-color:#8a5a00}.msg{margin:12px 0;padding:12px;background:#fff7df;border:1px solid #ead39b}.ai-box{background:var(--ivory-alt);border:1px dashed var(--sand);padding:12px;margin-top:12px}.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.report-grid button{text-align:left}.muted{color:var(--muted)}@media(max-width:1100px){html,body{max-width:100%;overflow-x:hidden}.rfi-grid{grid-template-columns:repeat(2,1fr)}.rfi-workspace{grid-template-columns:minmax(0,1fr)}.controls-shell{padding:18px;max-width:100%;overflow:hidden}.rfi-form{grid-template-columns:1fr}.rfi-toolbar input,.rfi-toolbar select{max-width:100%}}
+  </style>
+</head>
+<body>
+  <main class="controls-shell">
+    <header class="project-page-header">
+      <div><div class="project-page-subtitle">CAST Project Controls Platform · Documents</div><h1 class="project-page-title">RFI Tracking and Completion</h1><p class="muted">Dashboard, RFI log, completion workflow, responses, official response, reports, and CSV export.</p></div>
+      <div class="cb-action-row"><button class="btn secondary" data-reset>Reset Seed Data</button><button class="btn" data-export>Export RFI Log CSV</button></div>
+    </header>
+    <nav class="controls-nav"><a class="active" href="/projects/cast-rfi-tracker.html">RFI Tracking</a><a href="/projects/cast-drawing-log.html">Drawing Log</a><a href="/projects/cast-document-register.html">Document Register</a><a href="/projects/golden-hill-procore.html">Alüm Home</a></nav>
+    <section class="rfi-grid" data-metrics></section>
+    <section class="project-panel" style="margin-bottom:18px"><div class="panel-header"><h2>Create RFI</h2><span>Draft or Open</span></div><div style="padding:18px"><form class="rfi-form" data-rfi-form>
+      <label class="wide">Subject<input name="subject" required placeholder="Field condition / clarification subject"></label>
+      <label class="wide">Question<textarea name="question" required rows="4" placeholder="Write the RFI question clearly..."></textarea></label>
+      <label>Assignee<select name="assignee_user_ids" data-users></select></label><label>Due Date<input name="due_date" type="date"></label>
+      <label>RFI Manager<select name="rfi_manager_user_id" data-managers></select></label><label>Responsible Contractor<select name="responsible_company_id" data-companies></select></label>
+      <label>Drawing Reference<select name="drawing_id" data-drawings></select></label><label>Spec Section<select name="spec_section_id" data-specs></select></label>
+      <label>Location<select name="location_id" data-locations></select></label><label>Priority<select name="priority"><option>Normal</option><option>High</option><option>Urgent</option><option>Low</option></select></label>
+      <label>Cost Impact<select name="cost_impact_status"><option>No</option><option>Yes Known</option><option>Yes Unknown</option><option>To Be Determined</option><option>Not Applicable</option></select></label><label>Schedule Impact<select name="schedule_impact_status"><option>No</option><option>Yes Known</option><option>Yes Unknown</option><option>To Be Determined</option><option>Not Applicable</option></select></label>
+      <label>Cost Code<input name="cost_code" placeholder="e.g. 09-2900"></label><label><span>Private</span><select name="private_flag"><option value="false">No</option><option value="true">Yes</option></select></label>
+      <div class="wide"><button class="btn secondary" type="submit" name="intent" value="Draft">Save as Draft</button> <button class="btn" type="submit" name="intent" value="Open">Create as Open</button> <button class="btn secondary" type="reset">Cancel</button></div>
+    </form><div data-form-message></div></div></section>
+    <section class="rfi-workspace">
+      <div>
+        <div class="rfi-toolbar"><input data-search placeholder="Search RFIs, subject, question, drawing"><select data-status-filter><option value="">All Statuses</option></select><select data-assignee-filter><option value="">All Assignees</option></select><button class="btn secondary" data-overdue>Overdue</button><button class="btn secondary" data-clear>Clear</button></div>
+        <div class="rfi-table-wrap"><table class="rfi-table"><thead><tr><th data-sort="rfi_number">Number</th><th data-sort="revision_number">Rev</th><th data-sort="subject">Subject</th><th data-sort="status">Status</th><th>Priority</th><th>Ball in Court</th><th>Assignees</th><th>RFI Manager</th><th>Responsible Contractor</th><th>Drawing</th><th>Spec</th><th>Location</th><th data-sort="due_date">Due</th><th>Days Open</th><th>Cost</th><th>Schedule</th><th>Closed</th></tr></thead><tbody data-rfi-rows></tbody></table></div>
+      </div>
+      <aside class="detail-panel" data-detail><h2>Select an RFI</h2><p class="muted">Choose a row to view detail, responses, official response, comments, attachments, revision history, audit log, and actions.</p></aside>
+    </section>
+    <section class="project-panel" style="margin-top:18px"><div class="panel-header"><h2>Reports</h2><span>CSV-ready</span></div><div class="report-grid" style="padding:18px" data-reports></div></section>
+  </main>
+  <script src="/projects/cast-project-controls-data.js"></script>
+  <script src="/projects/cast-rfi-tracker.js"></script>
+</body>
+</html>

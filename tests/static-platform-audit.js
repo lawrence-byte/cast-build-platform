@@ -3,7 +3,7 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -100,6 +100,36 @@ for (const [moduleFile, label] of procoreSystemPages) {
   const text = fs.readFileSync(path.join(root, moduleFile), 'utf8');
   if (!text.includes(label) || !text.includes('project-sidebar-group')) {
     console.error(`${moduleFile} must use grouped project navigation and include ${label}.`);
+    failed = true;
+  }
+}
+
+
+const rfiTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-rfi-tracker.html'), 'utf8');
+const rfiTrackerScript = fs.readFileSync(path.join(root, 'public/projects/cast-rfi-tracker.js'), 'utf8');
+const controlsDataScript = fs.readFileSync(path.join(root, 'public/projects/cast-project-controls-data.js'), 'utf8');
+for (const requiredRfiMvpSignal of ['RFI Tracking and Completion', 'data-rfi-form', 'data-rfi-rows', 'data-detail', 'Export RFI Log CSV']) {
+  if (!rfiTrackerPage.includes(requiredRfiMvpSignal)) {
+    console.error(`CAST RFI tracker page missing MVP signal: ${requiredRfiMvpSignal}`);
+    failed = true;
+  }
+}
+for (const requiredRfiDomainSignal of ['generateRfiNumber', 'validateRfi', 'markOfficialResponse', 'closeRfi', 'reopenRfi', 'reviseRfi', 'auditLog', 'notifications']) {
+  if (!controlsDataScript.includes(requiredRfiDomainSignal)) {
+    console.error(`CAST RFI data service missing domain signal: ${requiredRfiDomainSignal}`);
+    failed = true;
+  }
+}
+for (const requiredRfiUiSignal of ['Add Response', 'Mark Last Response Official', 'Close', 'Reopen', 'Revise', 'AI Helper Suggestions']) {
+  if (!rfiTrackerScript.includes(requiredRfiUiSignal)) {
+    console.error(`CAST RFI tracker UI missing workflow signal: ${requiredRfiUiSignal}`);
+    failed = true;
+  }
+}
+for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawing Log'], ['public/projects/cast-document-register.html', 'Document Register']]) {
+  const text = fs.readFileSync(path.join(root, requiredScaffold[0]), 'utf8');
+  if (!text.includes(requiredScaffold[1]) || !text.includes('RFI Tracking')) {
+    console.error(`${requiredScaffold[0]} missing document-control scaffold signals.`);
     failed = true;
   }
 }

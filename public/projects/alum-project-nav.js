@@ -32,6 +32,9 @@
       label: 'Documents',
       summary: 'Drawings, specs, data room',
       items: [
+        ['RFI Tracking', '/projects/cast-rfi-tracker.html', 'i-help'],
+        ['Drawing Log', '/projects/cast-drawing-log.html', 'i-document'],
+        ['Document Register', '/projects/cast-document-register.html', 'i-data'],
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
         ['Doc Intelligence', '/projects/alum-document-intelligence.html', 'i-search'],
         ['Specifications', '/projects/alum-specifications.html', 'i-spec'],

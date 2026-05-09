@@ -1,0 +1,2 @@
+project_id,rfi_number,revision_number,subject,question,status,priority,assignee_emails,due_date,rfi_manager_email,drawing_number,spec_section,location,cost_code,cost_impact_status,schedule_impact_status,private_flag
+broderick,,0,,,,Normal,,,,,,,,No,No,false
