@@ -162,6 +162,13 @@ if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,
   console.error('CAST Build landing must use reduced mobile CAST Build sizing.');
   failed = true;
 }
+const projectCss = fs.readFileSync(path.join(root, 'public/projects/golden-hill-procore.css'), 'utf8');
+for (const requiredResponsiveRule of ['Responsive sheet hardening', '.dashboard,.card,.head,.body,.modulemap,.modulemap a,.metricgrid,.controls{min-width:0;max-width:100%;}', 'html,body{max-width:100%;overflow-x:hidden;}', 'table{min-width:680px;}']) {
+  if (!projectCss.includes(requiredResponsiveRule)) {
+    console.error(`Project CSS missing command-center responsive guard: ${requiredResponsiveRule}`);
+    failed = true;
+  }
+}
 const pricingModelsPage = fs.readFileSync(path.join(root, 'public/pricing-models.html'), 'utf8');
 
 
