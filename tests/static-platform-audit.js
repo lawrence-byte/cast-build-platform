@@ -271,6 +271,41 @@ for (const requiredUploadField of ['original_file_name','stored_file_name','file
   }
 }
 
+
+const workflowService = fs.readFileSync(path.join(root, 'api/_lib/document-workflow.js'), 'utf8');
+for (const requiredWorkflowSignal of ['Uploaded','Processing','Classified','Needs Review','Approved for Filing','Filed','Distributed','Rejected','Archived','Ready to File','Sensitive document requires human confirmation','auditEvent']) {
+  if (!workflowService.includes(requiredWorkflowSignal)) {
+    console.error(`Document workflow service missing signal: ${requiredWorkflowSignal}`);
+    failed = true;
+  }
+}
+const contactCaptureService = fs.readFileSync(path.join(root, 'api/_lib/document-contact-capture.js'), 'utf8');
+for (const requiredContactSignal of ['dateFirstSeen','dateLastSeen','uploadCountIncrement','relatedDocuments','relatedRFIs','relatedSubmittals','relatedContracts','requiresAdminApprovalBeforeOverwrite']) {
+  if (!contactCaptureService.includes(requiredContactSignal)) {
+    console.error(`Document contact capture missing signal: ${requiredContactSignal}`);
+    failed = true;
+  }
+}
+const matchingService = fs.readFileSync(path.join(root, 'api/_lib/document-matching.js'), 'utf8');
+for (const requiredMatchingSignal of ['issued_rfi_link','responded_rfi_link','issued_submittal_link','responded_submittal_link','create_new_rfi_candidate','create_new_submittal_candidate','emailDistributionHistory','contractAmount','retainage','paymentTerms','signatureStatus']) {
+  if (!matchingService.includes(requiredMatchingSignal)) {
+    console.error(`Document matching service missing signal: ${requiredMatchingSignal}`);
+    failed = true;
+  }
+}
+for (const requiredPermissionSignal of ['document:override_classification','document:view_financial_sensitive','document:view_contract_sensitive','externalRule','canOverrideClassification','canViewModule']) {
+  if (!permissionsService.includes(requiredPermissionSignal)) {
+    console.error(`Document permission contract missing signal: ${requiredPermissionSignal}`);
+    failed = true;
+  }
+}
+for (const requiredContactSchemaSignal of ['document_contact_capture_rollups','upload_count','related_documents','related_rfis','related_submittals','related_contracts','requires_admin_approval_before_overwrite']) {
+  if (!intakeSchema.includes(requiredContactSchemaSignal)) {
+    console.error(`Document contact schema missing signal: ${requiredContactSchemaSignal}`);
+    failed = true;
+  }
+}
+
 const procorePage = fs.readFileSync(path.join(root, 'public/procore.html'), 'utf8');
 if (!/no CAST BUILD A.O authentication/i.test(procorePage) || !/write API calls/i.test(procorePage)) {
   console.error('CAST BUILD A.O page must state integration guardrails.');

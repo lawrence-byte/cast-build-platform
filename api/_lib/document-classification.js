@@ -2,6 +2,8 @@
 
 const { buildStructuredFolder, moduleFolder, safeSegment } = require('./document-storage');
 const { matchLinkedRecords } = require('./document-matching');
+const { workflowDecision } = require('./document-workflow');
+const { extractContactSuggestions } = require('./document-contact-capture');
 const MODULES = ['Documents','Contracts','Financials','Field','Drawings','RFIs','Submittals','Change Orders','Pay Applications','Invoices','Insurance','Permits','Meeting Minutes','Closeout','Uncategorized'];
 const RULES = [
   ['RFIs', /\brfi\b|request for information|clarification|rfi response/i, 'RFI / response'],
@@ -48,7 +50,9 @@ function classifyDocument(input={}) {
   const suggestedRecordLinks = matchLinkedRecords(input);
   const extractedMetadata = extractMetadata({ ...input, ocrUsed: input.ocrUsed });
   const suggestedFolderPath = buildStructuredFolder({ projectSlug, projectId, module });
-  const requiresHumanReview = confidenceScore < 0.92 || suggestedRecordLinks.some((x) => x.duplicateWarning);
-  return { projectId, projectName, module, documentType, confidenceScore, suggestedFolderPath, suggestedRecordLinks, extractedMetadata, requiresHumanReview, reasoningSummary, provider: process.env.CLASSIFICATION_PROVIDER || 'rules', model: process.env.CLASSIFICATION_MODEL || 'rules-v1', moduleFolder: moduleFolder(module) };
+  const workflow = workflowDecision({ module, documentType, confidenceScore, suggestedRecordLinks }, input.duplicateState || {});
+  const contactSuggestions = extractContactSuggestions(input);
+  const requiresHumanReview = workflow.requiresHumanReview;
+  return { projectId, projectName, module, documentType, confidenceScore, suggestedFolderPath, suggestedRecordLinks, extractedMetadata: { ...extractedMetadata, contactSuggestions }, requiresHumanReview, reasoningSummary, workflow, provider: process.env.CLASSIFICATION_PROVIDER || 'rules', model: process.env.CLASSIFICATION_MODEL || 'rules-v1', moduleFolder: moduleFolder(module) };
 }
 module.exports = { MODULES, classifyDocument, extractMetadata, ext };

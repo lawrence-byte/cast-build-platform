@@ -3,7 +3,9 @@
 const { classifyDocument, MODULES: MODULE_LIST, ext } = require('./document-classification');
 const { extractTextFallback } = require('./document-ocr');
 const { buildFilingPath, buildStructuredFolder, storageConfig } = require('./document-storage');
-const { permissionRulesFor } = require('./document-permissions');
+const { permissionRulesFor, canOverrideClassification } = require('./document-permissions');
+const { auditEvent } = require('./document-workflow');
+const { captureUploaderContact } = require('./document-contact-capture');
 
 const MODULES = new Set(MODULE_LIST);
 const ALLOWED_EXTENSIONS = new Set(['pdf','doc','docx','xls','xlsx','csv','jpg','jpeg','png','heic','dwg','dxf','eml','msg','txt']);
@@ -29,7 +31,7 @@ function getActor(req) {
   const auth = req.headers.authorization || '';
   if (!auth.startsWith('Bearer ')) return null;
   const role = req.headers['x-cast-role'] || 'Admin';
-  return { id: req.headers['x-cast-user-id'] || 'authenticated-api-caller', role, permissions: permissionRulesFor(role).permissions };
+  return { id: req.headers['x-cast-user-id'] || 'authenticated-api-caller', name: req.headers['x-cast-user-name'] || 'Authenticated User', email: req.headers['x-cast-user-email'] || '', company: req.headers['x-cast-company'] || '', role, permissions: permissionRulesFor(role).permissions };
 }
 function validatePayload(body) {
   const errors = [];
@@ -89,16 +91,20 @@ async function handleDocumentIntake(req, res) {
   try { body = await readBody(req); } catch (err) { return json(res, 400, { ok: false, code: err.message, message: 'Invalid document intake request body.' }); }
   body.actorRole = actor.role;
   const errors = validatePayload(body);
+  if (body.adminOverrideNote && !canOverrideClassification(actor.role)) errors.push('Only admins and project managers can override classification.');
   if (errors.length) return json(res, 422, { ok: false, code: 'VALIDATION_FAILED', errors });
   const ocr = await extractTextFallback(body);
   const structuredClassification = body.structuredClassification || classifyDocument({ ...body, textSnippet: body.textSnippet || ocr.text, ocrUsed: Boolean(ocr.text), folderContext: body.folderContext });
   const storagePlan = buildStoragePlan({ ...body, structuredClassification, module: body.module || structuredClassification.module });
+  const uploaderContact = captureUploaderContact({ user: actor, projectId: body.projectId, documentId: body.id, classification: structuredClassification });
+  const auditLog = [auditEvent({ documentId: body.id, userId: actor.id, action: 'document.upload.confirmed', newValue: { fileName: body.fileName, classification: structuredClassification }, reason: body.adminOverrideNote, req })];
+  if (body.adminOverrideNote) auditLog.push(auditEvent({ documentId: body.id, userId: actor.id, action: 'document.classification.override', previousValue: body.classification || null, newValue: structuredClassification, reason: body.adminOverrideNote, req }));
   if (!process.env.DOCUMENT_STORAGE_ROOT && !process.env.CAST_DOCUMENT_STORAGE_ROOT && !process.env.CAST_DOCUMENT_BUCKET) {
-    return json(res, 501, { ok: false, code: 'DOCUMENT_STORAGE_NOT_CONFIGURED', message: 'Server document storage is not configured. The client should retain a local queued intake record.', ocr, structuredClassification, storagePlan });
+    return json(res, 501, { ok: false, code: 'DOCUMENT_STORAGE_NOT_CONFIGURED', message: 'Server document storage is not configured. The client should retain a local queued intake record.', ocr, structuredClassification, uploaderContact, auditLog, storagePlan });
   }
   if (!process.env.DOCUMENT_DATABASE_URL && !process.env.CAST_DOCUMENT_DATABASE_URL) {
-    return json(res, 501, { ok: false, code: 'DOCUMENT_DATABASE_NOT_CONFIGURED', message: 'Document metadata database is not configured. Filing is blocked to avoid orphaned files.', ocr, structuredClassification, storagePlan });
+    return json(res, 501, { ok: false, code: 'DOCUMENT_DATABASE_NOT_CONFIGURED', message: 'Document metadata database is not configured. Filing is blocked to avoid orphaned files.', ocr, structuredClassification, uploaderContact, auditLog, storagePlan });
   }
-  return json(res, 501, { ok: false, code: 'HANDLER_NOT_IMPLEMENTED', message: 'Storage adapter is configured but write handler is not implemented in this static scaffold.', ocr, structuredClassification, storagePlan });
+  return json(res, 501, { ok: false, code: 'HANDLER_NOT_IMPLEMENTED', message: 'Storage adapter is configured but write handler is not implemented in this static scaffold.', ocr, structuredClassification, uploaderContact, auditLog, storagePlan });
 }
 module.exports = { handleDocumentIntake, buildStoragePlan, validatePayload, MODULES, ALLOWED_EXTENSIONS };

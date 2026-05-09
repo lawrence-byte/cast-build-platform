@@ -81,3 +81,29 @@ create table if not exists project_contact_directory (
 
 create index if not exists project_contact_directory_project_email_idx on project_contact_directory(project_id, lower(email));
 create index if not exists document_links_document_idx on document_links(document_id, linked_module);
+
+-- Contact capture rollup used to avoid manually maintaining uploader/contact data.
+create table if not exists document_contact_capture_rollups (
+  id uuid primary key default gen_random_uuid(),
+  project_id text not null,
+  user_id text,
+  name text,
+  email text,
+  company text,
+  role text,
+  date_first_seen timestamptz not null default now(),
+  date_last_seen timestamptz not null default now(),
+  upload_count integer not null default 0,
+  related_documents jsonb not null default '[]'::jsonb,
+  related_rfis jsonb not null default '[]'::jsonb,
+  related_submittals jsonb not null default '[]'::jsonb,
+  related_contracts jsonb not null default '[]'::jsonb,
+  requires_admin_approval_before_overwrite boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists document_contact_capture_rollups_project_email_idx on document_contact_capture_rollups(project_id, lower(email));
+
+-- Status constraint reference: Uploaded, Processing, Classified, Needs Review, Approved for Filing, Filed, Distributed, Rejected, Archived.
+-- Classification overrides must insert document_audit_log rows with action = 'document.classification.override', user_id, previous_value_json, new_value_json, and reason in new_value_json/admin metadata.

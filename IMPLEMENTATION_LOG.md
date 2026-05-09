@@ -172,3 +172,13 @@ Open configuration:
 - Replaced the initial schema proposal with requested tables: `document_intake_uploads`, `document_versions`, `document_audit_log`, `document_links`, and `project_contact_directory`.
 - Added role/permission contract for login-required document upload/view/edit/file/approve/distribute/share/debug access across Admin, PM, Field, Accounting, Owner, Architect/Engineer, Subcontractor, Vendor, and Read Only roles.
 - Updated client intake and admin queue to use the structured classification fields and server storage folder recommendations.
+
+## 2026-05-09 — Document intake permissions, workflow, matching, and contact capture
+
+- Added explicit document permission rules: authorized upload only; Admin/Project Manager classification override only; sensitive financial access restricted to Accounting/Executives/Admin; contract restrictions; Field/RFI/Submittal/external visibility rules.
+- Added workflow decision engine for Uploaded → Processing → Classified → Needs Review → Approved for Filing → Filed → Distributed → Rejected → Archived.
+- Added confidence routing: >90% ready-to-file suggestion, 70–90% user confirmation, <70% Needs Review, sensitive/legal/financial/contract/insurance/lien release always human-confirmed.
+- Added audit event scaffold for every upload/action and classification override, including actor, reason, IP, and user agent.
+- Added uploader contact capture and extracted contact suggestions with admin-approval-before-overwrite behavior.
+- Expanded RFI/Submittal matching for issued/responded links, duplicate warnings, supported link fields, and create-new-record suggestions.
+- Expanded contract matching for agreements, purchase orders, scopes/exhibits/amendments/signed contracts and extraction targets.

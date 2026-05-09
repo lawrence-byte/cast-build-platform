@@ -118,3 +118,44 @@ These match the requested fields and should be applied only after production DB/
 ## Permission roles
 
 `api/_lib/document-permissions.js` defines login-required permissions for: Admin, Project Executive, Project Manager, Assistant Project Manager, Superintendent, Field Staff, Accounting, Owner, Consultant, Architect, Engineer, Subcontractor, Vendor, Read Only.
+
+## Permission and security rules
+
+- Only authorized logged-in users can upload documents.
+- Only Admin and Project Manager roles can override classification.
+- Sensitive Financials, Pay Applications, and Invoices are restricted to Admin, Project Executive, and Accounting.
+- Contract documents are restricted to Admin, Project Executive, Project Manager, or explicitly authorized/shared users.
+- Field documents can be viewed by Field Staff and above.
+- RFIs/Submittals can be viewed by assigned contacts and project team members.
+- External users only see documents shared with them or assigned to them.
+- Every upload/action/override must create an audit event.
+- Every upload stores uploader identity.
+- Every classification override stores who changed it and the reason.
+
+## Workflow statuses and routing
+
+Statuses: Uploaded, Processing, Classified, Needs Review, Approved for Filing, Filed, Distributed, Rejected, Archived.
+
+Rules:
+- Confidence > 90% can suggest `Ready to File` / `Approved for Filing` when not sensitive and not a duplicate/link-risk.
+- Confidence 70–90% requires user confirmation.
+- Confidence < 70% routes to `Needs Review`.
+- Financial, contract, insurance, lien release, and legal documents always require human confirmation.
+- RFI/Submittal linked-record matches require confirmation before linking.
+- Duplicate files warn the user and suggest creating a new version instead of a new document.
+- Newer versions warn before filing; older versions can be archived or superseded.
+
+## Intelligent contact capture
+
+Uploader contact rollups capture name, email, company, role, project, first/last seen, upload count, related documents/RFIs/Submittals/Contracts. Extracted document emails become project directory add/update suggestions. Existing contact data is never overwritten without admin approval.
+
+## Category matching details
+
+### RFIs
+Detects RFI, Request for Information, RFI Number, Question, Response, Answer, Architect Response, Engineer Response. Matches numbers against existing RFI logs, proposes issued/responded RFI links, and supports attachments, Dropbox links, server file links, and email distribution history.
+
+### Submittals
+Detects Submittal, Shop Drawing, Product Data, Sample, Specification Section, Architect Review, Reviewed, Revise and Resubmit, Approved, Approved as Noted. Matches numbers against existing submittal logs, proposes issued/responded links, and supports drawing/product data links, Dropbox links, server file links, review comments, and email distribution history.
+
+### Contracts
+Detects owner contracts, subcontract agreements, consultant agreements, purchase orders, scopes of work, exhibits, insurance exhibits, amendments, and signed contracts. Extraction targets include parties, dates, contract amount, project, scope title, company, insurance requirements, retainage, payment terms, signature status, vendor, cost code, and budget line item.
