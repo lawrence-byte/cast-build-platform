@@ -409,9 +409,21 @@ if (!scheduleSourceIndex.source_status || !scheduleSourceIndex.publish_guardrail
 }
 const publicIndex = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
 const castBuildCss = fs.readFileSync(path.join(root, 'public/cast-build.css'), 'utf8');
-if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain\.html/.test(publicIndex)) {
-  console.error('CAST Build landing must link to Schedule Brain and Schedule Brain must link to Alüm workbench.');
+if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage)) {
+  console.error('Schedule Brain must link to Alüm workbench.');
   failed = true;
+}
+for (const removedLandingToolCard of ['/schedule-brain.html', '/construction-cost-forecasting.html', '/document-tools.html']) {
+  if (publicIndex.includes(`href="${removedLandingToolCard}"`)) {
+    console.error(`CAST Build landing must not expose standalone tool card: ${removedLandingToolCard}`);
+    failed = true;
+  }
+}
+for (const retainedLandingSignal of ['Project Home', 'RFI Log']) {
+  if (!publicIndex.includes(retainedLandingSignal)) {
+    console.error(`CAST Build landing missing retained platform entry: ${retainedLandingSignal}`);
+    failed = true;
+  }
 }
 if (!publicIndex.includes('/assets/brand/cast-community-logo-transparent.png') || !/alt="CAST COMMUNITY"/.test(publicIndex)) {
   console.error('CAST Build landing top-left must use the transparent CAST Community logo.');
@@ -577,6 +589,12 @@ if (!/alum-management-control-center\.html/.test(alumReplicaPage) || !/alum-sche
 if (!/alum-command-center\.html/.test(alumReplicaPage) || !/alum-meeting-minutes\.html/.test(alumReplicaPage) || !/alum-schedule\.html/.test(alumReplicaPage) || !/alum-closeout\.html/.test(alumReplicaPage)) {
   console.error('Alüm replica page must link to command center, meeting minutes, schedule control, and closeout modules.');
   failed = true;
+}
+for (const integratedToolSignal of ['Schedule intelligence', 'Cost engine', 'Document tools']) {
+  if (!alumReplicaPage.includes(integratedToolSignal)) {
+    console.error(`Alüm module map must integrate landing tool stack signal: ${integratedToolSignal}`);
+    failed = true;
+  }
 }
 for (const requiredModule of ['alum-rfis.html', 'alum-submittals.html', 'alum-change-events.html', 'alum-daily-log.html']) {
   if (!alumReplicaPage.includes(requiredModule)) {

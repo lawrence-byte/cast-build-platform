@@ -229,3 +229,15 @@ Validation:
 - `npm test`
 - `npm run build`
 - `git diff --check`
+
+## 2026-05-09 — Landing page module-link consolidation
+
+- Removed standalone landing-page cards for Schedule Intelligence, Cost Engine, Document Tools, and CAST BUILD A.O so the landing page stays focused on Project Home plus the top RFI Log action entry.
+- Updated the Project Home card and Alüm module map to route schedule intelligence, cost engine, document tools, and CAST BUILD A.O workflow signals into the appropriate platform modules instead of exposing separate landing shortcuts.
+- Added static audit coverage so standalone tool cards do not return to the landing page and the Alüm module map keeps the integrated tool-stack signals.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Local browser smoke at `/` confirming only Project Home and RFI Log cards remain.
