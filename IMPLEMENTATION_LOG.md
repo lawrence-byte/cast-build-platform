@@ -291,3 +291,16 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Local desktop and mobile browser screenshot QA confirmed no content/CTA conflicts.
+
+## 2026-05-09 — Landing sketch style-reference refinement
+
+- Reworked the Alüm landing building sketch to better match Lawrence's architectural hand-rendering reference: denser ink facade hatching, more expressive linework, stronger overhang/balcony shadow texture, and a taller centered building-only composition.
+- Preserved the transparent linen-line treatment and removed street/sidewalk/landscape context.
+- Updated image dimensions to `898×1032`, kept the asset decorative (`alt=""`, `aria-hidden="true"`, async decoding), and repositioned the sketch farther right/smaller so it no longer conflicts with the landing CTA.
+- Updated static audit coverage for the new crop and dimensions.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Desktop and mobile browser screenshot QA; final pass had no CTA/content blockers.

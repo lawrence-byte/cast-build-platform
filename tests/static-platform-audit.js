@@ -447,7 +447,7 @@ if (!publicIndex.includes('cast-landing-building-sketch') || !publicIndex.includ
   console.error('CAST Build landing must include the Alüm linen building sketch asset.');
   failed = true;
 }
-if (!/class="cast-landing-building-sketch"[^>]*alt=""[^>]*width="937"[^>]*height="1075"[^>]*aria-hidden="true"/.test(publicIndex)) {
+if (!/class="cast-landing-building-sketch"[^>]*alt=""[^>]*width="898"[^>]*height="1032"[^>]*aria-hidden="true"/.test(publicIndex)) {
   console.error('CAST Build landing sketch must remain decorative with explicit dimensions for CLS safety.');
   failed = true;
 }
@@ -463,7 +463,7 @@ if (!/\.automation-top img\{width:190px;height:auto/.test(castBuildCss)) {
   console.error('CAST Build landing must use reduced CAST Automation desktop sizing.');
   failed = true;
 }
-if (!/\.cast-landing-building-sketch\{[^}]*right:clamp\(-420px,-25vw,-300px\);[^}]*width:min\(720px,58vw\)/.test(castBuildCss)) {
+if (!/\.cast-landing-building-sketch\{[^}]*right:clamp\(-580px,-36vw,-470px\);[^}]*width:min\(620px,49vw\)/.test(castBuildCss)) {
   console.error('CAST Build landing building sketch must sit cropped on the far right.');
   failed = true;
 }
