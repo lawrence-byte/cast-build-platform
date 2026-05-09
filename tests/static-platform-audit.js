@@ -485,6 +485,12 @@ if (!/Schedule Dashboard/.test(schedulePage) || !/Field Update Intake/.test(sche
   console.error('Schedule dashboard must include schedule items, huddle, field intake, constraints, lookahead, and draft-only correspondence posture.');
   failed = true;
 }
+for (const requiredSchedulePageSignal of ['schedule-modern', 'Modern CAST Build schedule page alignment', 'schedule-hero{background:transparent', 'schedule-row{grid-template-columns:96px minmax(180px,1.2fr)']) {
+  if (!schedulePage.includes(requiredSchedulePageSignal)) {
+    console.error(`Alüm schedule page missing modern project-page alignment guard: ${requiredSchedulePageSignal}`);
+    failed = true;
+  }
+}
 for (const forbiddenSchedulePageCopy of ['Field-First Schedule Intelligence', 'Voice-first schedule brain', 'Field reality into schedule pressure', 'Less admin']) {
   if (schedulePage.includes(forbiddenSchedulePageCopy)) {
     console.error(`Alüm schedule page must not expose slogan/catch-line copy: ${forbiddenSchedulePageCopy}`);

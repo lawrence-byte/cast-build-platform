@@ -118,7 +118,7 @@
     .alum-project-nav-spacer .app{padding-left:272px!important}
     .alum-project-nav-spacer .project-dashboard-wrapper{display:block!important}
     .alum-project-nav-spacer .project-main-content{margin-left:272px!important;width:auto!important}
-    .alum-project-nav-spacer .dashboard{padding-left:24px!important}
+    .alum-project-nav-spacer .dashboard{margin-left:0!important;padding-left:24px!important}
     .alum-project-nav-spacer>.wrap{margin-left:272px!important;width:calc(100% - 272px)!important;display:block!important;grid-template-columns:1fr!important;min-width:0!important}
     .alum-project-nav-spacer>.wrap>.main{max-width:none!important;width:100%!important;box-sizing:border-box!important}
 

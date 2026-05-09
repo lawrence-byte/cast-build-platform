@@ -110,6 +110,9 @@ if (/padding:10px 22px 10px 296px/.test(nav)) {
 if (!/\.alum-section-rail\{[^}]*inset:70px auto 0 0;/.test(nav)) {
   fail('Alüm section rail must start below the sticky top bar so ALÜM umlaut is visible');
 }
+if (!/\.alum-project-nav-spacer \.dashboard\{margin-left:0!important;padding-left:24px!important\}/.test(nav)) {
+  fail('legacy Alüm dashboard pages must not double-offset beside the generated section rail');
+}
 if (!/\.alum-section-rail__brand img\{display:none!important\}/.test(nav)) {
   fail('left rail must not render a duplicate CAST Build logo below the top bar');
 }
