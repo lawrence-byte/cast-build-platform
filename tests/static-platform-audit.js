@@ -211,9 +211,10 @@ try {
   };
   vm.createContext(xlsxContext);
   vm.runInContext(fs.readFileSync(path.join(root, 'public/cast-xlsx-export.js'), 'utf8'), xlsxContext);
-  xlsxContext.window.CastXlsxExport.downloadXlsx('audit.csv', 'Audit', [{ key: 'label', header: 'Label' }, { key: 'amount', header: 'Amount' }], [{ label: 'Excel export', amount: 42 }]);
+  xlsxContext.window.CastXlsxExport.downloadXlsx('audit.csv', 'Audit/Bad:*?', [{ key: 'label', header: 'Label' }, { key: 'amount', header: 'Amount' }], [{ label: 'Excel export', amount: 42 }]);
   const workbook = XLSX.read(capturedXlsxBlob.toBuffer(), { type: 'buffer' });
   const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+  if (workbook.SheetNames[0] !== 'Audit Bad') fail('XLSX export helper did not sanitize Excel sheet names.');
   if (rows[0][0] !== 'Label' || rows[1][1] !== 42) fail('XLSX export helper produced an unreadable workbook.');
 } catch (err) {
   fail(`XLSX export helper validation failed: ${err.message}`);
