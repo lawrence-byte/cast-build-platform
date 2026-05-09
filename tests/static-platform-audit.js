@@ -158,8 +158,12 @@ if (!/\.cast-family-top img\{width:95px;height:auto/.test(castBuildCss) || !/\.c
   console.error('CAST Build landing must use reduced CAST Community top-left sizing and reduced CAST Build desktop sizing.');
   failed = true;
 }
-if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,86vw\)/.test(castBuildCss)) {
-  console.error('CAST Build landing must use reduced mobile CAST Build sizing.');
+if (!/\.automation-top img\{width:190px;height:auto/.test(castBuildCss)) {
+  console.error('CAST Build landing must use reduced CAST Automation desktop sizing.');
+  failed = true;
+}
+if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,86vw\)/.test(castBuildCss) || !/@media\(max-width:900px\)[\s\S]*\.automation-top img\{width:66px;height:auto/.test(castBuildCss)) {
+  console.error('CAST Build landing must use reduced mobile CAST Build and CAST Automation sizing.');
   failed = true;
 }
 const projectCss = fs.readFileSync(path.join(root, 'public/projects/golden-hill-procore.css'), 'utf8');
