@@ -154,3 +154,22 @@ Validation:
 
 Open risks:
 - Historical/source filenames can still reference `.csv` in safe metadata because they describe imported/source artifacts, not user-facing spreadsheet export behavior.
+
+## 2026-05-09 — API/auth fail-closed repair pass
+
+- Audited the remaining backend/auth/distribution gap and found `/api/*` was still rewritten to a static JSON placeholder, returning a misleading scaffold response for routes that should be authentication-required.
+- Added Vercel serverless API contract handlers in `api/` for project-controls routes.
+- Protected RFI, Submittal, ProjectAccess, distribution, and contact routes now fail closed:
+  - unauthenticated requests return `401 AUTH_REQUIRED`;
+  - authenticated requests without configured backend/database return `501 BACKEND_NOT_CONFIGURED`;
+  - configured-but-unimplemented routes return `501 HANDLER_NOT_IMPLEMENTED`.
+- Removed the `/api/:path*` static rewrite from `vercel.json` so API functions, not static placeholder JSON, own API behavior.
+- Added regression tests to prevent reintroducing static `/api/*` placeholder rewrites and to verify protected API fail-closed behavior.
+
+Validation:
+- `node --check api/_lib/project-controls-api.js && node --check 'api/[...path].js' && node --check api/index.js`
+- `node tests/project-controls-api-tests.js`
+- `npm test`
+
+Open risks:
+- This is a fail-closed repair, not a full production backend. Real record reads/writes, email distribution, login sessions, ProjectAccess grants, and audit persistence still require connecting a real backend/database/auth provider.
