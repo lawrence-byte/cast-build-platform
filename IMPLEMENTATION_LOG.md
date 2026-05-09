@@ -241,3 +241,15 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Local browser smoke at `/` confirming only Project Home and RFI Log cards remain.
+
+## 2026-05-09 — Landing page Alüm project card label
+
+- Renamed the landing page `Project Home` card to `ALÜM PROJECT`.
+- Simplified the card content so the label sits vertically centered in the card while retaining the same horizontal card position and destination.
+- Updated static audit coverage for the retained landing entry.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Local mobile browser smoke confirming `ALÜM PROJECT` is vertically centered above `RFI LOG`.

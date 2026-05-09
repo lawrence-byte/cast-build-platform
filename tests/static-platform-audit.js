@@ -419,7 +419,7 @@ for (const removedLandingToolCard of ['/schedule-brain.html', '/construction-cos
     failed = true;
   }
 }
-for (const retainedLandingSignal of ['Project Home', 'RFI Log']) {
+for (const retainedLandingSignal of ['ALÜM PROJECT', 'RFI Log']) {
   if (!publicIndex.includes(retainedLandingSignal)) {
     console.error(`CAST Build landing missing retained platform entry: ${retainedLandingSignal}`);
     failed = true;
