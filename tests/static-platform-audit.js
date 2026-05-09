@@ -419,9 +419,13 @@ for (const removedLandingToolCard of ['/schedule-brain.html', '/construction-cos
     failed = true;
   }
 }
-for (const retainedLandingSignal of ['ALÜM PROJECT', 'RFI Log']) {
-  if (!publicIndex.includes(retainedLandingSignal)) {
-    console.error(`CAST Build landing missing retained platform entry: ${retainedLandingSignal}`);
+if (!publicIndex.includes('ALÜM PROJECT')) {
+  console.error('CAST Build landing missing retained platform entry: ALÜM PROJECT');
+  failed = true;
+}
+for (const removedLandingProjectShortcut of ['RFI Log', 'href="/projects/alum-rfis.html"']) {
+  if (publicIndex.includes(removedLandingProjectShortcut)) {
+    console.error(`CAST Build landing must consolidate project shortcut into portals: ${removedLandingProjectShortcut}`);
     failed = true;
   }
 }

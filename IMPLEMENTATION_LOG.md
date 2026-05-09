@@ -253,3 +253,15 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Local mobile browser smoke confirming `ALÜM PROJECT` is vertically centered above `RFI LOG`.
+
+## 2026-05-09 — Landing page RFI consolidation
+
+- Removed the standalone `RFI Log` card from the CAST Build landing page so the landing page only presents the `ALÜM PROJECT` platform entry.
+- Kept RFI access consolidated inside the project portals: Alüm module map, persistent Documents rail, and Documents center actions still route to `/projects/alum-rfis.html` and `#create-rfi`.
+- Added static audit coverage to prevent the landing page from reintroducing the direct RFI shortcut.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Local mobile browser smoke confirming only `ALÜM PROJECT` remains on the landing page.
