@@ -304,3 +304,15 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Desktop and mobile browser screenshot QA; final pass had no CTA/content blockers.
+
+## 2026-05-09 — Landing sketch 30% left shift
+
+- Moved the desktop Alüm building sketch approximately 30% left by adjusting its right-side crop from `clamp(-580px,-36vw,-470px)` to `clamp(-406px,-25.2vw,-329px)`.
+- Kept the mobile sketch safely off to the right with lower opacity to avoid competing with the CAST Build headline and `ALÜM PROJECT` CTA.
+- Updated static audit coverage for the new desktop crop position.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Desktop and mobile browser screenshot QA; mobile adjusted after first pass to remove content conflicts.
