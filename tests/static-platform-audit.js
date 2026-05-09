@@ -467,6 +467,10 @@ if (!/\.cast-landing-building-sketch\{[^}]*right:clamp\(-406px,-25\.2vw,-329px\)
   console.error('CAST Build landing building sketch must sit cropped on the far right.');
   failed = true;
 }
+if (!/\.cast-landing-building-sketch\{[^}]*transform:translateY\(-50%\) scaleY\(1\.3\);[^}]*transform-origin:center center/.test(castBuildCss)) {
+  console.error('CAST Build landing building sketch must be vertically stretched and centered.');
+  failed = true;
+}
 if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,86vw\)/.test(castBuildCss) || !/@media\(max-width:900px\)[\s\S]*\.automation-top img\{width:66px;height:auto/.test(castBuildCss)) {
   console.error('CAST Build landing must use reduced mobile CAST Build and CAST Automation sizing.');
   failed = true;

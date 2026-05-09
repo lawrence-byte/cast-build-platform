@@ -316,3 +316,15 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Desktop and mobile browser screenshot QA; mobile adjusted after first pass to remove content conflicts.
+
+## 2026-05-09 — Landing sketch vertical stretch
+
+- Vertically stretched the Alüm landing building sketch by 30% with `scaleY(1.3)` while preserving centered placement via `transform-origin:center center`.
+- Applied the centered vertical stretch to desktop and mobile sketch placement without changing the underlying transparent PNG asset.
+- Added static audit coverage to keep the 30% vertical stretch and centered transform origin in place.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Desktop and mobile browser screenshot QA confirmed no CTA/content conflict.
