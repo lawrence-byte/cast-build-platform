@@ -3,177 +3,159 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Alüm Schedule Command Center — CAST Build</title>
-  <link rel="stylesheet" href="/projects/golden-hill-procore.css">
+  <title>Alüm Schedule Dashboard — CAST Build</title>
+  <meta name="description" content="Alüm schedule dashboard for work packages, lookahead, huddles, constraints, field updates, and recovery planning.">
+  <link rel="stylesheet" href="/cast-build.css">
+  <link rel="stylesheet" href="/cast-build-components.css">
+  <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
+  <script src="/assets/brand/brand.js" defer></script>
+  <script src="/cast-build-shell.js" defer></script>
   <style>
-
     /* Modern CAST Build schedule page alignment */
-    .schedule-modern.dashboard{max-width:none;width:100%;gap:16px;padding:32px 40px 56px!important}
-    .schedule-modern .card{background:var(--white);border:1px solid var(--sand-light);box-shadow:none;min-width:0;overflow:hidden}
-    .schedule-modern .head{min-height:62px;padding:18px 22px;background:var(--white)}
-    .schedule-modern .head h2{font-size:1.18rem;letter-spacing:.16em}
-    .schedule-modern .body{padding:20px 22px}
-    .schedule-modern .schedule-hero{background:transparent;color:var(--graphite);border:0;border-bottom:1px solid var(--sand-light);box-shadow:none;min-height:0}
-    .schedule-modern .schedule-hero:after{display:none}
-    .schedule-modern .schedule-hero .body{padding:0 0 26px}
-    .schedule-modern .eyebrow{color:var(--bison);font-size:.7rem;letter-spacing:.15em}
-    .schedule-modern .hero-title{font-size:2.4rem;line-height:1.08;color:var(--dark);letter-spacing:.04em;margin:8px 0 8px}
-    .schedule-modern .hero-copy{color:var(--muted);max-width:760px;font-size:.92rem;line-height:1.55}
-    .schedule-modern .quick,.schedule-modern .tinybtn{display:inline-flex;align-items:center;justify-content:center;min-height:34px;border:1px solid var(--sand-light);background:var(--white);color:var(--graphite);padding:8px 12px;font-size:.65rem;letter-spacing:.12em}
-    .schedule-modern .quick:hover,.schedule-modern .tinybtn:hover{border-color:var(--bison);color:var(--bison)}
-    .schedule-modern .metric{background:var(--white);padding:18px;border:1px solid rgba(212,201,178,.8)}
-    .schedule-modern .metric strong{font-size:2.15rem}
-    .schedule-modern input,.schedule-modern select,.schedule-modern textarea{min-height:42px;background:var(--white)}
-    .schedule-modern .schedule-row{grid-template-columns:96px minmax(180px,1.2fr) 118px 92px 104px;min-width:760px}
-    .schedule-modern .schedule-list{max-height:720px;background:var(--white);overflow:auto}
-    .schedule-modern .activity-drawer{top:92px}
-    .schedule-modern .lane,.schedule-modern .pulse-card,.schedule-modern .admin-panel{background:var(--white)}
-    .lookahead-gantt{display:grid;gap:10px;min-width:920px}.lookahead-gantt__calendar,.lookahead-gantt__row{display:grid;grid-template-columns:minmax(230px,.8fr) repeat(14,minmax(34px,1fr));gap:4px;align-items:center}.lookahead-gantt__label{min-width:0}.lookahead-gantt__task{display:block;font-family:var(--font-heading);font-size:1.02rem;font-weight:500;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lookahead-gantt__meta{display:block;margin-top:3px;color:var(--muted);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lookahead-gantt__day{min-height:28px;display:flex;align-items:center;justify-content:center;background:var(--ivory-alt);border:1px solid rgba(212,201,178,.65);font-family:var(--font-caption);font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sand);text-align:center}.lookahead-gantt__cell{height:28px;background:rgba(212,201,178,.18);border:1px solid rgba(212,201,178,.34)}.lookahead-gantt__bar{height:28px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:var(--bison);color:var(--white);font-family:var(--font-caption);font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;overflow:hidden;white-space:nowrap}.lookahead-gantt__bar--active_now{background:var(--danger)}.lookahead-gantt__bar--starts_soon{background:var(--bison)}.lookahead-gantt__bar--verify_complete{background:var(--warning);color:var(--dark)}.lookahead-gantt__bar--complete{background:var(--success)}.lookahead-gantt__bar--critical{background:#141414;color:var(--ivory)}.lookahead-gantt__bar--watch{background:var(--danger)}.lookahead-gantt__bar--coordination{background:var(--warning);color:var(--dark)}.lookahead-gantt__empty{padding:24px;color:var(--muted);border:1px solid var(--sand-light);background:var(--ivory-alt)}.critical-gantt{min-width:980px}.critical-gantt .lookahead-gantt__calendar,.critical-gantt .lookahead-gantt__row{grid-template-columns:minmax(260px,.9fr) repeat(10,minmax(58px,1fr))}.critical-gantt .lookahead-gantt__cell,.critical-gantt .lookahead-gantt__bar{height:30px}.critical-basis{display:inline-block;margin-top:5px;color:var(--bison);font-family:var(--font-caption);font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
-    @media(max-width:1050px){.schedule-modern.dashboard{padding:18px 14px 44px!important}.schedule-modern .schedule-hero .body{padding-bottom:18px}.schedule-modern .hero-title{font-size:2rem}.schedule-modern .body{padding:14px}.schedule-modern .schedule-board,.schedule-modern .pulse,.schedule-modern .kanban,.schedule-modern .mini-kpis,.schedule-modern .schedule-control-bar{grid-template-columns:1fr}.schedule-modern .activity-drawer{position:relative;top:auto}.schedule-modern .schedule-list{max-height:none}.schedule-modern .schedule-row{min-width:680px}.lookahead-gantt{min-width:820px}.lookahead-gantt__calendar,.lookahead-gantt__row{grid-template-columns:minmax(190px,.8fr) repeat(14,minmax(30px,1fr))}}
-    .schedule-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--dark),#2b2423 52%,var(--bison));color:var(--ivory);border-color:rgba(212,201,178,.45)}
-    .schedule-hero:after{content:"";position:absolute;right:26px;bottom:18px;width:260px;height:170px;background:url('/assets/brand/cast-build-logo-transparent.png') center/contain no-repeat;opacity:.09;pointer-events:none}.schedule-hero .body{position:relative;z-index:1}.eyebrow{font-family:var(--font-caption);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand-light);font-weight:700}.hero-title{font-family:var(--font-heading);font-size:3rem;letter-spacing:.04em;line-height:1;margin:10px 0 12px;color:var(--ivory)}.hero-copy{max-width:920px;color:rgba(245,243,239,.82);font-size:1rem}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.hero-actions .quick{background:rgba(245,243,239,.06)}.schedule-control-bar{display:grid;grid-template-columns:1.2fr repeat(4,minmax(140px,.6fr));gap:10px}.schedule-control-bar input,.schedule-control-bar select{width:100%}.schedule-board{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(360px,.75fr);gap:16px}.schedule-list{max-height:780px;overflow:auto;border:1px solid rgba(212,201,178,.7)}.schedule-row{display:grid;grid-template-columns:96px 1.2fr 118px 92px 104px;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(212,201,178,.55);background:var(--white);cursor:pointer}.schedule-row:hover,.schedule-row.active{background:var(--ivory-alt)}.schedule-row strong{font-family:var(--font-heading);font-size:1.08rem;font-weight:500;color:var(--dark);line-height:1.15}.schedule-row small{display:block;color:var(--muted);font-size:.74rem;margin-top:4px}.status-dot{width:10px;height:10px;display:inline-block;margin-right:6px;background:var(--info)}.status-complete .status-dot{background:var(--success)}.status-verify_complete .status-dot{background:var(--warning)}.status-active_now .status-dot{background:var(--danger)}.status-starts_soon .status-dot{background:var(--bison)}.timeline-cell{height:8px;background:rgba(212,201,178,.28);position:relative}.timeline-cell span{position:absolute;left:0;top:0;bottom:0;background:var(--bison);min-width:6px}.activity-drawer{position:sticky;top:86px;align-self:start}.drawer-title{font-family:var(--font-heading);font-size:1.7rem;line-height:1.05;color:var(--dark);margin:0 0 8px}.drawer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.drawer-grid label{display:grid;gap:5px;font-family:var(--font-caption);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--sand);font-weight:700}.scenario-note{min-height:92px}.mini-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.lane{border:1px solid var(--sand-light);background:var(--ivory-alt);min-height:180px}.lane h3{margin:0;padding:12px 14px;border-bottom:1px solid var(--sand-light);font-family:var(--font-caption);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);font-weight:700}.lane-card{margin:10px;background:var(--white);border-left:3px solid var(--bison);padding:12px;font-size:.8rem}.lane-card strong{display:block;color:var(--dark);font-family:var(--font-heading);font-size:1.05rem;font-weight:500}.pulse{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.pulse-card{border:1px solid var(--sand-light);padding:16px;background:var(--white)}.pulse-card strong{display:block;font-family:var(--font-heading);font-size:1.35rem;color:var(--dark);font-weight:400}.scenario-pill{background:rgba(69,40,44,.12);color:var(--bison);border:1px solid rgba(69,40,44,.2);padding:4px 8px;font-size:.62rem;text-transform:uppercase;letter-spacing:.11em;font-weight:700}.admin-panel{border:1px solid var(--sand-light);background:var(--ivory-alt);padding:16px}.admin-panel h3{font-family:var(--font-heading);font-weight:400;font-size:1.4rem;margin:0 0 8px;color:var(--dark)}@media(max-width:1200px){.schedule-board,.pulse,.kanban,.mini-kpis,.schedule-control-bar{grid-template-columns:1fr}.schedule-row{grid-template-columns:1fr}.activity-drawer{position:relative;top:auto}.hero-title{font-size:2.2rem}}
+    .schedule-modern{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;min-width:0}.schedule-modern .span-12{grid-column:span 12}.schedule-modern .span-8{grid-column:span 8}.schedule-modern .span-7{grid-column:span 7}.schedule-modern .span-6{grid-column:span 6}.schedule-modern .span-5{grid-column:span 5}.schedule-modern .span-4{grid-column:span 4}
+    .schedule-workbench{--schedule-soft:rgba(212,201,178,.28)}.schedule-workbench .project-panel{min-width:0;overflow:hidden}.schedule-workbench .panel-body{padding:18px 22px}.schedule-workbench .schedule-hero{background:transparent;border:1px solid var(--sand-light);border-left:4px solid var(--bison);padding:20px 22px}.schedule-workbench .schedule-hero p{color:var(--muted);max-width:900px;font-size:.94rem;line-height:1.65}.schedule-workbench .schedule-hero .eyebrow{font-family:var(--font-caption);font-size:.64rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--bison);margin-bottom:8px}.schedule-workbench .hero-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}.schedule-workbench .quick,.schedule-workbench .tinybtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--sand-light);background:var(--white);color:var(--graphite);font-family:var(--font-caption);font-size:.64rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;min-height:34px;padding:8px 12px;cursor:pointer;transition:background .18s ease,color .18s ease,border-color .18s ease}.schedule-workbench .quick:hover,.schedule-workbench .tinybtn:hover{background:var(--dark);border-color:var(--dark);color:var(--ivory)}.schedule-workbench .tinybtn:focus-visible,.schedule-workbench .quick:focus-visible,.schedule-workbench input:focus-visible,.schedule-workbench select:focus-visible,.schedule-workbench textarea:focus-visible{outline:2px solid var(--bison);outline-offset:2px}.schedule-workbench .schedule-control-bar{display:grid;grid-template-columns:minmax(260px,1.2fr) repeat(4,minmax(140px,.65fr));gap:10px}.schedule-workbench .schedule-control-bar label,.schedule-workbench .field-form label,.schedule-workbench .notice-form label{display:grid;gap:6px;font-family:var(--font-caption);font-size:.6rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--sand)}.schedule-workbench .schedule-control-bar input,.schedule-workbench .schedule-control-bar select,.schedule-workbench .field-form input,.schedule-workbench .field-form textarea,.schedule-workbench .notice-form input,.schedule-workbench .notice-form textarea,.schedule-workbench .drawer-grid input,.schedule-workbench .drawer-grid select,.schedule-workbench .scenario-note{width:100%;border:1px solid var(--sand-light);background:var(--white);color:var(--graphite);font:inherit;font-size:.86rem;min-height:40px;padding:10px 12px}.schedule-workbench textarea{resize:vertical}.schedule-board{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(340px,.8fr);gap:16px}.schedule-list{background:var(--white);max-height:720px;overflow:auto}.schedule-row{grid-template-columns:96px minmax(180px,1.2fr) 118px 92px 104px minmax(110px,.45fr);display:grid;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(212,201,178,.58);background:var(--white);cursor:pointer}.schedule-row:hover,.schedule-row.active{background:var(--ivory-alt)}.schedule-row strong{display:block;font-family:var(--font-heading);font-size:1.08rem;font-weight:500;color:var(--dark);line-height:1.14}.schedule-row small{display:block;color:var(--muted);font-size:.74rem;margin-top:4px}.status-dot{width:9px;height:9px;display:inline-block;margin-right:7px;border-radius:99px;background:var(--info)}.status-complete .status-dot{background:var(--success)}.status-verify_complete .status-dot{background:var(--warning)}.status-active_now .status-dot{background:var(--danger)}.status-starts_soon .status-dot{background:var(--bison)}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(122,139,154,.3);border-radius:999px;background:rgba(122,139,154,.12);color:var(--info);font-family:var(--font-caption);font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;white-space:nowrap}.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.pill.open{background:rgba(139,74,74,.14);border-color:rgba(139,74,74,.32);color:var(--danger)}.pill.draft{background:rgba(166,139,75,.14);border-color:rgba(166,139,75,.32);color:var(--warning)}.scenario-pill{display:inline-block;margin-top:6px;border:1px solid rgba(69,40,44,.22);background:rgba(69,40,44,.1);color:var(--bison);font-family:var(--font-caption);font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px}.timeline-cell{height:8px;background:rgba(212,201,178,.34);position:relative}.timeline-cell span{position:absolute;inset:0 auto 0 0;background:var(--bison);min-width:6px}.activity-drawer{position:sticky;top:88px;align-self:start}.drawer-title{font-family:var(--font-heading);font-size:1.58rem;font-weight:400;line-height:1.05;color:var(--dark);margin:0 0 8px}.drawer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.drawer-grid label{display:grid;gap:6px;font-family:var(--font-caption);font-size:.6rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--sand)}.scenario-note{min-height:98px}.source{font-size:.82rem;color:var(--muted);line-height:1.55}.compact{margin-top:14px}.wide-note{background:rgba(212,201,178,.18);border:1px solid var(--sand-light);border-left:4px solid var(--bison);padding:14px 16px;color:var(--graphite);font-size:.84rem;line-height:1.55}.field-form,.notice-form{display:grid;gap:12px}.field-grid,.notice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.notice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lookahead-gantt{display:grid;gap:10px;min-width:920px}.lookahead-gantt__calendar,.lookahead-gantt__row{display:grid;grid-template-columns:minmax(230px,.8fr) repeat(14,minmax(34px,1fr));gap:4px;align-items:center}.lookahead-gantt__label{min-width:0}.lookahead-gantt__task{display:block;font-family:var(--font-heading);font-size:1.02rem;font-weight:500;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lookahead-gantt__meta{display:block;margin-top:3px;color:var(--muted);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lookahead-gantt__day{min-height:28px;display:flex;align-items:center;justify-content:center;background:var(--ivory-alt);border:1px solid rgba(212,201,178,.65);font-family:var(--font-caption);font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sand);text-align:center}.lookahead-gantt__cell{height:28px;background:rgba(212,201,178,.18);border:1px solid rgba(212,201,178,.34)}.lookahead-gantt__bar{height:28px;display:flex;align-items:center;justify-content:center;padding:0 8px;background:var(--bison);color:var(--white);font-family:var(--font-caption);font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;overflow:hidden;white-space:nowrap}.lookahead-gantt__bar--active_now{background:var(--danger)}.lookahead-gantt__bar--starts_soon{background:var(--bison)}.lookahead-gantt__bar--verify_complete{background:var(--warning);color:var(--dark)}.lookahead-gantt__bar--complete{background:var(--success)}.lookahead-gantt__bar--critical{background:#141414;color:var(--ivory)}.lookahead-gantt__bar--watch{background:var(--danger)}.lookahead-gantt__bar--coordination{background:var(--warning);color:var(--dark)}.lookahead-gantt__empty{padding:24px;color:var(--muted);border:1px solid var(--sand-light);background:var(--ivory-alt)}.critical-gantt{min-width:980px}.critical-gantt .lookahead-gantt__calendar,.critical-gantt .lookahead-gantt__row{grid-template-columns:minmax(260px,.9fr) repeat(10,minmax(58px,1fr))}.critical-gantt .lookahead-gantt__cell,.critical-gantt .lookahead-gantt__bar{height:30px}.critical-basis{display:inline-block;margin-top:5px;color:var(--bison);font-family:var(--font-caption);font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.lane{border:1px solid var(--sand-light);background:var(--ivory-alt);min-height:180px}.lane h3{margin:0;padding:12px 14px;border-bottom:1px solid var(--sand-light);font-family:var(--font-caption);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);font-weight:800}.lane-card{margin:10px;background:var(--white);border-left:3px solid var(--bison);padding:12px;font-size:.8rem}.lane-card strong{display:block;color:var(--dark);font-family:var(--font-heading);font-size:1.05rem;font-weight:500}.modulemap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.modulemap a{display:block;min-height:96px;background:var(--ivory-alt);border:1px solid var(--sand-light);border-left:3px solid var(--bison);padding:14px;text-decoration:none;color:var(--graphite)}.modulemap strong{display:block;font-family:var(--font-heading);font-size:1.18rem;font-weight:400;color:var(--dark);margin-bottom:5px}.modulemap span{font-size:.82rem;color:var(--muted);line-height:1.45}.label{font-family:var(--font-caption);font-size:.64rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--sand)}.empty{padding:36px;text-align:center;color:var(--muted)}.empty h3{font-family:var(--font-heading);font-size:1.45rem;font-weight:400;color:var(--dark);margin-bottom:8px}.project-table{min-width:760px}.table-panel-body{padding:0}.cb-table-wrap{border:0}.schedule-workbench .project-kpi-grid{grid-column:1/-1;margin-bottom:0}.schedule-workbench .schedule-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}.schedule-board>article.project-panel{overflow:auto}.schedule-workbench .project-kpi-card{margin:0}.schedule-workbench .project-kpi-card .kpi-value{font-variant-numeric:tabular-nums}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:1180px){.schedule-board,.field-grid,.notice-grid,.kanban{grid-template-columns:1fr}.schedule-workbench .schedule-metrics{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.schedule-modern .span-8,.schedule-modern .span-7,.schedule-modern .span-6,.schedule-modern .span-5,.schedule-modern .span-4{grid-column:span 12}.activity-drawer{position:relative;top:auto}.schedule-workbench .schedule-control-bar{grid-template-columns:1fr}.schedule-row{min-width:920px}.lookahead-gantt{min-width:820px}.lookahead-gantt__calendar,.lookahead-gantt__row{grid-template-columns:minmax(190px,.8fr) repeat(14,minmax(30px,1fr))}}@media(max-width:1050px){.schedule-modern{grid-template-columns:1fr}.schedule-modern .span-12,.schedule-modern .span-8,.schedule-modern .span-7,.schedule-modern .span-6,.schedule-modern .span-5,.schedule-modern .span-4{grid-column:span 1}.project-page-title{font-size:2.1rem}.schedule-workbench .panel-body{padding:14px}.modulemap{grid-template-columns:1fr}}
   </style>
 </head>
-<body class="schedule-page">
-<div class="app">
-  <header class="top">
-    <div class="title"><span class="building"></span><span class="project-context">Project Controls</span></div>
-    <a class="link" href="/projects/alum-management-control-center.html">Management</a>
-    <a class="link" href="/projects/alum-command-center.html">Command Center</a>
-    <a class="link" href="/projects/golden-hill-procore.html">Overview</a>
-    <a class="link" href="/projects/alum-rfis.html">RFIs</a>
-    <a class="link" href="/projects/alum-submittals.html">Submittals</a>
-    <a class="link" href="/projects/alum-budget.html">Budget</a>
-    <div><button class="quick" data-copy-huddle>Copy Huddle Board</button></div>
-  </header>
-  <nav class="tabs">
-    <a class="tablink" href="/projects/alum-command-center.html">Dashboard</a>
-    <a class="tablink" href="/projects/alum-open-items.html">Critical Items</a>
-    <a class="tablink" href="/projects/alum-documents.html">Documents</a>
-    <a class="tablink" href="/projects/alum-budget.html">Financials</a>
-    <a class="tablink" href="/projects/alum-daily-log.html">Field</a>
-    <div class="tab">Schedule</div>
-  </nav>
+<body class="project-admin-body schedule-workbench">
+  <div class="project-dashboard-wrapper project-dashboard-wrapper--no-rail">
+    <main class="project-main-content" id="schedule-app">
+      <header class="project-page-header">
+        <div>
+          <div class="project-page-subtitle">Alüm · Field</div>
+          <h1 class="project-page-title">Schedule Dashboard</h1>
+          <p style="color:var(--muted);font-size:.94rem;margin-top:8px;max-width:780px;line-height:1.55" data-current-read>Loading current schedule read…</p>
+        </div>
+        <div class="cb-action-row">
+          <button class="cb-btn cb-btn--ghost cb-btn--small" type="button" data-view-preset="active_now">Active Today</button>
+          <button class="cb-btn cb-btn--ghost cb-btn--small" type="button" data-view-preset="starts_soon">2-Week Starts</button>
+          <button class="cb-btn cb-btn--primary" type="button" data-export-schedule>Export Current View</button>
+        </div>
+      </header>
 
-  <main class="dashboard schedule-modern" id="schedule-app">
-    <section class="card span-12 schedule-hero">
-      <div class="body">
-        <div class="eyebrow">SUPERINTENDENT · Interactive Schedule Command Center</div>
-        <h1 class="hero-title">Alüm Schedule Dashboard</h1>
-        <p class="hero-copy" data-current-read>Loading current schedule read…</p>
+      <section class="project-panel schedule-hero" style="margin-bottom:18px">
+        <div class="eyebrow">Superintendent · Interactive Schedule Command Center</div>
+        <p>Schedule metadata is read-first and safe for coordination. Local field updates, scenario dates, and recovery notices remain browser-local draft planning tools until source-system write-back is explicitly approved.</p>
         <div class="hero-actions">
-          <button class="quick" data-view-preset="active_now">Active Today</button>
-          <button class="quick" data-view-preset="starts_soon">2-Week Starts</button>
-          <button class="quick" data-view-preset="verify_complete">Verify Complete</button>
-          <button class="quick" data-copy-huddle>Copy Huddle Board</button>
-          <button class="quick" data-export-schedule>Export Current View</button>
+          <button class="quick" type="button" data-view-preset="verify_complete">Verify Complete</button>
+          <button class="quick" type="button" data-copy-huddle>Copy Huddle Board</button>
+          <a class="quick" href="#huddle">Daily Huddle</a>
+          <a class="quick" href="#field-intake">Field Update Intake</a>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="card span-12">
-      <div class="head"><h2>Schedule Pulse</h2><div class="tools"><span data-source-basis>Loading source…</span></div></div>
-      <div class="body mini-kpis">
-        <div class="metric"><strong data-total-work-packages>—</strong><span>Work Packages</span></div>
-        <div class="metric"><strong data-active-count>—</strong><span>Active Now</span></div>
-        <div class="metric"><strong data-starts-soon-count>—</strong><span>Starts ≤ 14 Days</span></div>
-        <div class="metric"><strong data-verify-complete-count>—</strong><span>Verify Complete</span></div>
-        <div class="metric"><strong data-scenario-count>—</strong><span>Local Adjustments</span></div>
-      </div>
-    </section>
+      <section class="schedule-modern">
+        <section class="project-kpi-grid schedule-metrics span-12" aria-label="Schedule metrics">
+          <article class="project-kpi-card"><div class="kpi-label">Work Packages</div><div class="kpi-value" data-total-work-packages>—</div><div class="kpi-change" data-source-basis>Loading source…</div></article>
+          <article class="project-kpi-card"><div class="kpi-label">Active Now</div><div class="kpi-value" data-active-count>—</div><div class="kpi-change">Current field execution</div></article>
+          <article class="project-kpi-card"><div class="kpi-label">Starts ≤ 14 Days</div><div class="kpi-value" data-starts-soon-count>—</div><div class="kpi-change">Two-week lookahead</div></article>
+          <article class="project-kpi-card"><div class="kpi-label">Verify Complete</div><div class="kpi-value" data-verify-complete-count>—</div><div class="kpi-change">Closeout / handoff checks</div></article>
+          <article class="project-kpi-card"><div class="kpi-label">Local Adjustments</div><div class="kpi-value" data-scenario-count>—</div><div class="kpi-change">Browser-local scenarios</div></article>
+        </section>
 
-    <section class="card span-12" id="two-week-lookahead">
-      <div class="head"><h2>Two-Week Lookahead Gantt</h2><div class="tools"><span data-lookahead-range>Loading…</span></div></div>
-      <div class="body" style="overflow-x:auto"><div class="lookahead-gantt" data-lookahead-gantt></div></div>
-    </section>
+        <section class="project-panel span-12" id="two-week-lookahead">
+          <div class="panel-header"><h2>Two-Week Lookahead Gantt</h2><span data-lookahead-range>Loading…</span></div>
+          <div class="panel-body" style="overflow-x:auto"><div class="lookahead-gantt" data-lookahead-gantt></div></div>
+        </section>
 
-    <section class="card span-12" id="critical-lookahead">
-      <div class="head"><h2>10-Week Critical Items to Consider</h2><div class="tools"><span data-critical-range>Loading…</span></div></div>
-      <div class="body" style="overflow-x:auto"><div class="lookahead-gantt critical-gantt" data-critical-gantt></div></div>
-    </section>
+        <section class="project-panel span-12" id="critical-lookahead">
+          <div class="panel-header"><h2>10-Week Critical Items to Consider</h2><span data-critical-range>Loading…</span></div>
+          <div class="panel-body" style="overflow-x:auto"><div class="lookahead-gantt critical-gantt" data-critical-gantt></div></div>
+        </section>
 
-    <section class="card span-12">
-      <div class="head"><h2>Controls</h2><div class="tools"><span data-filter-readout>All work packages</span></div></div>
-      <div class="body schedule-control-bar">
-        <input data-search placeholder="Search task, WBS, trade, location, predecessor…">
-        <select data-status-filter><option value="">All statuses</option><option value="active_now">Active now</option><option value="starts_soon">Starts soon</option><option value="verify_complete">Verify complete</option><option value="complete">Complete</option><option value="upcoming">Upcoming</option></select>
-        <select data-trade-filter><option value="">All trades</option></select>
-        <select data-phase-filter><option value="">All phases</option></select>
-        <select data-sort><option value="start">Sort by start</option><option value="finish">Sort by finish</option><option value="trade">Sort by trade</option><option value="status">Sort by status</option></select>
-      </div>
-    </section>
+        <section class="project-panel span-12">
+          <div class="panel-header"><h2>Controls</h2><span data-filter-readout>All work packages</span></div>
+          <div class="panel-body schedule-control-bar">
+            <label>Search<input class="cb-input cb-search" name="schedule_search" data-search autocomplete="off" aria-label="Search schedule work packages" placeholder="Search task, WBS, trade, location, predecessor…"></label>
+            <label>Status<select class="cb-select" name="schedule_status" data-status-filter aria-label="Filter by status"><option value="">All statuses</option><option value="active_now">Active now</option><option value="starts_soon">Starts soon</option><option value="verify_complete">Verify complete</option><option value="complete">Complete</option><option value="upcoming">Upcoming</option></select></label>
+            <label>Trade<select class="cb-select" name="schedule_trade" data-trade-filter aria-label="Filter by trade"><option value="">All trades</option></select></label>
+            <label>Phase<select class="cb-select" name="schedule_phase" data-phase-filter aria-label="Filter by phase"><option value="">All phases</option></select></label>
+            <label>Sort<select class="cb-select" name="schedule_sort" data-sort aria-label="Sort schedule"><option value="start">Sort by start</option><option value="finish">Sort by finish</option><option value="trade">Sort by trade</option><option value="status">Sort by status</option></select></label>
+          </div>
+        </section>
 
-    <section class="span-12 schedule-board">
-      <div class="card">
-        <div class="head"><h2>Current Schedule Items</h2><div class="tools"><span data-visible-count>—</span></div></div>
-        <div class="body" style="padding:0"><div class="schedule-list" data-activity-list></div></div>
-      </div>
-      <aside class="card activity-drawer">
-        <div class="head"><h2>Task Detail</h2><div class="tools"><span data-selected-status>—</span></div></div>
-        <div class="body" data-activity-drawer>
-          <p class="source">Select a schedule row to review predecessors, adjust local scenario dates/status, and draft recovery instructions.</p>
-        </div>
-      </aside>
-    </section>
+        <section class="span-12 schedule-board">
+          <article class="project-panel">
+            <div class="panel-header"><h2>Current Schedule Items</h2><span data-visible-count>—</span></div>
+            <div class="table-panel-body"><div class="schedule-list" data-activity-list></div></div>
+          </article>
+          <aside class="project-panel activity-drawer">
+            <div class="panel-header"><h2>Task Detail</h2><span data-selected-status>—</span></div>
+            <div class="panel-body" data-activity-drawer>
+              <p class="source">Select a schedule row to review predecessors, adjust local scenario dates/status, and draft recovery instructions.</p>
+            </div>
+          </aside>
+        </section>
 
-    <section class="card span-12">
-      <div class="head"><h2>3-Week Lookahead</h2><div class="tools"><span>Broderick-style leasing board, translated for field execution</span></div></div>
-      <div class="body kanban" data-lookahead-board></div>
-    </section>
+        <section class="project-panel span-12">
+          <div class="panel-header"><h2>3-Week Lookahead</h2><span>Field execution lanes</span></div>
+          <div class="panel-body kanban" data-lookahead-board></div>
+        </section>
 
+        <section class="project-panel span-12" id="huddle">
+          <div class="panel-header"><h2>Daily Superintendent Huddle</h2><span><button class="tinybtn" type="button" data-copy-huddle>Copy Huddle Board</button></span></div>
+          <div class="cb-table-wrap"><table class="project-table" aria-label="Daily superintendent huddle"><thead><tr><th>Trade / Location</th><th>Today’s Check</th><th>Needed Answer</th></tr></thead><tbody data-huddle-rows></tbody></table></div>
+        </section>
 
-    <section class="card span-12" id="huddle">
-      <div class="head"><h2>Daily Superintendent Huddle</h2><div class="tools"><button class="tinybtn" data-copy-huddle>Copy Huddle Board</button></div></div>
-      <div class="body"><table class="rfi-table"><thead><tr><th>Trade / location</th><th>Today’s check</th><th>Needed answer</th></tr></thead><tbody data-huddle-rows></tbody></table></div>
-    </section>
+        <section class="project-panel span-12" id="constraints">
+          <div class="panel-header"><h2>RFI / Submittal Constraints</h2><span data-constraint-count>Loading…</span></div>
+          <div class="cb-table-wrap"><table class="project-table" aria-label="RFI and submittal constraints"><thead><tr><th>Constraint</th><th>Source</th><th>Owner</th><th>Risk</th><th>Clearance Step</th></tr></thead><tbody data-constraint-rows></tbody></table></div>
+        </section>
 
-    <section class="card span-12" id="constraints">
-      <div class="head"><h2>RFI / Submittal Constraints</h2><div class="tools"><span data-constraint-count>Loading…</span></div></div>
-      <div class="body"><table class="rfi-table"><thead><tr><th>Constraint</th><th>Source</th><th>Owner</th><th>Risk</th><th>Clearance step</th></tr></thead><tbody data-constraint-rows></tbody></table></div>
-    </section>
+        <section class="project-panel span-7" id="field-intake">
+          <div class="panel-header"><h2>Field Update Intake</h2><span><button class="tinybtn" type="button" data-add-field-update>Add Update</button></span></div>
+          <div class="panel-body field-form">
+            <label>Field Read<textarea class="cb-textarea" name="field_update_text" data-field-update-text placeholder="Example: Electrical feeders at corridors are 70 percent complete; waiting on SDGE inspection release…"></textarea></label>
+            <div class="field-grid">
+              <label>Trade<input class="cb-input" name="update_trade" data-update-trade autocomplete="off" placeholder="Trade…"></label>
+              <label>Location<input class="cb-input" name="update_location" data-update-location autocomplete="off" placeholder="Location…"></label>
+              <label>% Complete<input class="cb-input" name="update_percent" data-update-percent inputmode="numeric" autocomplete="off" placeholder="70…"></label>
+            </div>
+            <div class="field-grid">
+              <label>Contractor<input class="cb-input" name="update_contractor" data-update-contractor autocomplete="off" placeholder="Contractor…"></label>
+              <label>Blocker / Recovery Note<input class="cb-input" name="update_blocker" data-update-blocker autocomplete="off" placeholder="Blocker or recovery note…"></label>
+              <label><span class="sr-only">Add update</span><button class="cb-btn cb-btn--primary" type="button" data-add-field-update>Add Update</button></label>
+            </div>
+            <div class="cb-table-wrap"><table class="project-table" aria-label="Field update register"><thead><tr><th>When</th><th>Trade / Location</th><th>Progress</th><th>Read</th><th></th></tr></thead><tbody data-field-update-rows></tbody></table></div>
+          </div>
+        </section>
 
-    <section class="card span-7" id="field-intake">
-      <div class="head"><h2>Field Update Intake</h2><div class="tools"><button class="tinybtn" data-add-field-update>Add Update</button></div></div>
-      <div class="body">
-        <textarea data-field-update-text placeholder="Example: Electrical feeders at corridors are 70 percent complete; waiting on SDGE inspection release." style="width:100%;min-height:118px"></textarea>
-        <div class="controls"><input data-update-trade placeholder="Trade"><input data-update-location placeholder="Location"><input data-update-percent placeholder="% complete"></div>
-        <div class="controls"><input data-update-contractor placeholder="Contractor"><input data-update-blocker placeholder="Blocker / recovery note"><button class="tinybtn" data-add-field-update>Add Update</button></div>
-        <table class="rfi-table"><thead><tr><th>When</th><th>Trade / Location</th><th>Progress</th><th>Read</th><th></th></tr></thead><tbody data-field-update-rows></tbody></table>
-      </div>
-    </section>
+        <section class="project-panel span-5" id="correspondence">
+          <div class="panel-header"><h2>Recovery Request Draft</h2><span><button class="tinybtn" type="button" data-generate-notice>Generate</button> <button class="tinybtn" type="button" data-copy-notice>Copy</button></span></div>
+          <div class="panel-body notice-form">
+            <div class="notice-grid">
+              <label>Trade / Contractor<input class="cb-input" name="notice_to" data-notice-to autocomplete="off" placeholder="Trade or contractor…"></label>
+              <label>Work Package<input class="cb-input" name="notice_work" data-notice-work autocomplete="off" placeholder="Work package…"></label>
+            </div>
+            <label>Due Date<input class="cb-input" name="notice_due" data-notice-due autocomplete="off" placeholder="End of next business day…"></label>
+            <label>Schedule Impact / Required Recovery Information<textarea class="cb-textarea" name="notice_context" data-notice-context placeholder="Schedule impact / required recovery information…"></textarea></label>
+            <label>Draft<textarea class="cb-textarea" name="notice_draft" data-notice-draft style="min-height:240px" placeholder="Draft appears here. External sending requires approval…"></textarea></label>
+            <div class="wide-note compact" data-copy-status>Draft only. No external writeback or send without approval.</div>
+          </div>
+        </section>
 
-    <section class="card span-5" id="correspondence">
-      <div class="head"><h2>Recovery Request Draft</h2><div class="tools"><button class="tinybtn" data-generate-notice>Generate</button><button class="tinybtn" data-copy-notice>Copy</button></div></div>
-      <div class="body">
-        <div class="controls"><input data-notice-to placeholder="Trade / contractor"><input data-notice-work placeholder="Work package"><input data-notice-due placeholder="Due date"></div>
-        <textarea data-notice-context placeholder="Schedule impact / required recovery information" style="width:100%;min-height:82px"></textarea>
-        <textarea data-notice-draft style="width:100%;min-height:250px" placeholder="Draft appears here. External sending requires approval."></textarea>
-        <div class="wide-note compact" data-copy-status>Draft only. No external writeback or send without approval.</div>
-      </div>
-    </section>
+        <section class="project-panel span-6">
+          <div class="panel-header"><h2>Recovery Watch</h2><span data-recovery-count>—</span></div>
+          <div class="cb-table-wrap"><table class="project-table" aria-label="Recovery watch"><thead><tr><th>Item</th><th>Signal</th><th>Action</th></tr></thead><tbody data-recovery-rows></tbody></table></div>
+        </section>
 
-    <section class="card span-6">
-      <div class="head"><h2>Recovery Watch</h2><div class="tools"><span data-recovery-count>—</span></div></div>
-      <div class="body"><table class="rfi-table"><thead><tr><th>Item</th><th>Signal</th><th>Action</th></tr></thead><tbody data-recovery-rows></tbody></table></div>
-    </section>
+        <section class="project-panel span-6">
+          <div class="panel-header"><h2>Subcontractor Directives</h2><span><button class="tinybtn" type="button" data-copy-directives>Copy</button></span></div>
+          <div class="panel-body"><div class="modulemap" data-sub-directive-cards></div><div class="wide-note compact" data-directive-copy-status>Draft communication only. Verify recipients before sending.</div></div>
+        </section>
 
-    <section class="card span-6">
-      <div class="head"><h2>Subcontractor Directives</h2><div class="tools"><button class="tinybtn" data-copy-directives>Copy</button></div></div>
-      <div class="body"><div class="modulemap" data-sub-directive-cards></div><div class="wide-note compact" data-directive-copy-status>Draft communication only. Verify recipients before sending.</div></div>
-    </section>
-
-    <section class="card span-12">
-      <div class="head"><h2>Source + Guardrails</h2><div class="tools"><span data-source-index-status>Loading…</span></div></div>
-      <div class="body pulse">
-        <div class="pulse-card"><strong data-imported-tasks>—</strong><span class="label">Imported Tasks</span><p class="source">From current Microsoft Project schedule extraction.</p></div>
-        <div class="pulse-card"><strong data-critical-count>—</strong><span class="label">Critical Items</span><p class="source">Critical-path flags included when available from source data.</p></div>
-        <div class="pulse-card"><strong>Approval gated</strong><span class="label">External Writeback</span><p class="source">Local date/status changes are scenarios only until you approve source-system writeback.</p></div>
-      </div>
-    </section>
-  </main>
-</div>
-<script src="/cast-xlsx-export.js"></script>
-<script src="/projects/alum-schedule.js"></script>
-<script src="/projects/alum-project-nav.js" defer></script>
+        <section class="project-panel span-12">
+          <div class="panel-header"><h2>Source + Guardrails</h2><span data-source-index-status>Loading…</span></div>
+          <div class="project-kpi-grid" style="padding:18px;margin:0">
+            <article class="project-kpi-card"><div class="kpi-label">Imported Tasks</div><div class="kpi-value" data-imported-tasks>—</div><div class="kpi-change">Microsoft Project schedule extraction</div></article>
+            <article class="project-kpi-card"><div class="kpi-label">Critical Items</div><div class="kpi-value" data-critical-count>—</div><div class="kpi-change">Critical-path flags when available</div></article>
+            <article class="project-kpi-card"><div class="kpi-label">External Writeback</div><div class="kpi-value" style="font-size:1.85rem">Approval Gated</div><div class="kpi-change">Local changes are scenario-only until approved</div></article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="/cast-xlsx-export.js"></script>
+  <script src="/projects/alum-schedule.js"></script>
+  <script src="/projects/alum-project-nav.js" defer></script>
 </body>
 </html>

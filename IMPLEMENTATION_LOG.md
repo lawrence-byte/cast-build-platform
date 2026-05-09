@@ -192,3 +192,19 @@ Open configuration:
 - Added email distribution contract/templates for documents, RFIs, Submittals, Contracts, Financials, Field reports, and Drawing updates; secure links by default, attachments admin-gated, manual recipients become contact suggestions.
 - Added global search/saved-view contract across document fields, extracted text, linked records, statuses, and Dropbox links.
 - Added schema support for external links, email distributions, saved views, archive/soft-delete/delete-request fields, and audit/compliance action list.
+
+## 2026-05-09 — Alüm Schedule visual refresh
+
+- Refreshed `/projects/alum-schedule.html` onto the newer CAST Build project shell using `cast-build.css`, `cast-build-components.css`, `project-admin-body`, `project-dashboard-wrapper--no-rail`, `project-main-content`, `project-page-header`, `project-panel`, `project-kpi-grid`, `cb-btn`, `cb-input`, `cb-select`, `cb-textarea`, and `project-table` patterns.
+- Preserved existing schedule data hooks and `public/projects/alum-schedule.js` behavior while modernizing the page layout, KPI cards, action buttons, filters, lookahead Gantt panels, schedule list/detail area, huddle table, constraints table, field intake, and recovery draft sections.
+- Kept the persistent Alüm navigation script as the shell navigation source and removed the hardcoded sidebar from the schedule page to avoid duplicate/legacy rail behavior.
+- Added accessibility polish for labeled controls and explicit `type="button"` on non-submit actions.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Local browser smoke at `http://127.0.0.1:4173/projects/alum-schedule.html` with desktop screenshot QA.
+
+Open risks:
+- Schedule changes, field updates, and recovery notices remain local/draft-only until backend/auth/write-back is connected and approved.
