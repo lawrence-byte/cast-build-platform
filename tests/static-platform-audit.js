@@ -134,8 +134,32 @@ if (!scheduleSourceIndex.source_status || !scheduleSourceIndex.publish_guardrail
   console.error('Schedule source index must be sanitized and avoid private paths/raw artifact extensions.');
   failed = true;
 }
-if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain\.html/.test(fs.readFileSync(path.join(root, 'public/index.html'), 'utf8'))) {
+const publicIndex = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
+const castBuildCss = fs.readFileSync(path.join(root, 'public/cast-build.css'), 'utf8');
+if (!/projects\/alum-schedule\.html/.test(scheduleBrainPage) || !/schedule-brain\.html/.test(publicIndex)) {
   console.error('CAST Build landing must link to Schedule Brain and Schedule Brain must link to Alüm workbench.');
+  failed = true;
+}
+if (!publicIndex.includes('/assets/brand/cast-community-logo-transparent.png') || !/alt="CAST COMMUNITY"/.test(publicIndex)) {
+  console.error('CAST Build landing top-left must use the transparent CAST Community logo.');
+  failed = true;
+}
+if (!publicIndex.includes('/assets/brand/cast-automation-horizontal-white-on-charcoal.png') || !/alt="CAST AUTOMATION"/.test(publicIndex)) {
+  console.error('CAST Build landing top-right must use the CAST Automation logo.');
+  failed = true;
+}
+for (const asset of ['cast-community-logo-transparent.png', 'cast-build-logo-transparent.png', 'cast-automation-horizontal-white-on-charcoal.png']) {
+  if (!fs.existsSync(path.join(root, 'public/assets/brand', asset))) {
+    console.error(`Missing transparent landing brand asset: ${asset}`);
+    failed = true;
+  }
+}
+if (!/\.cast-family-top img\{width:380px;height:auto/.test(castBuildCss) || !/\.cast-access-logo\{[^}]*width:min\(380px,100%\)/.test(castBuildCss)) {
+  console.error('CAST Build landing must match CAST Community and reduced CAST Build desktop sizing.');
+  failed = true;
+}
+if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,86vw\)/.test(castBuildCss)) {
+  console.error('CAST Build landing must use reduced mobile CAST Build sizing.');
   failed = true;
 }
 const pricingModelsPage = fs.readFileSync(path.join(root, 'public/pricing-models.html'), 'utf8');
