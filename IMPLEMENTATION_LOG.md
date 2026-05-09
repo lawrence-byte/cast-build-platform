@@ -110,3 +110,9 @@ Open risks:
 - Updated `CAST_PROJECT_ACCESS_SPEC.md` to distinguish ProjectAccess from Assignability.
 - Updated RFI/Submittal data dictionaries and workflows so RFI Manager, Submittal Manager, Submitter, Reviewer, Responder, Responsible Contractor, Ball in Court, Package Manager, Watcher, and Distribution Only roles use one assignment model.
 - Documented that legacy `*_user_id`, `ball_in_court_user_ids`, assignee, and workflow participant fields should become compatibility/derived fields once `EntityAssignments` is implemented.
+
+## 2026-05-09 — RFI current-log, links, distribution, contact-login spec pass
+
+- Added `CAST_RFI_LOG_FIX_NOTES.md` diagnosing why the static RFI page is not a true active server/register query.
+- Expanded RFI specs for `RFIRegisters`, RFI register relationship fields, issued/responded RFI controlled links, Dropbox/external link storage, issued/responded email distributions, distribution recipients, secure login-required access, automatic contact/profile updates, ProjectAccess grants, private RFI approval, and audit events.
+- Updated RFI workflow documentation to require current active register defaulting, Show All Revisions, no hidden closed/revised/responded RFIs unless filtered, controlled ExternalLinks, and authenticated distribution links.

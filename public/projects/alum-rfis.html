@@ -115,25 +115,59 @@
             </select>
           </div>
           <div class="cb-toolbar__sep"></div>
+          <div class="cb-toolbar__group">
+            <span class="cb-toolbar__label">Links</span>
+            <select class="cb-select" data-filter="links" aria-label="Filter by RFI links">
+              <option value="">Any</option>
+              <option value="has-issued">Has Issued RFI Link</option>
+              <option value="missing-issued">Missing Issued RFI Link</option>
+              <option value="has-responded">Has Responded RFI Link</option>
+              <option value="missing-responded">Missing Responded RFI Link</option>
+              <option value="distributed">Distributed</option>
+              <option value="not-distributed">Not Distributed</option>
+              <option value="response-distributed">Response Distributed</option>
+              <option value="response-not-distributed">Response Not Distributed</option>
+            </select>
+          </div>
+          <label class="cb-toolbar__group" style="gap:8px"><input type="checkbox" data-show-revisions> <span class="cb-toolbar__label">Show All Revisions</span></label>
+          <button class="cb-btn cb-btn--ghost cb-btn--small" type="button" data-reset-filters>Reset Filters</button>
           <input type="search" class="cb-input cb-search" placeholder="Search subject, ball-in-court…" aria-label="Search RFIs" data-cb-search>
           <div class="cb-toolbar__spacer"></div>
           <span class="cb-toolbar__count" data-rfi-count>—</span>
         </div>
+        <div class="cb-callout cb-callout--read-first" data-filter-warning hidden><strong>Filtered View Active</strong> Reset filters to see the full current-log scaffold.</div>
 
         <div class="cb-table-wrap">
           <table class="project-table" aria-label="RFI action queue">
             <thead>
               <tr>
                 <th style="width:5rem">#</th>
+                <th>Rev</th>
                 <th>Subject</th>
                 <th style="width:8rem">Status</th>
+                <th>Priority</th>
                 <th>Ball In Court</th>
-                <th style="width:7rem">Due</th>
+                <th>Assignees</th>
+                <th>RFI Manager</th>
+                <th>Responsible Contractor</th>
+                <th>Due</th>
+                <th>Date Issued</th>
+                <th>Date Responded</th>
+                <th>Date Closed</th>
+                <th>Issued RFI Link</th>
+                <th>Responded RFI Link</th>
+                <th>Last Distributed</th>
+                <th>Last Response Distributed</th>
+                <th>Cost Impact</th>
+                <th>Schedule Impact</th>
+                <th>Days Open</th>
+                <th>Days Overdue</th>
+                <th>Private</th>
                 <th>Safe Next Step</th>
               </tr>
             </thead>
             <tbody data-rfi-rows>
-              <tr><td colspan="6" style="padding:24px"><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-80"></span><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-60"></span><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-40"></span></td></tr>
+              <tr><td colspan="23" style="padding:24px"><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-80"></span><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-60"></span><span class="cb-skeleton cb-skeleton--line cb-skeleton--line-40"></span></td></tr>
             </tbody>
           </table>
         </div>

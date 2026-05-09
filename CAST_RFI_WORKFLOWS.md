@@ -33,3 +33,17 @@ Issued RFI distribution requires an issued package/system link unless an authori
 RFI assignment uses `CAST_ASSIGNABILITY_SPEC.md`.
 
 When creating or updating an RFI, the picker should show registered users, project contacts, company placeholders, and distribution-only contacts with assignability status. Assigning an unregistered contact creates an invitation. Assigning a responder creates or requests the least required RFI access role. Ball in Court is derived from active `EntityAssignments`, not from free-text fields.
+
+## Current RFI Log workflow
+
+The RFI Log page defaults to the current active RFI Register for the active project. It returns all current revisions the user can view, including Open, Closed, Returned, Responded, Revised, and Void records. Closed/revised/responded RFIs are not hidden unless the user intentionally applies a filter. A Show All Revisions toggle exposes prior revisions.
+
+If a new RFI is created without an explicit register, the system assigns it to the current active RFI Log for the project and audits `RFI assigned to current log`.
+
+## RFI link workflow
+
+Issued and Responded RFI package links are stored as `ExternalLinks` records. The RFI stores `issued_rfi_link_id` and `responded_rfi_link_id` as the controlled primary links. Additional drawing/reference/backup/response links may be attached without changing the primary links.
+
+## RFI distribution workflow
+
+Issued and responded RFI distributions create `RFIDistributions`, `RFIDistributionRecipients`, access invitations, audit events, and last-distributed timestamps. Distribution emails include a secure authenticated system record link plus the relevant Dropbox/external package link.
