@@ -1,9 +1,11 @@
 // Alüm RFIs — populates the dedicated module page from local metadata.
 // Data shape: /safe-data/projects/golden-hill/rfi-summary.json
-// Note: this is a read-first replica. No write actions, no CAST BUILD A.O auth.
+// Note: this is a read-first document portal. Create RFI saves local draft intake records until backend/auth/write-back exists.
 
 (function () {
   'use strict';
+
+  const LOCAL_RFI_KEY = 'cast-alum-local-rfi-drafts-v1';
 
   // ---------- helpers ----------
   async function loadJson(path) {
@@ -18,6 +20,36 @@
   }
   function pct(n, total) { return total ? `${Math.round((Number(n || 0) / total) * 100)}%` : '0%'; }
   function fmtNum(n) { return Number(n || 0).toLocaleString(); }
+
+  function readLocalDrafts() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_RFI_KEY) || '[]'); } catch { return []; }
+  }
+  function writeLocalDrafts(rows) {
+    localStorage.setItem(LOCAL_RFI_KEY, JSON.stringify(rows.slice(0, 100)));
+  }
+  function localDraftNumber() {
+    const d = new Date();
+    return `DRAFT-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}-${String(Date.now()).slice(-5)}`;
+  }
+  function localDraftToQueue(row) {
+    return {
+      Number: row.number,
+      Revision: '0',
+      Subject: row.subject,
+      Status: 'Draft (Local)',
+      'Ball In Court': row.ball_in_court,
+      'RFI Manager': row.rfi_manager,
+      'Due Date': row.due_date,
+      'Cost Impact': row.cost_impact,
+      'Schedule Impact': row.schedule_impact,
+      Drawing: row.drawing,
+      Spec: row.spec,
+      Location: row.location,
+      Private: row.private_flag ? 'Yes' : 'No',
+      _localDraft: true,
+      _createdAt: row.created_at,
+    };
+  }
 
   function statusPill(s) {
     const t = String(s || '');
@@ -34,6 +66,9 @@
   function safeStep(item) {
     if (/open/i.test(item.Status || '') && item['Due Date']) {
       return `Confirm reviewer response path before ${esc(item['Due Date'])}`;
+    }
+    if (item._localDraft) {
+      return 'Review local draft, verify attachments/recipients, then issue through approved backend workflow';
     }
     if (/draft/i.test(item.Status || '')) {
       return 'Validate draft scope, manager, and due date before issuing';
@@ -79,17 +114,18 @@
       activate(t.dataset.tab, true);
     }));
     const initial = (window.location.hash || '').replace('#', '') || 'queue';
-    if (document.getElementById(initial)) activate(initial, false);
+    if ([...panels].some((p) => p.id === initial)) activate(initial, false);
+    else activate('queue', false);
   }
 
   // ---------- filters / search ----------
-  function setupFilters(allRows, render) {
+  function setupFilters(getRows, render) {
     const statusSel = document.querySelector('[data-filter="status"]');
     const impactSel = document.querySelector('[data-filter="impact"]');
     const search = document.querySelector('[data-cb-search]');
 
     function apply() {
-      let rows = allRows.slice();
+      let rows = getRows().slice();
       const s = (statusSel && statusSel.value) || '';
       const imp = (impactSel && impactSel.value) || '';
       const q = (search && search.value || '').trim().toLowerCase();
@@ -113,6 +149,53 @@
     if (impactSel) impactSel.addEventListener('change', apply);
     if (search) search.addEventListener('input', apply);
     return apply;
+  }
+
+
+  function setupCreateRfi(onCreate) {
+    const form = document.querySelector('[data-rfi-create-form]');
+    const msg = document.querySelector('[data-rfi-create-message]');
+    const clear = document.querySelector('[data-clear-local-rfis]');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const draft = {
+        id: `local_${Date.now()}`,
+        number: localDraftNumber(),
+        subject: String(fd.get('subject') || '').trim(),
+        question: String(fd.get('question') || '').trim(),
+        ball_in_court: String(fd.get('ball_in_court') || '').trim() || 'Unassigned',
+        rfi_manager: String(fd.get('rfi_manager') || '').trim() || 'Unassigned',
+        due_date: String(fd.get('due_date') || '').trim(),
+        priority: String(fd.get('priority') || 'Normal'),
+        cost_impact: String(fd.get('cost_impact') || 'No'),
+        schedule_impact: String(fd.get('schedule_impact') || 'No'),
+        drawing: String(fd.get('drawing') || '').trim(),
+        spec: String(fd.get('spec') || '').trim(),
+        location: String(fd.get('location') || '').trim(),
+        private_flag: fd.get('private_flag') === 'true',
+        created_at: new Date().toISOString(),
+      };
+      if (!draft.subject || !draft.question) return;
+      const drafts = readLocalDrafts();
+      drafts.unshift(draft);
+      writeLocalDrafts(drafts);
+      form.reset();
+      if (msg) {
+        msg.style.display = 'block';
+        msg.innerHTML = `<strong>${esc(draft.number)} saved.</strong> Local draft created in the Documents RFI portal. Issuing/distribution still requires backend/auth approval workflow.`;
+      }
+      onCreate();
+      location.hash = 'queue';
+    });
+    if (clear) clear.addEventListener('click', () => {
+      if (!readLocalDrafts().length) return;
+      if (!confirm('Clear locally saved draft RFIs from this browser?')) return;
+      writeLocalDrafts([]);
+      if (msg) { msg.style.display = 'block'; msg.textContent = 'Local draft RFIs cleared from this browser.'; }
+      onCreate();
+    });
   }
 
   // ---------- main ----------
@@ -156,7 +239,7 @@
 
     // Action queue rows — annotate with overdue/due7 flags for filtering
     const today = new Date();
-    const queueRaw = ((rfi.openItems && rfi.openItems.length) ? rfi.openItems : (rfi.folderItems || rfi.recentItems || [])).slice(0);
+    let queueRaw = [...readLocalDrafts().map(localDraftToQueue), ...(((rfi.openItems && rfi.openItems.length) ? rfi.openItems : (rfi.folderItems || rfi.recentItems || [])) || [])];
     queueRaw.forEach((x) => {
       const d = x['Due Date'] ? new Date(x['Due Date']) : null;
       x._overdue = d && d < today && /open|draft/i.test(x.Status || '');
@@ -180,7 +263,7 @@
         const ball = x['Ball In Court'] || x['Assigned Id'] || x['RFI Manager'] || x.sourceKind || '—';
         return `<tr>
           <td>${num}</td>
-          <td><strong style="color:var(--dark)">${esc(x.Subject || '')}</strong></td>
+          <td><strong style="color:var(--dark)">${esc(x.Subject || '')}</strong>${x._localDraft ? '<br><span class="cb-td-muted">Local draft · not issued</span>' : ''}</td>
           <td>${statusPill(x.Status)}</td>
           <td>${esc(ball)}</td>
           <td class="cb-td-num">${due}</td>
@@ -189,8 +272,22 @@
       }).join('');
       if (countEl) countEl.textContent = `${rows.length} of ${queueRaw.length} shown`;
     }
+    function annotateQueueRows() {
+      queueRaw.forEach((x) => {
+        const d = x['Due Date'] ? new Date(x['Due Date']) : null;
+        x._overdue = d && d < today && /open|draft/i.test(x.Status || '');
+        x._due7 = d && (d - today) >= 0 && (d - today) < 7 * 86400000;
+      });
+    }
+    let applyFilters = () => renderQueue(queueRaw);
+    function refreshQueueFromDrafts() {
+      queueRaw = [...readLocalDrafts().map(localDraftToQueue), ...(((rfi.openItems && rfi.openItems.length) ? rfi.openItems : (rfi.folderItems || rfi.recentItems || [])) || [])];
+      annotateQueueRows();
+      applyFilters();
+    }
     renderQueue(queueRaw);
-    setupFilters(queueRaw, renderQueue);
+    applyFilters = setupFilters(() => queueRaw, renderQueue);
+    setupCreateRfi(refreshQueueFromDrafts);
 
     // Status distribution
     const statuses = Object.entries(rfi.statusCounts || {}).sort((a, b) => b[1] - a[1]);

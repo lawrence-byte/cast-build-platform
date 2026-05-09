@@ -20,20 +20,12 @@
       ],
     },
     {
-      label: 'Top Level Items',
-      summary: 'Core action queues',
+      label: 'Documents',
+      summary: 'RFIs, submittals, drawings, specs, data room',
       items: [
         ['RFIs', '/projects/alum-rfis.html', 'i-help'],
         ['Submittals', '/projects/alum-submittals.html', 'i-clipboard'],
         ['Meeting Minutes', '/projects/alum-meeting-minutes.html', 'i-clock'],
-      ],
-    },
-    {
-      label: 'Documents',
-      summary: 'Drawings, specs, data room',
-      items: [
-        ['RFI Tracking', '/projects/cast-rfi-tracker.html', 'i-help'],
-        ['Submittals', '/projects/cast-submittal-tracker.html', 'i-clipboard'],
         ['Drawing Log', '/projects/cast-drawing-log.html', 'i-document'],
         ['Document Register', '/projects/cast-document-register.html', 'i-data'],
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
@@ -90,7 +82,7 @@
   const primary = [
     ['Home', HOME],
     ['Dashboard', HOME],
-    ['Top Level', '/projects/alum-command-center.html'],
+    ['Critical Items', '/projects/alum-open-items.html'],
     ['Documents', '/projects/golden-hill-documents.html'],
     ['Financials', '/projects/alum-budget.html'],
     ['Field', '/projects/alum-schedule.html'],

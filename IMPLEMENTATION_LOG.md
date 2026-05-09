@@ -111,3 +111,20 @@ Validation:
 Open risks:
 - Historical/source filenames can still reference `.csv` in safe metadata because they describe imported/source artifacts, not user-facing spreadsheet export behavior.
 
+
+## 2026-05-09 — Unified Documents RFI portal
+
+- Moved RFIs out of the separate top-level navigation group and into the unified Documents section.
+- Updated the persistent Alüm rail so `RFIs` points to `/projects/alum-rfis.html` under Documents, and removed the live navigation path to the standalone RFI Tracking page.
+- Added Create RFI intake directly to `alum-rfis.html`; drafts save locally in the Documents RFI portal and appear in the action queue as local, not-issued draft records until backend/auth/write-back is connected.
+- Retired `cast-rfi-tracker.html` as a standalone page and redirected it to `/projects/alum-rfis.html#create-rfi` so old links land in the correct portal.
+- Updated the Documents hub with direct Create RFI / Open RFIs actions.
+- Updated tests to enforce the unified Documents RFI portal behavior.
+
+Validation:
+- `node --check public/projects/alum-rfis.js`
+- `node --check public/projects/alum-project-nav.js`
+- `npm test`
+
+Open risks:
+- Create RFI is local draft intake only. Real issuing, distribution, private-record access grants, and CAST BUILD A.O/server write-back still require backend/auth integration.

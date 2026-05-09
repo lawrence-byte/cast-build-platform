@@ -87,7 +87,7 @@ for (const requiredRail of [
   'alum-section-rail',
   'Project Home',
   'Dashboard',
-  'Top Level Items',
+  'Critical Items',
   'Documents',
   'Financials',
   'Field',

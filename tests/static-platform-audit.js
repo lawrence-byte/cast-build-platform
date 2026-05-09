@@ -109,10 +109,17 @@ for (const [moduleFile, label] of procoreSystemPages) {
 
 const rfiTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-rfi-tracker.html'), 'utf8');
 const rfiTrackerScript = fs.readFileSync(path.join(root, 'public/projects/cast-rfi-tracker.js'), 'utf8');
+const alumRfiPage = fs.readFileSync(path.join(root, 'public/projects/alum-rfis.html'), 'utf8');
 const controlsDataScript = fs.readFileSync(path.join(root, 'public/projects/cast-project-controls-data.js'), 'utf8');
-for (const requiredRfiMvpSignal of ['RFI Tracking and Completion', 'data-rfi-form', 'data-rfi-rows', 'data-detail', 'Export RFI Log Excel']) {
+for (const requiredRfiMvpSignal of ['RFIs moved to Documents', '/projects/alum-rfis.html#create-rfi']) {
   if (!rfiTrackerPage.includes(requiredRfiMvpSignal)) {
-    console.error(`CAST RFI tracker page missing MVP signal: ${requiredRfiMvpSignal}`);
+    console.error(`Retired CAST RFI tracker page missing redirect signal: ${requiredRfiMvpSignal}`);
+    failed = true;
+  }
+}
+for (const requiredRfiPortalSignal of ['Alüm · Documents', 'data-rfi-create-form', 'data-rfi-rows', 'Create RFI']) {
+  if (!alumRfiPage.includes(requiredRfiPortalSignal)) {
+    console.error(`Alüm Documents RFI portal missing create/action signal: ${requiredRfiPortalSignal}`);
     failed = true;
   }
 }
@@ -122,11 +129,9 @@ for (const requiredRfiDomainSignal of ['generateRfiNumber', 'validateRfi', 'mark
     failed = true;
   }
 }
-for (const requiredRfiUiSignal of ['Add Response', 'Mark Last Response Official', 'Close', 'Reopen', 'Revise', 'AI Helper Suggestions']) {
-  if (!rfiTrackerScript.includes(requiredRfiUiSignal)) {
-    console.error(`CAST RFI tracker UI missing workflow signal: ${requiredRfiUiSignal}`);
-    failed = true;
-  }
+if (!rfiTrackerScript.includes('/projects/alum-rfis.html#create-rfi')) {
+  console.error('Retired CAST RFI tracker script must redirect to the Documents RFI portal.');
+  failed = true;
 }
 
 const submittalTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.html'), 'utf8');
@@ -153,7 +158,7 @@ for (const requiredSubmittalUiSignal of ['Submit for Review', 'Add Response', 'M
 
 for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawing Log'], ['public/projects/cast-document-register.html', 'Document Register']]) {
   const text = fs.readFileSync(path.join(root, requiredScaffold[0]), 'utf8');
-  if (!text.includes(requiredScaffold[1]) || !text.includes('RFI Tracking')) {
+  if (!text.includes(requiredScaffold[1]) || !text.includes('RFIs')) {
     console.error(`${requiredScaffold[0]} missing document-control scaffold signals.`);
     failed = true;
   }
@@ -419,7 +424,7 @@ const changeEventModuleScript = fs.readFileSync(path.join(root, 'public/projects
 const potentialChangeOrdersPage = fs.readFileSync(path.join(root, 'public/projects/alum-potential-change-orders.html'), 'utf8');
 const potentialChangeOrdersScript = fs.readFileSync(path.join(root, 'public/projects/alum-potential-change-orders.js'), 'utf8');
 const dailyLogModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.js'), 'utf8');
-for (const requiredRfiSignal of ['costImpactYes', 'scheduleImpactYes', 'topManagers', 'topContractors']) {
+for (const requiredRfiSignal of ['costImpactYes', 'scheduleImpactYes', 'topManagers', 'topContractors', 'setupCreateRfi', 'LOCAL_RFI_KEY']) {
   if (!rfiModuleScript.includes(requiredRfiSignal)) {
     console.error(`RFI module script missing signal: ${requiredRfiSignal}`);
     failed = true;

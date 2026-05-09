@@ -10,6 +10,13 @@
   <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
   <script src="/assets/brand/brand.js" defer></script>
   <script src="/cast-build-shell.js" defer></script>
+  <style>
+    .cb-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .cb-form-grid label{display:grid;gap:6px;color:var(--muted);font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .cb-form-grid .wide{grid-column:1/-1}
+    .cb-form-grid textarea{min-height:108px;resize:vertical}
+    @media(max-width:800px){.cb-form-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body class="project-admin-body">
 
@@ -21,23 +28,53 @@
       <!-- Page header -->
       <header class="project-page-header">
         <div>
-          <div class="project-page-subtitle">Alüm · Action Items</div>
+          <div class="project-page-subtitle">Alüm · Documents</div>
           <h1 class="project-page-title">RFIs</h1>
           <p style="color:var(--muted);font-size:.92rem;margin-top:8px;max-width:640px;line-height:1.5">
-            Request-for-information log: review queue, impact flags, responsibility, and status distribution.
+            Document-control RFI portal: create draft RFIs, monitor the action queue, review impact flags, responsibility, status, and distribution readiness.
           </p>
         </div>
         <div class="cb-action-row">
-          <button class="cb-btn cb-btn--ghost cb-btn--small" type="button" disabled title="Read-only replica">Export</button>
-          <button class="cb-btn cb-btn--primary" type="button" disabled title="Read-only replica">+ New RFI</button>
+          <a class="cb-btn cb-btn--ghost cb-btn--small" href="/projects/golden-hill-documents.html">Documents</a>
+          <a class="cb-btn cb-btn--primary" href="#create-rfi">+ Create RFI</a>
         </div>
       </header>
 
       <!-- Read-first callout -->
       <div class="cb-callout cb-callout--read-first" role="note">
-        <strong>Read-first replica</strong>
-        Metadata derived from CAST BUILD A.O exports. RFI updates, ball-in-court reassignment, and exports happen in CAST BUILD A.O — this view is for monitoring and triage only.
+        <strong>Documents RFI portal</strong>
+        Metadata is derived from CAST BUILD A.O exports. New RFIs created here are local draft records for intake and coordination until backend/auth/write-back is connected; issuing, distribution, and source-system updates remain approval-gated.
       </div>
+
+
+      <section id="create-rfi" class="project-panel" style="margin:22px 0">
+        <div class="panel-header">
+          <h2>Create RFI</h2>
+          <span>Local draft intake · backend write-back pending</span>
+        </div>
+        <div style="padding:18px">
+          <form class="cb-form-grid" data-rfi-create-form>
+            <label class="wide">Subject<input class="cb-input" name="subject" required placeholder="Field condition / clarification subject"></label>
+            <label class="wide">Question<textarea class="cb-input" name="question" required rows="4" placeholder="Write the RFI question clearly..."></textarea></label>
+            <label>Ball In Court / Assignee<input class="cb-input" name="ball_in_court" placeholder="Person or company"></label>
+            <label>RFI Manager<input class="cb-input" name="rfi_manager" placeholder="Manager / reviewer"></label>
+            <label>Due Date<input class="cb-input" name="due_date" type="date"></label>
+            <label>Priority<select class="cb-select" name="priority"><option>Normal</option><option>High</option><option>Urgent</option><option>Low</option></select></label>
+            <label>Cost Impact<select class="cb-select" name="cost_impact"><option>No</option><option>Yes Known</option><option>Yes Unknown</option><option>To Be Determined</option><option>Not Applicable</option></select></label>
+            <label>Schedule Impact<select class="cb-select" name="schedule_impact"><option>No</option><option>Yes Known</option><option>Yes Unknown</option><option>To Be Determined</option><option>Not Applicable</option></select></label>
+            <label>Drawing Reference<input class="cb-input" name="drawing" placeholder="Drawing number / sheet"></label>
+            <label>Spec Section<input class="cb-input" name="spec" placeholder="Spec section"></label>
+            <label>Location<input class="cb-input" name="location" placeholder="Area / level / unit"></label>
+            <label>Private<select class="cb-select" name="private_flag"><option value="false">No</option><option value="true">Yes — approval required before sharing</option></select></label>
+            <div class="wide cb-action-row">
+              <button class="cb-btn cb-btn--primary" type="submit" name="intent" value="Draft">Save Draft RFI</button>
+              <button class="cb-btn cb-btn--ghost" type="reset">Cancel</button>
+              <button class="cb-btn cb-btn--ghost" type="button" data-clear-local-rfis>Clear Local Drafts</button>
+            </div>
+          </form>
+          <div class="cb-callout" data-rfi-create-message style="display:none;margin-top:14px"></div>
+        </div>
+      </section>
 
       <!-- KPI Grid -->
       <section class="project-kpi-grid" aria-label="RFI metrics">
@@ -85,6 +122,7 @@
 
       <!-- Tabs -->
       <nav class="cb-tabs" role="tablist" aria-label="RFI views">
+        <a href="#create-rfi" data-tab-jump="create-rfi">Create RFI</a>
         <a href="#queue" class="is-active" data-tab="queue" role="tab">Action Queue</a>
         <a href="#status" data-tab="status" role="tab">Status</a>
         <a href="#managers" data-tab="managers" role="tab">Managers</a>
