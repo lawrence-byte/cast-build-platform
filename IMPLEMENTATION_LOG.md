@@ -128,3 +128,20 @@ Validation:
 
 Open risks:
 - Create RFI is local draft intake only. Real issuing, distribution, private-record access grants, and CAST BUILD A.O/server write-back still require backend/auth integration.
+
+## 2026-05-09 — Unified Documents Submittal portal
+
+- Reintegrated Create Submittal, submit-for-review, responses, official response, return, closeout, revision, comments, reports, and Excel export controls directly into `/projects/alum-submittals.html`.
+- The Alüm Documents Submittals portal now uses the submittal workflow scaffold script and local state instead of remaining a read-only summary table.
+- Retired `cast-submittal-tracker.html` as a standalone workflow page and redirected it to `/projects/alum-submittals.html#create-submittal`.
+- Updated tests so the unified Documents Submittals portal, not the retired standalone tracker, owns workflow/create behavior.
+
+Validation:
+- `node --check public/projects/alum-submittals.js`
+- `node --check public/projects/cast-submittal-tracker.js`
+- `npm test`
+- `npm run build`
+- `git diff --check`
+
+Open risks:
+- Submittal create/issue/return/revise/close actions are local workflow scaffolds until backend/auth/write-back is connected. Production issuing/distribution remains approval-gated.

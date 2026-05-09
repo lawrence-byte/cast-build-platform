@@ -136,10 +136,17 @@ if (!rfiTrackerScript.includes('/projects/alum-rfis.html#create-rfi')) {
 
 const submittalTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.html'), 'utf8');
 const submittalTrackerScript = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.js'), 'utf8');
+const alumSubmittalPage = fs.readFileSync(path.join(root, 'public/projects/alum-submittals.html'), 'utf8');
 const submittalDataScript = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-controls-data.js'), 'utf8');
-for (const requiredSubmittalSignal of ['Submittal Tracking', 'data-form', 'data-rows', 'data-detail', 'Export Submittal Log Excel']) {
+for (const requiredSubmittalSignal of ['Submittals moved to Documents', '/projects/alum-submittals.html#create-submittal']) {
   if (!submittalTrackerPage.includes(requiredSubmittalSignal)) {
-    console.error(`CAST submittal tracker page missing MVP signal: ${requiredSubmittalSignal}`);
+    console.error(`Retired CAST submittal tracker page missing redirect signal: ${requiredSubmittalSignal}`);
+    failed = true;
+  }
+}
+for (const requiredSubmittalPortalSignal of ['Alüm · Documents', 'data-form', 'data-rows', 'data-detail', 'Export Submittal Log Excel', 'Submit for Review']) {
+  if (!alumSubmittalPage.includes(requiredSubmittalPortalSignal)) {
+    console.error(`Alüm Documents Submittal portal missing workflow signal: ${requiredSubmittalPortalSignal}`);
     failed = true;
   }
 }
@@ -149,11 +156,9 @@ for (const requiredSubmittalDomainSignal of ['generateSubmittalNumber', 'generat
     failed = true;
   }
 }
-for (const requiredSubmittalUiSignal of ['Submit for Review', 'Add Response', 'Mark Last Response Official', 'Return', 'Close', 'Create Revision', 'AI Helper Suggestions']) {
-  if (!submittalTrackerScript.includes(requiredSubmittalUiSignal)) {
-    console.error(`CAST submittal tracker UI missing workflow signal: ${requiredSubmittalUiSignal}`);
-    failed = true;
-  }
+if (!submittalTrackerScript.includes('/projects/alum-submittals.html#create-submittal')) {
+  console.error('Retired CAST submittal tracker script must redirect to the Documents Submittals portal.');
+  failed = true;
 }
 
 for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawing Log'], ['public/projects/cast-document-register.html', 'Document Register']]) {
@@ -430,7 +435,7 @@ for (const requiredRfiSignal of ['costImpactYes', 'scheduleImpactYes', 'topManag
     failed = true;
   }
 }
-for (const requiredSubmittalSignal of ['topSpecSections', 'typeCounts', 'Revise & Resubmit', 'Responsible Contractor']) {
+for (const requiredSubmittalSignal of ['startWorkflow', 'submitSubmittalResponse', 'markOfficialSubmittalResponse', 'returnSubmittal', 'closeSubmittal', 'reviseSubmittal', 'Responsible Contractor']) {
   if (!submittalModuleScript.includes(requiredSubmittalSignal)) {
     console.error(`Submittal module script missing signal: ${requiredSubmittalSignal}`);
     failed = true;
