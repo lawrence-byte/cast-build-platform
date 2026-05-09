@@ -182,3 +182,13 @@ Open configuration:
 - Added uploader contact capture and extracted contact suggestions with admin-approval-before-overwrite behavior.
 - Expanded RFI/Submittal matching for issued/responded links, duplicate warnings, supported link fields, and create-new-record suggestions.
 - Expanded contract matching for agreements, purchase orders, scopes/exhibits/amendments/signed contracts and extraction targets.
+
+## 2026-05-09 — Document links, distribution, search, and compliance contracts
+
+- Expanded Financial matching/extraction for invoices, pay applications, change orders, lien releases, budgets, cost reports, forecasts, SOVs, backup, receipts, payment approvals, dollar amounts, invoice/pay app numbers, cost codes, retainage, current/prior payments, and change order refs.
+- Expanded Field matching/extraction for daily reports, photos, inspections, safety, punch, observations, logs, delivery tickets, weather/manpower, site instructions, locations, trades, issue categories, and related drawings.
+- Expanded Drawing matching/extraction for plan sheets, addenda, sketches, ASIs, bulletins, revisions, specs, drawing logs, sheet number/title, discipline, issue date, revision/addendum number, and design team author; drawings can be referenced by RFIs/Submittals/COs/Field/Contracts.
+- Added Dropbox/external secure-link contract with typed links for source, issued/responded, backup, drawing, folder, notes, date added, and user added.
+- Added email distribution contract/templates for documents, RFIs, Submittals, Contracts, Financials, Field reports, and Drawing updates; secure links by default, attachments admin-gated, manual recipients become contact suggestions.
+- Added global search/saved-view contract across document fields, extracted text, linked records, statuses, and Dropbox links.
+- Added schema support for external links, email distributions, saved views, archive/soft-delete/delete-request fields, and audit/compliance action list.

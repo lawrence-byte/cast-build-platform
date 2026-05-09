@@ -159,3 +159,41 @@ Detects Submittal, Shop Drawing, Product Data, Sample, Specification Section, Ar
 
 ### Contracts
 Detects owner contracts, subcontract agreements, consultant agreements, purchase orders, scopes of work, exhibits, insurance exhibits, amendments, and signed contracts. Extraction targets include parties, dates, contract amount, project, scope title, company, insurance requirements, retainage, payment terms, signature status, vendor, cost code, and budget line item.
+
+
+## Financial, Field, and Drawing matching
+
+Financial matching detects invoices, pay applications, change orders, lien releases, budgets, cost reports, forecasts, schedules of values, backup, receipts, and payment approvals. Extraction targets include dollar amounts, invoice numbers, pay application numbers, vendor names, cost codes, dates, retainage, current payment due, prior payments, and change order references. Financial documents link to contracts, commitments, change orders, budgets, and cost codes and remain permission-restricted.
+
+Field matching detects daily reports, field photos, inspection reports, safety reports, punch lists, observations, logs, delivery tickets, weather records, manpower reports, and site instructions. Extraction targets include date, author, location, trade, weather, manpower, issue category, and related drawings. Field documents can link to project areas, units, floors, trades, and schedule activities.
+
+Drawing matching detects drawings, plan sheets, addenda, sketches, ASIs, bulletins, revisions, specifications, and drawing logs. Extraction targets include sheet number, sheet title, discipline, issue date, revision number, addendum number, and design team author. Drawings link to the drawing register and can be referenced by RFIs, Submittals, Change Orders, Field Reports, and Contracts.
+
+## Dropbox/external links
+
+Records support secure URL storage for server stored files, Dropbox source links, issued document links, responded document links, supporting backup links, drawing links, folder links, external shared link notes, date added, and user who added the link. Dropbox API integration is optional; HTTPS URL validation, labeling, and display are supported by contract now.
+
+## Email distribution
+
+Distribution sends secure document links by default. Raw attachments require admin permission. Records store subject, body, recipients, manual recipients, sender, date, linked document/module, delivery status, resend support, and exportable distribution logs. Manual recipients become project contact directory suggestions.
+
+Reusable templates:
+- Document filed notice
+- RFI issued
+- RFI response received
+- Submittal issued
+- Submittal response received
+- Contract uploaded for review
+- Financial document uploaded for approval
+- Field report distributed
+- Drawing update distributed
+
+## Search and retrieval
+
+Global document search supports file name, document type, module, project, company, contact, date range, cost code, RFI number, Submittal number, Contract number, Change Order number, Invoice number, Drawing sheet number, extracted text, tags, status, uploaded by, linked records, and Dropbox links.
+
+Saved views: Needs Review, Recently Uploaded, Filed Today, Financial Documents, Contract Documents, Field Documents, RFI Attachments, Submittal Attachments, Drawing Updates, Missing Metadata, Low Confidence Classification, Duplicates, Ready to Distribute.
+
+## Audit and compliance
+
+Auditable actions include Upload, View, Download, Classification, Classification override, Folder path change, Metadata edit, Link to record, Unlink from record, Version upload, Approval, Rejection, Distribution, Archive, Delete request. Documents should be archived or soft deleted by default; permanent deletion requires explicit admin confirmation.

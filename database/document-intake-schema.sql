@@ -107,3 +107,57 @@ create index if not exists document_contact_capture_rollups_project_email_idx on
 
 -- Status constraint reference: Uploaded, Processing, Classified, Needs Review, Approved for Filing, Filed, Distributed, Rejected, Archived.
 -- Classification overrides must insert document_audit_log rows with action = 'document.classification.override', user_id, previous_value_json, new_value_json, and reason in new_value_json/admin metadata.
+
+-- Dropbox/external link support for documents and linked module records.
+create table if not exists document_external_links (
+  id uuid primary key default gen_random_uuid(),
+  document_id uuid references document_intake_uploads(id) on delete cascade,
+  linked_module text,
+  linked_record_id text,
+  link_type text not null,
+  secure_url text,
+  label text,
+  external_shared_link_notes text,
+  date_link_added timestamptz not null default now(),
+  user_who_added_link text not null,
+  created_at timestamptz not null default now()
+);
+
+-- Email distribution records. Store secure links by default; attachment sending requires admin permission.
+create table if not exists document_email_distributions (
+  id uuid primary key default gen_random_uuid(),
+  document_id uuid references document_intake_uploads(id) on delete set null,
+  linked_module text,
+  linked_record_id text,
+  email_subject text not null,
+  email_body text not null,
+  recipients_json jsonb not null default '[]'::jsonb,
+  manual_recipients_json jsonb not null default '[]'::jsonb,
+  sender_user_id text not null,
+  sent_at timestamptz,
+  delivery_status text not null default 'queued',
+  secure_links_json jsonb not null default '[]'::jsonb,
+  raw_attachments_permitted boolean not null default false,
+  resend_of_distribution_id uuid,
+  created_at timestamptz not null default now()
+);
+
+-- Global document search / saved views contract.
+create table if not exists document_saved_views (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null,
+  project_id text,
+  name text not null,
+  filters_json jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table document_intake_uploads add column if not exists archived_at timestamptz;
+alter table document_intake_uploads add column if not exists soft_deleted_at timestamptz;
+alter table document_intake_uploads add column if not exists delete_requested_at timestamptz;
+alter table document_intake_uploads add column if not exists delete_requested_by_user_id text;
+
+-- Major auditable actions: Upload, View, Download, Classification, Classification override, Folder path change,
+-- Metadata edit, Link to record, Unlink from record, Version upload, Approval, Rejection, Distribution,
+-- Archive, Delete request. Permanent deletion should require explicit admin confirmation outside normal workflow.

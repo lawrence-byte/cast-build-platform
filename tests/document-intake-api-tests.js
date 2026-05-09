@@ -4,6 +4,10 @@ const { handleDocumentIntake, validatePayload, buildStoragePlan } = require('../
 const { classifyDocument } = require('../api/_lib/document-classification');
 const { workflowDecision } = require('../api/_lib/document-workflow');
 const { canOverrideClassification, canViewModule } = require('../api/_lib/document-permissions');
+const { matchLinkedRecords, extractFinancialMetadata, extractFieldMetadata, extractDrawingMetadata } = require('../api/_lib/document-matching');
+const { DROPBOX_LINK_TYPES, createDropboxLinkRecord } = require('../api/_lib/document-dropbox-links');
+const { EMAIL_TEMPLATES, createDistributionRecord } = require('../api/_lib/document-email-distribution');
+const { SEARCH_FIELDS, SAVED_VIEWS, buildSearchQuery } = require('../api/_lib/document-search');
 
 function mockReq(method, body, headers = {}) {
   const req = new Readable({ read() {} });
@@ -67,6 +71,35 @@ async function call(method, body, headers) { const res = mockRes(); await handle
   assert.equal(canViewModule('Accounting', 'Financials'), true);
   assert.equal(canViewModule('Field Staff', 'Financials'), false);
   assert.equal(canViewModule('Subcontractor', 'RFIs', { assignedToUser: true, externalUser: true }), true);
+
+
+  const financialMatches = matchLinkedRecords({ fileName: 'Invoice INV-77 Pay Application 12 cost code 03-100 retainage.pdf', textSnippet: 'Current payment due $10,000 prior payments $5,000 Change Order CO-02' });
+  assert(financialMatches.some((x) => x.linkType === 'financial_document_link'));
+  const financialMeta = extractFinancialMetadata('Invoice INV-77 Pay Application 12 cost code 03-100 retainage current payment due $10,000 prior payments $5,000 Change Order CO-02');
+  assert(financialMeta.invoiceNumbers.includes('INV-77'));
+  assert(financialMeta.dollarAmounts.includes('$10,000'));
+  assert(financialMeta.costCodes.includes('03-100'));
+
+  const fieldMatches = matchLinkedRecords({ fileName: 'Daily Report field photos weather manpower Area Level 3 electrical.pdf' });
+  assert(fieldMatches.some((x) => x.linkType === 'field_document_link'));
+  assert(extractFieldMetadata('weather manpower area Level 3 electrical safety').trades.includes('electrical'));
+
+  const drawingMatches = matchLinkedRecords({ fileName: 'ASI 04 A2.01 Revision 3 Architectural bulletin.pdf' });
+  assert(drawingMatches.some((x) => x.linkType === 'drawing_register_link'));
+  assert.equal(extractDrawingMetadata('A2.01 Revision 3 Architectural').sheetNumber, 'A2.01');
+
+  assert(DROPBOX_LINK_TYPES.includes('dropbox_source_link'));
+  const link = createDropboxLinkRecord({ documentId: 'doc1', linkedModule: 'RFIs', linkedRecordId: '24', linkType: 'dropbox_issued_document_link', url: 'https://dropbox.com/s/doc', userId: 'u1' });
+  assert.equal(link.userWhoAddedLink, 'u1');
+
+  assert(EMAIL_TEMPLATES.rfi_issued);
+  const dist = createDistributionRecord({ templateKey: 'drawing_update_distributed', documentId: 'doc1', linkedModule: 'Drawings', recipients: ['pm@cast-dev.com'], manualRecipients: ['new@example.com'], sender: 'u1', data: { documentTitle: 'A2.01', projectName: 'Alüm', secureLink: 'https://secure/link' } });
+  assert.equal(dist.sendSecureLinksNotRawAttachments, true);
+  assert(dist.contactDirectorySuggestions.some((x) => x.email === 'new@example.com'));
+
+  assert(SEARCH_FIELDS.includes('dropboxLinks'));
+  assert(SAVED_VIEWS.includes('Ready to Distribute'));
+  assert.equal(buildSearchQuery({ module: 'RFIs' }).requiresPermissionFilter, true);
 
   const errors = validatePayload({ fileName: 'bad.exe', module: 'RFIs', projectId: 'golden-hill', confirmedAt: 'now' });
   assert(errors.some((e) => e.includes('Unsupported file extension')));

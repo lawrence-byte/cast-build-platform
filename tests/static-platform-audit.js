@@ -306,6 +306,41 @@ for (const requiredContactSchemaSignal of ['document_contact_capture_rollups','u
   }
 }
 
+
+for (const requiredService of ['api/_lib/document-dropbox-links.js','api/_lib/document-email-distribution.js','api/_lib/document-search.js']) {
+  if (!fs.existsSync(path.join(root, requiredService))) {
+    console.error(`Missing document infrastructure service: ${requiredService}`);
+    failed = true;
+  }
+}
+const dropboxLinkService = fs.readFileSync(path.join(root, 'api/_lib/document-dropbox-links.js'), 'utf8');
+for (const requiredDropboxSignal of ['dropbox_source_link','dropbox_issued_document_link','dropbox_responded_document_link','dropbox_supporting_backup_link','dropbox_drawing_link','dropbox_folder_link','external_shared_link_note','validateSecureUrl']) {
+  if (!dropboxLinkService.includes(requiredDropboxSignal)) {
+    console.error(`Dropbox link service missing signal: ${requiredDropboxSignal}`);
+    failed = true;
+  }
+}
+const emailDistributionService = fs.readFileSync(path.join(root, 'api/_lib/document-email-distribution.js'), 'utf8');
+for (const requiredEmailSignal of ['document_filed_notice','rfi_issued','rfi_response_received','submittal_issued','submittal_response_received','contract_uploaded_for_review','financial_document_uploaded_for_approval','field_report_distributed','drawing_update_distributed','sendSecureLinksNotRawAttachments','exportableDistributionLog']) {
+  if (!emailDistributionService.includes(requiredEmailSignal)) {
+    console.error(`Email distribution service missing signal: ${requiredEmailSignal}`);
+    failed = true;
+  }
+}
+const searchService = fs.readFileSync(path.join(root, 'api/_lib/document-search.js'), 'utf8');
+for (const requiredSearchSignal of ['fileName','documentType','costCode','rfiNumber','submittalNumber','contractNumber','changeOrderNumber','invoiceNumber','drawingSheetNumber','extractedText','dropboxLinks','Needs Review','Ready to Distribute']) {
+  if (!searchService.includes(requiredSearchSignal)) {
+    console.error(`Document search service missing signal: ${requiredSearchSignal}`);
+    failed = true;
+  }
+}
+for (const requiredComplianceSchemaSignal of ['document_external_links','document_email_distributions','document_saved_views','archived_at','soft_deleted_at','delete_requested_at','Upload, View, Download, Classification']) {
+  if (!intakeSchema.includes(requiredComplianceSchemaSignal)) {
+    console.error(`Document schema missing distribution/search/compliance signal: ${requiredComplianceSchemaSignal}`);
+    failed = true;
+  }
+}
+
 const procorePage = fs.readFileSync(path.join(root, 'public/procore.html'), 'utf8');
 if (!/no CAST BUILD A.O authentication/i.test(procorePage) || !/write API calls/i.test(procorePage)) {
   console.error('CAST BUILD A.O page must state integration guardrails.');
