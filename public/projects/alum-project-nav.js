@@ -2,6 +2,7 @@
 (function () {
   'use strict';
 
+  const LANDING_PAGE = '/';
   const HOME = '/projects/golden-hill-procore.html';
   const rawPath = window.location.pathname;
   const path = rawPath.endsWith('.html') ? rawPath : rawPath + '.html';
@@ -189,8 +190,8 @@
   topNav.setAttribute('aria-label', 'Alüm quick navigation');
   const brand = document.createElement('a');
   brand.className = 'alum-project-nav__brand';
-  brand.href = HOME;
-  brand.setAttribute('aria-label', 'Back to Alüm Project Home');
+  brand.href = LANDING_PAGE;
+  brand.setAttribute('aria-label', 'Back to CAST Build landing page');
   brand.innerHTML = `<img src="${projectLogo}" alt="CAST Build"><span class="alum-project-mark__name">${projectName}</span>`;
   const topLinks = document.createElement('div');
   topLinks.className = 'alum-project-nav__links';

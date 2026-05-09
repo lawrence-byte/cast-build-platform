@@ -98,8 +98,11 @@ for (const requiredRail of [
 ]) {
   if (!nav.includes(requiredRail)) fail(`persistent Alüm nav missing left section rail item: ${requiredRail}`);
 }
-if (!nav.includes("brand.href = HOME") || !nav.includes("railBrand.href = HOME")) {
-  fail('top-left and left-rail home links must target project home constant');
+if (!nav.includes("const LANDING_PAGE = '/'") || !nav.includes("brand.href = LANDING_PAGE")) {
+  fail('top-left CAST Build logo must target the platform landing page');
+}
+if (!nav.includes("railBrand.href = HOME")) {
+  fail('left-rail Alüm brand link must continue targeting the project home constant');
 }
 if (!/\.alum-project-nav\{[^}]*justify-content:flex-start;[^}]*padding:10px 22px;/.test(nav)) {
   fail('CAST Build top nav brand must stay left-aligned without the old sidebar-offset padding');

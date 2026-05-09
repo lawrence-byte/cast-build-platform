@@ -208,3 +208,15 @@ Validation:
 
 Open risks:
 - Schedule changes, field updates, and recovery notices remain local/draft-only until backend/auth/write-back is connected and approved.
+
+## 2026-05-09 — CAST logo landing-page link fix
+
+- Updated the persistent Alüm navigation shell so the top-left CAST Build logo links to the platform landing page `/` (`https://app.cast-bld.com/` in production).
+- Kept the left-rail `ALÜM` project brand link pointed at the Alüm project home, preserving its existing behavior.
+- Added regression coverage so the CAST logo and Alüm rail brand keep distinct destinations.
+
+Validation:
+- `node --check public/projects/alum-project-nav.js`
+- `npm test`
+- `npm run build`
+- `git diff --check`
