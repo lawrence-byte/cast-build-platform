@@ -201,12 +201,15 @@
 
   // ---------- main ----------
   (async () => {
-    let rfi, sub, pcc;
+    let rfi, sub, pcc, budget, acct, doc;
     try {
-      [rfi, sub, pcc] = await Promise.all([
+      [rfi, sub, pcc, budget, acct, doc] = await Promise.all([
         loadJson('/safe-data/projects/golden-hill/rfi-summary.json'),
         loadJson('/safe-data/projects/golden-hill/submittal-summary.json'),
         loadJson('/safe-data/projects/golden-hill/project-control-center.json'),
+        loadJson('/safe-data/projects/golden-hill/procore-information/budget/budget-summary.json').catch(() => ({})),
+        loadJson('/safe-data/projects/golden-hill/accounting-budget/accounting-budget-tieout.json').catch(() => ({})),
+        loadJson('/safe-data/projects/golden-hill/document-intelligence/summary.json').catch(() => ({})),
       ]);
     } catch (err) {
       console.error('[home] data load failed', err);
@@ -325,21 +328,21 @@
     ).join('');
     setHTML('[data-spec-rows]', specRows || '<tr><td colspan="2" style="padding:18px;color:var(--muted)">No spec section data yet.</td></tr>');
 
-    // ------- coordination focus -------
-    const cf = pcc.coordination_focus || [];
-    if (cf.length) {
-      const html = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;padding-top:6px">${
-        cf.map((f) => `
-          <a href="${esc(f.link || '#')}" style="text-decoration:none;color:inherit;display:block;border:1px solid var(--sand-light);border-left:3px solid var(--bison);padding:18px 18px 16px;background:var(--white);transition:box-shadow .2s ease" onmouseover="this.style.boxShadow='0 12px 28px rgba(20,20,20,.06)'" onmouseout="this.style.boxShadow='none'">
-            <div style="font-family:var(--font-caption);font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--bison);margin-bottom:8px">${esc(f.lane || '')}</div>
-            <div style="font-family:var(--font-heading);font-size:1.05rem;color:var(--dark);margin-bottom:6px;line-height:1.35">${esc(f.signal || '')}</div>
-            <div style="font-size:.84rem;color:var(--muted);line-height:1.55;margin-bottom:10px">${esc(f.management_move || '')}</div>
-            <div style="font-family:var(--font-caption);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);opacity:.7">Owner: ${esc(f.owner || '—')}</div>
+    // ------- critical items -------
+    const critical = window.AlumCriticalItems?.buildCriticalItems?.({ rfi, sub, budget, acct, doc }) || [];
+    if (critical.length) {
+      const html = `<div style="display:grid;gap:10px;padding-top:6px">${
+        critical.slice(0, 14).map((f, i) => `
+          <a href="${esc(f.link || '#')}" style="text-decoration:none;color:inherit;display:grid;grid-template-columns:44px minmax(140px,.34fr) minmax(0,1fr) minmax(180px,.44fr);gap:12px;align-items:start;border:1px solid var(--sand-light);border-left:3px solid ${f.severity === 'critical' ? 'var(--danger)' : f.severity === 'warning' ? 'var(--warning)' : 'var(--bison)'};padding:14px 16px;background:var(--white);transition:box-shadow .2s ease" onmouseover="this.style.boxShadow='0 12px 28px rgba(20,20,20,.06)'" onmouseout="this.style.boxShadow='none'">
+            <div style="font-family:var(--font-caption);font-size:.7rem;font-weight:800;color:var(--bison)">#${i + 1}</div>
+            <div><div style="font-family:var(--font-caption);font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--bison);margin-bottom:5px">${esc(f.area || '')}</div><span class="cb-pill cb-pill--${f.severity === 'critical' ? 'open' : f.severity === 'warning' ? 'draft' : 'neutral'}">${esc(f.signal || '')}</span></div>
+            <div><div style="font-family:var(--font-heading);font-size:1.02rem;color:var(--dark);line-height:1.35">${esc(f.item || f.title || '')}</div><div style="font-size:.78rem;color:var(--muted);margin-top:4px">Owner: ${esc(f.owner || '—')} · ${esc(f.reason || 'critical signal')}</div></div>
+            <div style="font-size:.84rem;color:var(--muted);line-height:1.5">${esc(f.next || '')}</div>
           </a>`).join('')
       }</div>`;
       setHTML('[data-coord-focus]', html);
     } else {
-      setHTML('[data-coord-focus]', '<div class="cb-empty" style="border:none;padding:32px"><h3>No coordination items</h3><p>Coordination focus will appear once project metadata is generated.</p></div>');
+      setHTML('[data-coord-focus]', '<div class="cb-empty" style="border:none;padding:32px"><h3>No critical items</h3><p>Critical items will appear once project metadata is generated.</p></div>');
     }
 
     // ------- recent activity feed (top 12) -------

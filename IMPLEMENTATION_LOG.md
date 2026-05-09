@@ -125,3 +125,16 @@ Open risks:
 - Added `assignable-parties.json` as the shared RFI/Submittal assignment picker source for managers, submitters, reviewers, responders, responsible contractors, package managers, watchers, and distribution-only recipients.
 - Added `CAST_PROJECT_CONTACT_SYNC_SPEC.md` to define how directory rows sync across Contacts, AssignableParties, AccessInvitations, ProjectAccess, RFIDistributionRecipients, SubmittalDistributionRecipients, and Project Contacts UI.
 - Updated Directory UI to show assignable-party counts and assignment-ready contacts so the directory is visibly tied into RFI/Submittal workflows.
+
+## 2026-05-09 — Documents platform consolidation + critical item dashboard
+
+- Removed RFIs/Submittals/Meeting Minutes from the project shell's separate top-level grouping and moved them into the unified Documents navigation group.
+- Merged live Alüm RFI/Submittal pages into the Documents platform as `RFI Tracking` and `Submittal Tracking`, while retaining the workflow-spec tracker pages as supporting document-control specs.
+- Added a `Unified Document Platform` section to `golden-hill-documents.html` with direct lanes for RFI Tracking, Submittal Tracking, Meeting Minutes, Drawings, Specifications, and Data Room.
+- Added shared `public/projects/alum-critical-items.js` criticality rules so dashboard/open-items/command-center use one sorted critical-item model.
+- Criticality rules now prioritize overdue/due-soon RFIs and submittals, missing owner/BIC and controlled-link gaps when those fields exist, folder/register reconciliation gaps, OCR backlog, financial commitment exceptions, and accounting tie-out exceptions.
+- Replaced the Project Home action queue with a sorted Critical Items list sourced from safe RFI, submittal, budget, accounting, and document-intelligence metadata.
+- Updated Command Center and Open Items drilldowns to show the same shared sorted critical-item stack.
+
+Open risks:
+- Static UI still cannot enforce production authentication, private-record approvals, server reconciliation, or distribution writes until a real backend/auth/API is connected.
