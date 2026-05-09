@@ -123,9 +123,7 @@
     .alum-project-nav-spacer>.wrap>.main{max-width:none!important;width:100%!important;box-sizing:border-box!important}
 
     @media(max-width:1050px){
-      .alum-section-rail{position:relative;width:auto;inset:auto;height:auto;padding:18px 14px;box-shadow:none;border-right:none;border-bottom:1px solid rgba(207,199,177,.18)}
-      .alum-section-rail__brand{padding-bottom:14px;margin-bottom:12px}
-      .alum-section-rail__group{margin-top:14px}
+      .alum-section-rail{display:none!important}
       .alum-project-nav{padding:10px 14px;position:sticky;min-height:64px}.alum-project-nav__links{justify-content:flex-start}
       .alum-project-nav__brand{min-width:170px}
       .alum-project-nav__brand img{width:170px}

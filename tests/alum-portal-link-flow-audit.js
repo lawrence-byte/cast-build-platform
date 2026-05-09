@@ -113,6 +113,9 @@ if (!/\.alum-section-rail\{[^}]*inset:70px auto 0 0;/.test(nav)) {
 if (!/\.alum-section-rail__brand img\{display:none!important\}/.test(nav)) {
   fail('left rail must not render a duplicate CAST Build logo below the top bar');
 }
+if (!/@media\(max-width:1050px\)\{\s*\.alum-section-rail\{display:none!important\}/.test(nav)) {
+  fail('mobile Alüm pages must hide the desktop section rail so page content appears first');
+}
 if (!/railBrand\.innerHTML = `<span class="alum-section-rail__project-name">\$\{projectName\}<\/span>`;/.test(nav)) {
   fail('left rail brand should render only the project name');
 }
