@@ -208,7 +208,7 @@ for (const requiredIntakeCssSignal of ['.cast-intake-button', '.cast-intake-over
   }
 }
 const intakeApi = fs.readFileSync(path.join(root, 'api/_lib/document-intake-api.js'), 'utf8');
-for (const requiredApiSignal of ['AUTH_REQUIRED', 'DOCUMENT_STORAGE_NOT_CONFIGURED', 'CAST_DOCUMENT_STORAGE_ROOT', 'CAST_DOCUMENT_DATABASE_URL', 'validatePayload', 'buildStoragePlan']) {
+for (const requiredApiSignal of ['AUTH_REQUIRED', 'DOCUMENT_STORAGE_NOT_CONFIGURED', 'DOCUMENT_STORAGE_ROOT', 'DOCUMENT_DATABASE_URL', 'validatePayload', 'buildStoragePlan', 'structuredClassification']) {
   if (!intakeApi.includes(requiredApiSignal)) {
     console.error(`Document intake API contract missing signal: ${requiredApiSignal}`);
     failed = true;
@@ -231,6 +231,42 @@ for (const requiredAdminQueueScriptSignal of ['castDocumentIntakeReviewQueue.v1'
 for (const requiredIntakeDoc of ['docs/document-intake-system.md', 'database/document-intake-schema.sql', 'api/_lib/document-storage.js', 'api/_lib/document-classification.js', 'api/_lib/document-ocr.js', 'api/_lib/document-matching.js']) {
   if (!fs.existsSync(path.join(root, requiredIntakeDoc))) {
     console.error(`Missing document intake deliverable: ${requiredIntakeDoc}`);
+    failed = true;
+  }
+}
+
+
+const classificationService = fs.readFileSync(path.join(root, 'api/_lib/document-classification.js'), 'utf8');
+for (const requiredClassificationField of ['projectId','projectName','module','documentType','confidenceScore','suggestedFolderPath','suggestedRecordLinks','extractedMetadata','requiresHumanReview','reasoningSummary']) {
+  if (!classificationService.includes(requiredClassificationField)) {
+    console.error(`Document classifier missing structured field: ${requiredClassificationField}`);
+    failed = true;
+  }
+}
+const storageService = fs.readFileSync(path.join(root, 'api/_lib/document-storage.js'), 'utf8');
+for (const requiredStorageSignal of ['/server_storage/projects', "RFIs: 'rfis'", 'processed_text', 'metadataPath', 'downloadLink', 'viewLink', 'shareLink']) {
+  if (!storageService.includes(requiredStorageSignal)) {
+    console.error(`Document storage planner missing required signal: ${requiredStorageSignal}`);
+    failed = true;
+  }
+}
+const permissionsService = fs.readFileSync(path.join(root, 'api/_lib/document-permissions.js'), 'utf8');
+for (const requiredRole of ['Admin','Project Executive','Project Manager','Assistant Project Manager','Superintendent','Field Staff','Accounting','Owner','Consultant','Architect','Engineer','Subcontractor','Vendor','Read Only']) {
+  if (!permissionsService.includes(requiredRole)) {
+    console.error(`Document permission contract missing role: ${requiredRole}`);
+    failed = true;
+  }
+}
+const intakeSchema = fs.readFileSync(path.join(root, 'database/document-intake-schema.sql'), 'utf8');
+for (const requiredTable of ['document_intake_uploads','document_versions','document_audit_log','document_links','project_contact_directory']) {
+  if (!intakeSchema.includes(requiredTable)) {
+    console.error(`Document intake schema missing table: ${requiredTable}`);
+    failed = true;
+  }
+}
+for (const requiredUploadField of ['original_file_name','stored_file_name','file_extension','original_storage_path','processed_text_path','module_classification','confidence_score','suggested_folder_path','final_folder_path','requires_human_review','extracted_metadata_json','linked_records_json','upload_source']) {
+  if (!intakeSchema.includes(requiredUploadField)) {
+    console.error(`Document intake schema missing upload field: ${requiredUploadField}`);
     failed = true;
   }
 }

@@ -163,3 +163,12 @@ Validation targets:
 
 Open configuration:
 - Real binary upload/storage, persistent database records, OCR provider calls, Dropbox API links, email sending, and production auth/session integration still require environment/provider configuration.
+
+## 2026-05-09 — Structured document classification and filing contract
+
+- Updated document classification to return the required structured object: projectId, projectName, module, documentType, confidenceScore, suggestedFolderPath, suggestedRecordLinks, extractedMetadata, requiresHumanReview, and reasoningSummary.
+- Expanded extracted metadata scaffolding for file extension, folder context, extracted text/OCR flags, dates, document title/header/footer, signatures, email addresses, cost values, keywords, vendors, and project directory contacts.
+- Updated server filing path logic to the required non-flat hierarchy under `/server_storage/projects/{projectSlug}/documents/{module_folder}` with original, processed text, metadata, and version paths.
+- Replaced the initial schema proposal with requested tables: `document_intake_uploads`, `document_versions`, `document_audit_log`, `document_links`, and `project_contact_directory`.
+- Added role/permission contract for login-required document upload/view/edit/file/approve/distribute/share/debug access across Admin, PM, Field, Accounting, Owner, Architect/Engineer, Subcontractor, Vendor, and Read Only roles.
+- Updated client intake and admin queue to use the structured classification fields and server storage folder recommendations.

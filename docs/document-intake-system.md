@@ -57,3 +57,64 @@ Legacy aliases currently checked by the API: `CAST_DOCUMENT_STORAGE_ROOT`, `CAST
 ## Admin review queue
 
 The review queue displays file name, uploaded by, project, suggested module/type, confidence, suggested folder, Dropbox link, linked record suggestions, status, upload date, and action buttons for approve/reject/reclassify/move/link/create. It also includes admin-only debug output for classification reasoning.
+
+## Structured classification object
+
+Every classification service implementation must return this shape:
+
+```json
+{
+  "projectId": "",
+  "projectName": "",
+  "module": "",
+  "documentType": "",
+  "confidenceScore": 0,
+  "suggestedFolderPath": "",
+  "suggestedRecordLinks": [],
+  "extractedMetadata": {},
+  "requiresHumanReview": true,
+  "reasoningSummary": ""
+}
+```
+
+Admin users can see `reasoningSummary` and classification debug output in the review queue. The classifier considers file name, extension, module/folder context, extracted text, OCR fallback, existing project records, RFI/Submittal/Contract/Change Order numbers, vendors, directory contacts, dates, title/header/footer, signatures, emails, cost values, and keywords.
+
+## Required server folder hierarchy
+
+The storage abstraction files documents into module-specific project folders, not a flat bucket:
+
+```text
+/server_storage/projects/{projectSlug}/documents/general
+/server_storage/projects/{projectSlug}/documents/contracts
+/server_storage/projects/{projectSlug}/documents/financials
+/server_storage/projects/{projectSlug}/documents/field
+/server_storage/projects/{projectSlug}/documents/drawings
+/server_storage/projects/{projectSlug}/documents/rfis
+/server_storage/projects/{projectSlug}/documents/submittals
+/server_storage/projects/{projectSlug}/documents/change_orders
+/server_storage/projects/{projectSlug}/documents/pay_applications
+/server_storage/projects/{projectSlug}/documents/invoices
+/server_storage/projects/{projectSlug}/documents/insurance
+/server_storage/projects/{projectSlug}/documents/permits
+/server_storage/projects/{projectSlug}/documents/meeting_minutes
+/server_storage/projects/{projectSlug}/documents/closeout
+/server_storage/projects/{projectSlug}/documents/uncategorized
+```
+
+For each filed document, the storage plan includes original file storage, processed text storage, metadata, version path, audit/log requirements, upload user, approval status, module association, linked records, permission rules, download/view/share links.
+
+## Database tables
+
+`database/document-intake-schema.sql` defines:
+
+- `document_intake_uploads`
+- `document_versions`
+- `document_audit_log`
+- `document_links`
+- `project_contact_directory`
+
+These match the requested fields and should be applied only after production DB/auth is connected.
+
+## Permission roles
+
+`api/_lib/document-permissions.js` defines login-required permissions for: Admin, Project Executive, Project Manager, Assistant Project Manager, Superintendent, Field Staff, Accounting, Owner, Consultant, Architect, Engineer, Subcontractor, Vendor, Read Only.
