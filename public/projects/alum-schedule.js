@@ -23,7 +23,16 @@ function saveScenario(id, patch) { const all = scenarios(); all[id] = { ...(all[
 function clearScenario(id) { const all = scenarios(); delete all[id]; writeStore(STATE_KEY, all); }
 function taskWithScenario(task) { return { ...task, ...(scenarios()[task.id] || {}) }; }
 function statusText(status) { return String(status || 'upcoming').replaceAll('_', ' '); }
-function parseDate(value) { const d = new Date(value); return Number.isNaN(d.getTime()) ? null : d; }
+function parseDate(value) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(value))) {
+    const [y, m, d] = String(value).split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+function dateKey(date) { return date.toISOString().slice(0, 10); }
+function addDays(date, days) { const d = new Date(date); d.setDate(d.getDate() + days); return d; }
 function daysBetween(a, b) { const da = parseDate(a); const db = parseDate(b); if (!da || !db) return 1; return Math.max(1, Math.round((db - da) / 86400000) + 1); }
 function pctFrom(text) { const m = String(text).match(/(\d{1,3})\s*(?:%|percent)/i); return m ? Math.min(100, Number(m[1])) : ''; }
 function tradeFrom(text) { const trades = ['framing', 'drywall', 'electrical', 'plumbing', 'mechanical', 'hvac', 'concrete', 'roofing', 'waterproofing', 'paint', 'fire alarm', 'fire sprinkler', 'low voltage', 'flooring', 'doors', 'windows', 'sitework', 'sdge']; const lower = String(text).toLowerCase(); return trades.find((t) => lower.includes(t)) || ''; }
@@ -148,6 +157,40 @@ function addFieldUpdate() {
   ['[data-field-update-text]', '[data-update-trade]', '[data-update-location]', '[data-update-percent]', '[data-update-contractor]', '[data-update-blocker]'].forEach((sel) => { $(sel).value = ''; });
   renderFieldUpdates(); renderRecovery();
 }
+function renderLookaheadGantt() {
+  const el = $('[data-lookahead-gantt]');
+  if (!el) return;
+  const start = parseDate(schedule?.as_of) || new Date();
+  start.setHours(0, 0, 0, 0);
+  const end = addDays(start, 13);
+  const days = Array.from({ length: 14 }, (_, i) => addDays(start, i));
+  set('[data-lookahead-range]', `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`);
+  const rows = allTasks()
+    .filter((t) => {
+      const s = parseDate(t.start); const f = parseDate(t.finish);
+      return s && f && f >= start && s <= end;
+    })
+    .sort((a, b) => String(a.start).localeCompare(String(b.start)) || String(a.trade).localeCompare(String(b.trade)))
+    .slice(0, 12);
+  if (!rows.length) {
+    el.innerHTML = '<div class="lookahead-gantt__empty">No work packages overlap the next two weeks.</div>';
+    return;
+  }
+  const calendar = `<div class="lookahead-gantt__calendar"><div class="lookahead-gantt__day">Work package</div>${days.map((d) => `<div class="lookahead-gantt__day">${esc(d.toLocaleDateString('en-US', { weekday: 'short' }))}<br>${esc(d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }))}</div>`).join('')}</div>`;
+  const body = rows.map((t) => {
+    const s = parseDate(t.start); const f = parseDate(t.finish);
+    const barStart = Math.max(0, Math.round((s - start) / 86400000));
+    const barEnd = Math.min(13, Math.round((f - start) / 86400000));
+    const span = Math.max(1, barEnd - barStart + 1);
+    const cells = days.map((_, i) => {
+      if (i === barStart) return `<div class="lookahead-gantt__bar lookahead-gantt__bar--${esc(t.status)}" style="grid-column:span ${span}" title="${esc(t.title)} · ${esc(statusText(t.status))} · ${esc(t.start_label || t.start)}–${esc(t.finish_label || t.finish)}">${span >= 3 ? esc(statusText(t.status)) : ''}</div>`;
+      if (i > barStart && i <= barEnd) return '';
+      return '<div class="lookahead-gantt__cell"></div>';
+    }).join('');
+    return `<div class="lookahead-gantt__row"><div class="lookahead-gantt__label"><span class="lookahead-gantt__task">${esc(t.title)}</span><span class="lookahead-gantt__meta">${esc(t.trade)} · ${esc(t.location)} · ${esc(t.start_label || t.start)}–${esc(t.finish_label || t.finish)}</span></div>${cells}</div>`;
+  }).join('');
+  el.innerHTML = calendar + body;
+}
 function renderLookahead() {
   const tasks = allTasks();
   const lanes = [
@@ -212,7 +255,7 @@ function renderSummary() {
   const tasks = allTasks(); const summary = schedule?.summary || {};
   set('[data-total-work-packages]', tasks.length); set('[data-active-count]', tasks.filter((t) => t.status === 'active_now').length); set('[data-starts-soon-count]', tasks.filter((t) => t.status === 'starts_soon').length); set('[data-verify-complete-count]', tasks.filter((t) => t.status === 'verify_complete').length); set('[data-scenario-count]', Object.keys(scenarios()).length); set('[data-imported-tasks]', summary.total_imported_tasks || '—'); set('[data-critical-count]', summary.critical_path_items || tasks.filter((t) => t.critical).length); set('[data-source-basis]', schedule?.source_basis || 'Sanitized schedule metadata'); set('[data-source-index-status]', schedule?.source_status || 'loaded'); set('[data-current-read]', (schedule?.current_read || []).join(' '));
 }
-function renderAll() { renderSummary(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderRecovery(); renderDirectives(); }
+function renderAll() { renderSummary(); renderLookaheadGantt(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderRecovery(); renderDirectives(); }
 function bind() {
   ['[data-search]', '[data-status-filter]', '[data-trade-filter]', '[data-phase-filter]', '[data-sort]'].forEach((sel) => $$(sel).forEach((el) => el.addEventListener('input', renderAll)));
   $$('[data-view-preset]').forEach((b) => b.addEventListener('click', () => { $('[data-status-filter]').value = b.dataset.viewPreset; renderAll(); }));

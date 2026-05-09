@@ -485,7 +485,7 @@ if (!/Schedule Dashboard/.test(schedulePage) || !/Field Update Intake/.test(sche
   console.error('Schedule dashboard must include schedule items, huddle, field intake, constraints, lookahead, and draft-only correspondence posture.');
   failed = true;
 }
-for (const requiredSchedulePageSignal of ['schedule-modern', 'Modern CAST Build schedule page alignment', 'schedule-hero{background:transparent', 'schedule-row{grid-template-columns:96px minmax(180px,1.2fr)']) {
+for (const requiredSchedulePageSignal of ['schedule-modern', 'Modern CAST Build schedule page alignment', 'schedule-hero{background:transparent', 'schedule-row{grid-template-columns:96px minmax(180px,1.2fr)', 'Two-Week Lookahead Gantt', 'data-lookahead-gantt']) {
   if (!schedulePage.includes(requiredSchedulePageSignal)) {
     console.error(`Alüm schedule page missing modern project-page alignment guard: ${requiredSchedulePageSignal}`);
     failed = true;
@@ -497,7 +497,7 @@ for (const forbiddenSchedulePageCopy of ['Field-First Schedule Intelligence', 'V
     failed = true;
   }
 }
-for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'schedule-source-index.json', 'data-source-index-status', 'alumScheduleFieldUpdates', 'alumScheduleLookahead', 'SpeechRecognition', 'Recovery Plan Required', 'localStorage']) {
+for (const requiredScheduleSignal of ['rfi-summary.json', 'submittal-summary.json', 'schedule-source-index.json', 'data-source-index-status', 'alumScheduleFieldUpdates', 'alumScheduleLookahead', 'SpeechRecognition', 'Recovery Plan Required', 'localStorage', 'renderLookaheadGantt', 'data-lookahead-range']) {
   if (!scheduleScript.includes(requiredScheduleSignal) && !schedulePage.includes(requiredScheduleSignal)) {
     console.error(`Schedule control missing signal/control: ${requiredScheduleSignal}`);
     failed = true;
