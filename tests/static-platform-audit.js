@@ -437,11 +437,15 @@ if (!publicIndex.includes('/assets/brand/cast-automation-horizontal-white-on-cha
   console.error('CAST Build landing top-right must use the CAST Automation logo.');
   failed = true;
 }
-for (const asset of ['cast-community-logo-transparent.png', 'cast-build-logo-transparent.png', 'cast-automation-horizontal-white-on-charcoal.png']) {
+for (const asset of ['cast-community-logo-transparent.png', 'cast-build-logo-transparent.png', 'cast-automation-horizontal-white-on-charcoal.png', 'alum-building-linen-sketch.png']) {
   if (!fs.existsSync(path.join(root, 'public/assets/brand', asset))) {
     console.error(`Missing transparent landing brand asset: ${asset}`);
     failed = true;
   }
+}
+if (!publicIndex.includes('cast-landing-building-sketch') || !publicIndex.includes('/assets/brand/alum-building-linen-sketch.png')) {
+  console.error('CAST Build landing must include the Alüm linen building sketch asset.');
+  failed = true;
 }
 if (!/\.cast-family-top img\{width:95px;height:auto/.test(castBuildCss) || !/\.cast-access-logo\{[^}]*width:min\(380px,100%\)/.test(castBuildCss)) {
   console.error('CAST Build landing must use reduced CAST Community top-left sizing and reduced CAST Build desktop sizing.');
@@ -449,6 +453,10 @@ if (!/\.cast-family-top img\{width:95px;height:auto/.test(castBuildCss) || !/\.c
 }
 if (!/\.automation-top img\{width:190px;height:auto/.test(castBuildCss)) {
   console.error('CAST Build landing must use reduced CAST Automation desktop sizing.');
+  failed = true;
+}
+if (!/\.cast-landing-building-sketch\{[^}]*right:clamp\(-360px,-22vw,-245px\);[^}]*width:min\(720px,58vw\)/.test(castBuildCss)) {
+  console.error('CAST Build landing building sketch must sit cropped on the far right.');
   failed = true;
 }
 if (!/@media\(max-width:900px\)[\s\S]*\.cast-access-logo\{[^}]*width:min\(320px,86vw\)/.test(castBuildCss) || !/@media\(max-width:900px\)[\s\S]*\.automation-top img\{width:66px;height:auto/.test(castBuildCss)) {

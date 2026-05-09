@@ -265,3 +265,16 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Local mobile browser smoke confirming only `ALÜM PROJECT` remains on the landing page.
+
+## 2026-05-09 — Landing page Alüm building sketch
+
+- Created a transparent PNG architectural sketch asset from Lawrence's reference image: `public/assets/brand/alum-building-linen-sketch.png`.
+- Converted the sketch to warm linen-colored line art, removed street/sidewalk/background context, and kept it building-only.
+- Added the sketch to the CAST Build landing page as a decorative far-right background element, cropped off-canvas so only part of the building is visible and the main CTA remains readable.
+- Added static audit coverage for the landing sketch asset and right-side crop placement.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Local desktop and mobile browser screenshot QA; mobile placement adjusted so the sketch does not interfere with the CTA.
