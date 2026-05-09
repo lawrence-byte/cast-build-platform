@@ -173,3 +173,4 @@ Validation:
 
 Open risks:
 - This is a fail-closed repair, not a full production backend. Real record reads/writes, email distribution, login sessions, ProjectAccess grants, and audit persistence still require connecting a real backend/database/auth provider.
+- Added explicit Vercel API files for protected project route families so `/api/projects/:projectId/{rfis,submittals,access,distribution,contacts}` route to fail-closed functions in preview/production, not 404/static placeholders.
