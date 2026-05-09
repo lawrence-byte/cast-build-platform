@@ -92,6 +92,29 @@
   const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
   const projectLogo = document.body.dataset.projectLogo || '/assets/brand/cast-build-logo-transparent.png';
 
+  function loadGlobalIntakeAssets() {
+    if (!document.querySelector('link[data-cast-document-intake]')) {
+      const linkEl = document.createElement('link');
+      linkEl.rel = 'stylesheet';
+      linkEl.href = '/cast-document-intake.css';
+      linkEl.dataset.castDocumentIntake = 'true';
+      document.head.appendChild(linkEl);
+    }
+    return new Promise((resolve) => {
+      if (window.CastDocumentIntake) return resolve(window.CastDocumentIntake);
+      let script = document.querySelector('script[data-cast-document-intake]');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = '/cast-document-intake.js';
+        script.defer = true;
+        script.dataset.castDocumentIntake = 'true';
+        document.body.appendChild(script);
+      }
+      script.addEventListener('load', () => resolve(window.CastDocumentIntake), { once: true });
+      script.addEventListener('error', () => resolve(null), { once: true });
+    });
+  }
+
   const css = document.createElement('style');
   css.textContent = `
     .alum-project-nav{position:sticky;top:0;z-index:1300;display:flex;align-items:center;justify-content:flex-start;gap:18px;min-height:70px;padding:10px 22px;background:rgba(24,24,22,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(207,199,177,.18);box-shadow:0 10px 30px rgba(0,0,0,.18)}
@@ -173,6 +196,10 @@
   topLinks.className = 'alum-project-nav__links';
   for (const [label, href] of primary) topLinks.appendChild(link(label, href));
   topNav.append(brand, topLinks);
+
+  loadGlobalIntakeAssets().then((intake) => {
+    if (intake && intake.mountButton) intake.mountButton(topNav);
+  });
 
   const rail = document.createElement('aside');
   rail.className = 'alum-section-rail';

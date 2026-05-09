@@ -145,3 +145,21 @@ Validation:
 
 Open risks:
 - Submittal create/issue/return/revise/close actions are local workflow scaffolds until backend/auth/write-back is connected. Production issuing/distribution remains approval-gated.
+
+## 2026-05-09 — Global CAST Document Intake infrastructure
+
+- Added global CAST logo document-intake action using Lawrence's supplied circular CAST logo as `/assets/cast-upload-logo.png` with transparent PNG output.
+- Added `public/cast-document-intake.js` and `public/cast-document-intake.css` for the global upload/intelligent filing panel.
+- Integrated the global intake button into the shared Alüm navigation shell and Admin header.
+- Added fail-closed API contract route `/api/document-intake` plus review route scaffold `/api/document-intake-review`.
+- Added provider-neutral storage path logic, classification service, OCR fallback hook, linked-record matching, and server validation.
+- Added admin review queue in `admin.html` with file name, uploaded by, project, suggested module/type, confidence, folder/Dropbox link, linked records, status, date, approve/reject/reclassify/move/link/create actions, filters, seed records, and admin debug output.
+- Added proposed database schema at `database/document-intake-schema.sql` for intake items, versions, and audit logs.
+- Added `docs/document-intake-system.md` describing the flow, env vars, storage abstraction, OCR fallback, matching logic, and review queue.
+
+Validation targets:
+- Static/source tests enforce the global intake UI, API contract, classification modules, and admin review queue signals.
+- API unit tests cover GET contract, auth-required POST, fail-closed unconfigured storage, validation, and storage-plan generation.
+
+Open configuration:
+- Real binary upload/storage, persistent database records, OCR provider calls, Dropbox API links, email sending, and production auth/session integration still require environment/provider configuration.

@@ -5,7 +5,7 @@ const XLSX = require('xlsx');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/cast-document-intake.js', 'public/cast-document-intake.css', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -165,6 +165,72 @@ for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawi
   const text = fs.readFileSync(path.join(root, requiredScaffold[0]), 'utf8');
   if (!text.includes(requiredScaffold[1]) || !text.includes('RFIs')) {
     console.error(`${requiredScaffold[0]} missing document-control scaffold signals.`);
+    failed = true;
+  }
+}
+
+
+const intakeScript = fs.readFileSync(path.join(root, 'public/cast-document-intake.js'), 'utf8');
+const intakeCss = fs.readFileSync(path.join(root, 'public/cast-document-intake.css'), 'utf8');
+const navScript = fs.readFileSync(path.join(root, 'public/projects/alum-project-nav.js'), 'utf8');
+const adminPageForIntake = fs.readFileSync(path.join(root, 'public/admin.html'), 'utf8');
+const adminIntakeScript = fs.readFileSync(path.join(root, 'public/admin-document-intake.js'), 'utf8');
+for (const requiredIntakeSignal of ['CAST Document Intake', 'Upload and File Document', 'data-intake-drop', 'Confirm and File', 'classification', 'linkedRecords', '/api/document-intake', 'document:upload']) {
+  if (!intakeScript.includes(requiredIntakeSignal)) {
+    console.error(`Global document intake missing signal: ${requiredIntakeSignal}`);
+    failed = true;
+  }
+}
+for (const requiredIntakeModule of ['Documents','Contracts','Financials','Field','Drawings','RFIs','Submittals','Change Orders','Pay Applications','Invoices','Insurance','Permits','Meeting Minutes','Closeout','Uncategorized']) {
+  if (!intakeScript.includes(requiredIntakeModule)) {
+    console.error(`Global document intake missing classification module: ${requiredIntakeModule}`);
+    failed = true;
+  }
+}
+if (!fs.existsSync(path.join(root, 'public/assets/cast-upload-logo.png'))) {
+  console.error('Missing CAST upload logo asset placeholder at public/assets/cast-upload-logo.png');
+  failed = true;
+}
+for (const requiredNavIntakeSignal of ['cast-document-intake.js', 'cast-document-intake.css', 'mountButton(topNav)']) {
+  if (!navScript.includes(requiredNavIntakeSignal)) {
+    console.error(`Alüm global nav missing document intake integration: ${requiredNavIntakeSignal}`);
+    failed = true;
+  }
+}
+if (!adminPageForIntake.includes('/cast-document-intake.js') || !adminPageForIntake.includes("mountButton(document.querySelector('.topbar'))")) {
+  console.error('Admin page must mount the global CAST document intake button.');
+  failed = true;
+}
+for (const requiredIntakeCssSignal of ['.cast-intake-button', '.cast-intake-overlay', '.cast-intake-panel']) {
+  if (!intakeCss.includes(requiredIntakeCssSignal)) {
+    console.error(`Global document intake CSS missing signal: ${requiredIntakeCssSignal}`);
+    failed = true;
+  }
+}
+const intakeApi = fs.readFileSync(path.join(root, 'api/_lib/document-intake-api.js'), 'utf8');
+for (const requiredApiSignal of ['AUTH_REQUIRED', 'DOCUMENT_STORAGE_NOT_CONFIGURED', 'CAST_DOCUMENT_STORAGE_ROOT', 'CAST_DOCUMENT_DATABASE_URL', 'validatePayload', 'buildStoragePlan']) {
+  if (!intakeApi.includes(requiredApiSignal)) {
+    console.error(`Document intake API contract missing signal: ${requiredApiSignal}`);
+    failed = true;
+  }
+}
+
+
+for (const requiredAdminQueueSignal of ['Admin Document Intake Review Queue', 'data-intake-review-rows', 'Approve', 'Reject', 'Reclassify', 'Move folder', 'Link to existing record', 'Create new record', 'Dropbox']) {
+  if (!adminPageForIntake.includes(requiredAdminQueueSignal)) {
+    console.error(`Admin document intake review queue missing signal: ${requiredAdminQueueSignal}`);
+    failed = true;
+  }
+}
+for (const requiredAdminQueueScriptSignal of ['castDocumentIntakeReviewQueue.v1', 'duplicateWarning', 'classification', 'emailDistribution', 'contacts', 'Admin debug']) {
+  if (!adminIntakeScript.includes(requiredAdminQueueScriptSignal)) {
+    console.error(`Admin document intake review script missing signal: ${requiredAdminQueueScriptSignal}`);
+    failed = true;
+  }
+}
+for (const requiredIntakeDoc of ['docs/document-intake-system.md', 'database/document-intake-schema.sql', 'api/_lib/document-storage.js', 'api/_lib/document-classification.js', 'api/_lib/document-ocr.js', 'api/_lib/document-matching.js']) {
+  if (!fs.existsSync(path.join(root, requiredIntakeDoc))) {
+    console.error(`Missing document intake deliverable: ${requiredIntakeDoc}`);
     failed = true;
   }
 }
