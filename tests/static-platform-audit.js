@@ -3,7 +3,7 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -74,7 +74,7 @@ for (const file of files) {
 }
 
 const alumPortalPage = fs.readFileSync(path.join(root, 'public/projects/golden-hill.html'), 'utf8');
-for (const requiredPortalLink of ['alum-directory.html', 'alum-quality.html', 'alum-punch-list.html', 'alum-contracts.html', 'alum-owner-billings.html', 'alum-specifications.html', 'alum-reports.html']) {
+for (const requiredPortalLink of ['alum-directory.html', 'alum-quality.html', 'alum-punch-list.html', 'alum-contracts.html', 'alum-potential-change-orders.html', 'alum-owner-billings.html', 'alum-specifications.html', 'alum-reports.html']) {
   if (!alumPortalPage.includes(requiredPortalLink)) {
     console.error(`Alüm portal missing Procore-style system link: ${requiredPortalLink}`);
     failed = true;
@@ -90,7 +90,8 @@ const procoreSystemPages = [
   ['public/projects/alum-directory.html', 'Directory'],
   ['public/projects/alum-quality.html', 'Observations / Inspections'],
   ['public/projects/alum-punch-list.html', 'Punch List'],
-  ['public/projects/alum-contracts.html', 'Prime Contract'],
+  ['public/projects/alum-contracts.html', 'Contracts'],
+  ['public/projects/alum-potential-change-orders.html', 'Potential Change Orders'],
   ['public/projects/alum-owner-billings.html', 'Owner Billings'],
   ['public/projects/alum-specifications.html', 'Specifications'],
   ['public/projects/alum-reports.html', 'Reports'],
@@ -325,6 +326,8 @@ for (const moduleFile of ['public/projects/alum-rfis.html', 'public/projects/alu
 const rfiModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-rfis.js'), 'utf8');
 const submittalModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-submittals.js'), 'utf8');
 const changeEventModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-change-events.js'), 'utf8');
+const potentialChangeOrdersPage = fs.readFileSync(path.join(root, 'public/projects/alum-potential-change-orders.html'), 'utf8');
+const potentialChangeOrdersScript = fs.readFileSync(path.join(root, 'public/projects/alum-potential-change-orders.js'), 'utf8');
 const dailyLogModuleScript = fs.readFileSync(path.join(root, 'public/projects/alum-daily-log.js'), 'utf8');
 for (const requiredRfiSignal of ['costImpactYes', 'scheduleImpactYes', 'topManagers', 'topContractors']) {
   if (!rfiModuleScript.includes(requiredRfiSignal)) {
@@ -341,6 +344,18 @@ for (const requiredSubmittalSignal of ['topSpecSections', 'typeCounts', 'Revise 
 for (const requiredChangeSignal of ['11. CHANGE EVENTS', '12. OWNER CHANGE ORDERS', 'budget-revisions-register.json', 'raw log remains private']) {
   if (!changeEventModuleScript.includes(requiredChangeSignal)) {
     console.error(`Change Events module script missing signal: ${requiredChangeSignal}`);
+    failed = true;
+  }
+}
+for (const requiredPcoSignal of ['Contracts', 'Potential Change Orders', 'data-pco-rows', 'data-contingency-remaining', 'Contingency Bridge']) {
+  if (!potentialChangeOrdersPage.includes(requiredPcoSignal)) {
+    console.error(`Potential Change Orders page missing signal: ${requiredPcoSignal}`);
+    failed = true;
+  }
+}
+for (const requiredPcoScriptSignal of ['Pending Cost Changes', 'Projected over Under', 'topBudgetRiskRows', 'contingencyTie', 'remainingContingency']) {
+  if (!potentialChangeOrdersScript.includes(requiredPcoScriptSignal)) {
+    console.error(`Potential Change Orders script missing budget/contingency tie: ${requiredPcoScriptSignal}`);
     failed = true;
   }
 }

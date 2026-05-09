@@ -25,7 +25,6 @@
       items: [
         ['RFIs', '/projects/alum-rfis.html', 'i-help'],
         ['Submittals', '/projects/alum-submittals.html', 'i-clipboard'],
-        ['Change Events', '/projects/alum-change-events.html', 'i-swap'],
         ['Meeting Minutes', '/projects/alum-meeting-minutes.html', 'i-clock'],
       ],
     },
@@ -39,6 +38,17 @@
         ['Folder Registers', '/projects/alum-folder-registers.html', 'i-data'],
         ['Data Room', '/projects/alum-data-room.html', 'i-data'],
         ['Closeout', '/projects/alum-closeout.html', 'i-flag'],
+      ],
+    },
+    {
+      label: 'CONTRACTS',
+      summary: 'Prime contract and change control',
+      items: [
+        ['Prime Contract', '/projects/alum-contracts.html', 'i-document'],
+        ['Potential Change Orders', '/projects/alum-potential-change-orders.html', 'i-alert'],
+        ['Change Events', '/projects/alum-change-events.html', 'i-swap'],
+        ['Approved Change Orders', '/projects/alum-budget-changes.html', 'i-check'],
+        ['Owner Billings', '/projects/alum-owner-billings.html', 'i-money'],
       ],
     },
     {

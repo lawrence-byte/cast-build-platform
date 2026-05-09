@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alüm Potential Change Orders — CAST Build</title>
+  <meta name="description" content="Alüm contracts control room — potential change orders tied to budget codes, forecast exposure, and remaining contingency.">
+  <link rel="stylesheet" href="/cast-build.css">
+  <link rel="stylesheet" href="/cast-build-components.css">
+  <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
+  <script src="/assets/brand/brand.js" defer></script>
+  <script src="/cast-build-shell.js" defer></script>
+  <style>
+    .contract-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:28px}.contract-flow a{display:block;min-height:96px;padding:16px;border:1px solid var(--sand-light);border-left:3px solid var(--bison);background:var(--white);text-decoration:none;color:var(--graphite)}.contract-flow strong{display:block;font-family:var(--font-heading);font-size:1.22rem;font-weight:400;color:var(--dark);margin-bottom:6px}.contract-flow span{font-size:.8rem;color:var(--muted);line-height:1.45}.contingency-bridge{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:18px 22px 22px}.bridge-step{border:1px solid rgba(212,201,178,.8);background:var(--ivory-alt);padding:16px}.bridge-step span{display:block;font-family:var(--font-caption);font-size:.62rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--sand);margin-bottom:7px}.bridge-step strong{display:block;font-family:var(--font-heading);font-size:1.55rem;font-weight:400;color:var(--dark);line-height:1}.bridge-step.danger strong{color:var(--danger)}.pco-risk{font-weight:700}.pco-risk--high{color:var(--danger)}.pco-risk--medium{color:var(--warning)}.pco-risk--watch{color:var(--graphite)}.cb-table-wrap{max-width:100%;overflow-x:auto}.project-panel{min-width:0}@media(max-width:1050px){.contingency-bridge{grid-template-columns:1fr;padding:14px}.contract-flow{grid-template-columns:1fr}.project-dashboard-grid{grid-template-columns:1fr!important}.project-panel{min-width:0!important;max-width:100%!important}.project-table{min-width:980px}.cb-table-wrap{max-width:100%;overflow-x:auto}}
+  </style>
+</head>
+<body class="project-admin-body">
+  <!-- project-sidebar-group rendered by /projects/alum-project-nav.js -->
+  <div class="project-dashboard-wrapper project-dashboard-wrapper--no-rail">
+    <main class="project-main-content">
+      <header class="project-page-header">
+        <div>
+          <div class="project-page-subtitle">Alüm · Contracts</div>
+          <h1 class="project-page-title">Potential Change Orders</h1>
+          <p style="color:var(--muted);font-size:.92rem;margin-top:8px;max-width:760px;line-height:1.55">
+            Contract exposure watchlist tied to current budget codes, forecast variance, pending cost changes, and remaining contingency. Read-first only — no owner-facing action or source-system writeback.
+          </p>
+        </div>
+        <div class="cb-action-row">
+          <span class="cb-toolbar__count" data-generated>Loading…</span>
+          <a class="cb-btn cb-btn--ghost cb-btn--small" href="/projects/alum-contracts.html">Prime Contract</a>
+          <a class="cb-btn cb-btn--ghost cb-btn--small" href="/projects/alum-budget.html">Budget</a>
+        </div>
+      </header>
+
+      <nav class="contract-flow" aria-label="Contracts subcategories">
+        <a href="/projects/alum-contracts.html"><strong>Prime Contract</strong><span>Contract files, GMP controls, notice and billing terms.</span></a>
+        <a href="/projects/alum-potential-change-orders.html"><strong>Potential Change Orders</strong><span>PCO candidates tied to budget and contingency exposure.</span></a>
+        <a href="/projects/alum-change-events.html"><strong>Change Events</strong><span>Source event buckets and change-control workflow.</span></a>
+        <a href="/projects/alum-budget-changes.html"><strong>Approved Change Orders</strong><span>Approved budget revisions and line-level transfers.</span></a>
+        <a href="/projects/alum-owner-billings.html"><strong>Owner Billings</strong><span>Pay applications, retainage, approvals, and billing posture.</span></a>
+      </nav>
+
+      <div class="cb-callout cb-callout--read-first" role="note">
+        <strong>Read-first contracts control.</strong>
+        Potential Change Orders shown here are generated from sanitized budget/forecast metadata and change-event folder signals. Amounts are planning exposure only until validated against contract backup and approved in CAST BUILD A.O.
+      </div>
+
+      <section class="project-kpi-grid" aria-label="PCO and contingency metrics">
+        <article class="project-kpi-card"><div class="kpi-label">Potential Exposure</div><div class="kpi-value kpi-value--num" data-pco-exposure>—</div><div class="kpi-change">Open forecast / pending candidates</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Remaining Contingency</div><div class="kpi-value kpi-value--num" data-contingency-remaining>—</div><div class="kpi-change">Current contingency budget line</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Coverage After PCOs</div><div class="kpi-value kpi-value--num" data-coverage-after>—</div><div class="kpi-change" data-coverage-caption>Contingency less potential exposure</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Pending Cost Changes</div><div class="kpi-value kpi-value--num" data-pending-cost>—</div><div class="kpi-change">Current budget metric</div></article>
+      </section>
+
+      <section class="project-panel span-12" style="margin-bottom:28px">
+        <div class="panel-header"><h2>Contingency Bridge</h2><span data-contingency-status>Loading…</span></div>
+        <div class="contingency-bridge">
+          <div class="bridge-step"><span>Original contingency</span><strong data-contingency-original>—</strong></div>
+          <div class="bridge-step"><span>Approved drawdown</span><strong data-contingency-drawdown>—</strong></div>
+          <div class="bridge-step"><span>Remaining contingency</span><strong data-contingency-current>—</strong></div>
+          <div class="bridge-step danger"><span>Potential PCO exposure</span><strong data-contingency-exposure>—</strong></div>
+          <div class="bridge-step"><span>Projected balance</span><strong data-contingency-balance>—</strong></div>
+        </div>
+      </section>
+
+      <section class="project-panel span-12" style="margin-bottom:28px">
+        <div class="panel-header"><h2>Potential Change Orders</h2><span data-pco-count>—</span></div>
+        <div class="cb-table-wrap" style="border:none">
+          <table class="project-table" aria-label="Potential change orders tied to budget and contingency">
+            <thead><tr><th>PCO Candidate</th><th>Source Signal</th><th>Budget Code</th><th class="cb-td-num" style="text-align:right">Exposure</th><th>Contingency Tie</th><th>Risk</th><th>Next Step</th></tr></thead>
+            <tbody data-pco-rows></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="project-dashboard-grid" style="margin-bottom:28px">
+        <article class="project-panel span-8">
+          <div class="panel-header"><h2>Budget Codes Driving Exposure</h2><span data-budget-code-count>—</span></div>
+          <div class="cb-table-wrap" style="border:none"><table class="project-table"><thead><tr><th>Budget Code</th><th>Description</th><th class="cb-td-num" style="text-align:right">Projected O/U</th><th class="cb-td-num" style="text-align:right">Revised Budget</th></tr></thead><tbody data-budget-code-rows></tbody></table></div>
+        </article>
+        <article class="project-panel span-4">
+          <div class="panel-header"><h2>Change Event Backup</h2><span>metadata only</span></div>
+          <div class="fast-link-list">
+            <a href="/projects/alum-change-events.html">Change Event Buckets</a>
+            <a href="/projects/alum-budget-changes.html">Approved Change Orders</a>
+            <a href="/projects/alum-accounting-tieout.html">Accounting Tie-Out</a>
+            <a href="/projects/alum-budget-exceptions.html">Budget Exceptions</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+  <script src="/projects/alum-potential-change-orders.js" defer></script>
+  <script src="/projects/alum-project-nav.js" defer></script>
+</body>
+</html>
