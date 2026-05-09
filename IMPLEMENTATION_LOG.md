@@ -103,3 +103,10 @@ Open risks:
 - Diagnosed Submittal Log source issue: current repo is static/read-first and `alum-submittals.js` reads local summary JSON rather than a server source-of-truth register. No backend/server schema was found in this repo.
 - Added/updated RFI and Submittal documentation for controlled external links, email distribution, access invitations, login-required record access, automatic contact/profile creation, ProjectAccess, distribution recipient linking, audit events, and server reconciliation requirements.
 - Added `CAST_SUBMITTAL_LOG_FIX_NOTES.md` and `CAST_SUBMITTAL_SERVER_RECONCILIATION_REPORT.md` documenting current blocker: live server reconciliation cannot run until the real server/API/database is connected to this repo.
+
+## 2026-05-09 — RFI/Submittal assignability model
+
+- Added `CAST_ASSIGNABILITY_SPEC.md` defining shared assignable parties, entity assignments, assignment roles, picker behavior, automatic access creation, duplicate handling, audit events, and tests.
+- Updated `CAST_PROJECT_ACCESS_SPEC.md` to distinguish ProjectAccess from Assignability.
+- Updated RFI/Submittal data dictionaries and workflows so RFI Manager, Submittal Manager, Submitter, Reviewer, Responder, Responsible Contractor, Ball in Court, Package Manager, Watcher, and Distribution Only roles use one assignment model.
+- Documented that legacy `*_user_id`, `ball_in_court_user_ids`, assignee, and workflow participant fields should become compatibility/derived fields once `EntityAssignments` is implemented.

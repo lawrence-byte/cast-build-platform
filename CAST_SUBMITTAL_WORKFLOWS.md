@@ -44,3 +44,9 @@ When an email recipient opens a secure submittal link, unauthenticated users are
 ## Reconciliation review workflow
 
 Admins review server/local conflicts in the Submittal Reconciliation Review screen. Available actions: Merge, Keep Server, Keep Local Draft, Flag for Review, Archive Duplicate. No duplicate is deleted automatically.
+
+## Assignability workflow
+
+Submittal assignment uses `CAST_ASSIGNABILITY_SPEC.md`.
+
+Submittal Manager, Submitter, Reviewer, Approver, Ball in Court, Responsible Contractor, and Package Manager should all be selected through the shared assignability picker. Workflow-step participants become `EntityAssignments`; BIC is derived from active workflow-step/record assignments. Assigning an unregistered contact creates an invitation and the least required access role unless private-record approval is required.

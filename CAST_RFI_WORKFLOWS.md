@@ -27,3 +27,9 @@ All system RFI detail pages require authentication. Public email links route thr
 ## Issued/responded RFI email distribution workflow
 
 Issued RFI distribution requires an issued package/system link unless an authorized override reason is recorded. Responded RFI distribution requires a responded package/system link unless an authorized override reason is recorded. Each send creates distribution history, recipient rows, access invitations, and audit events.
+
+## Assignability workflow
+
+RFI assignment uses `CAST_ASSIGNABILITY_SPEC.md`.
+
+When creating or updating an RFI, the picker should show registered users, project contacts, company placeholders, and distribution-only contacts with assignability status. Assigning an unregistered contact creates an invitation. Assigning a responder creates or requests the least required RFI access role. Ball in Court is derived from active `EntityAssignments`, not from free-text fields.

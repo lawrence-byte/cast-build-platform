@@ -64,3 +64,30 @@ These shared access tables support secure email distribution links, login-requir
 ## SubmittalDistributions / SubmittalDistributionRecipients / SubmittalDistributionList
 
 Distribution tables track issued, returned, general update, overdue reminder, closeout, and package distributions. Recipients may be registered users or project contacts. When a contact later logs in, the distribution list updates to show the linked user profile.
+
+## Assignability additions
+
+Submittal assignments use the shared `AssignableParties` and `EntityAssignments` models in `CAST_ASSIGNABILITY_SPEC.md`.
+
+Legacy fields such as `submitter_user_id`, `submittal_manager_user_id`, `ball_in_court_user_ids`, `SubmittalWorkflowParticipants`, and package manager fields should be treated as derived or compatibility fields once `EntityAssignments` is available.
+
+Submittal assignment roles:
+
+- Submittal Manager
+- Submitter
+- Reviewer
+- Approver
+- Ball in Court
+- Responsible Contractor
+- Package Manager
+- Distribution Only
+- Watcher
+
+Rules:
+
+- Every active Submittal must have a Submittal Manager.
+- Submitted/Under Review submittals must have at least one current Ball in Court or workflow-step assignment.
+- Workflow-step participants are represented as EntityAssignments so due dates, reminders, BIC, responses, and access all use one source.
+- Package-level assignments may cascade to submittal items; item-level overrides are allowed.
+- Contacts without logins can be assigned, but must create AccessInvitations before secure record access.
+- Private Submittals require explicit approval before assignment-created access is granted.

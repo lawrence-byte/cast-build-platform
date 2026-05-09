@@ -165,3 +165,9 @@ Controlled external links for Dropbox/Drive/SharePoint/etc. These are package/re
 - distribution.sent
 - distribution.failed
 - distribution.resent
+
+## Assignability relationship
+
+RFIs and Submittals use the shared assignability model in `CAST_ASSIGNABILITY_SPEC.md`.
+
+ProjectAccess answers whether a user may access the project. Assignability answers whether a user/contact/company can be selected for a specific RFI/Submittal responsibility. Assignments may create the least required ProjectAccess and AccessInvitation, but must not downgrade existing access and must pause for approval on private records.

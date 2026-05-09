@@ -82,3 +82,27 @@ Distribution recipients may be registered users or contacts. When a contact late
 ## Audit event additions
 
 RFI assigned to current log, RFI log query fixed, issued/responded link added/changed, external link verified, issued/responded RFI distributed, recipient invited/logged in, contact auto created/updated, project access granted/revoked, distribution failed/resent.
+
+## Assignability additions
+
+RFI assignments use the shared `AssignableParties` and `EntityAssignments` models in `CAST_ASSIGNABILITY_SPEC.md`.
+
+Legacy fields such as `rfi_manager_user_id`, `ball_in_court_user_ids`, and `RFIAssignees` should be treated as derived or compatibility fields once `EntityAssignments` is available.
+
+RFI assignment roles:
+
+- RFI Manager
+- Ball in Court
+- Responsible Contractor
+- Reviewer
+- Responder
+- Approver
+- Distribution Only
+- Watcher
+
+Rules:
+
+- Every open RFI must have one RFI Manager and at least one active Ball in Court assignment.
+- Contacts without logins can be assigned, but must create AccessInvitations before secure record access.
+- Private RFIs require explicit approval before assignment-created access is granted.
+- Reassignment preserves history by creating a new assignment and marking the previous assignment Reassigned or Removed.
