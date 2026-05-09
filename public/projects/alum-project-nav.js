@@ -33,6 +33,7 @@
       summary: 'Drawings, specs, data room',
       items: [
         ['RFI Tracking', '/projects/cast-rfi-tracker.html', 'i-help'],
+        ['Submittals', '/projects/cast-submittal-tracker.html', 'i-clipboard'],
         ['Drawing Log', '/projects/cast-drawing-log.html', 'i-document'],
         ['Document Register', '/projects/cast-document-register.html', 'i-data'],
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],

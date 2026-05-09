@@ -40,3 +40,12 @@ The current service boundary should map cleanly to a future backend:
 - Uses public construction-management workflow conventions only.
 - Current module is MVP/local-data until real auth/database are added.
 - AI suggestions are non-official and cannot change records without user action.
+
+## Submittal module extension
+
+The Submittal Tracking MVP extends the same static/local CAST Project Controls architecture as RFI Tracking. Submittal domain functions live in `public/projects/cast-submittal-controls-data.js` and intentionally share the same `localStorage` state with the RFI, drawing, document, user, company, spec, location, audit, and notification structures. This keeps the current MVP cohesive while preserving a future backend seam.
+
+Submittal pages:
+
+- `public/projects/cast-submittal-tracker.html` / `.js` — dashboard, log, create form, detail/actions, reports.
+- Future backend tables should map to `CAST_SUBMITTAL_DATA_DICTIONARY.md`.

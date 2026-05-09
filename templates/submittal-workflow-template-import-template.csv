@@ -1,0 +1,2 @@
+project_id,template_name,step_number,step_name,review_type,participant_role,default_user_email,days_allocated
+broderick,Architect Review,1,Architect Review,Sequential,Approver,architect@example.com,7

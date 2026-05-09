@@ -3,7 +3,7 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -126,6 +126,29 @@ for (const requiredRfiUiSignal of ['Add Response', 'Mark Last Response Official'
     failed = true;
   }
 }
+
+const submittalTrackerPage = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.html'), 'utf8');
+const submittalTrackerScript = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-tracker.js'), 'utf8');
+const submittalDataScript = fs.readFileSync(path.join(root, 'public/projects/cast-submittal-controls-data.js'), 'utf8');
+for (const requiredSubmittalSignal of ['Submittal Tracking', 'data-form', 'data-rows', 'data-detail', 'Export Submittal Log CSV']) {
+  if (!submittalTrackerPage.includes(requiredSubmittalSignal)) {
+    console.error(`CAST submittal tracker page missing MVP signal: ${requiredSubmittalSignal}`);
+    failed = true;
+  }
+}
+for (const requiredSubmittalDomainSignal of ['generateSubmittalNumber', 'generatePackageNumber', 'validateSubmittal', 'startWorkflow', 'submitSubmittalResponse', 'markOfficialSubmittalResponse', 'returnSubmittal', 'closeSubmittal', 'reviseSubmittal', 'workingDaysFrom']) {
+  if (!submittalDataScript.includes(requiredSubmittalDomainSignal)) {
+    console.error(`CAST submittal service missing domain signal: ${requiredSubmittalDomainSignal}`);
+    failed = true;
+  }
+}
+for (const requiredSubmittalUiSignal of ['Submit for Review', 'Add Response', 'Mark Last Response Official', 'Return', 'Close', 'Create Revision', 'AI Helper Suggestions']) {
+  if (!submittalTrackerScript.includes(requiredSubmittalUiSignal)) {
+    console.error(`CAST submittal tracker UI missing workflow signal: ${requiredSubmittalUiSignal}`);
+    failed = true;
+  }
+}
+
 for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawing Log'], ['public/projects/cast-document-register.html', 'Document Register']]) {
   const text = fs.readFileSync(path.join(root, requiredScaffold[0]), 'utf8');
   if (!text.includes(requiredScaffold[1]) || !text.includes('RFI Tracking')) {
