@@ -138,3 +138,19 @@ Open risks:
 
 Open risks:
 - Static UI still cannot enforce production authentication, private-record approvals, server reconciliation, or distribution writes until a real backend/auth/API is connected.
+
+## 2026-05-09 — Excel export standard pass
+
+- Added `public/cast-xlsx-export.js`, a lightweight browser XLSX writer for user-facing spreadsheet downloads without adding a runtime CDN dependency.
+- Converted RFI, Submittal, Drawing Log, Document Register, Alüm Schedule, and Schedule Dashboard export actions from CSV downloads to `.xlsx` Excel downloads.
+- Updated export labels and report copy from CSV to Excel/Excel-ready.
+- Added the shared XLSX export script to each converted page before its page-specific script.
+- Updated static audit expectations so the platform checks for Excel export labels on the converted surfaces.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+
+Open risks:
+- Historical/source filenames can still reference `.csv` in safe metadata because they describe imported/source artifacts, not user-facing spreadsheet export behavior.

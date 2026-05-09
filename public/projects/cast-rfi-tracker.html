@@ -13,8 +13,8 @@
 <body>
   <main class="controls-shell">
     <header class="project-page-header">
-      <div><div class="project-page-subtitle">CAST Project Controls Platform · Documents</div><h1 class="project-page-title">RFI Tracking and Completion</h1><p class="muted">Dashboard, RFI log, completion workflow, responses, official response, reports, and CSV export.</p></div>
-      <div class="cb-action-row"><button class="btn secondary" data-reset>Reset Seed Data</button><button class="btn" data-export>Export RFI Log CSV</button></div>
+      <div><div class="project-page-subtitle">CAST Project Controls Platform · Documents</div><h1 class="project-page-title">RFI Tracking and Completion</h1><p class="muted">Dashboard, RFI log, completion workflow, responses, official response, reports, and Excel export.</p></div>
+      <div class="cb-action-row"><button class="btn secondary" data-reset>Reset Seed Data</button><button class="btn" data-export>Export RFI Log Excel</button></div>
     </header>
     <nav class="controls-nav"><a class="active" href="/projects/cast-rfi-tracker.html">RFI Tracking</a><a href="/projects/cast-drawing-log.html">Drawing Log</a><a href="/projects/cast-document-register.html">Document Register</a><a href="/projects/golden-hill-procore.html">Alüm Home</a></nav>
     <section class="rfi-grid" data-metrics></section>
@@ -36,9 +36,9 @@
       </div>
       <aside class="detail-panel" data-detail><h2>Select an RFI</h2><p class="muted">Choose a row to view detail, responses, official response, comments, attachments, revision history, audit log, and actions.</p></aside>
     </section>
-    <section class="project-panel" style="margin-top:18px"><div class="panel-header"><h2>Reports</h2><span>CSV-ready</span></div><div class="report-grid" style="padding:18px" data-reports></div></section>
+    <section class="project-panel" style="margin-top:18px"><div class="panel-header"><h2>Reports</h2><span>Excel-ready</span></div><div class="report-grid" style="padding:18px" data-reports></div></section>
   </main>
-  <script src="/projects/cast-project-controls-data.js"></script>
+  <script src="/cast-xlsx-export.js"></script><script src="/projects/cast-project-controls-data.js"></script>
   <script src="/projects/cast-rfi-tracker.js"></script>
 </body>
 </html>

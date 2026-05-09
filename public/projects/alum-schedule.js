@@ -294,15 +294,13 @@ function renderDirectives() {
   const directives = schedule?.sub_directives || [];
   $('[data-sub-directive-cards]').innerHTML = directives.slice(0, 12).map((x) => `<a href="#correspondence"><strong>${esc(x.trade)} · ${esc(x.location)}</strong><span>${esc(x.window)} — ${esc(x.message)}</span></a>`).join('') || '<a><strong>No directives</strong><span>No subcontractor directives are available.</span></a>';
 }
-function scheduleCsv() {
-  const header = ['WBS', 'Trade', 'Location', 'Task', 'Start', 'Finish', 'Status', 'Percent', 'Ask'];
-  return [header, ...filteredTasks().map((t) => [t.wbs, t.trade, t.location, t.title, t.start, t.finish, statusText(t.status), t.percent_complete, t.ask])].map((cols) => cols.map((v) => `"${String(v ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
-}
+function scheduleColumns() { return [{key:'wbs',header:'WBS'},{key:'trade',header:'Trade'},{key:'location',header:'Location'},{key:'title',header:'Task',width:34},{key:'start',header:'Start'},{key:'finish',header:'Finish'},{key:'statusLabel',header:'Status'},{key:'percent_complete',header:'Percent'},{key:'ask',header:'Ask',width:42}]; }
+function scheduleRows() { return filteredTasks().map((t) => ({ ...t, statusLabel: statusText(t.status) })); }
 async function copyHuddleBoard() {
   const text = allTasks().filter((t) => ['active_now', 'verify_complete', 'starts_soon'].includes(t.status)).slice(0, 15).map((t, i) => `${i + 1}. ${activityBrief(t)}`).join('\n\n');
   await navigator.clipboard?.writeText(text);
 }
-function exportScheduleCsv() { const blob = new Blob([scheduleCsv()], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'cast-build-alum-schedule-current-view.csv'; a.click(); URL.revokeObjectURL(url); }
+function exportScheduleXlsx() { window.CastXlsxExport.downloadXlsx('cast-build-alum-schedule-current-view.xlsx', 'Schedule', scheduleColumns(), scheduleRows()); }
 function renderSummary() {
   const tasks = allTasks(); const summary = schedule?.summary || {};
   set('[data-total-work-packages]', tasks.length); set('[data-active-count]', tasks.filter((t) => t.status === 'active_now').length); set('[data-starts-soon-count]', tasks.filter((t) => t.status === 'starts_soon').length); set('[data-verify-complete-count]', tasks.filter((t) => t.status === 'verify_complete').length); set('[data-scenario-count]', Object.keys(scenarios()).length); set('[data-imported-tasks]', summary.total_imported_tasks || '—'); set('[data-critical-count]', summary.critical_path_items || tasks.filter((t) => t.critical).length); set('[data-source-basis]', schedule?.source_basis || 'Sanitized schedule metadata'); set('[data-source-index-status]', schedule?.source_status || 'loaded'); set('[data-current-read]', (schedule?.current_read || []).join(' '));
@@ -311,7 +309,7 @@ function renderAll() { renderSummary(); renderLookaheadGantt(); renderCriticalGa
 function bind() {
   ['[data-search]', '[data-status-filter]', '[data-trade-filter]', '[data-phase-filter]', '[data-sort]'].forEach((sel) => $$(sel).forEach((el) => el.addEventListener('input', renderAll)));
   $$('[data-view-preset]').forEach((b) => b.addEventListener('click', () => { $('[data-status-filter]').value = b.dataset.viewPreset; renderAll(); }));
-  $$('[data-export-schedule]').forEach((b) => b.addEventListener('click', exportScheduleCsv));
+  $$('[data-export-schedule]').forEach((b) => b.addEventListener('click', exportScheduleXlsx));
   $$('[data-copy-huddle]').forEach((b) => b.addEventListener('click', copyHuddleBoard));
   $$('[data-add-field-update]').forEach((b) => b.addEventListener('click', addFieldUpdate));
   $('[data-generate-notice]').addEventListener('click', generateNotice);
