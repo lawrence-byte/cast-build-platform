@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Quality Control — CAST Build</title>
+  <link rel="stylesheet" href="/cast-build.css">
+</head>
+<body class="project-admin-body" data-project-name="ALÜM">
+  <div class="project-dashboard-wrapper">
+    <aside class="project-sidebar" aria-label="Alüm project navigation">
+      <a class="project-sidebar-logo" href="/" aria-label="CAST Build home"><img src="/assets/brand/alum-logo-white.svg" alt="Alüm"></a>
+      <nav class="project-sidebar-nav">
+        <div class="project-sidebar-group">Project</div>
+        <a href="/projects/golden-hill-procore.html"><span class="nav-icon">⌂</span>Overview</a>
+        <a href="/projects/alum-command-center.html"><span class="nav-icon">◇</span>Command Center</a>
+        <a href="/projects/alum-open-items.html"><span class="nav-icon">!</span>Open Items</a>
+        <a href="/projects/alum-executive-report.html"><span class="nav-icon">↗</span>Status Report</a>
+        <div class="project-sidebar-group">Reports</div>
+        <a href="/projects/alum-reports.html"><span class="nav-icon">↗</span>Reports</a>
+        <a class="active" href="/projects/alum-quality-control-report.html"><span class="nav-icon">Q</span>Quality Control</a>
+        <a href="/projects/alum-photos-videos.html"><span class="nav-icon">▣</span>Project Photos & Videos</a>
+        <a href="/construction-cost-forecasting.html"><span class="nav-icon">$</span>Cost Forecast</a>
+      </nav>
+      <div class="project-rail-note">1101 25th Street · San Diego</div>
+    </aside>
+    <main class="project-main-content">
+      <header class="project-page-header">
+        <div>
+          <h1 class="project-page-title">Quality Control</h1>
+          <p class="project-page-subtitle">QC reporting packet for inspections, deficiencies, test records, photo evidence, and closeout readiness</p>
+        </div>
+        <img class="project-monogram" src="/assets/brand/cast-monogram-logo.svg" alt="CAST monogram">
+      </header>
+
+      <section class="project-kpi-grid">
+        <article class="project-kpi-card"><div class="kpi-label">Open QC Items</div><div class="kpi-value" data-open-qc>—</div><div class="kpi-change">Deficiencies / follow-up</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Inspections</div><div class="kpi-value" data-inspections>—</div><div class="kpi-change">QC inspection records</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Report Ready</div><div class="kpi-value" data-report-ready>—</div><div class="kpi-change">Owner packet items</div></article>
+      </section>
+
+      <section class="project-dashboard-grid">
+        <article class="project-panel span-12">
+          <div class="panel-header"><h2>Add QC Report Item</h2><span>Local register</span></div>
+          <div class="fast-link-list">
+            <select data-type>
+              <option>Inspection</option>
+              <option>Deficiency</option>
+              <option>Test Record</option>
+              <option>Photo Evidence</option>
+              <option>Closeout Verification</option>
+            </select>
+            <input data-date type="date" aria-label="QC date">
+            <input data-location placeholder="Location / area">
+            <input data-trade placeholder="Trade / spec section">
+            <select data-status><option>Open</option><option>In Review</option><option>Accepted</option><option>Closed</option></select>
+            <input data-note placeholder="Finding / reporting note">
+            <button class="small-action" data-add-qc>Add QC Item</button>
+            <button class="small-action" data-export-qc>Export JSON</button>
+          </div>
+        </article>
+
+        <article class="project-panel span-8">
+          <div class="panel-header"><h2>Quality Control Register</h2><span data-qc-count>—</span></div>
+          <table class="project-table">
+            <thead><tr><th>Type</th><th>Date</th><th>Location</th><th>Trade / Spec</th><th>Status</th><th>Note</th><th></th></tr></thead>
+            <tbody data-qc-rows></tbody>
+          </table>
+        </article>
+
+        <article class="project-panel span-4">
+          <div class="panel-header"><h2>QC Source Links</h2><span>Evidence</span></div>
+          <div class="fast-link-list">
+            <a href="/projects/alum-quality.html">Observations / Inspections</a>
+            <a href="/projects/alum-submittals.html">Tests & Submittals</a>
+            <a href="/projects/alum-photos-videos.html">Project Photos & Videos</a>
+            <a href="/projects/alum-punch-list.html">Punch List</a>
+            <a href="/projects/alum-closeout.html">Closeout</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+  <script src="/projects/alum-quality-control-report.js"></script>
+  <script src="/projects/alum-project-nav.js" defer></script>
+</body>
+</html>
