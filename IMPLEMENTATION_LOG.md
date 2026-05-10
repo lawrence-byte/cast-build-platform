@@ -328,3 +328,14 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Desktop and mobile browser screenshot QA confirmed no CTA/content conflict.
+
+## 2026-05-09 — Landing sketch roof shading
+
+- Added a subtle light-linen translucent wash and clipped hatch lines to the Alüm building sketch roof plane.
+- Kept the sketch transparent/background-free and preserved the existing far-right landing placement and vertical stretch.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Asset QA confirmed roof shading was light enough; desktop/mobile browser screenshot QA found no CTA/content blockers.
