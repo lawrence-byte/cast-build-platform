@@ -6,6 +6,7 @@ const { buildFilingPath, buildStructuredFolder, storageConfig } = require('./doc
 const { permissionRulesFor, canOverrideClassification } = require('./document-permissions');
 const { auditEvent } = require('./document-workflow');
 const { captureUploaderContact } = require('./document-contact-capture');
+const { CAST_SERVER_FILING_MATRIX } = require('./cast-server-filing-matrix');
 
 const MODULES = new Set(MODULE_LIST);
 const ALLOWED_EXTENSIONS = new Set(['pdf','doc','docx','xls','xlsx','csv','jpg','jpeg','png','heic','dwg','dxf','eml','msg','txt']);
@@ -82,7 +83,7 @@ function buildStoragePlan(body) {
 }
 async function handleDocumentIntake(req, res) {
   if (req.method === 'GET') {
-    return json(res, 200, { ok: true, endpoint: 'CAST Document Intake', supportedModules: [...MODULES], supportedExtensions: [...ALLOWED_EXTENSIONS], maxFileBytes: MAX_FILE_BYTES, authRequired: true, roles: require('./document-permissions').ROLES, storageHierarchy: '/server_storage/projects/{projectSlug}/documents/{module_folder}', storage: storageConfig(), storageRequiredEnv: ['DOCUMENT_STORAGE_ROOT','DOCUMENT_DATABASE_URL'], optionalEnv: ['DOCUMENT_PUBLIC_LINK_BASE','EMAIL_PROVIDER','EMAIL_FROM_ADDRESS','OCR_PROVIDER','OCR_API_KEY','DROPBOX_ENABLED','DROPBOX_APP_KEY','DROPBOX_APP_SECRET','CLASSIFICATION_PROVIDER','CLASSIFICATION_MODEL','MAX_UPLOAD_SIZE_MB'] });
+    return json(res, 200, { ok: true, endpoint: 'CAST Document Intake', supportedModules: [...MODULES], supportedExtensions: [...ALLOWED_EXTENSIONS], maxFileBytes: MAX_FILE_BYTES, authRequired: true, roles: require('./document-permissions').ROLES, storageHierarchy: '/server_storage/projects/{projectSlug}/documents/{module_folder}', castServerFilingMatrix: CAST_SERVER_FILING_MATRIX, storage: storageConfig(), storageRequiredEnv: ['DOCUMENT_STORAGE_ROOT','DOCUMENT_DATABASE_URL'], optionalEnv: ['DOCUMENT_PUBLIC_LINK_BASE','EMAIL_PROVIDER','EMAIL_FROM_ADDRESS','OCR_PROVIDER','OCR_API_KEY','DROPBOX_ENABLED','DROPBOX_APP_KEY','DROPBOX_APP_SECRET','CLASSIFICATION_PROVIDER','CLASSIFICATION_MODEL','MAX_UPLOAD_SIZE_MB'] });
   }
   if (req.method !== 'POST') return json(res, 405, { ok: false, code: 'METHOD_NOT_ALLOWED', message: 'Use POST to file a confirmed intake document.' });
   const actor = getActor(req);

@@ -4,6 +4,7 @@ const { buildStructuredFolder, moduleFolder, safeSegment } = require('./document
 const { matchLinkedRecords } = require('./document-matching');
 const { workflowDecision } = require('./document-workflow');
 const { extractContactSuggestions } = require('./document-contact-capture');
+const { matchCastServerFolder } = require('./cast-server-filing-matrix');
 const MODULES = ['Documents','Contracts','Financials','Field','Drawings','RFIs','Submittals','Change Orders','Pay Applications','Invoices','Insurance','Permits','Meeting Minutes','Closeout','Uncategorized'];
 const RULES = [
   ['RFIs', /\brfi\b|request for information|clarification|rfi response/i, 'RFI / response'],
@@ -43,6 +44,12 @@ function classifyDocument(input={}) {
   for (const [m, re, type] of RULES) {
     if (re.test(hay)) { module=m; documentType=type; confidenceScore=0.86; reasoningSummary=`Matched ${type} language in filename, folder context, or extracted text.`; break; }
   }
+  const castServerTarget = matchCastServerFolder(input);
+  if (castServerTarget) {
+    module = castServerTarget.module || module;
+    confidenceScore = Math.min(0.94, Math.max(confidenceScore, 0.82) + castServerTarget.confidenceBoost);
+    reasoningSummary += ` CAST Server matrix matched ${castServerTarget.label} (${castServerTarget.serverFolder}).`;
+  }
   if (/signed|executed/i.test(hay) && /agreement|contract|proposal/i.test(hay)) { module='Contracts'; documentType='Executed agreement'; confidenceScore=0.9; reasoningSummary='Detected signed/executed agreement language.'; }
   const projectId = input.projectId || 'golden-hill';
   const projectName = input.projectName || (projectId === 'golden-hill' ? 'Alüm' : projectId);
@@ -53,6 +60,6 @@ function classifyDocument(input={}) {
   const workflow = workflowDecision({ module, documentType, confidenceScore, suggestedRecordLinks }, input.duplicateState || {});
   const contactSuggestions = extractContactSuggestions(input);
   const requiresHumanReview = workflow.requiresHumanReview;
-  return { projectId, projectName, module, documentType, confidenceScore, suggestedFolderPath, suggestedRecordLinks, extractedMetadata: { ...extractedMetadata, contactSuggestions }, requiresHumanReview, reasoningSummary, workflow, provider: process.env.CLASSIFICATION_PROVIDER || 'rules', model: process.env.CLASSIFICATION_MODEL || 'rules-v1', moduleFolder: moduleFolder(module) };
+  return { projectId, projectName, module, documentType, confidenceScore, suggestedFolderPath, castServerTarget, suggestedRecordLinks, extractedMetadata: { ...extractedMetadata, contactSuggestions }, requiresHumanReview, reasoningSummary, workflow, provider: process.env.CLASSIFICATION_PROVIDER || 'rules', model: process.env.CLASSIFICATION_MODEL || 'rules-v1', moduleFolder: moduleFolder(module) };
 }
 module.exports = { MODULES, classifyDocument, extractMetadata, ext };
