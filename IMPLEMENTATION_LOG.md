@@ -364,3 +364,14 @@ Validation:
 - `git diff --check`
 - Asset transparency inspection confirmed transparent pixels remain present.
 - Desktop/mobile browser screenshot QA found no CTA/content blockers and confirmed the roof reads as solid light linen.
+
+## 2026-05-09 — Landing sketch reverted to prior image
+
+- Reverted `public/assets/brand/alum-building-linen-sketch.png` to the prior image from before the solid-roof/looser-sketch replacement.
+- Preserved the current landing placement, desktop left shift, centered vertical stretch, and mobile-safe CSS unchanged.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Desktop/mobile browser screenshot QA found no CTA/content blockers.
