@@ -463,7 +463,7 @@ if (!/\.automation-top img\{width:190px;height:auto/.test(castBuildCss)) {
   console.error('CAST Build landing must use reduced CAST Automation desktop sizing.');
   failed = true;
 }
-if (!/\.cast-landing-building-sketch\{[^}]*right:clamp\(-406px,-25\.2vw,-329px\);[^}]*width:min\(620px,49vw\)/.test(castBuildCss)) {
+if (!/\.cast-landing-building-sketch\{[^}]*right:clamp\(-365px,-22\.7vw,-296px\);[^}]*width:min\(620px,49vw\)/.test(castBuildCss)) {
   console.error('CAST Build landing building sketch must sit cropped on the far right.');
   failed = true;
 }

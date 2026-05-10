@@ -339,3 +339,15 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Asset QA confirmed roof shading was light enough; desktop/mobile browser screenshot QA found no CTA/content blockers.
+
+## 2026-05-09 — Landing sketch 10% left shift
+
+- Shifted the desktop Alüm building sketch another ~10% left by adjusting the right-side crop from `clamp(-406px,-25.2vw,-329px)` to `clamp(-365px,-22.7vw,-296px)`.
+- Lowered desktop sketch opacity from `.34` to `.24` after screenshot QA so the moved sketch does not visually compete with the `ALÜM PROJECT` CTA.
+- Kept mobile placement unchanged in its safer off-right position.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Desktop/mobile browser screenshot QA; final desktop pass had no CTA blocker.
