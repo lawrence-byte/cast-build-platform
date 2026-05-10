@@ -74,6 +74,7 @@
       summary: 'Reports, people, operating view',
       items: [
         ['Reports', '/projects/alum-reports.html', 'i-report'],
+        ['Project Photos & Videos', '/projects/alum-photos-videos.html', 'i-grid'],
         ['Directory', '/projects/alum-directory.html', 'i-users'],
         ['Status Report', '/projects/alum-executive-report.html', 'i-dashboard'],
       ],

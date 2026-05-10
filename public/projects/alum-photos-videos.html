@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Project Photos & Videos — CAST Build</title>
+  <link rel="stylesheet" href="/cast-build.css">
+</head>
+<body class="project-admin-body" data-project-name="ALÜM">
+  <div class="project-dashboard-wrapper">
+    <aside class="project-sidebar" aria-label="Alüm project navigation">
+      <a class="project-sidebar-logo" href="/" aria-label="CAST Build home"><img src="/assets/brand/alum-logo-white.svg" alt="Alüm"></a>
+      <nav class="project-sidebar-nav">
+        <div class="project-sidebar-group">Project</div>
+        <a href="/projects/golden-hill-procore.html"><span class="nav-icon">⌂</span>Overview</a>
+        <a href="/projects/alum-command-center.html"><span class="nav-icon">◇</span>Command Center</a>
+        <a href="/projects/alum-open-items.html"><span class="nav-icon">!</span>Open Items</a>
+        <a href="/projects/alum-executive-report.html"><span class="nav-icon">↗</span>Status Report</a>
+        <div class="project-sidebar-group">Reports</div>
+        <a href="/projects/alum-reports.html"><span class="nav-icon">↗</span>Reports</a>
+        <a class="active" href="/projects/alum-photos-videos.html"><span class="nav-icon">▣</span>Project Photos & Videos</a>
+        <a href="/construction-cost-forecasting.html"><span class="nav-icon">$</span>Cost Forecast</a>
+      </nav>
+      <div class="project-rail-note">1101 25th Street · San Diego</div>
+    </aside>
+    <main class="project-main-content">
+      <header class="project-page-header">
+        <div>
+          <h1 class="project-page-title">Project Photos & Videos</h1>
+          <p class="project-page-subtitle">Field media log, location tags, progress evidence, and owner-report selections</p>
+        </div>
+        <img class="project-monogram" src="/assets/brand/cast-monogram-logo.svg" alt="CAST monogram">
+      </header>
+
+      <section class="project-kpi-grid">
+        <article class="project-kpi-card"><div class="kpi-label">Photos</div><div class="kpi-value" data-photo-count>—</div><div class="kpi-change">Tagged progress records</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Videos</div><div class="kpi-value" data-video-count>—</div><div class="kpi-change">Walkthrough / issue clips</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Report Picks</div><div class="kpi-value" data-report-count>—</div><div class="kpi-change">Ready for owner packet</div></article>
+      </section>
+
+      <section class="project-dashboard-grid">
+        <article class="project-panel span-12">
+          <div class="panel-header"><h2>Add Media Record</h2><span>Local log</span></div>
+          <div class="fast-link-list">
+            <input data-title placeholder="Title / caption">
+            <select data-type><option>Photo</option><option>Video</option></select>
+            <input data-location placeholder="Location / area">
+            <input data-date type="date" aria-label="Media date">
+            <input data-trade placeholder="Trade / scope">
+            <input data-link placeholder="Source link or file reference">
+            <button class="small-action" data-add-media>Add Media</button>
+            <button class="small-action" data-export-media>Export JSON</button>
+          </div>
+          <p class="project-rail-note">Use this as the reporting index for field photos, drone shots, walkthrough videos, issue documentation, and before/after progress evidence. Source uploads still belong in the configured document/media storage system.</p>
+        </article>
+
+        <article class="project-panel span-8">
+          <div class="panel-header"><h2>Media Register</h2><span data-media-count>—</span></div>
+          <table class="project-table">
+            <thead><tr><th>Type</th><th>Date</th><th>Title</th><th>Location</th><th>Trade</th><th>Owner Packet</th><th></th></tr></thead>
+            <tbody data-media-rows></tbody>
+          </table>
+        </article>
+
+        <article class="project-panel span-4">
+          <div class="panel-header"><h2>Reporting Uses</h2><span>Packets</span></div>
+          <div class="fast-link-list">
+            <a href="/projects/alum-executive-report.html">Monthly Owner Report</a>
+            <a href="/projects/alum-daily-log.html">Daily Log Support</a>
+            <a href="/projects/alum-quality.html">Observation / Inspection Evidence</a>
+            <a href="/projects/alum-punch-list.html">Punch Closeout Photos</a>
+            <a href="/projects/alum-closeout.html">Closeout Archive</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+  <script src="/projects/alum-photos-videos.js"></script>
+  <script src="/projects/alum-project-nav.js" defer></script>
+</body>
+</html>
