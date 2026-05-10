@@ -15,6 +15,7 @@
       summary: 'Important project signals',
       items: [
         ['Project Home', HOME, 'i-home'],
+        ['CAST Server', '/projects/alum-folder-registers.html', 'i-data'],
         ['Command Center', '/projects/alum-command-center.html', 'i-dashboard'],
         ['Open Items', '/projects/alum-open-items.html', 'i-list'],
         ['Management Center', '/projects/alum-management-control-center.html', 'i-cog'],
@@ -32,7 +33,6 @@
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
         ['Doc Intelligence', '/projects/alum-document-intelligence.html', 'i-search'],
         ['Specifications', '/projects/alum-specifications.html', 'i-spec'],
-        ['Folder Registers', '/projects/alum-folder-registers.html', 'i-data'],
         ['Data Room', '/projects/alum-data-room.html', 'i-data'],
         ['Closeout', '/projects/alum-closeout.html', 'i-flag'],
       ],
