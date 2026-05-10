@@ -66,6 +66,7 @@
         ['Schedule', '/projects/alum-schedule.html', 'i-calendar'],
         ['Daily Log', '/projects/alum-daily-log.html', 'i-sun'],
         ['Punch List', '/projects/alum-punch-list.html', 'i-check'],
+        ['Safety', '/projects/alum-safety.html', 'i-alert'],
         ['Quality', '/projects/alum-quality.html', 'i-star'],
       ],
     },
