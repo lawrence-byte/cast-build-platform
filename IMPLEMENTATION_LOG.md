@@ -351,3 +351,16 @@ Validation:
 - `npm run build`
 - `git diff --check`
 - Desktop/mobile browser screenshot QA; final desktop pass had no CTA blocker.
+
+## 2026-05-09 — Landing sketch solid roof and looser hand-rendering
+
+- Replaced the Alüm landing building asset with a looser architectural hand-sketch interpretation in the same `898×1032` canvas so the landing placement stays unchanged.
+- Filled the roof plane as a solid light-linen shape while preserving the transparent building-only PNG treatment.
+- Kept the existing far-right desktop crop, vertical stretch, and mobile-safe placement unchanged.
+
+Validation:
+- `npm test`
+- `npm run build`
+- `git diff --check`
+- Asset transparency inspection confirmed transparent pixels remain present.
+- Desktop/mobile browser screenshot QA found no CTA/content blockers and confirmed the roof reads as solid light linen.
