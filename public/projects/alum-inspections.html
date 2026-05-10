@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Inspections — CAST Build</title>
+  <link rel="stylesheet" href="/cast-build.css">
+</head>
+<body class="project-admin-body" data-project-name="ALÜM">
+  <div class="project-dashboard-wrapper">
+    <aside class="project-sidebar" aria-label="Alüm project navigation">
+      <a class="project-sidebar-logo" href="/" aria-label="CAST Build home"><img src="/assets/brand/alum-logo-white.svg" alt="Alüm"></a>
+      <nav class="project-sidebar-nav">
+        <div class="project-sidebar-group">Project</div>
+        <a href="/projects/golden-hill-procore.html"><span class="nav-icon">⌂</span>Overview</a>
+        <a href="/projects/alum-command-center.html"><span class="nav-icon">◇</span>Command Center</a>
+        <a href="/projects/alum-open-items.html"><span class="nav-icon">!</span>Open Items</a>
+        <a href="/projects/alum-executive-report.html"><span class="nav-icon">↗</span>Status Report</a>
+        <div class="project-sidebar-group">Field</div>
+        <a href="/projects/alum-daily-log.html"><span class="nav-icon">L</span>Daily Logs</a>
+        <a class="active" href="/projects/alum-inspections.html"><span class="nav-icon">I</span>Inspections</a>
+        <a href="/projects/alum-quality.html"><span class="nav-icon">Q</span>Observations / Inspections</a>
+        <a href="/projects/alum-punch-list.html"><span class="nav-icon">P</span>Punch List</a>
+        <a href="/projects/alum-safety.html"><span class="nav-icon">!</span>Safety</a>
+      </nav>
+      <div class="project-rail-note">1101 25th Street · San Diego</div>
+    </aside>
+    <main class="project-main-content">
+      <header class="project-page-header">
+        <div>
+          <h1 class="project-page-title">Inspections</h1>
+          <p class="project-page-subtitle">Inspection schedule, requested inspections, results, responsible trades, and follow-up items</p>
+        </div>
+        <img class="project-monogram" src="/assets/brand/cast-monogram-logo.svg" alt="CAST monogram">
+      </header>
+
+      <section class="project-kpi-grid">
+        <article class="project-kpi-card"><div class="kpi-label">Scheduled</div><div class="kpi-value" data-scheduled-count>—</div><div class="kpi-change">Upcoming / pending</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Failed / Reinspect</div><div class="kpi-value" data-reinspect-count>—</div><div class="kpi-change">Needs correction</div></article>
+        <article class="project-kpi-card"><div class="kpi-label">Passed</div><div class="kpi-value" data-passed-count>—</div><div class="kpi-change">Accepted inspections</div></article>
+      </section>
+
+      <section class="project-dashboard-grid">
+        <article class="project-panel span-12" id="new-inspection">
+          <div class="panel-header"><h2>New Inspection</h2><span>Capture</span></div>
+          <div class="fast-link-list">
+            <input data-inspection placeholder="Inspection type / permit item">
+            <input data-date type="date" aria-label="Inspection date">
+            <input data-location placeholder="Location / area">
+            <input data-trade placeholder="Responsible trade / company">
+            <select data-status><option>Scheduled</option><option>Requested</option><option>Passed</option><option>Failed</option><option>Reinspect</option></select>
+            <input data-note placeholder="Inspector notes / correction required">
+            <button class="small-action" data-add-inspection>Add Inspection</button>
+            <button class="small-action" data-export-inspections>Export JSON</button>
+          </div>
+        </article>
+
+        <article class="project-panel span-8">
+          <div class="panel-header"><h2>Inspection Register</h2><span data-inspection-count>—</span></div>
+          <table class="project-table">
+            <thead><tr><th>Inspection</th><th>Date</th><th>Location</th><th>Responsible</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+            <tbody data-inspection-rows></tbody>
+          </table>
+        </article>
+
+        <article class="project-panel span-4">
+          <div class="panel-header"><h2>Related Field Controls</h2><span>Follow-up</span></div>
+          <div class="fast-link-list">
+            <a href="/projects/alum-quality.html">Observations / Inspections</a>
+            <a href="/projects/alum-quality-control-report.html">Quality Control Report</a>
+            <a href="/projects/alum-photos-videos.html">Project Photos & Videos</a>
+            <a href="/projects/alum-punch-list.html">Punch List</a>
+            <a href="/projects/alum-safety.html">Safety</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+  <script src="/projects/alum-inspections.js"></script>
+  <script src="/projects/alum-project-nav.js" defer></script>
+</body>
+</html>
