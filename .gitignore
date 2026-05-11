@@ -24,3 +24,6 @@ public/data/projects/*/private/
 *.xls
 *.csv
 *.zip
+
+# Local assistant scratch/email drafts
+tmp/
