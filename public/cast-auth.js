@@ -6,13 +6,7 @@
   const SESSION_KEY = 'castBuildAuthSession.v1';
   const PASSWORD_SHA256 = 'ccbb21152c898da8dfc205c11d6e42e5aebda5de3133dbafd5597848ffb55996';
   const USERS = [
-    { email: 'joe@cast-dev.com', name: 'Joe Garza', role: 'CAST Team' },
-    { email: 'dan@cast-dev.com', name: 'Dan Meeh', role: 'CAST Team' },
     { email: 'lawrence@cast-dev.com', name: 'Lawrence Howard', role: 'Admin' },
-    { email: 'jackie@cast-dev.com', name: 'Jackeline Villanueva', role: 'CAST Team' },
-    { email: 'carlos@cast-dev.com', name: 'Carlos Gutierrez', role: 'CAST Team' },
-    { email: 'denise@cast-dev.com', name: 'Denise Swift', role: 'CAST Team' },
-    { email: 'karla@cast-dev.com', name: 'Karla Mohnhaupt', role: 'CAST Team' },
   ];
 
   const PUBLIC_PATHS = new Set(['/assets/brand/brand.js']);
