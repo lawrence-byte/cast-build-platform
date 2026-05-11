@@ -34,6 +34,16 @@ function parsePythonJson(stdout) {
   return JSON.parse(json);
 }
 function rel(p) { return path.relative(root, p).split(path.sep).join('/'); }
+function safeProjectPath(relToAlum) {
+  return String(relToAlum || '').split('/').filter(Boolean).join('/');
+}
+function sanitizeError(error) {
+  if (!error) return error;
+  return String(error)
+    .replace(/filename='[^']*'/g, "filename='private-source-file-redacted'")
+    .replace(/\/Users\/[^"'\n\r]*/g, 'private-local-path-redacted')
+    .replace(/data\/projects\/golden-hill\/dropbox-intake\/extracted-[^"'\n\r]+/g, 'private-intake-redacted');
+}
 function publicDataWrite(name, value) {
   for (const dir of [outDataDir, outPublicDir]) {
     fs.mkdirSync(dir, { recursive: true });
@@ -63,7 +73,7 @@ for (let i = 0; i < pdfs.length; i += 200) chunks.push(pdfs.slice(i, i + 200));
 let analyzed = [];
 for (const chunk of chunks) analyzed = analyzed.concat(parsePythonJson(runPython(analysisScript, chunk)));
 const byPath = new Map(analyzed.map((r) => [r.path, r]));
-const candidates = analyzed
+const candidateRows = analyzed
   .map((r) => {
     const p = r.path;
     const stat = fs.statSync(p);
@@ -76,7 +86,19 @@ const candidates = analyzed
     if (/scan|permit|invoice|rfi|proposal|cert|fire|sdge|take off|bid/i.test(relToAlum)) priority += 20;
     if (/Current Drawings|08\. RFI|02\. BUDGET|04\. INSURANCE|10\. COMMITMENTS/.test(category)) priority += 10;
     if (r.pages <= 5) priority += 10;
-    return { fileName: path.basename(p), path: rel(p), relativeToAlum: relToAlum, category, subcategory, pages: r.pages, sizeBytes: stat.size, nativeTextCharsFirst2: r.nativeTextCharsFirst2, ocrCandidate: r.nativeTextCharsFirst2 < 80, priority, error: r.error };
+    return {
+      fileName: path.basename(p),
+      fullPath: p,
+      projectPath: safeProjectPath(relToAlum),
+      category,
+      subcategory,
+      pages: r.pages,
+      sizeBytes: stat.size,
+      nativeTextCharsFirst2: r.nativeTextCharsFirst2,
+      ocrCandidate: r.nativeTextCharsFirst2 < 80,
+      priority,
+      error: sanitizeError(r.error),
+    };
   })
   .sort((a, b) => b.priority - a.priority || a.nativeTextCharsFirst2 - b.nativeTextCharsFirst2 || b.sizeBytes - a.sizeBytes);
 
@@ -93,8 +115,8 @@ for (const rx of wanted) {
   const hit = pdfs.find((p) => rx.test(path.relative(alumRoot, p).split(path.sep).join('/')));
   if (hit && !samplePaths.includes(hit)) samplePaths.push(hit);
 }
-for (const c of candidates) {
-  const full = path.join(root, c.path);
+for (const c of candidateRows) {
+  const full = c.fullPath;
   if (samplePaths.length >= 6) break;
   if (!samplePaths.includes(full) && c.ocrCandidate && c.pages > 0 && c.pages <= 5) samplePaths.push(full);
 }
@@ -138,8 +160,7 @@ const samples = ocrResults.map((r) => {
   if (/drawing|fire|sdge|plan/i.test(relToAlum)) reviewFlags.push('Drawing/plan content; OCR is assistive only, not design/takeoff authority.');
   return {
     fileName: path.basename(p),
-    path: rel(p),
-    relativeToAlum: relToAlum,
+    projectPath: safeProjectPath(relToAlum),
     category: relToAlum.split('/')[0] || '(root)',
     pages: info.pages || 0,
     pagesProcessed: r.pagesProcessed,
@@ -149,16 +170,16 @@ const samples = ocrResults.map((r) => {
     extractedTerms,
     textPreview: textPreview(r.text),
     reviewFlags,
-    error: r.error,
+    error: sanitizeError(r.error),
   };
 });
+
+const candidates = candidateRows.map(({ fullPath, ...safe }) => safe);
 
 const summary = {
   projectName: 'Alüm',
   generatedAt: new Date().toISOString(),
-  sourceRoot: rel(alumRoot),
-  localDataTiePath,
-  currentBudgetPath,
+  sourceBoundary: 'private_project_archive_metadata_only',
   dataTieStatus: fs.existsSync(localDataTiePath) ? 'mounted' : 'not_mounted_or_not_available_on_this_host',
   currentBudgetStatus: fs.existsSync(currentBudgetPath) ? 'mounted' : 'not_mounted_or_not_available_on_this_host',
   pdfCount: analyzed.length,
@@ -173,7 +194,7 @@ const summary = {
     { name: 'floor-plan', status: 'ready', role: 'Draw.io-style generated layout diagrams.' },
   ],
   pipeline: [
-    { step: 'Intake', status: 'live', detail: 'Dropbox archive, CAST BUILD A.O exports, and Telegram attachments are indexed locally.' },
+    { step: 'Intake', status: 'live', detail: 'Approved private project archive, CAST BUILD A.O exports, and Telegram attachments are indexed locally.' },
     { step: 'Classify', status: 'live', detail: '4,674-file Alüm data room is grouped by section/category.' },
     { step: 'Extract', status: 'pilot', detail: 'OCR pilot identifies PDFs with weak/no native text and extracts representative samples.' },
     { step: 'Publish', status: 'live', detail: 'Document intelligence JSON feeds the CAST Build UI.' },

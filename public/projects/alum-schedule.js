@@ -6,6 +6,7 @@ const set = (sel, value) => $$(sel).forEach((el) => { el.textContent = value; })
 const STATE_KEY = 'castBuildAlumScheduleScenarios';
 const UPDATE_KEY = 'alumScheduleFieldUpdates';
 const LOOKAHEAD_KEY = 'alumScheduleLookahead';
+const ASSISTANT_REQUEST_KEY = 'castBuildScheduleAdjustmentRequests.v1';
 // Data dependencies: rfi-summary.json, submittal-summary.json, schedule-source-index.json. Optional browser dictation: SpeechRecognition.
 let schedule = null;
 let selectedId = null;
@@ -278,6 +279,14 @@ async function renderConstraints() {
   }
 }
 
+function renderAssistantRequests() {
+  const rows = readStore(ASSISTANT_REQUEST_KEY, []).slice(0, 12);
+  set('[data-assistant-request-count]', rows.length ? `${rows.length} local drafts` : 'No local drafts');
+  const body = $('[data-assistant-request-rows]');
+  if (!body) return;
+  body.innerHTML = rows.map((item) => `<tr><td>${esc(new Date(item.createdAt).toLocaleString())}</td><td>${esc(String(item.type || '').replaceAll('_', ' '))}</td><td>${esc(item.request || '')}</td><td><span class="pill draft">${esc(item.status || 'Draft / PM review required')}</span></td></tr>`).join('') || '<tr><td colspan="4">No team-assistant schedule requests queued yet. Use the CAST Assistant button to capture field updates or draft schedule changes.</td></tr>';
+}
+
 function renderRecovery() {
   const recovery = (schedule?.recovery_watch || []).slice(0, 18).map(taskWithScenario);
   set('[data-recovery-count]', `${recovery.length} watch items`);
@@ -305,7 +314,7 @@ function renderSummary() {
   const tasks = allTasks(); const summary = schedule?.summary || {};
   set('[data-total-work-packages]', tasks.length); set('[data-active-count]', tasks.filter((t) => t.status === 'active_now').length); set('[data-starts-soon-count]', tasks.filter((t) => t.status === 'starts_soon').length); set('[data-verify-complete-count]', tasks.filter((t) => t.status === 'verify_complete').length); set('[data-scenario-count]', Object.keys(scenarios()).length); set('[data-imported-tasks]', summary.total_imported_tasks || '—'); set('[data-critical-count]', summary.critical_path_items || tasks.filter((t) => t.critical).length); set('[data-source-basis]', schedule?.source_basis || 'Sanitized schedule metadata'); set('[data-source-index-status]', schedule?.source_status || 'loaded'); set('[data-current-read]', (schedule?.current_read || []).join(' '));
 }
-function renderAll() { renderSummary(); renderLookaheadGantt(); renderCriticalGantt(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderRecovery(); renderDirectives(); }
+function renderAll() { renderSummary(); renderLookaheadGantt(); renderCriticalGantt(); renderList(); renderDrawer(); renderLookahead(); renderHuddle(); renderAssistantRequests(); renderRecovery(); renderDirectives(); }
 function bind() {
   ['[data-search]', '[data-status-filter]', '[data-trade-filter]', '[data-phase-filter]', '[data-sort]'].forEach((sel) => $$(sel).forEach((el) => el.addEventListener('input', renderAll)));
   $$('[data-view-preset]').forEach((b) => b.addEventListener('click', () => { $('[data-status-filter]').value = b.dataset.viewPreset; renderAll(); }));
@@ -319,6 +328,8 @@ function bind() {
 (async function init() {
   schedule = await loadJson('/safe-data/projects/golden-hill/schedule/superintendent-schedule.json');
   populateFilters(); bind(); renderFieldUpdates(); renderConstraints(); selectedId = allTasks()[0]?.id; renderAll();
+  window.addEventListener('storage', (event) => { if (event.key === ASSISTANT_REQUEST_KEY) renderAssistantRequests(); });
+  window.addEventListener('cast-team-assistant:queue-updated', renderAssistantRequests);
 })().catch((error) => {
   document.body.insertAdjacentHTML('afterbegin', `<div class="wide-note"><strong>Schedule metadata unavailable:</strong> ${esc(error.message)}</div>`);
 });

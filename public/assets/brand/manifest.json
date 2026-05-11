@@ -35,9 +35,16 @@
 
     "wordmark-brand": {
       "file": "cast-build-main-logo-supplied-transparent.png",
-      "description": "Hero brand mark. Highest visual weight — reserve for landing pages and Open Graph cards.",
+      "description": "Hero brand mark. Highest visual weight — reserve for Open Graph cards and marketing surfaces.",
       "format": "png",
-      "useFor": ["landing-hero", "og-image", "marketing"]
+      "useFor": ["og-image", "marketing"]
+    },
+
+    "wordmark-landing": {
+      "file": "cast-build-landing-logo-supplied-transparent.png",
+      "description": "Supplied CAST Build landing page wordmark with transparent background. Use as the primary logo on the app landing page.",
+      "format": "png",
+      "useFor": ["landing-hero"]
     },
 
     "wordmark-outline": {

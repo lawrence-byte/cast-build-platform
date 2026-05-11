@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="/cast-build-components.css">
   <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
   <script src="/assets/brand/brand.js" defer></script>
+  <script src="/cast-auth.js" defer></script>
+  <script src="/cast-team-assistant.js" defer></script>
 </head>
 <body>
   <main class="cast-access-section cast-access-section--platform" aria-label="CAST Build project access">
@@ -26,16 +28,30 @@
 
     <section class="cast-access-content cast-access-content--platform" aria-label="CAST Build platform overview">
       <div class="cast-access-copy">
-        <div class="cast-access-logo" aria-label="CASTBUILD">
-          <img src="/assets/brand/cast-build-logo-transparent.png" alt="CAST BUILD">
+        <div class="cast-access-brand-block">
+          <div class="cast-access-logo" aria-label="CASTBUILD">
+            <img data-brand-role="wordmark-landing" src="/assets/brand/cast-build-landing-logo-supplied-transparent.png" alt="CAST BUILD">
+          </div>
+          <p class="cast-access-eyebrow">CONSTRUCTION MANAGEMENT OPERATING PLATFORM</p>
         </div>
-        <p class="cast-access-eyebrow">CONSTRUCTION MANAGEMENT OPERATING PLATFORM</p>
       </div>
+
+      <div class="cast-access-chat-slot" aria-label="CAST Build chat assistant"></div>
 
       <div class="cast-access-grid cast-access-grid--platform">
         <a class="cast-access-card cast-access-card--primary cast-access-card--project" href="/projects/golden-hill-procore.html">
           <span>
             <h2>ALÜM PROJECT</h2>
+          </span>
+          <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a class="cast-access-card cast-access-card--document" href="/projects/golden-hill-documents.html">
+          <span>
+            <small>Document portal update</small>
+            <h2>DOCUMENT PORTAL</h2>
+            <p>OCR, intake review, registers, and Alüm document intelligence.</p>
           </span>
           <svg class="portal-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>

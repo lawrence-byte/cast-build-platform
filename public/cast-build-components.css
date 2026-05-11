@@ -629,21 +629,34 @@
   padding-bottom: 86px;
 }
 .cast-access-content--platform {
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-  gap: clamp(42px, 6vw, 88px);
+  grid-template-columns: minmax(260px, 390px) minmax(120px, 180px) minmax(280px, 420px);
+  justify-content: center;
+  gap: clamp(44px, 8vw, 120px);
+  align-items: center;
 }
 .cast-access-copy {
   min-width: 0;
+  width: min(420px, 100%);
+  justify-self: center;
+  text-align: center;
+  position: relative;
+}
+.cast-access-brand-block {
+  display: grid;
+  justify-items: center;
 }
 .cast-access-copy .cast-access-logo {
-  margin-bottom: 22px;
+  margin: 0 auto 0;
+  width: min(420px, 100%);
 }
 .cast-access-eyebrow {
-  margin: 0 0 14px;
+  margin: -8px 0 0;
   font-family: var(--font-caption);
   color: var(--sand-light);
-  font-size: 0.72rem;
-  letter-spacing: 0.24em;
+  font-size: clamp(0.56rem, 0.78vw, 0.72rem);
+  line-height: 1.1;
+  letter-spacing: 0.20em;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 .cast-access-copy h1 {
@@ -690,13 +703,21 @@
   background: var(--success);
   box-shadow: 0 0 18px rgba(93, 127, 103, 0.8);
 }
+.cast-access-chat-slot {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+}
 .cast-access-grid--platform {
   gap: 14px;
+  width: min(420px, 100%);
+  justify-self: start;
 }
 .cast-access-grid--platform .cast-access-card {
   min-height: 128px;
-  align-items: flex-start;
-  padding: 24px 24px 22px;
+  align-items: center;
+  padding: 24px;
 }
 .cast-access-grid--platform .cast-access-card small {
   display: block;
@@ -722,12 +743,35 @@
   background: rgba(191, 184, 162, 0.105);
   border-color: rgba(191, 184, 162, 0.34);
 }
-@media (max-width: 980px) {
+@media (max-width: 1080px) {
   .cast-access-content--platform {
     grid-template-columns: 1fr;
+    gap: 34px;
+  }
+  .cast-access-copy,
+  .cast-access-chat-slot,
+  .cast-access-grid--platform {
+    justify-self: center;
+  }
+  .cast-access-grid--platform {
+    grid-template-columns: minmax(0, 1fr);
   }
   .cast-access-copy .cast-access-logo {
     transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .cast-access-content--platform {
+    gap: 26px;
+  }
+  .cast-access-copy,
+  .cast-access-grid--platform {
+    width: min(100%, 360px);
+  }
+  .cast-access-grid--platform .cast-access-card {
+    min-height: 112px;
+    padding: 20px;
   }
 }
 

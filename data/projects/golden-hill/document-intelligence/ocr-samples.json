@@ -1,8 +1,6 @@
 [
   {
     "fileName": "FS-01-FIRE-SERVICE-Rev.0.pdf",
-    "path": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm/Current Drawings/Fire-Protection/FS-01-FIRE-SERVICE-Rev.0.pdf",
-    "relativeToAlum": "Current Drawings/Fire-Protection/FS-01-FIRE-SERVICE-Rev.0.pdf",
     "category": "Current Drawings",
     "pages": 1,
     "pagesProcessed": 1,
@@ -27,12 +25,11 @@
     "reviewFlags": [
       "No native text layer; OCR recovered searchable text.",
       "Drawing/plan content; OCR is assistive only, not design/takeoff authority."
-    ]
+    ],
+    "projectPath": "Current Drawings/Fire-Protection/FS-01-FIRE-SERVICE-Rev.0.pdf"
   },
   {
     "fileName": "GHA - RFI #083 Plumbing Underground Backfill.pdf",
-    "path": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm/08. RFI's/GHA - RFI #083 Plumbing Underground Backfill.pdf",
-    "relativeToAlum": "08. RFI's/GHA - RFI #083 Plumbing Underground Backfill.pdf",
     "category": "08. RFI's",
     "pages": 1,
     "pagesProcessed": 1,
@@ -50,12 +47,11 @@
     "reviewFlags": [
       "No native text layer; OCR recovered searchable text.",
       "RFI-related document; cross-link to RFI log before relying on extracted text."
-    ]
+    ],
+    "projectPath": "08. RFI's/GHA - RFI #083 Plumbing Underground Backfill.pdf"
   },
   {
     "fileName": "Scan2025-05-20_112040.pdf",
-    "path": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm/02. BUDGET/GMP Subcontractors/Roofing/Scan2025-05-20_112040.pdf",
-    "relativeToAlum": "02. BUDGET/GMP Subcontractors/Roofing/Scan2025-05-20_112040.pdf",
     "category": "02. BUDGET",
     "pages": 1,
     "pagesProcessed": 1,
@@ -77,12 +73,11 @@
     "reviewFlags": [
       "No native text layer; OCR recovered searchable text.",
       "Financial/procurement document; verify extracted amounts manually."
-    ]
+    ],
+    "projectPath": "02. BUDGET/GMP Subcontractors/Roofing/Scan2025-05-20_112040.pdf"
   },
   {
     "fileName": "GL Invoice.pdf",
-    "path": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm/04. INSURANCE/Certificates/GL Invoice.pdf",
-    "relativeToAlum": "04. INSURANCE/Certificates/GL Invoice.pdf",
     "category": "04. INSURANCE",
     "pages": 1,
     "pagesProcessed": 1,
@@ -107,12 +102,11 @@
     "reviewFlags": [
       "No native text layer; OCR recovered searchable text.",
       "Financial/procurement document; verify extracted amounts manually."
-    ]
+    ],
+    "projectPath": "04. INSURANCE/Certificates/GL Invoice.pdf"
   },
   {
     "fileName": "487162-PERMANENT-POWER-UG-Rev.0.pdf",
-    "path": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm/Current Drawings/SDGE-/487162-PERMANENT-POWER-UG-Rev.0.pdf",
-    "relativeToAlum": "Current Drawings/SDGE-/487162-PERMANENT-POWER-UG-Rev.0.pdf",
     "category": "Current Drawings",
     "pages": 1,
     "pagesProcessed": 1,
@@ -137,12 +131,11 @@
     "reviewFlags": [
       "No native text layer; OCR recovered searchable text.",
       "Drawing/plan content; OCR is assistive only, not design/takeoff authority."
-    ]
+    ],
+    "projectPath": "Current Drawings/SDGE-/487162-PERMANENT-POWER-UG-Rev.0.pdf"
   },
   {
     "fileName": "2503-12.pdf",
-    "path": "data/projects/golden-hill/dropbox-intake/extracted-20260506-050901/Alüm/10. COMMITMENTS/23 00 00 HVAC/02. COR's/2503-12.pdf",
-    "relativeToAlum": "10. COMMITMENTS/23 00 00 HVAC/02. COR's/2503-12.pdf",
     "category": "10. COMMITMENTS",
     "pages": 1,
     "pagesProcessed": 1,
@@ -166,6 +159,7 @@
     "textPreview": "--- Page 1 --- < 1865 N. Johnson Ave. Ste. 295 Fans (819) 362-2732 SSCS # Cajon. ca92020 Rswang@shepiobs). ney ie, #805406 MH Casr Bangs _ Sat: eet \\I7025 : ROE Swe eee S= SSS == ATEN: bie Cotvevec< Bor veo, , ; PROIECT: _ Come thu Renee Measys _ ; : = oe ; 4 = ae REFERENCE: ep (RES lo Coenen + ost Toy = wviss A Meterialsand “$\\.G07, 58 B Sales Tax 2A oe $i ZA se @ Blveet LaBOrE A Gye = 8 Has RS? B. indirect tabor: , a & Equipment / Tools: § : & Subbcontracis: § ® 6 «SUBTOTAL: (A thruF} — $ 2oBdA SF i Gverhesd 19% of (ehe § ZesA\\ - aa SUBTOTAL: {Fthrat} ze BZASZA rote 6 a4) 2S” 14 %- SUBTOTAL: (3¢ueR} S241. a Boud Premium: $s /e Mt. = TOTAL COST ESTIMATE: OCbAdd ( }Oeduce - $3,248 °° a. { ) Quotation is valid for days, Pp. Zz days extension of contract time required, ~8y",
     "reviewFlags": [
       "No native text layer; OCR recovered searchable text."
-    ]
+    ],
+    "projectPath": "10. COMMITMENTS/23 00 00 HVAC/02. COR's/2503-12.pdf"
   }
 ]

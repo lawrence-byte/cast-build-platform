@@ -5,7 +5,7 @@ const XLSX = require('xlsx');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/cast-document-intake.js', 'public/cast-document-intake.css', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/cast-team-assistant.js', 'api/cast-team-assistant.js', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/cast-document-intake.js', 'public/cast-document-intake.css', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -175,6 +175,10 @@ const intakeCss = fs.readFileSync(path.join(root, 'public/cast-document-intake.c
 const navScript = fs.readFileSync(path.join(root, 'public/projects/alum-project-nav.js'), 'utf8');
 const adminPageForIntake = fs.readFileSync(path.join(root, 'public/admin.html'), 'utf8');
 const adminIntakeScript = fs.readFileSync(path.join(root, 'public/admin-document-intake.js'), 'utf8');
+const teamAssistantScript = fs.readFileSync(path.join(root, 'public/cast-team-assistant.js'), 'utf8');
+const teamAssistantApi = fs.readFileSync(path.join(root, 'api/cast-team-assistant.js'), 'utf8');
+const alumSchedulePage = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.html'), 'utf8');
+const alumScheduleScript = fs.readFileSync(path.join(root, 'public/projects/alum-schedule.js'), 'utf8');
 for (const requiredIntakeSignal of ['CAST Document Intake', 'Upload and File Document', 'data-intake-drop', 'Confirm and File', 'classification', 'linkedRecords', '/api/document-intake', 'document:upload']) {
   if (!intakeScript.includes(requiredIntakeSignal)) {
     console.error(`Global document intake missing signal: ${requiredIntakeSignal}`);
@@ -194,6 +198,30 @@ if (!fs.existsSync(path.join(root, 'public/assets/cast-upload-logo.png'))) {
 for (const requiredNavIntakeSignal of ['cast-document-intake.js', 'cast-document-intake.css', 'mountButton(topNav)']) {
   if (!navScript.includes(requiredNavIntakeSignal)) {
     console.error(`Alüm global nav missing document intake integration: ${requiredNavIntakeSignal}`);
+    failed = true;
+  }
+}
+for (const requiredAssistantSignal of ['CAST Build Team Assistant', 'schedule_adjustment_request', 'correspondence_draft', 'externalWriteback: false', 'externalSend: false', 'approvalRequired: true', '/api/cast-team-assistant']) {
+  if (!teamAssistantScript.includes(requiredAssistantSignal)) {
+    console.error(`CAST team assistant widget missing guardrail/workflow signal: ${requiredAssistantSignal}`);
+    failed = true;
+  }
+}
+for (const requiredAssistantApiSignal of ['CAST Build Team Assistant', 'No external email send', 'No Procore or CAST BUILD A.O writeback', 'schedule_adjustment_request', 'correspondence_draft']) {
+  if (!teamAssistantApi.includes(requiredAssistantApiSignal)) {
+    console.error(`CAST team assistant API contract missing signal: ${requiredAssistantApiSignal}`);
+    failed = true;
+  }
+}
+for (const requiredAssistantNavSignal of ['cast-team-assistant.js', 'loadTeamAssistant', 'assistant.mount']) {
+  if (!navScript.includes(requiredAssistantNavSignal)) {
+    console.error(`Alüm global nav missing team assistant integration: ${requiredAssistantNavSignal}`);
+    failed = true;
+  }
+}
+for (const requiredScheduleAssistantSignal of ['Team Assistant Schedule Queue', 'castBuildScheduleAdjustmentRequests.v1', 'data-assistant-request-rows', 'cast-team-assistant:queue-updated']) {
+  if (!alumSchedulePage.includes(requiredScheduleAssistantSignal) && !alumScheduleScript.includes(requiredScheduleAssistantSignal)) {
+    console.error(`Schedule page missing team assistant queue signal: ${requiredScheduleAssistantSignal}`);
     failed = true;
   }
 }
@@ -926,6 +954,22 @@ for (const full of htmlFiles) {
 }
 if (brokenLinks.length) {
   fail(`Broken or unsafe public routes:\n - ${brokenLinks.slice(0, 30).join('\n - ')}${brokenLinks.length > 30 ? `\n - ... ${brokenLinks.length - 30} more` : ''}`);
+}
+
+
+for (const docIntelDir of [
+  path.join(root, 'data/projects/golden-hill/document-intelligence'),
+  path.join(root, 'public/data/projects/golden-hill/document-intelligence'),
+]) {
+  const leakedDocIntel = [];
+  walk(docIntelDir, (full) => {
+    if (!/\.json$/i.test(full)) return;
+    const text = fs.readFileSync(full, 'utf8');
+    if (/\/Users\/|CAST Community Dropbox|\/Volumes\/CAST Drive|00_PROCORE DATA TIE|dropbox-intake|source-logs|source-artifacts|"(?:sourceRoot|localDataTiePath|currentBudgetPath|relativeToAlum|path)"\s*:/i.test(text)) {
+      leakedDocIntel.push(path.relative(root, full));
+    }
+  });
+  if (leakedDocIntel.length) fail(`Document intelligence metadata leaked local/source path details: ${leakedDocIntel.join(', ')}`);
 }
 
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));

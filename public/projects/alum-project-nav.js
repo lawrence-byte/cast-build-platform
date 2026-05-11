@@ -95,7 +95,7 @@
   ];
 
   const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
-  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/cast-build-logo-transparent.png';
+  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/horizontal-build-white-on-charcoal.svg';
 
   function loadGlobalIntakeAssets() {
     if (!document.querySelector('link[data-cast-document-intake]')) {
@@ -116,6 +116,38 @@
         document.body.appendChild(script);
       }
       script.addEventListener('load', () => resolve(window.CastDocumentIntake), { once: true });
+      script.addEventListener('error', () => resolve(null), { once: true });
+    });
+  }
+
+  function loadAuthGate() {
+    return new Promise((resolve) => {
+      if (window.CASTAuth) return resolve(window.CASTAuth);
+      let script = document.querySelector('script[data-cast-auth]');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = '/cast-auth.js';
+        script.defer = true;
+        script.dataset.castAuth = 'true';
+        document.body.appendChild(script);
+      }
+      script.addEventListener('load', () => resolve(window.CASTAuth), { once: true });
+      script.addEventListener('error', () => resolve(null), { once: true });
+    });
+  }
+
+  function loadTeamAssistant() {
+    return new Promise((resolve) => {
+      if (window.CastTeamAssistant) return resolve(window.CastTeamAssistant);
+      let script = document.querySelector('script[data-cast-team-assistant]');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = '/cast-team-assistant.js';
+        script.defer = true;
+        script.dataset.castTeamAssistant = 'true';
+        document.body.appendChild(script);
+      }
+      script.addEventListener('load', () => resolve(window.CastTeamAssistant), { once: true });
       script.addEventListener('error', () => resolve(null), { once: true });
     });
   }
@@ -202,8 +234,12 @@
   for (const [label, href] of primary) topLinks.appendChild(link(label, href));
   topNav.append(brand, topLinks);
 
+  loadAuthGate();
   loadGlobalIntakeAssets().then((intake) => {
     if (intake && intake.mountButton) intake.mountButton(topNav);
+  });
+  loadTeamAssistant().then((assistant) => {
+    if (assistant && assistant.mount) assistant.mount();
   });
 
   const rail = document.createElement('aside');

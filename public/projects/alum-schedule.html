@@ -133,6 +133,11 @@
           </div>
         </section>
 
+        <section class="project-panel span-12" id="assistant-queue">
+          <div class="panel-header"><h2>Team Assistant Schedule Queue</h2><span data-assistant-request-count>Local draft requests</span></div>
+          <div class="cb-table-wrap"><table class="project-table" aria-label="Team assistant schedule adjustment queue"><thead><tr><th>When</th><th>Type</th><th>Request</th><th>Status</th></tr></thead><tbody data-assistant-request-rows></tbody></table></div>
+        </section>
+
         <section class="project-panel span-6">
           <div class="panel-header"><h2>Recovery Watch</h2><span data-recovery-count>—</span></div>
           <div class="cb-table-wrap"><table class="project-table" aria-label="Recovery watch"><thead><tr><th>Item</th><th>Signal</th><th>Action</th></tr></thead><tbody data-recovery-rows></tbody></table></div>
@@ -157,5 +162,5 @@
   <script src="/cast-xlsx-export.js"></script>
   <script src="/projects/alum-schedule.js"></script>
   <script src="/projects/alum-project-nav.js" defer></script>
-</body>
+<script src="/cast-team-assistant.js" defer></script></body>
 </html>
