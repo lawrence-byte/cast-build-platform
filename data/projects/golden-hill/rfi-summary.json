@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-08",
+  "generatedAt": "2026-05-12",
   "source": "CAST BUILD A.O exported RFI CSV attached by Lawrence",
   "total": 303,
   "statusCounts": {
@@ -255,9 +255,9 @@
     }
   ],
   "folderSource": "Private synced Alüm RFI folder metadata",
-  "folderRfiPdfCount": 255,
+  "folderRfiPdfCount": 256,
   "folderLogFileCount": 30,
-  "folderMissingTieOutCount": 255,
+  "folderMissingTieOutCount": 256,
   "latestFolderLogs": [
     {
       "path": "+RFI Log/2026-04-02 Golden Hill RFI Log.pdf",
@@ -3254,6 +3254,17 @@
       "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
     },
     {
+      "Number": "284",
+      "Subject": "EF-5 & 3 Dampers Clarification",
+      "Status": "Filed in project folder",
+      "sourceKind": "folder-pdf",
+      "fileName": "GHA - RFI 284 EF-5 & 3 Dampers Clarification.pdf",
+      "folderPath": "GHA - RFI 284 EF-5 & 3 Dampers Clarification.pdf",
+      "modifiedAt": "2026-05-11T15:12:23.000Z",
+      "sizeLabel": "4.2 MB",
+      "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
+    },
+    {
       "Number": null,
       "Subject": "2025.03.26 Civil POC RFI",
       "Status": "Filed in project folder",
@@ -3287,5 +3298,5 @@
       "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
     }
   ],
-  "totalFolderFiles": 285
+  "totalFolderFiles": 286
 }

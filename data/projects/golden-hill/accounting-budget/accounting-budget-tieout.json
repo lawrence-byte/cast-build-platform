@@ -2,15 +2,15 @@
   "projectName": "Alüm",
   "formerName": "Golden Hill Apartments",
   "source": "Approved Dropbox accounting folder snapshot plus CAST BUILD A.O metadata exports",
-  "generatedAt": "2026-05-06T16:21:09.262Z",
+  "generatedAt": "2026-05-12T02:08:03.291Z",
   "guardrail": "Read-first metadata extraction only. Raw PDFs/XLS/XLSX/CSV files remain local/private and are not published.",
-  "accountingFolder": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING",
-  "budgetFolder": "dropbox-intake/extracted-20260506-050901/Alüm/02. BUDGET",
+  "accountingFolder": "16. ACCOUNTING",
+  "budgetFolder": "02. BUDGET",
   "fileInventory": {
-    "accountingFiles": 1757,
-    "budgetFolderFiles": 335,
-    "spreadsheetFiles": 229,
-    "budgetRelatedFiles": 1869
+    "accountingFiles": 5119,
+    "budgetFolderFiles": 458,
+    "spreadsheetFiles": 392,
+    "budgetRelatedFiles": 4753
   },
   "currentCastBuildAOMetrics": {
     "Original Budget Amount": 37013422,
@@ -35,7 +35,7 @@
     "jtdPctOfRevised": 60.69
   },
   "budgetImport": {
-    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget import (final) REV.xlsx",
+    "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget import (final) REV.xlsx",
     "rowCount": 77,
     "total": 37013422,
     "byCostType": [
@@ -62,7 +62,7 @@
     ]
   },
   "buyoutSummary": {
-    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/02. BUDGET/Golden Hill Apartments_Buyout Log_live.xls",
+    "sourceFile": "02. BUDGET/Golden Hill Apartments_Buyout Log_live.xls",
     "rowCount": 53,
     "gmpBudget": 33146127,
     "subcontractAmount": 31963599,
@@ -73,7 +73,7 @@
     "tbdCount": 8
   },
   "latestCommitmentSnapshot": {
-    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/14 APR 2026/Commitments (1).xlsx",
+    "sourceFile": "16. ACCOUNTING/01.Pay Applications/14 APR 2026/Commitments (1).xlsx",
     "folder": "16. ACCOUNTING/01.Pay Applications/14 APR 2026",
     "rowCount": 40,
     "originalContractAmount": 29446462.28,
@@ -87,7 +87,7 @@
   },
   "commitmentSnapshots": [
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build, GHA - Commitments.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build, GHA - Commitments.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
       "rowCount": 39,
       "originalContractAmount": 0,
@@ -100,7 +100,7 @@
       "remainingBalanceOutstanding": 0
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/Monthly Logs 1.31.26/Commitments 2.10.26.csv",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/Monthly Logs 1.31.26/Commitments 2.10.26.csv",
       "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/Monthly Logs 1.31.26",
       "rowCount": 39,
       "originalContractAmount": 0,
@@ -113,7 +113,7 @@
       "remainingBalanceOutstanding": 0
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/12 FEB 2026/GHA Commitments (current) 3.20.26.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/12 FEB 2026/GHA Commitments (current) 3.20.26.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/12 FEB 2026",
       "rowCount": 39,
       "originalContractAmount": 0,
@@ -126,7 +126,7 @@
       "remainingBalanceOutstanding": 15545245.59
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/13 MAR 2026/Commitments (3).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026/Commitments (3).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026",
       "rowCount": 39,
       "originalContractAmount": 0,
@@ -139,7 +139,7 @@
       "remainingBalanceOutstanding": 16172866.45
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/13 MAR 2026/monthly logs/Commitments.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026/monthly logs/Commitments.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026/monthly logs",
       "rowCount": 39,
       "originalContractAmount": 0,
@@ -152,7 +152,7 @@
       "remainingBalanceOutstanding": 343.92
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/14 APR 2026/Commitments (1).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/14 APR 2026/Commitments (1).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/14 APR 2026",
       "rowCount": 40,
       "originalContractAmount": 29446462.28,
@@ -167,144 +167,144 @@
   ],
   "forecastSnapshots": [
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 1.30.26.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 1.30.26.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2026-02-17T00:36:20.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 10.17.25.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 10.17.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-10-17T22:00:16.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 11.05.25.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 11.05.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-12-31T20:17:31.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 12.31.25.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 12.31.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2026-01-19T22:29:26.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 3.31.26.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 3.31.26.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2026-04-17T20:24:59.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 8.7.25.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 8.7.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-08-15T01:21:51.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 9.5.25.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 9.5.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-09-23T01:21:37.000Z"
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
+      "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-06-26T02:46:56.000Z"
     }
   ],
   "latestForecastSnapshot": {
-    "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
+    "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
     "rowCount": 15,
     "listedBudget": 1297189,
     "listedCostToComplete": 80,
-    "fileMtime": "2026-05-06T12:08:48.000Z"
+    "fileMtime": "2025-06-26T02:46:56.000Z"
   },
   "purchaseReports": [
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (5).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (5).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
       "rowCount": 22,
       "amount": 0
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (6).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (6).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
       "rowCount": 12,
       "amount": 4894.17
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (8).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (8).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
       "rowCount": 27,
       "amount": 0
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (ties out to Procore 10.31.25).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (ties out to Procore 10.31.25).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/08 OCT 2025 CAST",
       "rowCount": 250,
       "amount": 422677.12
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (10) GCs.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (10) GCs.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST",
       "rowCount": 21,
       "amount": 8988.98
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (14).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST/CAST Build Inc._Purchases by Product_Service Detail (14).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/09 NOV 2025 CAST",
       "rowCount": 60,
       "amount": 2385062.25
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/10 DEC 2025 CAST/CAST Build Inc._GC & GR Purchases by Product_Service Detail - copy.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/10 DEC 2025 CAST/CAST Build Inc._GC & GR Purchases by Product_Service Detail - copy.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/10 DEC 2025 CAST",
       "rowCount": 37,
       "amount": 12373.62
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC & GR Purchases by Product_Service Detail - DEC revised reconcile (1).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC & GR Purchases by Product_Service Detail - DEC revised reconcile (1).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
       "rowCount": 50,
       "amount": 110233.67
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC& GR Purchases by Product_Service Detail (1.31.26).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC& GR Purchases by Product_Service Detail (1.31.26).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
       "rowCount": 28,
       "amount": 14533.64
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC& GR Purchases by Product_Service Detail 1.31.26 final (1).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST/CAST Build Inc._GC& GR Purchases by Product_Service Detail 1.31.26 final (1).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/11 JAN 2025 CAST",
       "rowCount": 41,
       "amount": 74779.34
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/12 FEB 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail (2).xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/12 FEB 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail (2).xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/12 FEB 2026",
       "rowCount": 26,
       "amount": 7665.45
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/13 MAR 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail 3.31.26.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail 3.31.26.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/13 MAR 2026",
       "rowCount": 54,
       "amount": 32596.15
     },
     {
-      "sourceFile": "dropbox-intake/extracted-20260506-050901/Alüm/16. ACCOUNTING/01.Pay Applications/14 APR 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail.xlsx",
+      "sourceFile": "16. ACCOUNTING/01.Pay Applications/14 APR 2026/CAST Build Inc._GC& GR Purchases by Product_Service Detail.xlsx",
       "folder": "16. ACCOUNTING/01.Pay Applications/14 APR 2026",
       "rowCount": 24,
       "amount": 16547.34

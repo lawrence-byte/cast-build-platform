@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-08",
+  "generatedAt": "2026-05-12",
   "source": "CAST BUILD A.O exported submittal XLSX/PDF attached by Lawrence",
   "total": 525,
   "statusCounts": {
@@ -3576,7 +3576,7 @@
     }
   ],
   "folderSource": "Private synced Alüm submittal folder metadata",
-  "folderDocumentCount": 799,
+  "folderDocumentCount": 800,
   "folderLogFileCount": 28,
   "latestFolderLogs": [
     {
@@ -3801,12 +3801,12 @@
     }
   ],
   "folderStatusCounts": {
-    "Filed / needs log tie-out": 684,
+    "Filed / needs log tie-out": 685,
     "Approved / no exceptions noted": 96,
     "Revise & Resubmit": 19
   },
   "folderTypeCounts": {
-    "Shop Drawing": 599,
+    "Shop Drawing": 600,
     "Product Data": 128,
     "Submittal document": 70,
     "Qualifications/Certifications": 2
@@ -14572,6 +14572,20 @@
     },
     {
       "Submittal Number": "23 00 00",
+      "Title": "23 00 00-004.0 HVAC SHOP DRAWINGS",
+      "Type": "Shop Drawing",
+      "Status": "Filed / needs log tie-out",
+      "Spec Section": "23 00 00 004.0 HVAC SHOP DRAWINGS",
+      "Division": "23 - HVAC",
+      "sourceKind": "folder-document",
+      "fileName": "23 00 00-004.0 HVAC SHOP DRAWINGS.pdf",
+      "folderPath": "23 - HVAC/23 00 00-004.0 HVAC SHOP DRAWINGS/23 00 00-004.0 HVAC SHOP DRAWINGS.pdf",
+      "modifiedAt": "2026-05-08T00:15:32.000Z",
+      "sizeLabel": "2.1 MB",
+      "nextStep": "Tie to latest exported submittal log for formal status and ball-in-court."
+    },
+    {
+      "Submittal Number": "23 00 00",
       "Title": "23 00 00-8.0 RR EXH FAN - PRODUCT DATA",
       "Type": "Product Data",
       "Status": "Filed / needs log tie-out",
@@ -15201,5 +15215,5 @@
       "nextStep": "Tie to latest exported submittal log for formal status and ball-in-court."
     }
   ],
-  "totalFolderFiles": 828
+  "totalFolderFiles": 829
 }

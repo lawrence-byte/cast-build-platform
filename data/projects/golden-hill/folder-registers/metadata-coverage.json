@@ -1,6 +1,6 @@
 {
   "projectName": "Alüm",
-  "generatedAt": "2026-05-08T16:25:04.579Z",
+  "generatedAt": "2026-05-12T02:03:50.712Z",
   "source": "Private synced Alüm project folder metadata",
   "guardrails": [
     "Publish sanitized metadata only.",
@@ -11,31 +11,31 @@
     {
       "id": "rfis",
       "label": "RFIs",
-      "sourceFiles": 285,
-      "extractedItems": 255,
+      "sourceFiles": 286,
+      "extractedItems": 256,
       "status": "folder_metadata_indexed",
       "nextAction": "Tie every folder PDF to the exported RFI log and expose missing/log mismatch queue."
     },
     {
       "id": "submittals",
       "label": "Submittals",
-      "sourceFiles": 828,
-      "extractedItems": 799,
+      "sourceFiles": 829,
+      "extractedItems": 800,
       "status": "folder_metadata_indexed",
       "nextAction": "Merge folder documents with exported submittal register and procurement log."
     },
     {
       "id": "commitments",
       "label": "Commitments",
-      "sourceFiles": 1535,
-      "extractedItems": 1535,
+      "sourceFiles": 1542,
+      "extractedItems": 1542,
       "status": "folder_metadata_indexed",
       "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
     },
     {
       "id": "accounting",
       "label": "Accounting",
-      "sourceFiles": 3938,
+      "sourceFiles": 3907,
       "extractedItems": 2000,
       "status": "folder_metadata_indexed",
       "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
@@ -51,8 +51,8 @@
     {
       "id": "quality",
       "label": "Quality Control",
-      "sourceFiles": 394,
-      "extractedItems": 394,
+      "sourceFiles": 396,
+      "extractedItems": 396,
       "status": "folder_metadata_indexed",
       "nextAction": "Review high-risk/recent files and promote stable fields into module-specific registers."
     },
@@ -101,16 +101,16 @@
     {
       "id": "rfis",
       "label": "RFIs",
-      "sourceFiles": 285,
-      "extractedItems": 255,
+      "sourceFiles": 286,
+      "extractedItems": 256,
       "status": "folder_metadata_indexed",
       "nextAction": "Tie every folder PDF to the exported RFI log and expose missing/log mismatch queue."
     },
     {
       "id": "submittals",
       "label": "Submittals",
-      "sourceFiles": 828,
-      "extractedItems": 799,
+      "sourceFiles": 829,
+      "extractedItems": 800,
       "status": "folder_metadata_indexed",
       "nextAction": "Merge folder documents with exported submittal register and procurement log."
     },

@@ -17,14 +17,16 @@ const MODULE_FOLDERS = {
   correspondence: '24. CORRESPONDENCE',
 };
 
-const sourceCandidates = [
-  process.env.ALUM_PROJECT_SOURCE_DIR,
-  '/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm',
-  '/Users/broderick/Library/CloudStorage/Dropbox-CASTCommunity/CAST Automation/CAST Build Management Platform/Alüm',
-].filter(Boolean);
-
 function sourceRoot() {
-  return sourceCandidates.find((candidate) => candidate && fs.existsSync(candidate));
+  const configured = process.env.ALUM_PROJECT_SOURCE_DIR;
+  return configured && fs.existsSync(configured) ? configured : null;
+}
+
+function castServerEnabled(req) {
+  if (process.env.CAST_SERVER_API_ENABLED !== 'true') return false;
+  const token = process.env.CAST_SERVER_API_TOKEN;
+  if (!token) return false;
+  return req.headers['x-cast-server-token'] === token;
 }
 
 function safeResolve(moduleId, rel = '') {
@@ -56,6 +58,7 @@ function query(req) {
 }
 
 function handleOpenFolder(req, res) {
+  if (!castServerEnabled(req)) return sendJson(res, 403, { error: 'CAST_SERVER_API_DISABLED', message: 'Raw CAST Server access is disabled for deployed/public routes. Use metadata-only indexes or approved private Dropbox/CAST Server access.' });
   const { module, path: rel = '' } = query(req);
   const resolved = safeResolve(module, rel);
   if (resolved.error) return sendJson(res, 404, resolved);
@@ -71,6 +74,7 @@ function handleOpenFolder(req, res) {
 }
 
 function handleOpenFile(req, res) {
+  if (!castServerEnabled(req)) return sendJson(res, 403, { error: 'CAST_SERVER_API_DISABLED', message: 'Raw CAST Server file streaming is disabled for deployed/public routes. Use approved private Dropbox/CAST Server access.' });
   const { module, path: rel = '' } = query(req);
   const resolved = safeResolve(module, rel);
   if (resolved.error) return sendJson(res, 404, resolved);
@@ -81,6 +85,7 @@ function handleOpenFile(req, res) {
 }
 
 function handleAddFile(req, res) {
+  if (!castServerEnabled(req)) return sendJson(res, 403, { error: 'CAST_SERVER_API_DISABLED', message: 'Raw CAST Server filing actions are disabled for deployed/public routes. Use the authenticated document intake workflow.' });
   const { module, path: rel = '' } = query(req);
   const resolved = safeResolve(module, rel);
   if (resolved.error) return sendJson(res, 404, resolved);

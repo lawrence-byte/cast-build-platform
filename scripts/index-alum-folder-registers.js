@@ -3,12 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const sourceCandidates = [
-  process.env.ALUM_PROJECT_SOURCE_DIR,
-  '/Users/lawrencehoward/CAST Community Dropbox/CAST Automation/CAST Build Management Platform/Alüm',
-  '/Users/broderick/Library/CloudStorage/Dropbox-CASTCommunity/CAST Automation/CAST Build Management Platform/Alüm',
-].filter(Boolean);
-const sourceRoot = sourceCandidates.find((candidate) => fs.existsSync(candidate)) || sourceCandidates[0];
+const sourceRoot = process.env.ALUM_PROJECT_SOURCE_DIR;
 const dataRoot = path.join(root, 'data/projects/golden-hill');
 const publicRoot = path.join(root, 'public/data/projects/golden-hill');
 const safeRoot = path.join(root, 'public/safe-data/projects/golden-hill');

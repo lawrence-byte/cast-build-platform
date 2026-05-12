@@ -1,20 +1,20 @@
 {
   "projectName": "Alüm",
   "section": "Quality Control",
-  "generatedAt": "2026-05-08T16:25:04.579Z",
+  "generatedAt": "2026-05-12T02:03:50.712Z",
   "source": "Private synced Alüm Quality Control folder metadata",
   "guardrail": "Sanitized file/register metadata only; raw source documents are not published.",
-  "totalFiles": 394,
-  "totalBytes": 3965754314,
+  "totalFiles": 396,
+  "totalBytes": 4002145543,
   "totalSizeLabel": "3.7 GB",
   "extensionCounts": {
-    "pdf": 362,
+    "pdf": 364,
     "heic": 18,
     "docx": 8,
     "xlsx": 6
   },
   "folderCounts": {
-    "c. Pre-Drywall Checklists": 278,
+    "c. Pre-Drywall Checklists": 280,
     "e. Car Lift As-Built": 97,
     "s. Box Walks": 12,
     "b. Conrete Pour Cards": 2,
@@ -24,6 +24,28 @@
     "d. OpenSpace QC": 1
   },
   "recentFiles": [
+    {
+      "path": "c. Pre-Drywall Checklists/Checklists by Unit/Unit 314 - S1 (signed).pdf",
+      "name": "Unit 314 - S1 (signed).pdf",
+      "title": "Unit 314 - S1 (signed)",
+      "folder": "c. Pre-Drywall Checklists",
+      "extension": "pdf",
+      "sizeBytes": 18782131,
+      "sizeLabel": "17.9 MB",
+      "modifiedAt": "2026-05-08T16:00:37.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "c. Pre-Drywall Checklists/Checklists by Unit/Unit 318 - B4 (signed).pdf",
+      "name": "Unit 318 - B4 (signed).pdf",
+      "title": "Unit 318 - B4 (signed)",
+      "folder": "c. Pre-Drywall Checklists",
+      "extension": "pdf",
+      "sizeBytes": 17609098,
+      "sizeLabel": "16.8 MB",
+      "modifiedAt": "2026-05-07T17:38:48.000Z",
+      "inferredDate": null
+    },
     {
       "path": "c. Pre-Drywall Checklists/Checklists by Unit/Unit 311 - B8 (signed) (signed).pdf",
       "name": "Unit 311 - B8 (signed) (signed).pdf",
@@ -439,28 +461,6 @@
       "extension": "heic",
       "sizeBytes": 2299367,
       "sizeLabel": "2.2 MB",
-      "modifiedAt": "2026-04-28T22:52:08.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "e. Car Lift As-Built/UTRON - Site Readiness Checklist/GHA - Utron Site Readiness Docs/GHA - Electrical at Car Pit/IMG_2236.HEIC",
-      "name": "IMG_2236.HEIC",
-      "title": "IMG 2236",
-      "folder": "e. Car Lift As-Built",
-      "extension": "heic",
-      "sizeBytes": 2714079,
-      "sizeLabel": "2.6 MB",
-      "modifiedAt": "2026-04-28T22:52:08.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "e. Car Lift As-Built/UTRON - Site Readiness Checklist/GHA - Utron Site Readiness Docs/GHA - Electrical at Car Pit/IMG_2237.HEIC",
-      "name": "IMG_2237.HEIC",
-      "title": "IMG 2237",
-      "folder": "e. Car Lift As-Built",
-      "extension": "heic",
-      "sizeBytes": 2740402,
-      "sizeLabel": "2.6 MB",
       "modifiedAt": "2026-04-28T22:52:08.000Z",
       "inferredDate": null
     }
@@ -1219,6 +1219,17 @@
       "inferredDate": null
     },
     {
+      "path": "c. Pre-Drywall Checklists/Checklists by Unit/Unit 314 - S1 (signed).pdf",
+      "name": "Unit 314 - S1 (signed).pdf",
+      "title": "Unit 314 - S1 (signed)",
+      "folder": "c. Pre-Drywall Checklists",
+      "extension": "pdf",
+      "sizeBytes": 18782131,
+      "sizeLabel": "17.9 MB",
+      "modifiedAt": "2026-05-08T16:00:37.000Z",
+      "inferredDate": null
+    },
+    {
       "path": "c. Pre-Drywall Checklists/Checklists by Unit/Unit 314 - S1.pdf",
       "name": "Unit 314 - S1.pdf",
       "title": "Unit 314 - S1",
@@ -1260,6 +1271,17 @@
       "sizeBytes": 17327074,
       "sizeLabel": "16.5 MB",
       "modifiedAt": "2026-04-03T19:53:51.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "c. Pre-Drywall Checklists/Checklists by Unit/Unit 318 - B4 (signed).pdf",
+      "name": "Unit 318 - B4 (signed).pdf",
+      "title": "Unit 318 - B4 (signed)",
+      "folder": "c. Pre-Drywall Checklists",
+      "extension": "pdf",
+      "sizeBytes": 17609098,
+      "sizeLabel": "16.8 MB",
+      "modifiedAt": "2026-05-07T17:38:48.000Z",
       "inferredDate": null
     },
     {

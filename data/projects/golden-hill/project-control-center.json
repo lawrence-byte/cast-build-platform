@@ -1,13 +1,13 @@
 {
   "project_id": "golden-hill",
   "project_name": "Alüm / Golden Hill",
-  "generated_at": "2026-05-08T15:46:29.762Z",
+  "generated_at": "2026-05-12T02:08:03.429Z",
   "source_status": "indexed",
   "source_basis": "Full private Alüm project folder scan. Published output is sanitized metadata only: counts, categories, safe titles, management reads, and next actions.",
   "scan_scope": {
-    "folder_count": 1466,
-    "file_count": 10288,
-    "total_bytes": 36254306942
+    "folder_count": 1595,
+    "file_count": 10992,
+    "total_bytes": 36741911568
   },
   "management_areas": [
     {
@@ -18,76 +18,76 @@
         "Commitment coverage",
         "Change exposure"
       ],
-      "folder_count": 908,
-      "file_count": 5661,
-      "total_bytes": 7439226395,
+      "folder_count": 968,
+      "file_count": 6283,
+      "total_bytes": 7994267612,
       "kinds": {
-        "portable-document": 4703,
-        "tabular-export": 31,
-        "word-document": 376,
-        "spreadsheet": 302,
-        "image": 102,
+        "portable-document": 5240,
+        "word-document": 402,
+        "spreadsheet": 345,
+        "image": 115,
         "other": 79,
-        "archive": 37,
+        "archive": 38,
         "model-or-cad": 30,
-        "schedule-source": 1
+        "schedule-source": 1,
+        "tabular-export": 33
       },
       "recent_items": [
         {
-          "title": "001 Golden Hill Apartments 1 INTERNAL BUDGET ADJUSTMENT MAY 2025 2026 05 06",
+          "title": "15. Ephoca 2972 (1) REV) $7040.25",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 122
+          "updated_at": "2026-04-28",
+          "size_kb": 78
         },
         {
-          "title": "001 Golden Hill Apartments 10 Tile Site Office 2026 05 06",
+          "title": "Marjan Invoice 1 2026 04 28 (draft)",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 100
+          "updated_at": "2026-04-28",
+          "size_kb": 111
         },
         {
-          "title": "001 Golden Hill Apartments 12 Establish GC Excess 2026 05 06",
+          "title": "2117 10",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 98
+          "updated_at": "2026-04-27",
+          "size_kb": 117
         },
         {
-          "title": "001 Golden Hill Apartments 13 July Budget Adjustment 2026 05 06",
+          "title": "2117 11 (Jan Pay App 11)",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 129
+          "updated_at": "2026-04-27",
+          "size_kb": 117
         },
         {
-          "title": "001 Golden Hill Apartments 14 August Pay App 6 Budget Adjustments 2026 05 06",
+          "title": "2117 4 (Feb Pay App 12)",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 121
+          "updated_at": "2026-04-27",
+          "size_kb": 117
         },
         {
-          "title": "001 Golden Hill Apartments 15 September 2025 Budget Adjustments 2026 05 06",
+          "title": "2117 5 (March Pay App 13)",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 105
+          "updated_at": "2026-04-27",
+          "size_kb": 117
         },
         {
-          "title": "001 Golden Hill Apartments 16 October Budget Adjustments 2026 05 06",
+          "title": "2117 6",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 113
+          "updated_at": "2026-04-27",
+          "size_kb": 117
         },
         {
-          "title": "001 Golden Hill Apartments 17 November Budget Adjustments 2026 05 06",
+          "title": "2117 7",
           "kind": "portable-document",
           "area": "Budget / Commitments / Accounting",
-          "updated_at": "2026-05-06",
-          "size_kb": 105
+          "updated_at": "2026-04-27",
+          "size_kb": 117
         }
       ],
       "management_read": "Budget and forecast data are indexed; tie-out exceptions should feed management priorities before commitments are treated as stable.",
@@ -105,75 +105,74 @@
         "ASI/bulletin tracking",
         "Field reference"
       ],
-      "folder_count": 180,
-      "file_count": 1873,
-      "total_bytes": 10436642060,
+      "folder_count": 185,
+      "file_count": 1637,
+      "total_bytes": 10456622100,
       "kinds": {
-        "portable-document": 1361,
-        "tabular-export": 1,
-        "word-document": 53,
-        "spreadsheet": 7,
+        "portable-document": 1108,
+        "word-document": 60,
+        "spreadsheet": 8,
         "archive": 17,
-        "image": 56,
-        "other": 42,
+        "image": 57,
+        "other": 51,
         "model-or-cad": 336
       },
       "recent_items": [
         {
-          "title": "001 Golden Hill Apartments 11 Traffic Control Permits 2026 05 06",
+          "title": "Golden Hill Common Areas Revised 04 14 26 Floorplans",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 100
+          "updated_at": "2026-04-23",
+          "size_kb": 4857
         },
         {
-          "title": "1c149dc7 5849 4db1 97c7 63bb5a94a206",
+          "title": "[SeamlessDocs] DS 311 March 2024",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 131
+          "updated_at": "2026-04-22",
+          "size_kb": 190
         },
         {
-          "title": "A 000 DEMO PLAN Rev.1",
-          "kind": "portable-document",
+          "title": "Commercial Cooking Oil 2022",
+          "kind": "word-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 2838
+          "updated_at": "2026-04-21",
+          "size_kb": 52
         },
         {
-          "title": "A 002 SITE PLAN Rev.2",
+          "title": "2026.04.17 GHA CLT Erection",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 12520
+          "updated_at": "2026-04-20",
+          "size_kb": 14984
         },
         {
-          "title": "A 100 BASEMENT PLAN Rev.3",
+          "title": "2026.03.31 GHA CONCRETE CORE 7 DAY",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 14908
+          "updated_at": "2026-04-17",
+          "size_kb": 229
         },
         {
-          "title": "A 101 1ST FLOOR PLAN Rev.14",
+          "title": "2026.04.01 GHA PH Rebar + Welding",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 1001
+          "updated_at": "2026-04-17",
+          "size_kb": 10409
         },
         {
-          "title": "A 101S 1ST FLOOR SLAB PLAN Rev.12",
+          "title": "2026.04.07 GHA L8 Welding at Timber",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 1019
+          "updated_at": "2026-04-17",
+          "size_kb": 8748
         },
         {
-          "title": "A 102 2ND FLOOR PLAN Rev.11",
+          "title": "2026.04.09 GHA L8 Knife Plate Welding + Rebar",
           "kind": "portable-document",
           "area": "Drawings / Specs",
-          "updated_at": "2026-05-06",
-          "size_kb": 1443
+          "updated_at": "2026-04-17",
+          "size_kb": 9611
         }
       ],
       "management_read": "Drawing/spec folders should drive current-set control and field decision clarity.",
@@ -191,74 +190,74 @@
         "Long-lead material status",
         "Revise/resubmit pressure"
       ],
-      "folder_count": 210,
-      "file_count": 960,
-      "total_bytes": 5973625311,
+      "folder_count": 213,
+      "file_count": 961,
+      "total_bytes": 5841302301,
       "kinds": {
-        "portable-document": 658,
-        "spreadsheet": 3,
+        "portable-document": 657,
         "model-or-cad": 5,
         "image": 288,
+        "spreadsheet": 2,
         "word-document": 1,
         "archive": 2,
-        "other": 3
+        "other": 6
       },
       "recent_items": [
         {
-          "title": "submittal logs",
+          "title": "VCON CO 4 equipment sales submittals",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-05",
-          "size_kb": 290
+          "updated_at": "2026-04-24",
+          "size_kb": 96
         },
         {
-          "title": "submittal logs",
-          "kind": "spreadsheet",
-          "area": "Submittals / Procurement",
-          "updated_at": "2026-05-05",
-          "size_kb": 103
-        },
-        {
-          "title": "Pages from 14 45 00 2.2 VEHICLE LIFTS SHOP DRAWING 1",
+          "title": "260318 TIMBERLAB GOLDEN HILLS LOD350 REV2",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-05",
-          "size_kb": 657
+          "updated_at": "2026-04-23",
+          "size_kb": 6895
         },
         {
-          "title": "2025 05 04 SUBMITTAL LOG",
+          "title": "08 14 16 4.0 WOOD DOORS (COMMON AREAS) SHOP DRAWINGS",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-04",
-          "size_kb": 69
+          "updated_at": "2026-04-23",
+          "size_kb": 1636
         },
         {
-          "title": "09 24 00 4.0 SEMCO SHOWER SYSTEM PRODUCT DATA APP",
+          "title": "12 32 10 5.0 CASEWORK (COMMON AREAS) SHOP DRAWING",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-04",
-          "size_kb": 128
+          "updated_at": "2026-04-23",
+          "size_kb": 4424
         },
         {
-          "title": "2025 05 04 SUBMITTAL LOG",
+          "title": "26 56 19 8.0 LED EXTERIOR LIGHTING (TERRACES) PRODUCT DATA",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-04",
-          "size_kb": 69
+          "updated_at": "2026-04-17",
+          "size_kb": 4172
         },
         {
-          "title": "08 31 13 1.0 ACCESS DOORS (TRANSFER FANS) PD APP",
+          "title": "23 00 00 8.0 RR EXH FAN PRODUCT DATA",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-01",
-          "size_kb": 475
+          "updated_at": "2026-04-15",
+          "size_kb": 1535
         },
         {
-          "title": "14 45 00 2.2 VEHICLE LIFTS SHOP DRAWING",
+          "title": "12 24 00 4.0 WINDOW SHADES SAMPLES APP",
           "kind": "portable-document",
           "area": "Submittals / Procurement",
-          "updated_at": "2026-05-01",
-          "size_kb": 11516
+          "updated_at": "2026-04-13",
+          "size_kb": 25045
+        },
+        {
+          "title": "12 24 00 4.0 WINDOW SHADES SAMPLES",
+          "kind": "portable-document",
+          "area": "Submittals / Procurement",
+          "updated_at": "2026-04-13",
+          "size_kb": 24922
         }
       ],
       "management_read": "66 submittals plus 43 revise/resubmit items need procurement pressure.",
@@ -274,25 +273,19 @@
       "modules": [
         "Document control"
       ],
-      "folder_count": 41,
-      "file_count": 504,
-      "total_bytes": 2885226401,
+      "folder_count": 55,
+      "file_count": 594,
+      "total_bytes": 3067221148,
       "kinds": {
-        "spreadsheet": 13,
-        "portable-document": 469,
-        "tabular-export": 6,
-        "word-document": 2,
+        "spreadsheet": 15,
+        "portable-document": 524,
+        "tabular-export": 8,
+        "word-document": 14,
         "archive": 1,
-        "image": 13
+        "image": 25,
+        "other": 7
       },
       "recent_items": [
-        {
-          "title": "GH Paving Extent Walk 2026 04 27",
-          "kind": "portable-document",
-          "area": "Documents / Data Room",
-          "updated_at": "2026-04-29",
-          "size_kb": 4708
-        },
         {
           "title": "Voluntary Audit Cast Build Inc MP0082001009757",
           "kind": "portable-document",
@@ -306,6 +299,13 @@
           "area": "Documents / Data Room",
           "updated_at": "2026-04-16",
           "size_kb": 1498
+        },
+        {
+          "title": "Project Makeup Sheet",
+          "kind": "word-document",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-15",
+          "size_kb": 114
         },
         {
           "title": "CC2",
@@ -322,25 +322,25 @@
           "size_kb": 22259
         },
         {
+          "title": "golden hill dashboard",
+          "kind": "other",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-01",
+          "size_kb": 283
+        },
+        {
+          "title": "golden hill procore data snapshot",
+          "kind": "other",
+          "area": "Documents / Data Room",
+          "updated_at": "2026-04-01",
+          "size_kb": 20
+        },
+        {
           "title": "LC Driveway LOI 2026 03 31",
           "kind": "portable-document",
           "area": "Documents / Data Room",
           "updated_at": "2026-03-31",
           "size_kb": 5961
-        },
-        {
-          "title": "SSI 006 Overlay w. Markups",
-          "kind": "portable-document",
-          "area": "Documents / Data Room",
-          "updated_at": "2026-03-30",
-          "size_kb": 4028
-        },
-        {
-          "title": "JonVinnys Bid Leveling v2.2",
-          "kind": "spreadsheet",
-          "area": "Documents / Data Room",
-          "updated_at": "2026-03-24",
-          "size_kb": 18
         }
       ],
       "management_read": "",
@@ -354,71 +354,72 @@
         "Punch readiness",
         "Inspection queue"
       ],
-      "folder_count": 30,
-      "file_count": 386,
-      "total_bytes": 4230352947,
+      "folder_count": 64,
+      "file_count": 487,
+      "total_bytes": 3856000452,
       "kinds": {
-        "word-document": 13,
-        "portable-document": 348,
-        "spreadsheet": 6,
-        "other": 19
+        "word-document": 39,
+        "portable-document": 426,
+        "image": 9,
+        "spreadsheet": 9,
+        "other": 4
       },
       "recent_items": [
         {
-          "title": "Unit 310 A2 (signed)",
-          "kind": "portable-document",
+          "title": "2026.04.27 Site Readiness Checklist",
+          "kind": "word-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-05",
-          "size_kb": 19188
+          "updated_at": "2026-04-27",
+          "size_kb": 5893
         },
         {
-          "title": "Unit 311 B8 (signed) (signed)",
+          "title": "GHA Concrete As Builts",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-05",
-          "size_kb": 18177
+          "updated_at": "2026-04-27",
+          "size_kb": 63752
         },
         {
-          "title": "Unit 312 A4 (signed)",
+          "title": "GHA MEP BOPs",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-05",
-          "size_kb": 19242
+          "updated_at": "2026-04-27",
+          "size_kb": 3553
         },
         {
-          "title": "Unit 311 B8 (signed)",
+          "title": "GHA Concrete As Builts",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-04",
-          "size_kb": 18163
+          "updated_at": "2026-04-27",
+          "size_kb": 63752
         },
         {
-          "title": "Unit 313 C2 (signed)",
+          "title": "GHA MEP BOPs",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-04",
-          "size_kb": 19469
+          "updated_at": "2026-04-27",
+          "size_kb": 3553
         },
         {
-          "title": "Unit 304 B2 (signed) (signed) (signed)",
+          "title": "Unit 215 S1 (signed)",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-01",
-          "size_kb": 19320
+          "updated_at": "2026-04-24",
+          "size_kb": 18942
         },
         {
-          "title": "Unit 304 B2 (signed) (signed)",
+          "title": "Unit 216 A5 (signed)",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-01",
-          "size_kb": 19035
+          "updated_at": "2026-04-24",
+          "size_kb": 19546
         },
         {
-          "title": "Unit 306 B3 (signed) (signed)",
+          "title": "Unit 217 S1 (signed)",
           "kind": "portable-document",
           "area": "Quality / Punch / Inspections",
-          "updated_at": "2026-05-01",
-          "size_kb": 17605
+          "updated_at": "2026-04-24",
+          "size_kb": 19253
         }
       ],
       "management_read": "Quality, inspections, and punch items should be connected to turnover windows by floor/area.",
@@ -436,73 +437,72 @@
         "Field blockers",
         "Decision turnaround"
       ],
-      "folder_count": 12,
-      "file_count": 372,
-      "total_bytes": 783870633,
+      "folder_count": 11,
+      "file_count": 369,
+      "total_bytes": 769097349,
       "kinds": {
-        "tabular-export": 1,
-        "portable-document": 354,
         "model-or-cad": 7,
-        "other": 7,
+        "other": 9,
         "spreadsheet": 1,
+        "portable-document": 350,
         "word-document": 2
       },
       "recent_items": [
         {
-          "title": "rfi list",
-          "kind": "tabular-export",
-          "area": "RFIs / Design Decisions",
-          "updated_at": "2026-05-05",
-          "size_kb": 89
-        },
-        {
-          "title": "rfi list",
+          "title": "GHA RFI #279 Collector Straps at Window Washing Anchors",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-05-05",
-          "size_kb": 655
+          "updated_at": "2026-04-27",
+          "size_kb": 1017
         },
         {
-          "title": "2025 05 04 RFI LOG",
+          "title": "1 Overlay Pages 1",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-05-04",
-          "size_kb": 66
+          "updated_at": "2026-04-27",
+          "size_kb": 1826
         },
         {
-          "title": "2025 05 04 RFI LOG",
+          "title": "GHA RFI #269 L2 BMP Drain",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-05-04",
-          "size_kb": 66
+          "updated_at": "2026-04-24",
+          "size_kb": 1229
         },
         {
-          "title": "GHA RFI #283 Elevator PH Embeds Correction",
+          "title": "GHA RFI #281 Collector Strap Slot Corrections",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-05-01",
-          "size_kb": 426
+          "updated_at": "2026-04-24",
+          "size_kb": 1932
+        },
+        {
+          "title": "RFI #220 RCP Update for Exposed Plumbing L3 7",
+          "kind": "portable-document",
+          "area": "RFIs / Design Decisions",
+          "updated_at": "2026-04-24",
+          "size_kb": 20058
         },
         {
           "title": "GHA RFI #274 L2 Terrace Lighting",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-04-29",
-          "size_kb": 8844
+          "updated_at": "2026-04-21",
+          "size_kb": 128
         },
         {
-          "title": "GHA RFI #278 Collector Strap CS29 Relocation",
+          "title": "GHA RFI #275 Unit C1 Corridor Wall Type",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-04-29",
-          "size_kb": 1532
+          "updated_at": "2026-04-21",
+          "size_kb": 6595
         },
         {
-          "title": "GHA RFI #280 Window Washing Drop Thru Sleeves",
+          "title": "GHA RFI #277 Plumbing & Electrical CLT Penetrations",
           "kind": "portable-document",
           "area": "RFIs / Design Decisions",
-          "updated_at": "2026-04-29",
-          "size_kb": 346
+          "updated_at": "2026-04-20",
+          "size_kb": 2166
         }
       ],
       "management_read": "7 RFI items should be treated as schedule constraints until cleared.",
@@ -521,165 +521,81 @@
         "Lookahead planning"
       ],
       "folder_count": 15,
-      "file_count": 220,
-      "total_bytes": 221530892,
+      "file_count": 209,
+      "total_bytes": 217264328,
       "kinds": {
-        "portable-document": 144,
-        "spreadsheet": 24,
+        "portable-document": 129,
+        "spreadsheet": 25,
         "model-or-cad": 2,
         "other": 3,
-        "word-document": 1,
+        "word-document": 2,
         "structured-schedule": 3,
-        "schedule-source": 42,
+        "schedule-source": 44,
         "image": 1
       },
       "recent_items": [
         {
-          "title": "A 551 FINISH SCHEDULE Rev.1",
-          "kind": "portable-document",
+          "title": "CAST Joe's schedule 2025 4 14 (Jackie Villanueva's conflicted copy 2026 04 27)",
+          "kind": "schedule-source",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 137
+          "updated_at": "2026-04-24",
+          "size_kb": 2221
         },
         {
-          "title": "A 601 DOOR SCHEDULE Rev.8",
-          "kind": "portable-document",
+          "title": "CAST Joe's schedule 2025 4 14",
+          "kind": "schedule-source",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 267
+          "updated_at": "2026-04-24",
+          "size_kb": 2240
         },
         {
-          "title": "A 602 WINDOW SCHEDULE Rev.4",
-          "kind": "portable-document",
+          "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 21)",
+          "kind": "schedule-source",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 187
+          "updated_at": "2026-04-21",
+          "size_kb": 2325
         },
         {
-          "title": "E002 LIGHT FIXTURE SCHEDULE Rev.3",
+          "title": "2026.04.17 GHA Schedule Update",
           "kind": "portable-document",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 223
+          "updated_at": "2026-04-17",
+          "size_kb": 1245
         },
         {
-          "title": "E604 PANEL SCHEDULES Rev.5",
-          "kind": "portable-document",
+          "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 17)",
+          "kind": "schedule-source",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 224
+          "updated_at": "2026-04-17",
+          "size_kb": 2112
         },
         {
-          "title": "E605 PANEL SCHEDULES Rev.16",
-          "kind": "portable-document",
+          "title": "CAST Joe's schedule 2025 4 13)",
+          "kind": "schedule-source",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 237
+          "updated_at": "2026-04-13",
+          "size_kb": 2101
         },
         {
-          "title": "E606 PANEL SCHEDULES Rev.4",
+          "title": "2026 04 06 GHA Schedule Update 4 week lookahead",
           "kind": "portable-document",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 227
+          "updated_at": "2026-04-08",
+          "size_kb": 93
         },
         {
-          "title": "E607 PANEL SCHEDULES Rev.2",
+          "title": "2026 04 06 GHA Schedule Update",
           "kind": "portable-document",
           "area": "Schedule / Lookahead",
-          "updated_at": "2026-05-06",
-          "size_kb": 214
+          "updated_at": "2026-04-07",
+          "size_kb": 404
         }
       ],
-      "management_read": "260 superintendent work packages and 40 subcontractor directives are available.",
+      "management_read": "220 superintendent work packages and 30 subcontractor directives are available.",
       "next_actions": [
         "Run daily voice updates by trade/location/percent complete.",
         "Use recovery-watch drafts for trades that cannot meet current windows.",
         "Keep a verified correspondence log before sending notices."
-      ]
-    },
-    {
-      "id": "safety",
-      "label": "Safety / Logistics / Site Control",
-      "modules": [
-        "Safety docs",
-        "Site logistics",
-        "Access constraints"
-      ],
-      "folder_count": 35,
-      "file_count": 172,
-      "total_bytes": 129756840,
-      "kinds": {
-        "portable-document": 70,
-        "image": 1,
-        "archive": 5,
-        "spreadsheet": 3,
-        "word-document": 92,
-        "other": 1
-      },
-      "recent_items": [
-        {
-          "title": "Actuators OrdAck1117064 $3,672",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-24",
-          "size_kb": 120
-        },
-        {
-          "title": "001 Golden Hill Apartments PO 001 011 Water Detection Equipment 2026 04 17",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-17",
-          "size_kb": 219
-        },
-        {
-          "title": "RG3 Quote 2026 04 13T155141.987 (2inch) $1985.30",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-17",
-          "size_kb": 110
-        },
-        {
-          "title": "Electric Actuators 2 Denise Swift Outlook",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-14",
-          "size_kb": 385
-        },
-        {
-          "title": "Electric Actuators Denise Swift Outlook",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-13",
-          "size_kb": 258
-        },
-        {
-          "title": "Electric Actuator HP datasheet",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-13",
-          "size_kb": 2620
-        },
-        {
-          "title": "RG3 Quote 2026 04 13T155141.987",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-13",
-          "size_kb": 113
-        },
-        {
-          "title": "Valve Actuator S4 datasheet",
-          "kind": "portable-document",
-          "area": "Safety / Logistics / Site Control",
-          "updated_at": "2026-04-13",
-          "size_kb": 438
-        }
-      ],
-      "management_read": "Safety and logistics folders should be converted into crane/pump/access/site-flow constraints.",
-      "next_actions": [
-        "Track logistics plans by date.",
-        "Confirm crane/pump/scaffold access windows.",
-        "Surface OSHA/site constraints in lookahead."
       ]
     },
     {
@@ -690,14 +606,14 @@
         "Manpower signals",
         "Weather / field constraints"
       ],
-      "folder_count": 15,
-      "file_count": 117,
-      "total_bytes": 4133865311,
+      "folder_count": 17,
+      "file_count": 199,
+      "total_bytes": 4334279828,
       "kinds": {
-        "portable-document": 32,
-        "word-document": 8,
-        "other": 2,
-        "spreadsheet": 1,
+        "portable-document": 35,
+        "word-document": 10,
+        "other": 78,
+        "spreadsheet": 2,
         "image": 74
       },
       "recent_items": [
@@ -766,6 +682,90 @@
       ]
     },
     {
+      "id": "safety",
+      "label": "Safety / Logistics / Site Control",
+      "modules": [
+        "Safety docs",
+        "Site logistics",
+        "Access constraints"
+      ],
+      "folder_count": 45,
+      "file_count": 199,
+      "total_bytes": 180785184,
+      "kinds": {
+        "image": 2,
+        "portable-document": 90,
+        "archive": 8,
+        "spreadsheet": 5,
+        "word-document": 93,
+        "other": 1
+      },
+      "recent_items": [
+        {
+          "title": "Actuators OrdAck1117064 $3,672",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-24",
+          "size_kb": 120
+        },
+        {
+          "title": "001 Golden Hill Apartments PO 001 011 Water Detection Equipment 2026 04 17",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-17",
+          "size_kb": 219
+        },
+        {
+          "title": "RG3 Quote 2026 04 13T155141.987 (2inch) $1985.30",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-17",
+          "size_kb": 110
+        },
+        {
+          "title": "Electric Actuators 2 Denise Swift Outlook",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-14",
+          "size_kb": 385
+        },
+        {
+          "title": "Electric Actuators Denise Swift Outlook",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 258
+        },
+        {
+          "title": "Electric Actuator HP datasheet",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 2620
+        },
+        {
+          "title": "RG3 Quote 2026 04 13T155141.987",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 113
+        },
+        {
+          "title": "Valve Actuator S4 datasheet",
+          "kind": "portable-document",
+          "area": "Safety / Logistics / Site Control",
+          "updated_at": "2026-04-13",
+          "size_kb": 438
+        }
+      ],
+      "management_read": "Safety and logistics folders should be converted into crane/pump/access/site-flow constraints.",
+      "next_actions": [
+        "Track logistics plans by date.",
+        "Confirm crane/pump/scaffold access windows.",
+        "Surface OSHA/site constraints in lookahead."
+      ]
+    },
+    {
       "id": "directory",
       "label": "Directory / Correspondence",
       "modules": [
@@ -773,12 +773,12 @@
         "Meeting minutes",
         "Correspondence log"
       ],
-      "folder_count": 19,
-      "file_count": 15,
-      "total_bytes": 5936770,
+      "folder_count": 21,
+      "file_count": 43,
+      "total_bytes": 9877603,
       "kinds": {
-        "portable-document": 11,
-        "word-document": 4
+        "portable-document": 14,
+        "word-document": 29
       },
       "recent_items": [
         {
@@ -810,32 +810,32 @@
           "size_kb": 165
         },
         {
-          "title": "Concrete pour sequence R1 KOR",
+          "title": "GHA Foremans Meeting Minutes 2024.12.03",
           "kind": "portable-document",
           "area": "Directory / Correspondence",
-          "updated_at": "2025-07-18",
-          "size_kb": 927
+          "updated_at": "2025-12-03",
+          "size_kb": 550
         },
         {
-          "title": "2025 06 23 Geotech Slurry Backfill Pea Gravel",
+          "title": "GHA Foremans Meeting Minutes 2024.11.24",
           "kind": "portable-document",
           "area": "Directory / Correspondence",
-          "updated_at": "2025-06-26",
-          "size_kb": 337
+          "updated_at": "2025-12-01",
+          "size_kb": 2370
         },
         {
-          "title": "2025 06 23 Geotech Slurry Backfill",
-          "kind": "portable-document",
+          "title": "FOREMANS MEETING GHA 11 26 25",
+          "kind": "word-document",
           "area": "Directory / Correspondence",
-          "updated_at": "2025-06-26",
-          "size_kb": 373
+          "updated_at": "2025-11-26",
+          "size_kb": 27
         },
         {
-          "title": "2025 06 11 Traffic Loop Damage",
-          "kind": "portable-document",
+          "title": "FOREMANS MEETING GHA 12 03 25",
+          "kind": "word-document",
           "area": "Directory / Correspondence",
-          "updated_at": "2025-06-11",
-          "size_kb": 982
+          "updated_at": "2025-11-26",
+          "size_kb": 27
         }
       ],
       "management_read": "Directory, meeting, and correspondence controls should define who gets which requests and who can approve sends.",
@@ -854,11 +854,12 @@
         "Energization blockers"
       ],
       "folder_count": 0,
-      "file_count": 6,
-      "total_bytes": 1912118,
+      "file_count": 9,
+      "total_bytes": 2832399,
       "kinds": {
         "spreadsheet": 2,
-        "portable-document": 4
+        "portable-document": 6,
+        "word-document": 1
       },
       "recent_items": [
         {
@@ -869,11 +870,32 @@
           "size_kb": 191
         },
         {
+          "title": "Temp Power (Power Plus)",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-05-30",
+          "size_kb": 741
+        },
+        {
+          "title": "Waterproofing Deck Coating (Mark Beamish)",
+          "kind": "word-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-05-06",
+          "size_kb": 59
+        },
+        {
           "title": "Temp Power",
           "kind": "spreadsheet",
           "area": "Utilities / Energization",
           "updated_at": "2025-05-01",
           "size_kb": 10
+        },
+        {
+          "title": "Nasland Staking Request water & sewer 4 29 25",
+          "kind": "portable-document",
+          "area": "Utilities / Energization",
+          "updated_at": "2025-04-29",
+          "size_kb": 98
         },
         {
           "title": "P005 PLUMBING MESTIC WATER DIAGRA Overlay Pages P005 PLUMBING MESTIC WATER DIAGRA",
@@ -895,13 +917,6 @@
           "area": "Utilities / Energization",
           "updated_at": "2025-03-06",
           "size_kb": 418
-        },
-        {
-          "title": "P008 PLUMBING MESTIC WATER DIAGRA Overlay Pages P008 PLUMBING MESTIC WATER DIAGRA",
-          "kind": "portable-document",
-          "area": "Utilities / Energization",
-          "updated_at": "2025-03-06",
-          "size_kb": 379
         }
       ],
       "management_read": "Utilities and energization are critical turnover constraints and should stay visible until meter/gear/power release is complete.",
@@ -951,179 +966,179 @@
   ],
   "recent_activity": [
     {
-      "title": "001 Golden Hill Apartments 1 INTERNAL BUDGET ADJUSTMENT MAY 2025 2026 05 06",
+      "title": "15. Ephoca 2972 (1) REV) $7040.25",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 122
+      "updated_at": "2026-04-28",
+      "size_kb": 78
     },
     {
-      "title": "001 Golden Hill Apartments 10 Tile Site Office 2026 05 06",
+      "title": "Marjan Invoice 1 2026 04 28 (draft)",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 100
+      "updated_at": "2026-04-28",
+      "size_kb": 111
     },
     {
-      "title": "001 Golden Hill Apartments 11 Traffic Control Permits 2026 05 06",
+      "title": "GHA RFI #279 Collector Straps at Window Washing Anchors",
       "kind": "portable-document",
-      "area": "Drawings / Specs",
-      "updated_at": "2026-05-06",
-      "size_kb": 100
+      "area": "RFIs / Design Decisions",
+      "updated_at": "2026-04-27",
+      "size_kb": 1017
     },
     {
-      "title": "001 Golden Hill Apartments 12 Establish GC Excess 2026 05 06",
-      "kind": "portable-document",
-      "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 98
-    },
-    {
-      "title": "001 Golden Hill Apartments 13 July Budget Adjustment 2026 05 06",
+      "title": "2117 10",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 129
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 14 August Pay App 6 Budget Adjustments 2026 05 06",
+      "title": "2117 11 (Jan Pay App 11)",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 121
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 15 September 2025 Budget Adjustments 2026 05 06",
+      "title": "2117 4 (Feb Pay App 12)",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 105
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 16 October Budget Adjustments 2026 05 06",
+      "title": "2117 5 (March Pay App 13)",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 113
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 17 November Budget Adjustments 2026 05 06",
+      "title": "2117 6",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 105
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 18 December 2025 Budget Adjustments 2026 05 06 (1)",
+      "title": "2117 7",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 115
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 18 December 2025 Budget Adjustments 2026 05 06",
+      "title": "2117 8",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 115
+      "updated_at": "2026-04-27",
+      "size_kb": 117
     },
     {
-      "title": "001 Golden Hill Apartments 19 January 2026 Budget Adjustments 2026 05 06",
+      "title": "2117 9",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 115
+      "updated_at": "2026-04-27",
+      "size_kb": 118
     },
     {
-      "title": "001 Golden Hill Apartments 2 Mass Timber Install 2026 05 06",
+      "title": "2972 (3)",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 99
+      "updated_at": "2026-04-27",
+      "size_kb": 130
     },
     {
-      "title": "001 Golden Hill Apartments 20 January 2026 GC internal adjustment 2026 05 06",
+      "title": "2972 2",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 97
+      "updated_at": "2026-04-27",
+      "size_kb": 76
     },
     {
-      "title": "001 Golden Hill Apartments 21 February 2026 Budget Adjustments 2026 05 06",
+      "title": "EST 003671",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 114
+      "updated_at": "2026-04-27",
+      "size_kb": 120
     },
     {
-      "title": "001 Golden Hill Apartments 22 March 2026 Budget Adjustments 2026 05 06",
+      "title": "1101 25th Street Client Spreadsheet",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 114
+      "updated_at": "2026-04-27",
+      "size_kb": 73
     },
     {
-      "title": "001 Golden Hill Apartments 23 April Internal Adjustment for GC s accountant 2026 05 06",
+      "title": "CP Atlas $14,158.97",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 97
+      "updated_at": "2026-04-27",
+      "size_kb": 667
     },
     {
-      "title": "001 Golden Hill Apartments 24 April 2026 Budget Adjustment 2026 05 06",
+      "title": "CP Calportland RVSD $81,966.31",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 114
+      "updated_at": "2026-04-27",
+      "size_kb": 79
     },
     {
-      "title": "001 Golden Hill Apartments 3 Move Funds From Electrical for Temp Power Power Plus 2026 05 06",
+      "title": "CP PSG $18,953.46",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 101
+      "updated_at": "2026-04-27",
+      "size_kb": 293
     },
     {
-      "title": "001 Golden Hill Apartments 4 Move Funds from Hoist to Covered Walkway 2026 05 06",
+      "title": "CP Sunbelt $9,856.90",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 102
+      "updated_at": "2026-04-27",
+      "size_kb": 80
     },
     {
-      "title": "001 Golden Hill Apartments 5 Move Funds from Electrical to Fixtures 2026 05 06",
+      "title": "CP Team Finish $20,956.25",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 99
+      "updated_at": "2026-04-27",
+      "size_kb": 186
     },
     {
-      "title": "001 Golden Hill Apartments 6 Move Funds for HVAC Install 2026 05 06",
+      "title": "CP Van Matre zero",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 98
+      "updated_at": "2026-04-27",
+      "size_kb": 568
     },
     {
-      "title": "001 Golden Hill Apartments 7 Move Funds from Electrical for HVAC Install 2026 05 06",
+      "title": "CP Western Concrete $42,279.75",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 99
+      "updated_at": "2026-04-27",
+      "size_kb": 61
     },
     {
-      "title": "001 Golden Hill Apartments 8 Move Funds From Electrical to Demo 2026 05 06",
+      "title": "CP White Cap $1,373.29",
       "kind": "portable-document",
       "area": "Budget / Commitments / Accounting",
-      "updated_at": "2026-05-06",
-      "size_kb": 98
+      "updated_at": "2026-04-27",
+      "size_kb": 151
+    },
+    {
+      "title": "UP Western Structural Shotcrete zero",
+      "kind": "portable-document",
+      "area": "Budget / Commitments / Accounting",
+      "updated_at": "2026-04-27",
+      "size_kb": 277
     }
   ],
   "management_snapshot": {
-    "active_work_packages": 13,
-    "verify_complete_work_packages": 70,
-    "starts_soon_work_packages": 49,
-    "trade_directives": 40,
+    "active_work_packages": 21,
+    "verify_complete_work_packages": 38,
+    "starts_soon_work_packages": 58,
+    "trade_directives": 30,
     "open_rfis": 7,
     "overdue_rfis": 2,
     "open_or_draft_submittals": 66,
@@ -1136,7 +1151,7 @@
     {
       "lane": "Superintendent trade huddle",
       "owner": "Superintendent",
-      "signal": "13 active, 70 verify-complete, 40 trade directives",
+      "signal": "21 active, 38 verify-complete, 30 trade directives",
       "management_move": "Run the day by trade/location, confirm manpower and blockers, and require recovery plans where dates cannot be met.",
       "link": "/projects/alum-schedule.html"
     },
@@ -1173,7 +1188,7 @@
     {
       "priority": "Schedule recovery / trade pressure",
       "owner": "Superintendent + Project Controls",
-      "signal": "40 trade directives",
+      "signal": "30 trade directives",
       "action": "Use Schedule Brain as daily trade directive/recovery-plan tool."
     },
     {
@@ -1254,20 +1269,11 @@
     },
     {
       "area": "Schedule / Lookahead",
-      "need": "260 superintendent work packages and 40 subcontractor directives are available.",
+      "need": "220 superintendent work packages and 30 subcontractor directives are available.",
       "next_actions": [
         "Run daily voice updates by trade/location/percent complete.",
         "Use recovery-watch drafts for trades that cannot meet current windows.",
         "Keep a verified correspondence log before sending notices."
-      ]
-    },
-    {
-      "area": "Safety / Logistics / Site Control",
-      "need": "Safety and logistics folders should be converted into crane/pump/access/site-flow constraints.",
-      "next_actions": [
-        "Track logistics plans by date.",
-        "Confirm crane/pump/scaffold access windows.",
-        "Surface OSHA/site constraints in lookahead."
       ]
     },
     {
@@ -1277,6 +1283,15 @@
         "Capture voice daily logs.",
         "Extract manpower by trade.",
         "Compare field notes to Schedule Brain work windows."
+      ]
+    },
+    {
+      "area": "Safety / Logistics / Site Control",
+      "need": "Safety and logistics folders should be converted into crane/pump/access/site-flow constraints.",
+      "next_actions": [
+        "Track logistics plans by date.",
+        "Confirm crane/pump/scaffold access windows.",
+        "Surface OSHA/site constraints in lookahead."
       ]
     },
     {

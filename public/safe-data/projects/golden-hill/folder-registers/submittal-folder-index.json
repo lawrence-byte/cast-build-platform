@@ -1,13 +1,13 @@
 {
   "projectName": "Alüm",
-  "generatedAt": "2026-05-08T16:25:04.579Z",
+  "generatedAt": "2026-05-12T02:03:50.712Z",
   "source": "Private synced Alüm submittal folder metadata",
   "guardrail": "Sanitized file/register metadata only; raw PDFs/XLSX files are not published.",
-  "totalFiles": 828,
-  "totalBytes": 4103769821,
+  "totalFiles": 829,
+  "totalBytes": 4105987967,
   "totalSizeLabel": "3.8 GB",
   "extensionCounts": {
-    "pdf": 533,
+    "pdf": 534,
     "jpg": 288,
     "dwg": 4,
     "xlsx": 2,
@@ -24,8 +24,8 @@
     "22 - PLUMBING": 24,
     "07 - THERMAL & MOISTURE PROTECTION": 19,
     "14 - CONVEYING EQUIPMENT": 18,
+    "23 - HVAC": 17,
     "09 - FINISHES": 16,
-    "23 - HVAC": 16,
     "10 - SPECIALTIES": 15,
     "27 - FIRE LIFE SAFETY": 15,
     "11- EQUIPMENT": 11,
@@ -38,6 +38,17 @@
     "08 - MIRRORS": 1
   },
   "recentFiles": [
+    {
+      "path": "23 - HVAC/23 00 00-004.0 HVAC SHOP DRAWINGS/23 00 00-004.0 HVAC SHOP DRAWINGS.pdf",
+      "name": "23 00 00-004.0 HVAC SHOP DRAWINGS.pdf",
+      "title": "23 00 00-004.0 HVAC SHOP DRAWINGS",
+      "folder": "23 - HVAC",
+      "extension": "pdf",
+      "sizeBytes": 2218146,
+      "sizeLabel": "2.1 MB",
+      "modifiedAt": "2026-05-08T00:15:32.000Z",
+      "inferredDate": null
+    },
     {
       "path": "14 - CONVEYING EQUIPMENT/14 45 00-2.2 VEHICLE LIFTS - SHOP DRAWING/Pages from 14 45 00-2.2 VEHICLE LIFTS - SHOP DRAWING 1.pdf",
       "name": "Pages from 14 45 00-2.2 VEHICLE LIFTS - SHOP DRAWING 1.pdf",
@@ -466,20 +477,9 @@
       "sizeLabel": "1.6 MB",
       "modifiedAt": "2026-03-04T21:45:04.000Z",
       "inferredDate": null
-    },
-    {
-      "path": "12 - FURNISHINGS/12 32 10-4.0 CASEWORK (AMENITIES) - SHOP DRAWINGS/12 32 10-4.0 CASEWORK (AMENITIES) - SHOP DRAWINGS.pdf",
-      "name": "12 32 10-4.0 CASEWORK (AMENITIES) - SHOP DRAWINGS.pdf",
-      "title": "12 32 10-4.0 CASEWORK (AMENITIES) - SHOP DRAWINGS",
-      "folder": "12 - FURNISHINGS",
-      "extension": "pdf",
-      "sizeBytes": 518803,
-      "sizeLabel": "506.6 KB",
-      "modifiedAt": "2026-03-03T19:22:21.000Z",
-      "inferredDate": null
     }
   ],
-  "documentCount": 799,
+  "documentCount": 800,
   "logFileCount": 28,
   "latestLogs": [
     {
@@ -704,12 +704,12 @@
     }
   ],
   "statusCounts": {
-    "Filed / needs log tie-out": 684,
+    "Filed / needs log tie-out": 685,
     "Approved / no exceptions noted": 96,
     "Revise & Resubmit": 19
   },
   "typeCounts": {
-    "Shop Drawing": 599,
+    "Shop Drawing": 600,
     "Product Data": 128,
     "Submittal document": 70,
     "Qualifications/Certifications": 2
@@ -926,8 +926,8 @@
     "22 - PLUMBING": 24,
     "07 - THERMAL & MOISTURE PROTECTION": 19,
     "14 - CONVEYING EQUIPMENT": 18,
+    "23 - HVAC": 17,
     "09 - FINISHES": 16,
-    "23 - HVAC": 16,
     "10 - SPECIALTIES": 15,
     "27 - FIRE LIFE SAFETY": 15,
     "11- EQUIPMENT": 11,
@@ -11494,6 +11494,20 @@
       "folderPath": "22 - PLUMBING/22 40 00-6.0 DISHWASHER AIR GAP - PRODUCT DATA/22 40 00-6.0 DISHWASHER AIR GAP - PRODUCT DATA.pdf",
       "modifiedAt": "2026-04-08T22:44:38.000Z",
       "sizeLabel": "601.6 KB",
+      "nextStep": "Tie to latest exported submittal log for formal status and ball-in-court."
+    },
+    {
+      "Submittal Number": "23 00 00",
+      "Title": "23 00 00-004.0 HVAC SHOP DRAWINGS",
+      "Type": "Shop Drawing",
+      "Status": "Filed / needs log tie-out",
+      "Spec Section": "23 00 00 004.0 HVAC SHOP DRAWINGS",
+      "Division": "23 - HVAC",
+      "sourceKind": "folder-document",
+      "fileName": "23 00 00-004.0 HVAC SHOP DRAWINGS.pdf",
+      "folderPath": "23 - HVAC/23 00 00-004.0 HVAC SHOP DRAWINGS/23 00 00-004.0 HVAC SHOP DRAWINGS.pdf",
+      "modifiedAt": "2026-05-08T00:15:32.000Z",
+      "sizeLabel": "2.1 MB",
       "nextStep": "Tie to latest exported submittal log for formal status and ball-in-court."
     },
     {

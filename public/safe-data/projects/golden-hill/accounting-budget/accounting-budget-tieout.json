@@ -2,15 +2,15 @@
   "projectName": "Alüm",
   "formerName": "Golden Hill Apartments",
   "source": "Approved Dropbox accounting folder snapshot plus CAST BUILD A.O metadata exports",
-  "generatedAt": "2026-05-06T16:21:09.262Z",
+  "generatedAt": "2026-05-12T02:08:03.291Z",
   "guardrail": "Read-first metadata extraction only. Raw accounting files remain private and are excluded from the preview bundle.",
   "accountingFolder": "16. ACCOUNTING",
   "budgetFolder": "02. BUDGET",
   "fileInventory": {
-    "accountingFiles": 1757,
-    "budgetFolderFiles": 335,
-    "spreadsheetFiles": 229,
-    "budgetRelatedFiles": 1869
+    "accountingFiles": 5119,
+    "budgetFolderFiles": 458,
+    "spreadsheetFiles": 392,
+    "budgetRelatedFiles": 4753
   },
   "currentCastBuildAOMetrics": {
     "Original Budget Amount": 37013422,
@@ -171,56 +171,56 @@
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2026-02-17T00:36:20.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 10.17.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-10-17T22:00:16.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 11.05.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-12-31T20:17:31.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 12.31.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2026-01-19T22:29:26.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 3.31.26.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2026-04-17T20:24:59.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 8.7.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-08-15T01:21:51.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast 9.5.25.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-09-23T01:21:37.000Z"
     },
     {
       "sourceFile": "16. ACCOUNTING/Budget -GHA/CAST Build GHA budget GC's Forecast.xlsx",
       "rowCount": 15,
       "listedBudget": 1297189,
       "listedCostToComplete": 80,
-      "fileMtime": "2026-05-06T12:08:48.000Z"
+      "fileMtime": "2025-06-26T02:46:56.000Z"
     }
   ],
   "latestForecastSnapshot": {
@@ -228,7 +228,7 @@
     "rowCount": 15,
     "listedBudget": 1297189,
     "listedCostToComplete": 80,
-    "fileMtime": "2026-05-06T12:08:48.000Z"
+    "fileMtime": "2025-06-26T02:46:56.000Z"
   },
   "purchaseReports": [
     {

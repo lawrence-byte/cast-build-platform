@@ -4,7 +4,7 @@ const XLSX = require('xlsx');
 
 const root = path.join(__dirname, '..');
 const projectRoot = path.join(root, 'data/projects/golden-hill');
-const intakeRoot = path.join(projectRoot, 'dropbox-intake/extracted-20260506-050901/Alüm');
+const intakeRoot = process.env.ALUM_PROJECT_SOURCE_DIR || path.join(projectRoot, 'dropbox-intake/extracted-20260506-050901/Alüm');
 const accountingRoot = path.join(intakeRoot, '16. ACCOUNTING');
 const budgetRoot = path.join(intakeRoot, '02. BUDGET');
 const outDir = path.join(projectRoot, 'accounting-budget');
@@ -19,7 +19,11 @@ function walk(dir, out = []) {
   }
   return out;
 }
-function rel(file) { return path.relative(projectRoot, file).replaceAll(path.sep, '/'); }
+function rel(file) {
+  const fromIntake = path.relative(intakeRoot, file).replaceAll(path.sep, '/');
+  if (fromIntake && !fromIntake.startsWith('..')) return fromIntake;
+  return path.relative(projectRoot, file).replaceAll(path.sep, '/');
+}
 function relIntake(file) { return path.relative(intakeRoot, file).replaceAll(path.sep, '/'); }
 function num(value) {
   if (value === null || value === undefined || value === '') return 0;

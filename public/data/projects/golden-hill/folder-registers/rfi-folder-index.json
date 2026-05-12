@@ -1,21 +1,32 @@
 {
   "projectName": "Alüm",
-  "generatedAt": "2026-05-08T16:25:04.579Z",
+  "generatedAt": "2026-05-12T02:03:50.712Z",
   "source": "Private synced Alüm RFI folder metadata",
   "guardrail": "Sanitized file/register metadata only; raw PDFs are not published.",
-  "totalFiles": 285,
-  "totalBytes": 607827572,
-  "totalSizeLabel": "579.7 MB",
+  "totalFiles": 286,
+  "totalBytes": 612249247,
+  "totalSizeLabel": "583.9 MB",
   "extensionCounts": {
-    "pdf": 284,
+    "pdf": 285,
     "xlsx": 1
   },
   "folderCounts": {
-    "root": 226,
+    "root": 227,
     "RFI Attachments": 30,
     "+RFI Log": 29
   },
   "recentFiles": [
+    {
+      "path": "GHA - RFI 284 EF-5 & 3 Dampers Clarification.pdf",
+      "name": "GHA - RFI 284 EF-5 & 3 Dampers Clarification.pdf",
+      "title": "RFI 284 EF-5 & 3 Dampers Clarification",
+      "folder": "root",
+      "extension": "pdf",
+      "sizeBytes": 4421675,
+      "sizeLabel": "4.2 MB",
+      "modifiedAt": "2026-05-11T15:12:23.000Z",
+      "inferredDate": null
+    },
     {
       "path": "+RFI Log/2025-05-04 RFI LOG.pdf",
       "name": "2025-05-04 RFI LOG.pdf",
@@ -444,20 +455,9 @@
       "sizeLabel": "2.6 MB",
       "modifiedAt": "2026-03-05T21:28:30.000Z",
       "inferredDate": null
-    },
-    {
-      "path": "GHA - RFI #254 L8 Power Modifications & Clarifications.pdf",
-      "name": "GHA - RFI #254 L8 Power Modifications & Clarifications.pdf",
-      "title": "RFI #254 L8 Power Modifications & Clarifications",
-      "folder": "root",
-      "extension": "pdf",
-      "sizeBytes": 1395907,
-      "sizeLabel": "1.3 MB",
-      "modifiedAt": "2026-03-03T23:39:45.000Z",
-      "inferredDate": null
     }
   ],
-  "rfiPdfCount": 255,
+  "rfiPdfCount": 256,
   "logFileCount": 30,
   "latestLogs": [
     {
@@ -3455,6 +3455,17 @@
       "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
     },
     {
+      "Number": "284",
+      "Subject": "EF-5 & 3 Dampers Clarification",
+      "Status": "Filed in project folder",
+      "sourceKind": "folder-pdf",
+      "fileName": "GHA - RFI 284 EF-5 & 3 Dampers Clarification.pdf",
+      "folderPath": "GHA - RFI 284 EF-5 & 3 Dampers Clarification.pdf",
+      "modifiedAt": "2026-05-11T15:12:23.000Z",
+      "sizeLabel": "4.2 MB",
+      "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
+    },
+    {
       "Number": null,
       "Subject": "2025.03.26 Civil POC RFI",
       "Status": "Filed in project folder",
@@ -3488,5 +3499,5 @@
       "nextStep": "Tie folder PDF to exported RFI log status before issuing or closing."
     }
   ],
-  "missingTieOutCount": 255
+  "missingTieOutCount": 256
 }

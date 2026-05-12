@@ -1,14 +1,14 @@
 {
   "projectName": "Alüm",
   "section": "Commitments",
-  "generatedAt": "2026-05-08T16:25:04.579Z",
+  "generatedAt": "2026-05-12T02:03:50.712Z",
   "source": "Private synced Alüm Commitments folder metadata",
   "guardrail": "Sanitized file/register metadata only; raw source documents are not published.",
-  "totalFiles": 1535,
-  "totalBytes": 4484265630,
+  "totalFiles": 1542,
+  "totalBytes": 4511355491,
   "totalSizeLabel": "4.2 GB",
   "extensionCounts": {
-    "pdf": 1079,
+    "pdf": 1086,
     "docx": 309,
     "dwg": 30,
     "fxf": 29,
@@ -45,17 +45,17 @@
     "06 17 00 Mass Timber": 33,
     "23 00 00 HVAC": 33,
     "Epocha": 33,
-    "09 21 00 Drywall": 29,
-    "20 00 50 Light Fixtures": 29,
+    "09 21 00 Drywall": 32,
+    "20 00 50 Light Fixtures": 30,
     "14 42 16 Automated Parking": 28,
     "07 10 00 Waterproofing": 27,
     "08 11 13 Doors Frames hardware": 25,
     "31 41 00 Shoring": 24,
     "13 11 00 Swimming Pools": 22,
     "01 55 26 Traffic Control": 21,
+    "11 31 00 Residential Appliances": 21,
     "04 22 00 CMU": 20,
     "11 24 00 Window Washing Equipment": 19,
-    "11 31 00 Residential Appliances": 19,
     "05 05 00 Misc Metals": 18,
     "09 91 00 Paint": 18,
     "26 00 01 Communications": 18,
@@ -69,11 +69,11 @@
     "07 60 00 Sheet Metal": 14,
     "08 83 00 Mirrors (Supply)": 14,
     "01 57 23 SWPPP": 13,
+    "26 00 02 SEISMIC": 13,
     "MICROCEMENT": 13,
     "01 54 23 Temp Scaffolding and Platforms": 12,
     "08 33 00 Coiling doors": 12,
     "12 24 00 Window Coverings": 12,
-    "26 00 02 SEISMIC": 12,
     "31 00 00 Earthwork": 12,
     "Site Concrete": 12,
     "01 34 00 Ped Walkway": 11,
@@ -99,6 +99,105 @@
     "root": 1
   },
   "recentFiles": [
+    {
+      "path": "20 00 50 Light Fixtures/02. COR's/CCO - 003 - Unit Entry Door Lights (signed).pdf",
+      "name": "CCO - 003 - Unit Entry Door Lights (signed).pdf",
+      "title": "CCO - 003 - Unit Entry Door Lights (signed)",
+      "folder": "20 00 50 Light Fixtures",
+      "extension": "pdf",
+      "sizeBytes": 3126812,
+      "sizeLabel": "3.0 MB",
+      "modifiedAt": "2026-05-11T19:57:54.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "09 21 00 Drywall/02. COR's/SCCO #013 SCI - Golden Hills Apartments -Storage Room Divider Wall (executed).pdf",
+      "name": "SCCO #013 SCI - Golden Hills Apartments -Storage Room Divider Wall (executed).pdf",
+      "title": "SCCO #013 SCI - Golden Hills Apartments -Storage Room Divider Wall (executed)",
+      "folder": "09 21 00 Drywall",
+      "extension": "pdf",
+      "sizeBytes": 8995071,
+      "sizeLabel": "8.6 MB",
+      "modifiedAt": "2026-05-11T17:07:49.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "09 21 00 Drywall/02. COR's/SCCO #012 SCI - Golden Hills Apartments -Fur Out for Ephoca Units (executed).pdf",
+      "name": "SCCO #012 SCI - Golden Hills Apartments -Fur Out for Ephoca Units (executed).pdf",
+      "title": "SCCO #012 SCI - Golden Hills Apartments -Fur Out for Ephoca Units (executed)",
+      "folder": "09 21 00 Drywall",
+      "extension": "pdf",
+      "sizeBytes": 11772373,
+      "sizeLabel": "11.2 MB",
+      "modifiedAt": "2026-05-08T18:47:12.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "11 31 00 Residential Appliances/02. COR's/SCCO-002 R&B Wholesale - Revised Appliance Schedule 2.2.26 (signed).pdf",
+      "name": "SCCO-002 R&B Wholesale - Revised Appliance Schedule 2.2.26 (signed).pdf",
+      "title": "SCCO-002 R&B Wholesale - Revised Appliance Schedule 2.2.26 (signed)",
+      "folder": "11 31 00 Residential Appliances",
+      "extension": "pdf",
+      "sizeBytes": 412409,
+      "sizeLabel": "402.7 KB",
+      "modifiedAt": "2026-05-08T18:46:10.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "09 21 00 Drywall/02. COR's/SCCO #014 SCI - Golden Hills Apartments -RFI260 MPOE Room Exhaust Duct (executed).pdf",
+      "name": "SCCO #014 SCI - Golden Hills Apartments -RFI260 MPOE Room Exhaust Duct (executed).pdf",
+      "title": "SCCO #014 SCI - Golden Hills Apartments -RFI260 MPOE Room Exhaust Duct (executed)",
+      "folder": "09 21 00 Drywall",
+      "extension": "pdf",
+      "sizeBytes": 690522,
+      "sizeLabel": "674.3 KB",
+      "modifiedAt": "2026-05-08T18:44:54.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "32 93 00 Landscaping/01. Commitment/02. 32 93 00 SOW_live.docx",
+      "name": "02. 32 93 00 SOW_live.docx",
+      "title": "02. 32 93 00 SOW live",
+      "folder": "32 93 00 Landscaping",
+      "extension": "docx",
+      "sizeBytes": 60505,
+      "sizeLabel": "59.1 KB",
+      "modifiedAt": "2026-05-06T20:42:17.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "32 93 00 Landscaping/01. Commitment/03. WO_Contract_Summary_.docx",
+      "name": "03. WO_Contract_Summary_.docx",
+      "title": "03. WO Contract Summary",
+      "folder": "32 93 00 Landscaping",
+      "extension": "docx",
+      "sizeBytes": 1338756,
+      "sizeLabel": "1.3 MB",
+      "modifiedAt": "2026-05-06T20:26:52.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "11 31 00 Residential Appliances/02. COR's/SCCO-001 R&B Wholesale CE_240_-_Hood_Vent_Dampers (signed).pdf",
+      "name": "SCCO-001 R&B Wholesale CE_240_-_Hood_Vent_Dampers (signed).pdf",
+      "title": "SCCO-001 R&B Wholesale CE 240 - Hood Vent Dampers (signed)",
+      "folder": "11 31 00 Residential Appliances",
+      "extension": "pdf",
+      "sizeBytes": 405511,
+      "sizeLabel": "396.0 KB",
+      "modifiedAt": "2026-05-06T18:51:31.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "26 00 02 SEISMIC/01. GHA Subcontractor Agreement - REFTEK (Seismic) executed.pdf",
+      "name": "01. GHA Subcontractor Agreement - REFTEK (Seismic) executed.pdf",
+      "title": "01. GHA Subcontractor Agreement - REFTEK (Seismic) executed",
+      "folder": "26 00 02 SEISMIC",
+      "extension": "pdf",
+      "sizeBytes": 1686496,
+      "sizeLabel": "1.6 MB",
+      "modifiedAt": "2026-05-06T18:49:45.000Z",
+      "inferredDate": null
+    },
     {
       "path": "26 00 02 SEISMIC/01. GHA Subcontractor Agreement - REFTEK (Seismic).pdf",
       "name": "01. GHA Subcontractor Agreement - REFTEK (Seismic).pdf",
@@ -163,17 +262,6 @@
       "sizeBytes": 83766,
       "sizeLabel": "81.8 KB",
       "modifiedAt": "2026-05-01T21:02:14.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "32 93 00 Landscaping/01. Commitment/02. 00 00 00 SOW_live.docx",
-      "name": "02. 00 00 00 SOW_live.docx",
-      "title": "02. 00 00 00 SOW live",
-      "folder": "32 93 00 Landscaping",
-      "extension": "docx",
-      "sizeBytes": 60401,
-      "sizeLabel": "59.0 KB",
-      "modifiedAt": "2026-04-29T16:57:52.000Z",
       "inferredDate": null
     },
     {
@@ -450,100 +538,12 @@
       "sizeLabel": "739.3 KB",
       "modifiedAt": "2026-04-15T01:20:29.000Z",
       "inferredDate": null
-    },
-    {
-      "path": "06 17 00 Mass Timber/02. COR's/SCO03 Timberlab - Mass Timber RFI's_(signed).pdf",
-      "name": "SCO03 Timberlab - Mass Timber RFI's_(signed).pdf",
-      "title": "SCO03 Timberlab - Mass Timber RFI's (signed)",
-      "folder": "06 17 00 Mass Timber",
-      "extension": "pdf",
-      "sizeBytes": 710159,
-      "sizeLabel": "693.5 KB",
-      "modifiedAt": "2026-04-15T01:18:09.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "04 40 00 Stone (Supply)/03. Correspondence/PO#P2603033_Black Mosaic Tile Quality Inspection.pdf",
-      "name": "PO#P2603033_Black Mosaic Tile Quality Inspection.pdf",
-      "title": "PO#P2603033 Black Mosaic Tile Quality Inspection",
-      "folder": "04 40 00 Stone (Supply)",
-      "extension": "pdf",
-      "sizeBytes": 4661711,
-      "sizeLabel": "4.4 MB",
-      "modifiedAt": "2026-04-14T13:24:49.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "01 54 16 TOWER CRANE & MAN HOIST/03. Correspondence/2026-03-26 Tower Crane Delay.pdf",
-      "name": "2026-03-26 Tower Crane Delay.pdf",
-      "title": "2026-03-26 Tower Crane Delay",
-      "folder": "01 54 16 TOWER CRANE & MAN HOIST",
-      "extension": "pdf",
-      "sizeBytes": 120997,
-      "sizeLabel": "118.2 KB",
-      "modifiedAt": "2026-04-10T22:53:11.000Z",
-      "inferredDate": "2026-03-26"
-    },
-    {
-      "path": "MICROCEMENT/GHA Subcontractor Agreement - MCC (MICROCEMENT) executed.pdf",
-      "name": "GHA Subcontractor Agreement - MCC (MICROCEMENT) executed.pdf",
-      "title": "GHA Subcontractor Agreement - MCC (MICROCEMENT) executed",
-      "folder": "MICROCEMENT",
-      "extension": "pdf",
-      "sizeBytes": 8050364,
-      "sizeLabel": "7.7 MB",
-      "modifiedAt": "2026-04-09T23:10:36.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "06 17 00 Mass Timber/Timberlab- Golden Hill Purchase Order Agreement - 250414 (executed).pdf",
-      "name": "Timberlab- Golden Hill Purchase Order Agreement - 250414 (executed).pdf",
-      "title": "Timberlab- Golden Hill Purchase Order Agreement - 250414 (executed)",
-      "folder": "06 17 00 Mass Timber",
-      "extension": "pdf",
-      "sizeBytes": 1276837,
-      "sizeLabel": "1.2 MB",
-      "modifiedAt": "2026-04-08T21:33:07.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "22 00 00 Plumbing/03. Correspondence/JGP_Prelim shops.pdf",
-      "name": "JGP_Prelim shops.pdf",
-      "title": "JGP Prelim shops",
-      "folder": "22 00 00 Plumbing",
-      "extension": "pdf",
-      "sizeBytes": 18977277,
-      "sizeLabel": "18.1 MB",
-      "modifiedAt": "2026-04-08T01:10:07.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "MICROCEMENT/01. Commitment/02. Microcement SOW_live.docx",
-      "name": "02. Microcement SOW_live.docx",
-      "title": "02. Microcement SOW live",
-      "folder": "MICROCEMENT",
-      "extension": "docx",
-      "sizeBytes": 63204,
-      "sizeLabel": "61.7 KB",
-      "modifiedAt": "2026-04-08T00:39:28.000Z",
-      "inferredDate": null
-    },
-    {
-      "path": "MICROCEMENT/GHA Subcontractor Agreement - MCC (MICROCEMENT).pdf",
-      "name": "GHA Subcontractor Agreement - MCC (MICROCEMENT).pdf",
-      "title": "GHA Subcontractor Agreement - MCC (MICROCEMENT)",
-      "folder": "MICROCEMENT",
-      "extension": "pdf",
-      "sizeBytes": 7902754,
-      "sizeLabel": "7.5 MB",
-      "modifiedAt": "2026-04-08T00:11:47.000Z",
-      "inferredDate": null
     }
   ],
   "keywordCounts": {
-    "cor": 517,
-    "contract": 335,
-    "subcontract": 215,
+    "cor": 523,
+    "contract": 336,
+    "subcontract": 216,
     "concrete": 111,
     "proposal": 58,
     "waiver": 49,
@@ -10120,6 +10120,39 @@
       "inferredDate": null
     },
     {
+      "path": "09 21 00 Drywall/02. COR's/SCCO #012 SCI - Golden Hills Apartments -Fur Out for Ephoca Units (executed).pdf",
+      "name": "SCCO #012 SCI - Golden Hills Apartments -Fur Out for Ephoca Units (executed).pdf",
+      "title": "SCCO #012 SCI - Golden Hills Apartments -Fur Out for Ephoca Units (executed)",
+      "folder": "09 21 00 Drywall",
+      "extension": "pdf",
+      "sizeBytes": 11772373,
+      "sizeLabel": "11.2 MB",
+      "modifiedAt": "2026-05-08T18:47:12.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "09 21 00 Drywall/02. COR's/SCCO #013 SCI - Golden Hills Apartments -Storage Room Divider Wall (executed).pdf",
+      "name": "SCCO #013 SCI - Golden Hills Apartments -Storage Room Divider Wall (executed).pdf",
+      "title": "SCCO #013 SCI - Golden Hills Apartments -Storage Room Divider Wall (executed)",
+      "folder": "09 21 00 Drywall",
+      "extension": "pdf",
+      "sizeBytes": 8995071,
+      "sizeLabel": "8.6 MB",
+      "modifiedAt": "2026-05-11T17:07:49.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "09 21 00 Drywall/02. COR's/SCCO #014 SCI - Golden Hills Apartments -RFI260 MPOE Room Exhaust Duct (executed).pdf",
+      "name": "SCCO #014 SCI - Golden Hills Apartments -RFI260 MPOE Room Exhaust Duct (executed).pdf",
+      "title": "SCCO #014 SCI - Golden Hills Apartments -RFI260 MPOE Room Exhaust Duct (executed)",
+      "folder": "09 21 00 Drywall",
+      "extension": "pdf",
+      "sizeBytes": 690522,
+      "sizeLabel": "674.3 KB",
+      "modifiedAt": "2026-05-08T18:44:54.000Z",
+      "inferredDate": null
+    },
+    {
       "path": "09 21 00 Drywall/02. COR's/SCI - Golden Hills Apartments - Change Order Request # 01 + 2.pdf",
       "name": "SCI - Golden Hills Apartments - Change Order Request # 01 + 2.pdf",
       "title": "SCI - Golden Hills Apartments - Change Order Request # 01 + 2",
@@ -12364,6 +12397,28 @@
       "inferredDate": "2025-06-11"
     },
     {
+      "path": "11 31 00 Residential Appliances/02. COR's/SCCO-001 R&B Wholesale CE_240_-_Hood_Vent_Dampers (signed).pdf",
+      "name": "SCCO-001 R&B Wholesale CE_240_-_Hood_Vent_Dampers (signed).pdf",
+      "title": "SCCO-001 R&B Wholesale CE 240 - Hood Vent Dampers (signed)",
+      "folder": "11 31 00 Residential Appliances",
+      "extension": "pdf",
+      "sizeBytes": 405511,
+      "sizeLabel": "396.0 KB",
+      "modifiedAt": "2026-05-06T18:51:31.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "11 31 00 Residential Appliances/02. COR's/SCCO-002 R&B Wholesale - Revised Appliance Schedule 2.2.26 (signed).pdf",
+      "name": "SCCO-002 R&B Wholesale - Revised Appliance Schedule 2.2.26 (signed).pdf",
+      "title": "SCCO-002 R&B Wholesale - Revised Appliance Schedule 2.2.26 (signed)",
+      "folder": "11 31 00 Residential Appliances",
+      "extension": "pdf",
+      "sizeBytes": 412409,
+      "sizeLabel": "402.7 KB",
+      "modifiedAt": "2026-05-08T18:46:10.000Z",
+      "inferredDate": null
+    },
+    {
       "path": "11 31 00 Residential Appliances/03. Correspondence/GH - Appliance & WU Power Requirements_updated.xlsx",
       "name": "GH - Appliance & WU Power Requirements_updated.xlsx",
       "title": "GH - Appliance & WU Power Requirements updated",
@@ -13747,6 +13802,17 @@
       "sizeBytes": 321020,
       "sizeLabel": "313.5 KB",
       "modifiedAt": "2026-01-27T22:37:52.000Z",
+      "inferredDate": null
+    },
+    {
+      "path": "20 00 50 Light Fixtures/02. COR's/CCO - 003 - Unit Entry Door Lights (signed).pdf",
+      "name": "CCO - 003 - Unit Entry Door Lights (signed).pdf",
+      "title": "CCO - 003 - Unit Entry Door Lights (signed)",
+      "folder": "20 00 50 Light Fixtures",
+      "extension": "pdf",
+      "sizeBytes": 3126812,
+      "sizeLabel": "3.0 MB",
+      "modifiedAt": "2026-05-11T19:57:54.000Z",
       "inferredDate": null
     },
     {
@@ -16115,6 +16181,17 @@
       "inferredDate": null
     },
     {
+      "path": "26 00 02 SEISMIC/01. GHA Subcontractor Agreement - REFTEK (Seismic) executed.pdf",
+      "name": "01. GHA Subcontractor Agreement - REFTEK (Seismic) executed.pdf",
+      "title": "01. GHA Subcontractor Agreement - REFTEK (Seismic) executed",
+      "folder": "26 00 02 SEISMIC",
+      "extension": "pdf",
+      "sizeBytes": 1686496,
+      "sizeLabel": "1.6 MB",
+      "modifiedAt": "2026-05-06T18:49:45.000Z",
+      "inferredDate": null
+    },
+    {
       "path": "26 00 02 SEISMIC/01. GHA Subcontractor Agreement - REFTEK (Seismic).pdf",
       "name": "01. GHA Subcontractor Agreement - REFTEK (Seismic).pdf",
       "title": "01. GHA Subcontractor Agreement - REFTEK (Seismic)",
@@ -16544,9 +16621,9 @@
       "inferredDate": null
     },
     {
-      "path": "32 93 00 Landscaping/01. Commitment/01. GHA Subcontractor Agreement - SUB (SCOPE).docx",
-      "name": "01. GHA Subcontractor Agreement - SUB (SCOPE).docx",
-      "title": "01. GHA Subcontractor Agreement - SUB (SCOPE)",
+      "path": "32 93 00 Landscaping/01. Commitment/01. GHA Subcontractor Agreement - L1 (LANDSCAPING).docx",
+      "name": "01. GHA Subcontractor Agreement - L1 (LANDSCAPING).docx",
+      "title": "01. GHA Subcontractor Agreement - L1 (LANDSCAPING)",
       "folder": "32 93 00 Landscaping",
       "extension": "docx",
       "sizeBytes": 77880,
@@ -16555,14 +16632,14 @@
       "inferredDate": null
     },
     {
-      "path": "32 93 00 Landscaping/01. Commitment/02. 00 00 00 SOW_live.docx",
-      "name": "02. 00 00 00 SOW_live.docx",
-      "title": "02. 00 00 00 SOW live",
+      "path": "32 93 00 Landscaping/01. Commitment/02. 32 93 00 SOW_live.docx",
+      "name": "02. 32 93 00 SOW_live.docx",
+      "title": "02. 32 93 00 SOW live",
       "folder": "32 93 00 Landscaping",
       "extension": "docx",
-      "sizeBytes": 60401,
-      "sizeLabel": "59.0 KB",
-      "modifiedAt": "2026-04-29T16:57:52.000Z",
+      "sizeBytes": 60505,
+      "sizeLabel": "59.1 KB",
+      "modifiedAt": "2026-05-06T20:42:17.000Z",
       "inferredDate": null
     },
     {
@@ -16571,21 +16648,10 @@
       "title": "03. WO Contract Summary",
       "folder": "32 93 00 Landscaping",
       "extension": "docx",
-      "sizeBytes": 1338193,
+      "sizeBytes": 1338756,
       "sizeLabel": "1.3 MB",
-      "modifiedAt": "2025-04-11T20:16:00.000Z",
+      "modifiedAt": "2026-05-06T20:26:52.000Z",
       "inferredDate": null
-    },
-    {
-      "path": "32 93 00 Landscaping/01. Commitment/05. GHA LoAD Log_2025.11.10.pdf",
-      "name": "05. GHA LoAD Log_2025.11.10.pdf",
-      "title": "05. GHA LoAD Log 2025.11.10",
-      "folder": "32 93 00 Landscaping",
-      "extension": "pdf",
-      "sizeBytes": 43282,
-      "sizeLabel": "42.3 KB",
-      "modifiedAt": "2025-11-10T20:02:01.000Z",
-      "inferredDate": "2025-11-10"
     },
     {
       "path": "32 93 00 Landscaping/01. Commitment/07. WaiverS.pdf",
@@ -16608,6 +16674,17 @@
       "sizeLabel": "61.7 KB",
       "modifiedAt": "2025-03-06T18:45:23.000Z",
       "inferredDate": null
+    },
+    {
+      "path": "32 93 00 Landscaping/01. Commitment/GHA LoAD Log_2025.11.10.pdf",
+      "name": "GHA LoAD Log_2025.11.10.pdf",
+      "title": "GHA LoAD Log 2025.11.10",
+      "folder": "32 93 00 Landscaping",
+      "extension": "pdf",
+      "sizeBytes": 43282,
+      "sizeLabel": "42.3 KB",
+      "modifiedAt": "2025-11-10T20:02:01.000Z",
+      "inferredDate": "2025-11-10"
     },
     {
       "path": "32 93 00 Landscaping/251254968.pdf",

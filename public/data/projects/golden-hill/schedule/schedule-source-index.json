@@ -3,20 +3,44 @@
   "module": "schedule-brain",
   "source_label": "Alüm private schedule folder",
   "source_status": "indexed",
-  "generated_at": "2026-05-08T15:46:29.622Z",
+  "generated_at": "2026-05-12T02:03:47.780Z",
   "publish_guardrail": "Sanitized schedule metadata only. No raw artifacts, private paths, or source files are published.",
   "artifact_counts": {
-    "microsoft-project": 41,
-    "pdf-snapshot": 47,
+    "microsoft-project": 44,
+    "pdf-snapshot": 48,
     "spreadsheet": 13,
     "project-xml": 3
   },
   "latest_artifacts": [
     {
+      "title": "CAST GHA Schedule Update 2026 05 11",
+      "kind": "microsoft-project",
+      "size_bytes": 2448896,
+      "updated_at": "2026-05-11T23:07:08.000Z"
+    },
+    {
+      "title": "2026.05.12 GHA Lookahead",
+      "kind": "pdf-snapshot",
+      "size_bytes": 221826,
+      "updated_at": "2026-05-11T23:06:53.000Z"
+    },
+    {
       "title": "CAST Joe's schedule 2025 4 30",
       "kind": "microsoft-project",
-      "size_bytes": 2454016,
-      "updated_at": "2026-05-05T20:36:16.000Z"
+      "size_bytes": 2465280,
+      "updated_at": "2026-05-11T19:39:17.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 30 (Joe Garza's conflicted copy 2026 05 08)",
+      "kind": "microsoft-project",
+      "size_bytes": 2568192,
+      "updated_at": "2026-05-08T22:09:03.000Z"
+    },
+    {
+      "title": "CAST Joe's schedule 2025 4 30 (carlos gutierrez's conflicted copy 2026 05 08)",
+      "kind": "microsoft-project",
+      "size_bytes": 2458112,
+      "updated_at": "2026-05-08T21:47:06.000Z"
     },
     {
       "title": "2026 05 04 GHA Schedule Update",
@@ -59,30 +83,6 @@
       "kind": "microsoft-project",
       "size_bytes": 2273792,
       "updated_at": "2026-04-24T19:38:00.000Z"
-    },
-    {
-      "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 21)",
-      "kind": "microsoft-project",
-      "size_bytes": 2380800,
-      "updated_at": "2026-04-21T18:06:42.000Z"
-    },
-    {
-      "title": "CAST Joe's schedule 2025 4 14 (Joe Garza's conflicted copy 2026 04 17)",
-      "kind": "microsoft-project",
-      "size_bytes": 2162688,
-      "updated_at": "2026-04-17T22:42:52.000Z"
-    },
-    {
-      "title": "2026.04.17 GHA Schedule Update",
-      "kind": "pdf-snapshot",
-      "size_bytes": 1274949,
-      "updated_at": "2026-04-17T21:18:56.000Z"
-    },
-    {
-      "title": "CAST Joe's schedule 2025 4 13)",
-      "kind": "microsoft-project",
-      "size_bytes": 2151424,
-      "updated_at": "2026-04-13T20:33:07.000Z"
     }
   ],
   "next_actions": [
