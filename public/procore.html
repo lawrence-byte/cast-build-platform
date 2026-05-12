@@ -1,1 +1,70 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CAST Build CAST BUILD A.O Integration</title><link rel="stylesheet" href="/cast-build.css"><script src="/cast-auth.js" defer></script></head><body><header class="topbar"><a class="brand-lockup" href="/" aria-label="CAST Build home"><img class="brand-logo" src="/assets/brand/cast-build-stacked-black-on-white.png" alt="CAST BUILD"><span><span class="brand">Build</span><span class="subbrand">CAST BUILD A.O integration</span></span></a><nav class="nav"><a href="/">Home</a><a href="/admin.html">Admin</a><a href="/projects.html">Projects</a><a href="/document-tools.html">Doc Tools</a></nav></header><main class="main"><h1 class="section-title">CAST BUILD A.O online buildout plan</h1><p class="lead">Connect CAST BUILD A.O as the construction data backbone while keeping CAST Build’s own executive workspace, reporting, workflow rules, and knowledge layer.</p><div class="warning"><strong>Guardrail:</strong> no CAST BUILD A.O authentication, data mutation, write API calls, or billing-impacting integrations are enabled in this scaffold.</div><table class="table"><tr><th>Phase</th><th>Scope</th><th>Output</th></tr><tr><td>1. Discovery</td><td>Catalog CAST BUILD A.O company/projects/tools available to CAST Build.</td><td>Data map + permissions matrix.</td></tr><tr><td>2. Read-only sync</td><td>Pull projects, RFIs, submittals, drawings, commitments, change events, budgets, daily logs.</td><td>Normalized dashboard data.</td></tr><tr><td>3. CAST views</td><td>Executive project health, risk register, overdue action queues, cost exposure, schedule drift.</td><td>Admin command center.</td></tr><tr><td>4. Workflow automation</td><td>Approved reminders, report generation, issue summaries, meeting prep.</td><td>Human-approved automations.</td></tr><tr><td>5. Write-back controls</td><td>Only after approval: create draft RFIs, notes, reports, or document indexes.</td><td>Audited write workflows.</td></tr></table><h2 class="section-title" style="margin-top:34px">Initial CAST BUILD A.O objects</h2><section class="grid" style="padding:0;grid-template-columns:repeat(3,1fr)"><article class="card"><h3>Project controls</h3><p>Projects, users, roles, companies, locations, cost codes, schedules.</p></article><article class="card"><h3>Field + documents</h3><p>Drawings, specs, documents, photos, daily logs, observations, punch list.</p></article><article class="card"><h3>Financials</h3><p>Budget, commitments, change events, change orders, invoices, direct costs.</p></article></section></main><script src="/cast-team-assistant.js" defer></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CAST Build CAST BUILD A.O Integration</title>
+  <link rel="stylesheet" href="/cast-build.css">
+  <script src="/cast-auth.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand-lockup" href="/" aria-label="CAST Build home">
+      <img class="brand-logo" src="/assets/brand/cast-build-stacked-black-on-white.png" alt="CAST BUILD">
+      <span><span class="brand">Build</span><span class="subbrand">CAST BUILD A.O integration</span></span>
+    </a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/admin.html">Admin</a>
+      <a href="/projects.html">Projects</a>
+      <a href="/document-tools.html">Doc Tools</a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <h1 class="section-title">CAST BUILD A.O online buildout plan</h1>
+    <p class="lead">Connect CAST BUILD A.O as the construction data backbone while keeping CAST Build’s own executive workspace, reporting, workflow rules, and knowledge layer.</p>
+    <div class="warning"><strong>Guardrail:</strong> no CAST BUILD A.O authentication, data mutation, write API calls, external sends, approvals, or billing-impacting integrations are enabled in this scaffold.</div>
+
+    <table class="table" aria-label="CAST BUILD A.O integration phases">
+      <tr><th>Phase</th><th>Scope</th><th>Output</th></tr>
+      <tr><td>1. Discovery</td><td>Catalog CAST BUILD A.O company/projects/tools available to CAST Build.</td><td>Data map + permissions matrix.</td></tr>
+      <tr><td>2. Read-only sync</td><td>Pull projects, RFIs, submittals, drawings, commitments, change events, budgets, daily logs.</td><td>Normalized dashboard data.</td></tr>
+      <tr><td>3. CAST views</td><td>Executive project health, risk register, overdue action queues, cost exposure, schedule drift.</td><td>Admin command center.</td></tr>
+      <tr><td>4. Workflow automation</td><td>Approved reminders, report generation, issue summaries, meeting prep.</td><td>Human-approved automations.</td></tr>
+      <tr><td>5. Write-back controls</td><td>Only after approval: create draft RFIs, notes, reports, or document indexes.</td><td>Audited write workflows.</td></tr>
+    </table>
+
+    <h2 class="section-title" style="margin-top:34px">Workflow coverage</h2>
+    <section class="grid" style="padding:0;grid-template-columns:repeat(3,1fr)">
+      <article class="card">
+        <h3>Project controls</h3>
+        <p>Projects, users, roles, companies, locations, cost codes, schedules.</p>
+        <p><strong>Read model:</strong> normalize source IDs, statuses, responsible parties, due dates, linked records, and source timestamps.</p>
+      </article>
+      <article class="card">
+        <h3>Field + documents</h3>
+        <p>Drawings, specs, documents, photos, daily logs, observations, punch list.</p>
+        <p><strong>Read model:</strong> support open-item reports, current-set checks, document context, field packet summaries, and closeout readiness.</p>
+      </article>
+      <article class="card">
+        <h3>Financials</h3>
+        <p>Budget, commitments, change events, change orders, invoices, direct costs.</p>
+        <p><strong>Read model:</strong> separate actual export values from local planning scenarios and keep source write-back disabled.</p>
+      </article>
+    </section>
+
+    <h2 class="section-title" style="margin-top:34px">Read-first workflow checkpoints</h2>
+    <table class="table" aria-label="Read-first workflow checkpoints">
+      <tr><th>Workflow</th><th>Current CAST Build use</th><th>Write-back posture</th></tr>
+      <tr><td>RFIs + submittals</td><td>Aging, ball-in-court, package completeness, linked document context, draft summaries.</td><td>Draft-only; human approval required before any future source action.</td></tr>
+      <tr><td>Drawings + specifications</td><td>Current-set review, superseded warning, reference lookup, document-register tie.</td><td>No source mutation enabled.</td></tr>
+      <tr><td>Budget + changes</td><td>Budget variance, forecast, commitments, change exposure, accounting tie-out.</td><td>No budget mutation; local scenarios remain separate from source records.</td></tr>
+      <tr><td>Daily logs + field</td><td>Field report rollups, unresolved issues, quality/punch/safety packet context.</td><td>No external send or source edit enabled.</td></tr>
+      <tr><td>Meetings + closeout</td><td>Agenda prep, action registers, decision log, turnover completeness checks.</td><td>Draft packets only until explicit approval workflow exists.</td></tr>
+    </table>
+  </main>
+
+  <script src="/cast-team-assistant.js" defer></script>
+</body>
+</html>

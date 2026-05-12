@@ -19,7 +19,11 @@ Map:
 - Commitments/change events/change orders
 - Budget/direct costs/invoices/payment applications
 - Daily logs/photos/observations/punch list
-- Schedule/milestones
+- Meeting actions, closeout items, schedule/milestones
+
+Normalize every workflow record with `projectId`, source system, stable source row/id, source export timestamp, status, responsible company/person, due date, last activity, linked records, `sourceWritebackEnabled: false`, and `reviewOnly: true`.
+
+Detailed workflow coverage lives in [`procore-workflow-read-model.md`](./procore-workflow-read-model.md).
 
 ## Phase 3 — CAST Build views
 
