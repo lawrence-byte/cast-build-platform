@@ -95,7 +95,7 @@
   ];
 
   const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
-  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/horizontal-build-white-on-charcoal.svg';
+  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/horizontal-build-white-transparent.svg';
 
   function loadGlobalIntakeAssets() {
     if (!document.querySelector('link[data-cast-document-intake]')) {
@@ -167,7 +167,7 @@
     .alum-section-rail{position:fixed;inset:70px auto 0 0;z-index:1250;width:272px;background:#181816;color:#f7f3e8;border-right:1px solid rgba(207,199,177,.18);overflow:auto;padding:24px 18px 28px;box-shadow:16px 0 38px rgba(0,0,0,.12);scrollbar-width:thin;scrollbar-color:rgba(207,199,177,.28) transparent}
     .alum-section-rail__brand{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 22px;margin-bottom:16px;border-bottom:1px solid rgba(207,199,177,.16);color:#f7f3e8;text-decoration:none;text-align:center;overflow:visible}
     .alum-section-rail__brand img{display:none!important}
-    .alum-section-rail__project-name{display:block;width:100%;color:#f7f3e8;font:400 38px/1.15 "Cormorant Garamond",Georgia,"Times New Roman",serif;letter-spacing:.24em;text-transform:uppercase;text-align:center;text-indent:.24em;padding-top:2px;overflow:visible}
+    .alum-section-rail__project-name{display:block;width:max-content;max-width:none;color:#f7f3e8;font:400 34px/1.15 "Cormorant Garamond",Georgia,"Times New Roman",serif;letter-spacing:.18em;text-transform:uppercase;text-align:center;text-indent:.18em;padding-top:2px;overflow:visible;white-space:nowrap}
     .alum-section-rail__group{margin:18px 0 5px;padding:0 8px;color:rgba(207,199,177,.68);font:800 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.15em;text-transform:uppercase}
     .alum-section-rail__summary{margin:0 8px 7px;color:rgba(247,243,232,.42);font:600 10px/1.35 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.07em;text-transform:uppercase}
     .alum-section-rail__tabs{display:grid;gap:2px;margin-bottom:6px}
@@ -194,7 +194,7 @@
       .alum-project-nav__brand{min-width:170px}
       .alum-project-nav__brand img{width:170px}
       .alum-section-rail__brand img{display:none!important}
-      .alum-section-rail__project-name{font-size:32px;line-height:1.2}
+      .alum-section-rail__project-name{font-size:30px;line-height:1.2}
       .alum-project-nav-spacer .app,.alum-project-nav-spacer .dashboard{padding-left:0!important}
       .alum-project-nav-spacer .project-main-content{margin-left:0!important;width:100%!important}
       .alum-project-nav-spacer>.wrap{margin-left:0!important;width:100%!important}
