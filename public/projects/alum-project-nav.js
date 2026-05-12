@@ -95,7 +95,7 @@
   ];
 
   const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
-  const projectLogo = document.body.dataset.projectLogo || '';
+  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/cast-build-supplied-wordmark-transparent.png';
 
   function loadGlobalIntakeAssets() {
     if (!document.querySelector('link[data-cast-document-intake]')) {
