@@ -161,6 +161,8 @@
     .alum-project-nav__wordmark strong{font-weight:650;letter-spacing:.16em}
     .alum-project-mark__name{display:none}
     .alum-project-nav__links{display:flex;align-items:center;justify-content:flex-start;gap:6px;min-width:0;overflow:auto;scrollbar-width:none;width:100%}
+    .alum-project-nav__assistant-slot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:grid;place-items:center;pointer-events:none}
+    .alum-project-nav__assistant-slot .cast-team-assistant-host{pointer-events:auto}
     .alum-project-nav__links::-webkit-scrollbar{display:none}
     .alum-project-nav a{white-space:nowrap;border:1px solid transparent;background:transparent;color:rgba(247,243,232,.72);text-decoration:none;padding:8px 10px;font:700 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.13em;text-transform:uppercase}
     .alum-project-nav a:hover{color:#fff;border-color:rgba(207,199,177,.28);background:rgba(255,255,255,.05)}
@@ -192,7 +194,7 @@
 
     @media(max-width:1050px){
       .alum-section-rail{display:none!important}
-      .alum-project-nav{padding:10px 14px;position:sticky;min-height:64px}.alum-project-nav__links{justify-content:flex-start}
+      .alum-project-nav{padding:10px 14px;position:sticky;min-height:64px}.alum-project-nav__links{justify-content:flex-start}.alum-project-nav__assistant-slot{left:auto;right:14px;transform:translateY(-50%)}
       .alum-project-nav__brand{min-width:170px}
       .alum-project-nav__brand img{width:170px}
       .alum-project-nav__wordmark{font-size:20px;gap:8px;letter-spacing:.14em}
@@ -237,7 +239,10 @@
   const topLinks = document.createElement('div');
   topLinks.className = 'alum-project-nav__links';
   for (const [label, href] of primary) topLinks.appendChild(link(label, href));
-  topNav.append(brand, topLinks);
+  const assistantSlot = document.createElement('div');
+  assistantSlot.className = 'alum-project-nav__assistant-slot';
+  assistantSlot.setAttribute('aria-label', 'CAST team assistant');
+  topNav.append(brand, topLinks, assistantSlot);
 
   loadAuthGate();
   loadGlobalIntakeAssets().then((intake) => {
