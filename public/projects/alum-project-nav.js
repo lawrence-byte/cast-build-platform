@@ -167,9 +167,9 @@
     .alum-project-nav a.is-active{color:#fff;border-color:rgba(207,199,177,.42);background:rgba(207,199,177,.12)}
 
     .alum-section-rail{position:fixed;inset:70px auto 0 0;z-index:1250;width:272px;background:#181816;color:#f7f3e8;border-right:1px solid rgba(207,199,177,.18);overflow:auto;padding:24px 18px 28px;box-shadow:16px 0 38px rgba(0,0,0,.12);scrollbar-width:thin;scrollbar-color:rgba(207,199,177,.28) transparent}
-    .alum-section-rail__brand{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 22px;margin-bottom:16px;border-bottom:1px solid rgba(207,199,177,.16);color:#f7f3e8;text-decoration:none;text-align:center;overflow:visible}
+    .alum-section-rail__brand{display:flex;flex-direction:column;align-items:center;justify-content:center;width:max-content;max-width:100%;padding:2px 8px 8px;margin:0 auto 14px;border-bottom:1px solid rgba(207,199,177,.16);color:#f7f3e8;text-decoration:none;text-align:center;overflow:visible}
     .alum-section-rail__brand img{display:none!important}
-    .alum-section-rail__project-name{display:block;width:max-content;max-width:none;color:#f7f3e8;font:400 34px/1.15 "Cormorant Garamond",Georgia,"Times New Roman",serif;letter-spacing:.18em;text-transform:uppercase;text-align:center;text-indent:.18em;padding-top:2px;overflow:visible;white-space:nowrap}
+    .alum-section-rail__project-name{display:block;width:max-content;max-width:none;color:#f7f3e8;font:400 34px/1 "Cormorant Garamond",Georgia,"Times New Roman",serif;letter-spacing:.18em;text-transform:uppercase;text-align:center;text-indent:.18em;padding-top:0;overflow:visible;white-space:nowrap}
     .alum-section-rail__group{margin:18px 0 5px;padding:0 8px;color:rgba(207,199,177,.68);font:800 10px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.15em;text-transform:uppercase}
     .alum-section-rail__summary{margin:0 8px 7px;color:rgba(247,243,232,.42);font:600 10px/1.35 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.07em;text-transform:uppercase}
     .alum-section-rail__tabs{display:grid;gap:2px;margin-bottom:6px}
