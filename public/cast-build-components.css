@@ -649,12 +649,17 @@
   margin: 0 auto 22px;
 }
 .cast-access-eyebrow {
-  margin: 0 0 14px;
+  width: max-content;
+  max-width: min(100vw - 40px, 620px);
+  margin: 0 auto 14px;
   font-family: var(--font-caption);
   color: var(--sand-light);
   font-size: 0.72rem;
   letter-spacing: 0.24em;
+  line-height: 1.1;
+  text-align: center;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .cast-access-copy h1 {
   margin: 0;
