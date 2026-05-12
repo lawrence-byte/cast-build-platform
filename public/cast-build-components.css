@@ -638,6 +638,16 @@
 .cast-access-copy {
   min-width: 0;
   width: min(440px, 100%);
+  position: relative;
+}
+.cast-access-chat-slot {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  z-index: 30;
 }
 .cast-access-copy .cast-access-logo {
   margin: 0 auto 22px;
