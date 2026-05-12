@@ -95,7 +95,7 @@
   ];
 
   const projectName = document.body.dataset.projectName || document.querySelector('meta[name="project-name"]')?.content || 'ALÜM';
-  const projectLogo = document.body.dataset.projectLogo || '/assets/brand/horizontal-build-white-transparent.svg';
+  const projectLogo = document.body.dataset.projectLogo || '';
 
   function loadGlobalIntakeAssets() {
     if (!document.querySelector('link[data-cast-document-intake]')) {
@@ -155,8 +155,10 @@
   const css = document.createElement('style');
   css.textContent = `
     .alum-project-nav{position:sticky;top:0;z-index:1300;display:flex;align-items:center;justify-content:flex-start;gap:18px;min-height:70px;padding:10px 22px;background:rgba(24,24,22,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(207,199,177,.18);box-shadow:0 10px 30px rgba(0,0,0,.18)}
-    .alum-project-nav__brand{display:flex;align-items:center;justify-content:flex-start;flex:0 0 auto;min-width:238px;color:#f7f3e8;text-decoration:none;border-color:transparent!important;background:transparent!important;padding-inline:0!important}
-    .alum-project-nav__brand img{width:238px;max-width:100%;height:auto;display:block;object-fit:contain}
+    .alum-project-nav__brand{display:flex;align-items:center;justify-content:flex-start;flex:0 0 auto;min-width:238px;color:#f7f3e8;text-decoration:none;border-color:transparent!important;background:transparent!important;padding-inline:0!important;box-shadow:none!important}
+    .alum-project-nav__brand img{width:238px;max-width:100%;height:auto;display:block;object-fit:contain;background:transparent!important;box-shadow:none!important}
+    .alum-project-nav__wordmark{display:inline-flex;align-items:baseline;gap:12px;background:transparent!important;color:#fff;font:300 28px/1 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;box-shadow:none!important}
+    .alum-project-nav__wordmark strong{font-weight:650;letter-spacing:.16em}
     .alum-project-mark__name{display:none}
     .alum-project-nav__links{display:flex;align-items:center;justify-content:flex-start;gap:6px;min-width:0;overflow:auto;scrollbar-width:none;width:100%}
     .alum-project-nav__links::-webkit-scrollbar{display:none}
@@ -193,6 +195,7 @@
       .alum-project-nav{padding:10px 14px;position:sticky;min-height:64px}.alum-project-nav__links{justify-content:flex-start}
       .alum-project-nav__brand{min-width:170px}
       .alum-project-nav__brand img{width:170px}
+      .alum-project-nav__wordmark{font-size:20px;gap:8px;letter-spacing:.14em}
       .alum-section-rail__brand img{display:none!important}
       .alum-section-rail__project-name{font-size:30px;line-height:1.2}
       .alum-project-nav-spacer .app,.alum-project-nav-spacer .dashboard{padding-left:0!important}
@@ -228,7 +231,9 @@
   brand.className = 'alum-project-nav__brand';
   brand.href = LANDING_PAGE;
   brand.setAttribute('aria-label', 'Back to CAST Build landing page');
-  brand.innerHTML = `<img src="${projectLogo}" alt="CAST Build"><span class="alum-project-mark__name">${projectName}</span>`;
+  brand.innerHTML = projectLogo
+    ? `<img src="${projectLogo}" alt="CAST Build"><span class="alum-project-mark__name">${projectName}</span>`
+    : `<span class="alum-project-nav__wordmark" aria-label="CAST Build"><span>CAST</span><strong>BUILD</strong></span><span class="alum-project-mark__name">${projectName}</span>`;
   const topLinks = document.createElement('div');
   topLinks.className = 'alum-project-nav__links';
   for (const [label, href] of primary) topLinks.appendChild(link(label, href));
