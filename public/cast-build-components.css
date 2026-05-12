@@ -629,14 +629,18 @@
   padding-bottom: 86px;
 }
 .cast-access-content--platform {
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-  gap: clamp(42px, 6vw, 88px);
+  grid-template-columns: minmax(280px, 440px);
+  justify-content: center;
+  justify-items: center;
+  gap: clamp(30px, 5vw, 54px);
+  text-align: center;
 }
 .cast-access-copy {
   min-width: 0;
+  width: min(440px, 100%);
 }
 .cast-access-copy .cast-access-logo {
-  margin-bottom: 22px;
+  margin: 0 auto 22px;
 }
 .cast-access-eyebrow {
   margin: 0 0 14px;
@@ -692,6 +696,8 @@
 }
 .cast-access-grid--platform {
   gap: 14px;
+  width: min(380px, 100%);
+  justify-self: center;
 }
 .cast-access-grid--platform .cast-access-card {
   min-height: 128px;
