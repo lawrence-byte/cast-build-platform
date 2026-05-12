@@ -745,6 +745,14 @@
     transform: none;
   }
 }
+@media (max-width: 700px) {
+  .cast-access-content--platform {
+    padding-bottom: 96px;
+  }
+  .cast-access-chat-slot {
+    top: calc(100% + 190px);
+  }
+}
 
 /* --- project pages without the generated sidebar rail ---------------- */
 .project-dashboard-wrapper--no-rail .project-main-content {
