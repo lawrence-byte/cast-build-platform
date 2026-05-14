@@ -1,5 +1,16 @@
 # Implementation Log
 
+## 2026-05-14 — Source manifest contract validator
+
+- Added a read-first source manifest validation helper for import scripts to verify required manifest fields, normalized-record linkage, row-count reconciliation, timestamp shape, and private/local source path guardrails.
+- Added unit coverage for successful manifests/records plus blocked write-back, unreconciled row counts, private path leakage, and mismatched manifest linkage.
+- Documented the helper in the source manifest reconciliation contract.
+
+Validation:
+- `npm test`
+- `node --check api/_lib/source-manifest-contract.js tests/source-manifest-contract-tests.js`
+- `git diff --check`
+
 ## Phase 1 — Discovery and planning
 
 Completed:

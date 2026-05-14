@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "dev": "npx serve public",
-    "test": "node tests/static-platform-audit.js && node tests/alum-portal-link-flow-audit.js && node tests/rfi-tracker-unit-tests.js && node tests/submittal-tracker-unit-tests.js && node tests/document-intake-api-tests.js",
+    "test": "node tests/static-platform-audit.js && node tests/alum-portal-link-flow-audit.js && node tests/rfi-tracker-unit-tests.js && node tests/submittal-tracker-unit-tests.js && node tests/document-intake-api-tests.js && node tests/source-manifest-contract-tests.js",
     "build": "node scripts/build-static.js",
     "intake:index": "node scripts/index-dropbox-intake.js",
     "intake:alum": "node scripts/index-alum-data-room.js",

@@ -43,6 +43,10 @@ Every normalized record should preserve the source manifest linkage:
 - `sourceWritebackEnabled: false`
 - `reviewOnly: true`
 
+## Validation helper
+
+`api/_lib/source-manifest-contract.js` provides local validation for source manifests and normalized-record linkage. It checks required fields, timestamp/count shape, row-count reconciliation, private/local path leakage in stable keys, and the read-first guardrails (`sourceWritebackEnabled: false`, `reviewOnly: true`). Use it in import scripts before publishing any sanitized metadata or claiming workflow coverage.
+
 ## Reconciliation rules
 
 1. A page may say a workflow is covered only after row count reconciliation is recorded.
