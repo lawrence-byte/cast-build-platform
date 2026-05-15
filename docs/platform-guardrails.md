@@ -26,14 +26,12 @@ Use this checklist before merging overnight feature branches or creating any pre
 Run these before merging a feature branch into the integration branch:
 
 ```sh
-node --check public/projects/*.js
-npm test
-npm run build
-npm test
-find public dist -type f \( -iname '*.pdf' -o -iname '*.xlsx' -o -iname '*.xls' -o -iname '*.csv' -o -iname '*.zip' \) -print
+npm run check:guardrails
 ```
 
-The first `npm test` catches source issues; the build creates `dist/`; the second `npm test` verifies the deploy bundle did not leak raw/private artifacts or source strings.
+The guardrail script checks browser JavaScript syntax, runs source tests, builds
+`dist/`, scans `public/` and `dist/` for raw/private deployable artifacts, then
+reruns tests against the deploy bundle.
 
 ## Fast integration checklist
 

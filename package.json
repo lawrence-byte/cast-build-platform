@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "npx serve public",
     "test": "node tests/static-platform-audit.js && node tests/alum-portal-link-flow-audit.js && node tests/rfi-tracker-unit-tests.js && node tests/submittal-tracker-unit-tests.js && node tests/document-intake-api-tests.js",
+    "check:public-artifacts": "node scripts/check-public-artifacts.mjs",
+    "check:guardrails": "node --check public/projects/*.js && npm test && npm run build && npm run check:public-artifacts && npm test",
     "check:third-party-scripts": "node scripts/check-third-party-scripts.mjs",
     "build": "node scripts/build-static.js",
     "intake:index": "node scripts/index-dropbox-intake.js",
