@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "policy": "No analytics, pixels, tag managers, or third-party measurement scripts may ship without an approval record in this file. GTM approvals must list every transitive child tag loaded by the container.",
+  "approvedScripts": []
+}
+
