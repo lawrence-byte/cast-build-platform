@@ -151,7 +151,7 @@ function markupDefaults(drawing, x, y) {
     markup_type: toolMap[activeTool] || 'pin',
     tool: activeTool,
     subject: label,
-    body: `${activeTool} added in CAST Drawing Intelligence. Route to estimator/PM before budget or RFI write-back.`,
+    body: `${activeTool} added in CAST CAD. Route to estimator/PM before budget or RFI write-back.`,
     x,
     y,
     priority: activeTool === 'Overlay Compare' ? 'High' : 'Normal',

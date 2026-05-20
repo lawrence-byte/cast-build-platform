@@ -47,4 +47,4 @@ const csv = CPC.exportDrawingReviewCsv(state);
 assert.ok(csv.includes('drawing_number,subject,tool,status'), 'CSV includes drawing review headers');
 assert.ok(csv.includes('Test constructability note'), 'CSV includes created markup');
 
-console.log('Drawing intelligence unit tests passed.');
+console.log('CAST CAD unit tests passed.');
