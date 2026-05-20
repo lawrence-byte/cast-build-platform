@@ -2,6 +2,8 @@ const CPC = window.CastProjectControls;
 let state = CPC.ensureDrawingIntelligenceState(CPC.loadState());
 let selectedDrawingId = state.drawings[0]?.id || '';
 let activeTool = 'Pin';
+let uploadedPdfUrl = '';
+let uploadedPdfName = '';
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -14,6 +16,18 @@ function save() {
 
 function selectedDrawing() {
   return byId(state.drawings, selectedDrawingId) || state.drawings[0];
+}
+
+function hasUploadedPdf() {
+  return Boolean(uploadedPdfUrl);
+}
+
+function clearUploadedPdf() {
+  if (uploadedPdfUrl) URL.revokeObjectURL(uploadedPdfUrl);
+  uploadedPdfUrl = '';
+  uploadedPdfName = '';
+  const input = document.querySelector('[data-pdf-input]');
+  if (input) input.value = '';
 }
 
 function renderMetrics() {
@@ -38,12 +52,27 @@ function renderSheets() {
   }).join('');
 }
 
+function renderPdfStage() {
+  const viewer = document.querySelector('[data-viewer]');
+  const stage = document.querySelector('[data-pdf-stage]');
+  const frame = document.querySelector('[data-pdf-frame]');
+  const status = document.querySelector('[data-pdf-status]');
+  const usingPdf = hasUploadedPdf();
+  viewer?.classList.toggle('has-pdf', usingPdf);
+  if (stage) stage.hidden = !usingPdf;
+  if (frame) frame.data = usingPdf ? uploadedPdfUrl : '';
+  if (status) status.textContent = usingPdf ? `Viewing ${uploadedPdfName} · click the overlay to place CAST markups` : 'No uploaded PDF · using sample plan';
+}
+
 function renderViewer() {
   const drawing = selectedDrawing();
   if (!drawing) return;
   document.querySelector('[data-viewer-title]').textContent = `${drawing.drawing_number} · ${drawing.drawing_title} · Rev ${drawing.current_revision}`;
   document.querySelectorAll('.markup').forEach((el) => el.remove());
+  renderPdfStage();
   const viewer = document.querySelector('[data-viewer]');
+  const annotationLayer = document.querySelector('[data-annotation-layer]');
+  const targetLayer = hasUploadedPdf() && annotationLayer ? annotationLayer : viewer;
   state.drawingMarkups.filter((m) => m.drawing_id === drawing.id).forEach((markup) => {
     const el = document.createElement('button');
     el.className = `markup ${markup.markup_type || 'pin'}`;
@@ -54,7 +83,7 @@ function renderViewer() {
     el.title = markup.subject;
     el.dataset.markup = markup.id;
     el.textContent = markup.tool === 'Area Measurement' ? '□' : '!';
-    viewer.appendChild(el);
+    targetLayer.appendChild(el);
   });
 }
 
@@ -73,7 +102,7 @@ function renderMarkups() {
         <button class="cb-btn small cb-btn--ghost" data-rfi="${esc(m.id)}">Convert to RFI</button>
       </div>
     </article>`;
-  }).join('') : '<p class="muted">No markups on this sheet yet. Click Add Markup to place a comment pin using the selected tool.</p>';
+  }).join('') : '<p class="muted">No markups on this sheet yet. Click Add Markup or click the PDF overlay to place a comment pin using the selected tool.</p>';
 }
 
 function renderQuantities() {
@@ -112,12 +141,10 @@ function render() {
   renderFindings();
 }
 
-function addMarkup() {
-  const drawing = selectedDrawing();
-  if (!drawing) return;
+function markupDefaults(drawing, x, y) {
   const toolMap = { 'Pin': 'pin', 'Cloud + Callout': 'cloud', 'Area Measurement': 'measurement', 'Count': 'pin', 'Overlay Compare': 'cloud' };
   const label = activeTool === 'Area Measurement' ? 'Verify measured quantity' : activeTool === 'Overlay Compare' ? 'Review revision overlay delta' : 'New drawing comment';
-  const result = CPC.createDrawingMarkup(state, {
+  return {
     project_id: drawing.project_id,
     drawing_id: drawing.id,
     revision_id: `dwgrev_${drawing.id}_${drawing.current_revision}`,
@@ -125,20 +152,52 @@ function addMarkup() {
     tool: activeTool,
     subject: label,
     body: `${activeTool} added in CAST Drawing Intelligence. Route to estimator/PM before budget or RFI write-back.`,
-    x: 22 + Math.floor(Math.random() * 54),
-    y: 24 + Math.floor(Math.random() * 46),
+    x,
+    y,
     priority: activeTool === 'Overlay Compare' ? 'High' : 'Normal',
     trade: drawing.discipline === 'E' ? 'Electrical' : drawing.discipline === 'P' ? 'Plumbing' : drawing.discipline === 'M' ? 'Mechanical' : 'Coordination',
     cost_code: drawing.discipline === 'E' ? '26-0500' : drawing.discipline === 'P' ? '22-0500' : drawing.discipline === 'M' ? '23-0500' : '01-3100',
     assignee_user_id: state.users[2]?.id,
-    source: 'CAST Drawing Review'
-  }, actor());
+    source: hasUploadedPdf() ? 'CAST PDF Overlay' : 'CAST Drawing Review'
+  };
+}
+
+function createMarkupAt(x, y) {
+  const drawing = selectedDrawing();
+  if (!drawing) return;
+  const result = CPC.createDrawingMarkup(state, markupDefaults(drawing, x, y), actor());
   if (result.ok) {
     CPC.createDrawingComment(state, { drawing_id: drawing.id, markup_id: result.markup.id, body: result.markup.body }, actor());
     save();
     window.CASTShell?.toast?.('Drawing markup added to review queue.', { kind: 'success' });
     render();
   }
+}
+
+function addMarkup() {
+  createMarkupAt(22 + Math.floor(Math.random() * 54), 24 + Math.floor(Math.random() * 46));
+}
+
+function addMarkupFromOverlay(event) {
+  if (!event.target.closest('[data-annotation-layer]')) return;
+  if (event.target.closest('[data-markup]')) return;
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = Math.max(2, Math.min(98, ((event.clientX - rect.left) / rect.width) * 100));
+  const y = Math.max(2, Math.min(98, ((event.clientY - rect.top) / rect.height) * 100));
+  createMarkupAt(Number(x.toFixed(1)), Number(y.toFixed(1)));
+}
+
+function handlePdfUpload(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    window.CASTShell?.toast?.('Please upload a PDF drawing file.', { kind: 'error' });
+    return;
+  }
+  clearUploadedPdf();
+  uploadedPdfUrl = URL.createObjectURL(file);
+  uploadedPdfName = file.name;
+  window.CASTShell?.toast?.('PDF loaded locally. Markups remain CAST structured data.', { kind: 'success' });
+  renderViewer();
 }
 
 function verifyQuantity(id) {
@@ -214,6 +273,11 @@ document.addEventListener('click', (event) => {
     return;
   }
   if (event.target.closest('[data-add-markup]')) addMarkup();
+  if (event.target.closest('[data-clear-pdf]')) {
+    clearUploadedPdf();
+    renderViewer();
+    return;
+  }
   const verify = event.target.closest('[data-verify-qty]');
   if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]');
@@ -222,10 +286,19 @@ document.addEventListener('click', (event) => {
   if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
   if (event.target.closest('[data-export]')) exportCsv();
   if (event.target.closest('[data-reset]')) {
+    clearUploadedPdf();
     state = CPC.ensureDrawingIntelligenceState(CPC.resetState());
     selectedDrawingId = state.drawings[0]?.id || '';
     render();
   }
 });
+
+document.addEventListener('change', (event) => {
+  const input = event.target.closest('[data-pdf-input]');
+  if (input) handlePdfUpload(input.files?.[0]);
+});
+
+document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
+window.addEventListener('beforeunload', clearUploadedPdf);
 
 render();

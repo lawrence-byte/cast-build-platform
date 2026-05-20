@@ -190,13 +190,13 @@ for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawi
 }
 const drawingIntelligencePage = fs.readFileSync(path.join(root, 'public/projects/cast-drawing-intelligence.html'), 'utf8');
 const drawingIntelligenceScript = fs.readFileSync(path.join(root, 'public/projects/cast-drawing-intelligence.js'), 'utf8');
-for (const requiredDrawingSignal of ['CAST Drawing Intelligence', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore']) {
+for (const requiredDrawingSignal of ['CAST Drawing Intelligence', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore', 'Upload PDF', 'data-pdf-frame', 'data-annotation-layer', 'PDF viewer + overlay']) {
   if (!drawingIntelligencePage.includes(requiredDrawingSignal)) {
     console.error(`CAST drawing intelligence page missing signal: ${requiredDrawingSignal}`);
     failed = true;
   }
 }
-for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty']) {
+for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty', 'handlePdfUpload', 'URL.createObjectURL', 'data-pdf-input', 'addMarkupFromOverlay', 'CAST PDF Overlay']) {
   if (!drawingIntelligenceScript.includes(requiredDrawingScriptSignal)) {
     console.error(`CAST drawing intelligence script missing workflow signal: ${requiredDrawingScriptSignal}`);
     failed = true;
