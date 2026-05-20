@@ -29,6 +29,7 @@
         ['Submittals', '/projects/alum-submittals.html', 'i-clipboard'],
         ['Meeting Minutes', '/projects/alum-meeting-minutes.html', 'i-clock'],
         ['Drawing Log', '/projects/cast-drawing-log.html', 'i-document'],
+        ['Drawing Intelligence', '/projects/cast-drawing-intelligence.html', 'i-search'],
         ['Document Register', '/projects/cast-document-register.html', 'i-data'],
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
         ['Doc Intelligence', '/projects/alum-document-intelligence.html', 'i-search'],

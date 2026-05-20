@@ -16,6 +16,9 @@ Create a CAST-controlled construction management platform for Procore / CAST BUI
 - `public/projects/alum-submittals.html` — dedicated Alüm submittal module (metadata-only queue, spec sections, type/status mix)
 - `public/projects/alum-change-events.html` — dedicated Alüm change-events module (metadata-only CE buckets and budget-revision tie-out)
 - `public/projects/alum-daily-log.html` — Alüm daily-log placeholder until approved field-log metadata exists
+- `public/projects/cast-drawing-log.html` — drawing register scaffold with revisions and current/superseded status
+- `public/projects/cast-drawing-intelligence.html` — web PDF drawing review + markup + AI takeoff intake MVP scaffold; CAST-owned verification log for Drawboard/Kreo/Togal/STACK/Forma/Procore-style inputs
+- `public/projects/cast-document-register.html` — single-source document register scaffold
 - `public/pricing-models.html` — construction cost forecasting sandbox for budget/EAC/draw scenarios only; not a development underwriting model
 - `public/projects/overlook-workspace.html` — sample construction-controls shell for future project intake, with no raw/private files
 - `src/adapters/procore.ts` — future CAST BUILD A.O/Membrane adapter boundary
