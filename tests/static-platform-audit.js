@@ -1049,4 +1049,8 @@ if (fs.existsSync(distDir)) {
   }
 }
 if (failed) process.exit(1);
+const projectsPage = fs.readFileSync(path.join(root, 'public/projects.html'), 'utf8');
+if (!projectsPage.includes('/projects/cast-cad.html') || !projectsPage.includes('CAST CAD')) fail('projects portfolio must expose CAST CAD from the platform project list');
+if (failed) process.exit(1);
+
 console.log('Static platform audit passed.');
