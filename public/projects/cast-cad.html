@@ -53,6 +53,16 @@
         <div class="cad-metric"><strong data-metric="proformaDeltaAmount">—</strong><span>Pro forma delta</span></div>
       </section>
 
+      <section class="cad-panel cast-cad-command" aria-label="CAST CAD product navigation">
+        <div class="cad-panel-head"><h2>CAST CAD command center</h2><span class="badge">Phase 1–3 MVP + flagged enterprise modules</span></div>
+        <div class="cad-panel-body">
+          <div class="cast-cad-module-rail" data-cad-modules aria-label="CAST CAD module rail"></div>
+          <div class="toolbar cast-cad-top-toolbar" role="toolbar" aria-label="Viewer command toolbar">
+            <button class="tool" type="button">Open</button><button class="tool" type="button">Save</button><button class="tool" type="button">Upload</button><button class="tool" type="button">Download</button><button class="tool" type="button">Print</button><button class="tool" type="button">Share</button><button class="tool" type="button">Undo</button><button class="tool" type="button">Redo</button><button class="tool" type="button">Search</button><button class="tool" type="button">Zoom</button><button class="tool" type="button">Pan</button><button class="tool" type="button">Rotate</button><button class="tool" type="button">Snapshot</button><button class="tool" type="button">Compare</button><button class="tool" type="button">Overlay</button><button class="tool" type="button">OCR</button><button class="tool" type="button">Calibrate</button><button class="tool" type="button">Measure</button><button class="tool" type="button">Export</button>
+          </div>
+        </div>
+      </section>
+
       <section class="cad-workbench">
         <aside class="cad-panel">
           <div class="cad-panel-head"><h2>Sheets</h2><span data-sheet-count class="cad-muted">—</span></div>
@@ -116,6 +126,28 @@
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Scope / Cost Risk Findings</h2><span class="cad-muted">Human review queue</span></div>
           <div class="cad-panel-body"><div class="finding-list" data-finding-list></div></div>
+        </article>
+      </section>
+
+      <section class="cad-grid" aria-label="Enterprise module scaffolds">
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>CAST Tool Library</h2><span class="badge">Feature flag</span></div>
+          <div class="cad-panel-body"><div class="tool-list"><div class="tool-card"><em>Standard libraries</em><strong>General · Architect · Structural · MEP · Punch · Cost takeoff</strong><span>Reusable company/project/trade/user tools with properties mode, symbol mode, permissions, favorites, and import/export planned behind `castCadToolLibrary`.</span></div><div class="tool-card"><em>Custom symbols</em><strong>Door tag · ADA · Firestopping · Scope gap · VE · Cost risk</strong><span>Save any markup/group as a CAST reusable tool without copying proprietary Bluebeam naming or interface patterns.</span></div></div></div>
+        </article>
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>AI Review agents</h2><span class="badge">Human verification required</span></div>
+          <div class="cad-panel-body"><div class="tool-list" data-ai-agents></div></div>
+        </article>
+      </section>
+
+      <section class="cad-grid" aria-label="Enterprise operations roadmap">
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Batch + comparison center</h2><span class="badge">Roadmap</span></div>
+          <div class="cad-panel-body"><p class="cad-muted">Scaffolded behind feature flags: batch OCR, page labels, bookmarks, hyperlinks, compare, overlay, slip-sheet, flatten/unflatten, stamp, export, Auto Link, Dynamic Area Fill, Visual Search, and revision delta reports.</p></div>
+        </article>
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Admin, collaboration, field mode</h2><span class="badge">Governed rollout</span></div>
+          <div class="cad-panel-body"><p class="cad-muted">Review Rooms, Project Rooms, roles/permissions, external collaborators, audit logs, mobile/tablet field mode, offline sync, and integration connectors are planned as backend-enabled modules.</p></div>
         </article>
       </section>
 

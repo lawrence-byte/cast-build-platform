@@ -190,13 +190,13 @@ for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawi
 }
 const drawingIntelligencePage = fs.readFileSync(path.join(root, 'public/projects/cast-cad.html'), 'utf8');
 const drawingIntelligenceScript = fs.readFileSync(path.join(root, 'public/projects/cast-cad.js'), 'utf8');
-for (const requiredDrawingSignal of ['CAST CAD', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'Bluebeam-style markup parity target', 'Scale calibration', 'Load current drawing set', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore', 'Optional PDF override', 'data-pdf-frame', 'data-annotation-layer', 'PDF viewer + overlay', 'mozilla/pdf.js', 'wojtekmaj/react-pdf', 'rudi-q/leed_pdf_viewer', 'mlightcad/cad-viewer', 'vagran/dxf-viewer', 'elstruck/pdf-takeoff']) {
+for (const requiredDrawingSignal of ['CAST CAD', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'CAST CAD command center', 'Viewer command toolbar', 'CAST Tool Library', 'AI Review agents', 'Batch + comparison center', 'Admin, collaboration, field mode', 'Bluebeam-style markup parity target', 'Scale calibration', 'Load current drawing set', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore', 'Optional PDF override', 'data-pdf-frame', 'data-annotation-layer', 'PDF viewer + overlay', 'mozilla/pdf.js', 'wojtekmaj/react-pdf', 'rudi-q/leed_pdf_viewer', 'mlightcad/cad-viewer', 'vagran/dxf-viewer', 'elstruck/pdf-takeoff']) {
   if (!drawingIntelligencePage.includes(requiredDrawingSignal)) {
     console.error(`CAST CAD page missing signal: ${requiredDrawingSignal}`);
     failed = true;
   }
 }
-for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty', 'handlePdfUpload', 'URL.createObjectURL', 'data-pdf-input', 'addMarkupFromOverlay', 'CAST PDF Overlay', 'CURRENT_DRAWING_INDEX_URL', 'linkCurrentDrawingSet', 'currentDrawingFiles', 'data-calibrate-scale', 'Line Measurement', 'measurement_value']) {
+for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty', 'handlePdfUpload', 'URL.createObjectURL', 'data-pdf-input', 'addMarkupFromOverlay', 'CAST PDF Overlay', 'CURRENT_DRAWING_INDEX_URL', 'linkCurrentDrawingSet', 'currentDrawingFiles', 'data-calibrate-scale', 'Line Measurement', 'measurement_value', 'renderArchitectureScaffold', 'castCadArchitectureSnapshot']) {
   if (!drawingIntelligenceScript.includes(requiredDrawingScriptSignal)) {
     console.error(`CAST CAD script missing workflow signal: ${requiredDrawingScriptSignal}`);
     failed = true;
@@ -1051,6 +1051,21 @@ if (fs.existsSync(distDir)) {
 if (failed) process.exit(1);
 const projectsPage = fs.readFileSync(path.join(root, 'public/projects.html'), 'utf8');
 if (!projectsPage.includes('/projects/cast-cad.html') || !projectsPage.includes('CAST CAD')) fail('projects portfolio must expose CAST CAD from the platform project list');
+const castCadArchitecturePath = path.join(root, 'docs/cast-cad-architecture.md');
+const castCadSchemaPath = path.join(root, 'db/migrations/001_cast_cad_schema.sql');
+if (!fs.existsSync(castCadArchitecturePath)) fail('CAST CAD architecture note is required');
+if (!fs.existsSync(castCadSchemaPath)) fail('CAST CAD database migration scaffold is required');
+if (fs.existsSync(castCadArchitecturePath)) {
+  const castCadArchitecture = fs.readFileSync(castCadArchitecturePath, 'utf8');
+  for (const signal of ['Repository assessment', 'Proposed architecture', 'Build plan by phase', 'Database schema', 'API endpoints', 'Component tree', 'Background worker design', 'Integration strategy', 'AI agent strategy', 'Security model', 'MVP implementation', 'Test plan', 'Known limitations', 'Next phase backlog']) {
+    if (!castCadArchitecture.includes(signal)) fail(`CAST CAD architecture note missing section: ${signal}`);
+  }
+}
+if (fs.existsSync(castCadSchemaPath)) {
+  const castCadSchema = fs.readFileSync(castCadSchemaPath, 'utf8');
+  for (const table of ['drawing_sets', 'drawing_sheets', 'markups', 'markup_geometry', 'measurements', 'takeoff_items', 'ai_findings', 'audit_logs']) {
+    if (!castCadSchema.includes(`cast_cad_${table}`)) fail(`CAST CAD schema missing table: ${table}`);
+  }
+}
 if (failed) process.exit(1);
-
 console.log('Static platform audit passed.');

@@ -8,6 +8,33 @@
   const IMPACT_STATUSES = ['No', 'Yes Known', 'Yes Unknown', 'To Be Determined', 'Not Applicable'];
   const ROLES = ['Owner Admin', 'CAST Admin', 'Project Manager', 'Project Engineer', 'Architect', 'Consultant', 'General Contractor', 'Subcontractor', 'Read Only Viewer'];
   const STORAGE_KEY = 'cast-project-controls-v1';
+  const CAST_CAD_FEATURE_FLAGS = [
+    { key: 'castCadPdfViewer', label: 'PDF viewer and sheet index', phase: 1, enabled: true },
+    { key: 'castCadMarkups', label: 'Markup engine and Markups List', phase: 2, enabled: true },
+    { key: 'castCadMeasurements', label: 'Scale calibration and takeoff workbook', phase: 3, enabled: true },
+    { key: 'castCadToolLibrary', label: 'CAST Tool Library', phase: 4, enabled: false },
+    { key: 'castCadDrawingSets', label: 'Drawing set versions and slip-sheeting', phase: 5, enabled: false },
+    { key: 'castCadComparisonCenter', label: 'Comparison and overlay center', phase: 6, enabled: false },
+    { key: 'castCadOcrSearch', label: 'OCR, visual search, and auto link', phase: 7, enabled: false },
+    { key: 'castCadRfiSubmittalLinks', label: 'RFI/submittal linked workflows', phase: 8, enabled: false },
+    { key: 'castCadReviewRooms', label: 'Collaboration review rooms', phase: 9, enabled: false },
+    { key: 'castCadAiReview', label: 'CAST CAD AI agents', phase: 10, enabled: false },
+    { key: 'castCadAdvancedBatchMobile', label: 'Batch tools and mobile field mode', phase: 11, enabled: false },
+  ];
+  const CAST_CAD_MODULES = [
+    { key: 'drawingViewer', label: 'Drawing Viewer', phase: 1, status: 'mvp-active' },
+    { key: 'drawingSets', label: 'Drawing Sets', phase: 1, status: 'mvp-active' },
+    { key: 'markupsList', label: 'Markups List', phase: 2, status: 'mvp-active' },
+    { key: 'takeoffWorkbook', label: 'Takeoff Workbook', phase: 3, status: 'mvp-active' },
+    { key: 'castToolLibrary', label: 'CAST Tool Library', phase: 4, status: 'flagged-roadmap' },
+    { key: 'comparisonCenter', label: 'Comparison Center', phase: 6, status: 'flagged-roadmap' },
+    { key: 'ocrVisualSearch', label: 'OCR + Visual Search', phase: 7, status: 'flagged-roadmap' },
+    { key: 'reviewRooms', label: 'Review Sessions + Project Rooms', phase: 9, status: 'flagged-roadmap' },
+    { key: 'aiReview', label: 'AI Review', phase: 10, status: 'flagged-roadmap' },
+    { key: 'adminGovernance', label: 'Admin + Governance', phase: 1, status: 'architecture-required' },
+  ];
+  const CAST_CAD_AGENTS = ['Plan Reviewer', 'Compare Agent', 'Takeoff Agent', 'RFI Agent', 'Submittal Agent', 'Code Reviewer', 'Cost Risk Agent', 'Constructability Agent', 'Document Librarian', 'Lender Package Agent'].map((name, index) => ({ id: `cast_cad_agent_${index + 1}`, name, guardrail: 'AI detected until human verified', enabled: false }));
+  const CAST_CAD_DATABASE_TABLES = ['projects','drawing_sets','drawing_sheets','drawing_revisions','documents','document_versions','document_pages','document_ocr','markups','markup_geometry','markup_comments','markup_status_history','markup_attachments','tool_sets','tool_items','measurements','takeoff_items','takeoff_workbooks','spaces','levels','units','comparison_jobs','comparison_results','visual_search_jobs','batch_jobs','review_sessions','session_participants','session_activity','rfi_links','submittal_links','change_event_links','exports','audit_logs','ai_findings','ai_agent_runs','user_preferences','keyboard_shortcuts','integrations','external_collaborators','permissions'];
 
   const today = () => new Date().toISOString().slice(0, 10);
   const addDays = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); };
@@ -209,6 +236,42 @@
     const rows = state.drawingMarkups.map((m) => { const drawing = byId(state.drawings, m.drawing_id); return { ...m, drawing_number: drawing?.drawing_number || m.drawing_id }; });
     return [cols.join(','), ...rows.map((r) => cols.map((c) => csvEscape(r[c])).join(','))].join('\n');
   }
+  function normalizeCastCadPoint(point) {
+    return { x: Math.max(0, Math.min(100, Number(point?.x || 0))), y: Math.max(0, Math.min(100, Number(point?.y || 0))) };
+  }
+  function calibrateCastCadScale({ knownLength, unit = 'FT', firstPoint, secondPoint }) {
+    const length = Number(knownLength || 0);
+    const a = normalizeCastCadPoint(firstPoint);
+    const b = normalizeCastCadPoint(secondPoint);
+    const percentDistance = Number(Math.hypot(b.x - a.x, b.y - a.y).toFixed(6));
+    if (!length || !percentDistance) return { ok: false, errors: ['Known length and two distinct calibration points are required.'] };
+    const scale = { known_length: length, unit, percent_distance: percentDistance, units_per_percent: Number((length / percentDistance).toFixed(6)), calibrated_at: new Date().toISOString() };
+    return { ok: true, scale };
+  }
+  function polygonArea(points) {
+    if (points.length < 3) return 0;
+    let sum = 0;
+    points.forEach((point, i) => { const next = points[(i + 1) % points.length]; sum += point.x * next.y - next.x * point.y; });
+    return Math.abs(sum) / 2;
+  }
+  function measureCastCadGeometry({ tool, scale, points = [], count = 1 }) {
+    const normalized = points.map(normalizeCastCadPoint);
+    const unitsPerPercent = Number(scale?.units_per_percent || scale?.knownLength / scale?.percentDistance || scale?.known_length / scale?.percent_distance || 0);
+    const unit = String(scale?.unit || 'FT').toUpperCase();
+    if (/count/i.test(tool || '')) return { value: Number(count || 1), unit: 'EA', precision: 0, source: 'CAST CAD count' };
+    if (!unitsPerPercent || normalized.length < 2) return { value: 0, unit: /area/i.test(tool || '') ? 'SF' : 'LF', precision: 2, source: 'scale required' };
+    if (/area|polygon|fill/i.test(tool || '')) {
+      const value = polygonArea(normalized) * unitsPerPercent * unitsPerPercent;
+      return { value: Number(value.toFixed(2)), unit: unit === 'IN' ? 'SQ IN' : 'SF', precision: 2, source: 'CAST CAD calibrated area' };
+    }
+    let lengthPercent = 0;
+    for (let i = 1; i < normalized.length; i += 1) lengthPercent += Math.hypot(normalized[i].x - normalized[i - 1].x, normalized[i].y - normalized[i - 1].y);
+    const value = lengthPercent * unitsPerPercent;
+    return { value: Number(value.toFixed(2)), unit: unit === 'IN' ? 'IN' : 'LF', precision: 2, source: 'CAST CAD calibrated length' };
+  }
+  function castCadArchitectureSnapshot() {
+    return { featureFlags: clone(CAST_CAD_FEATURE_FLAGS), modules: clone(CAST_CAD_MODULES), agents: clone(CAST_CAD_AGENTS), databaseTables: clone(CAST_CAD_DATABASE_TABLES) };
+  }
   function csvEscape(v) { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }
   function exportRfiCsv(state, rfis = state.rfis) { const cols = ['rfi_number','revision_number','subject','status','priority','due_date','date_closed','drawing_number','cost_impact_status','schedule_impact_status']; return [cols.join(','), ...rfis.map((r) => cols.map((c) => csvEscape(r[c])).join(','))].join('\n'); }
   function dashboardMetrics(state, asOf = today()) {
@@ -267,5 +330,5 @@
   function saveState(state) { if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
   function resetState() { const seed = buildSeedState(); saveState(seed); return seed; }
 
-  return { RFI_STATUSES, RESPONSE_STATUSES, IMPACT_STATUSES, ROLES, STORAGE_KEY, buildSeedState, loadState, saveState, resetState, generateRfiNumber, validateRfi, createRfi, submitResponse, markOfficialResponse, closeRfi, reopenRfi, reviseRfi, addComment, ensureDrawingIntelligenceState, createDrawingMarkup, createDrawingComment, updateDrawingIssueStatus, verifyEstimateQuantity, drawingIntelligenceMetrics, exportDrawingReviewCsv, canViewRfi, canPerform, dashboardMetrics, filterRfis, exportRfiCsv, isOverdue, daysOpen };
+  return { RFI_STATUSES, RESPONSE_STATUSES, IMPACT_STATUSES, ROLES, STORAGE_KEY, CAST_CAD_FEATURE_FLAGS, CAST_CAD_MODULES, CAST_CAD_AGENTS, CAST_CAD_DATABASE_TABLES, buildSeedState, loadState, saveState, resetState, generateRfiNumber, validateRfi, createRfi, submitResponse, markOfficialResponse, closeRfi, reopenRfi, reviseRfi, addComment, ensureDrawingIntelligenceState, createDrawingMarkup, createDrawingComment, updateDrawingIssueStatus, verifyEstimateQuantity, drawingIntelligenceMetrics, exportDrawingReviewCsv, normalizeCastCadPoint, calibrateCastCadScale, measureCastCadGeometry, castCadArchitectureSnapshot, canViewRfi, canPerform, dashboardMetrics, filterRfis, exportRfiCsv, isOverdue, daysOpen };
 });

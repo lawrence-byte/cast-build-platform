@@ -125,6 +125,23 @@ function renderMetrics() {
     el.textContent = key === 'proformaDeltaAmount' ? money(value) : value;
   });
 }
+function renderArchitectureScaffold() {
+  const snapshot = CPC.castCadArchitectureSnapshot?.() || { modules: [], agents: [], featureFlags: [] };
+  const modules = document.querySelector('[data-cad-modules]');
+  if (modules) {
+    const navOrder = ['Projects','Drawing Sets','Documents','Review Sessions','Markups','Takeoffs','Comparisons','RFIs','Submittals','Field Photos','Punch','Reports','AI Review','Admin'];
+    modules.innerHTML = navOrder.map((label) => {
+      const normalized = label.toLowerCase().replace(/[^a-z]/g, '');
+      const match = snapshot.modules.find((module) => normalized.includes(module.label.toLowerCase().replace(/[^a-z]/g, '').slice(0, 8)) || module.label.toLowerCase().includes(label.toLowerCase().split(' ')[0]));
+      const status = match?.status || (['Projects','Documents','RFIs','Submittals','Markups','Takeoffs','Drawing Sets'].includes(label) ? 'mvp-active' : 'flagged-roadmap');
+      return `<span class="badge ${status === 'mvp-active' ? 'ok' : ''}" title="${esc(status)}">${esc(label)}</span>`;
+    }).join('');
+  }
+  const agents = document.querySelector('[data-ai-agents]');
+  if (agents) {
+    agents.innerHTML = snapshot.agents.slice(0, 10).map((agent) => `<div class="tool-card"><em>${esc(agent.enabled ? 'Enabled' : 'Feature flag')}</em><strong>${esc(agent.name)}</strong><span>${esc(agent.guardrail)} · cite source sheet/page/OCR/markup/document before user approval.</span></div>`).join('');
+  }
+}
 function renderCurrentSetSummary() {
   const summary = document.querySelector('[data-current-set-summary]');
   if (!summary) return;
@@ -257,6 +274,7 @@ function renderFindings() {
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
+  renderArchitectureScaffold();
   renderSheets();
   renderViewer();
   renderMarkups();
