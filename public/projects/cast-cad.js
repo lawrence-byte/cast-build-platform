@@ -1,5 +1,5 @@
 const CPC = window.CastProjectControls;
-const CURRENT_DRAWING_INDEX_URL = '/data/projects/golden-hill/procore-information/procore-data-tie-index.json';
+const CURRENT_DRAWING_INDEX_URL = '/safe-data/projects/golden-hill/procore-information/procore-data-tie-index.json';
 const DRAWING_STATE_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-current-set-linked`;
 const SCALES_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-sheet-scales`;
 
