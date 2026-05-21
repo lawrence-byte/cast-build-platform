@@ -155,6 +155,7 @@
     const markup = {
       id: id('markup'), project_id: input.project_id || 'broderick', drawing_id: input.drawing_id, revision_id: input.revision_id || '', markup_type: input.markup_type || 'comment-pin', tool: input.tool || 'Pin', subject: input.subject || '', body: input.body || '',
       x: Number(input.x ?? 50), y: Number(input.y ?? 50), width: Number(input.width || 0), height: Number(input.height || 0), page_number: Number(input.page_number || 1), status: input.status || 'Open', priority: input.priority || 'Normal', trade: input.trade || '', cost_code: input.cost_code || '',
+      measurement_value: input.measurement_value === undefined ? 0 : Number(input.measurement_value || 0), measurement_unit: input.measurement_unit || '', scale_label: input.scale_label || '',
       assignee_user_id: input.assignee_user_id || '', created_by_user_id: actor.id, created_at: now, updated_at: now, source: input.source || 'CAST Drawing Review'
     };
     state.drawingMarkups.push(markup);
@@ -204,7 +205,7 @@
   }
   function exportDrawingReviewCsv(state) {
     ensureDrawingIntelligenceState(state);
-    const cols = ['drawing_number','subject','tool','status','priority','trade','cost_code','body'];
+    const cols = ['drawing_number','subject','tool','status','priority','trade','cost_code','measurement_value','measurement_unit','scale_label','body'];
     const rows = state.drawingMarkups.map((m) => { const drawing = byId(state.drawings, m.drawing_id); return { ...m, drawing_number: drawing?.drawing_number || m.drawing_id }; });
     return [cols.join(','), ...rows.map((r) => cols.map((c) => csvEscape(r[c])).join(','))].join('\n');
   }

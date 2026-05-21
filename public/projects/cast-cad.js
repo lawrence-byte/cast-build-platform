@@ -1,26 +1,28 @@
 const CPC = window.CastProjectControls;
+const CURRENT_DRAWING_INDEX_URL = '/data/projects/golden-hill/procore-information/procore-data-tie-index.json';
+const DRAWING_STATE_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-current-set-linked`;
+const SCALES_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-sheet-scales`;
+
 let state = CPC.ensureDrawingIntelligenceState(CPC.loadState());
 let selectedDrawingId = state.drawings[0]?.id || '';
 let activeTool = 'Pin';
 let uploadedPdfUrl = '';
 let uploadedPdfName = '';
+let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
+let drawingScales = loadDrawingScales();
+let calibration = null;
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 const byId = (rows, id) => rows.find((row) => row.id === id);
 const actor = () => state.users[0];
 
-function save() {
-  CPC.saveState(state);
-}
-
-function selectedDrawing() {
-  return byId(state.drawings, selectedDrawingId) || state.drawings[0];
-}
-
-function hasUploadedPdf() {
-  return Boolean(uploadedPdfUrl);
-}
+function save() { CPC.saveState(state); }
+function selectedDrawing() { return byId(state.drawings, selectedDrawingId) || state.drawings[0]; }
+function hasUploadedPdf() { return Boolean(uploadedPdfUrl); }
+function loadDrawingScales() { try { return JSON.parse(localStorage.getItem(SCALES_KEY) || '{}'); } catch { return {}; } }
+function saveDrawingScales() { try { localStorage.setItem(SCALES_KEY, JSON.stringify(drawingScales)); } catch {} }
+function currentScale() { return drawingScales[selectedDrawingId] || null; }
 
 function clearUploadedPdf() {
   if (uploadedPdfUrl) URL.revokeObjectURL(uploadedPdfUrl);
@@ -28,6 +30,91 @@ function clearUploadedPdf() {
   uploadedPdfName = '';
   const input = document.querySelector('[data-pdf-input]');
   if (input) input.value = '';
+}
+
+function slugId(input, fallback) {
+  return `alum_${String(input || fallback || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 80)}`;
+}
+function drawingNumberFromName(name) {
+  const base = String(name || '').replace(/\.pdf$/i, '');
+  const match = base.match(/^([A-Z]+[_-]?\d+(?:\.\d+)?)/i);
+  return match ? match[1].replace('_', '-') : base.slice(0, 32);
+}
+function titleFromName(name) {
+  return String(name || '').replace(/\.pdf$/i, '').replace(/^[A-Z]+[_-]?\d+(?:\.\d+)?[-_]?/i, '').replace(/[-_]+/g, ' ').replace(/\bRev\.?\s*\d+\b/i, '').trim() || 'Drawing sheet';
+}
+function revisionFromName(name) {
+  return String(name || '').match(/Rev\.?\s*(\d+)/i)?.[1] || '0';
+}
+function disciplineFromPath(path) {
+  return String(path || '').split('/')[1] || 'Current Drawings';
+}
+function currentDrawingFiles(index) {
+  return (index.files || [])
+    .filter((file) => file.topFolder === 'Current Drawings' && file.extension === 'pdf')
+    .filter((file) => /\//.test(file.path || ''))
+    .sort((a, b) => String(a.path).localeCompare(String(b.path), undefined, { numeric: true }));
+}
+function convertFileToDrawing(file, i) {
+  const discipline = disciplineFromPath(file.path);
+  const drawingNumber = drawingNumberFromName(file.name);
+  return {
+    id: slugId(file.path, `sheet_${i}`),
+    project_id: 'alum',
+    drawing_number: drawingNumber,
+    drawing_title: titleFromName(file.name),
+    discipline,
+    current_revision: revisionFromName(file.name),
+    drawing_date: String(file.modifiedAt || '').slice(0, 10),
+    received_date: String(file.modifiedAt || '').slice(0, 10),
+    set_name: 'Alüm Current Drawings',
+    area: discipline,
+    status: 'Current',
+    file_url: '',
+    source_path: file.path,
+    source_name: file.name,
+    source_size_label: file.sizeLabel || '',
+    source_boundary: 'private-current-drawing-set',
+    created_at: String(file.modifiedAt || new Date().toISOString()).slice(0, 10),
+    updated_at: String(file.modifiedAt || new Date().toISOString()).slice(0, 10),
+  };
+}
+function linkCurrentDrawingSet(index, { force = false } = {}) {
+  const files = currentDrawingFiles(index);
+  if (!files.length) return { ok: false, count: 0 };
+  const drawings = files.map(convertFileToDrawing);
+  const existingById = new Map((state.drawings || []).map((drawing) => [drawing.id, drawing]));
+  const merged = drawings.map((drawing) => ({ ...(existingById.get(drawing.id) || {}), ...drawing }));
+  const nonAlum = force ? (state.drawings || []).filter((drawing) => !String(drawing.id).startsWith('alum_')) : [];
+  state.drawings = force ? [...merged, ...nonAlum] : [...merged, ...state.drawings.filter((drawing) => !String(drawing.id).startsWith('alum_'))];
+  state.drawingSets = [
+    ...(state.drawingSets || []).filter((set) => set.id !== 'alum-current-drawings'),
+    { id: 'alum-current-drawings', project_id: 'alum', name: 'Alüm Current Drawings', sheet_count: drawings.length, source_index: CURRENT_DRAWING_INDEX_URL },
+  ];
+  selectedDrawingId = state.drawings.find((drawing) => String(drawing.id).startsWith('alum_'))?.id || selectedDrawingId;
+  currentSetMeta = {
+    status: 'loaded',
+    count: drawings.length,
+    disciplines: [...new Set(drawings.map((drawing) => drawing.discipline))].sort(),
+  };
+  try { localStorage.setItem(DRAWING_STATE_KEY, 'true'); } catch {}
+  save();
+  return { ok: true, count: drawings.length };
+}
+async function loadCurrentDrawingSet({ force = false, toast = false } = {}) {
+  try {
+    const response = await fetch(CURRENT_DRAWING_INDEX_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const index = await response.json();
+    const result = linkCurrentDrawingSet(index, { force });
+    if (!result.ok) throw new Error('No current drawing PDFs found in metadata index.');
+    if (toast) window.CASTShell?.toast?.(`Linked ${result.count} current drawing sheets.`, { kind: 'success' });
+  } catch (error) {
+    currentSetMeta = { status: 'error', count: 0, disciplines: [] };
+    console.warn('Could not link current drawing set', error);
+    if (toast) window.CASTShell?.toast?.('Could not load current drawing set metadata.', { kind: 'error' });
+  }
+  render();
 }
 
 function renderMetrics() {
@@ -38,38 +125,76 @@ function renderMetrics() {
     el.textContent = key === 'proformaDeltaAmount' ? money(value) : value;
   });
 }
-
+function renderCurrentSetSummary() {
+  const summary = document.querySelector('[data-current-set-summary]');
+  if (!summary) return;
+  if (currentSetMeta.status === 'loaded') {
+    summary.textContent = `${currentSetMeta.count.toLocaleString()} current PDF sheets linked from metadata · ${currentSetMeta.disciplines.slice(0, 7).join(', ')}${currentSetMeta.disciplines.length > 7 ? '…' : ''}`;
+  } else if (currentSetMeta.status === 'error') {
+    summary.textContent = 'Metadata link failed; sample seed drawings remain available.';
+  } else {
+    summary.textContent = 'Loading current drawing set metadata…';
+  }
+}
 function renderSheets() {
-  const rows = state.drawings.slice(0, 16);
-  document.querySelector('[data-sheet-count]').textContent = `${state.drawings.length} sheets`;
-  document.querySelector('[data-sheet-list]').innerHTML = rows.map((drawing) => {
+  const rows = state.drawings.slice(0, 80);
+  const countEl = document.querySelector('[data-sheet-count]');
+  if (countEl) countEl.textContent = `${state.drawings.length.toLocaleString()} sheets`;
+  const list = document.querySelector('[data-sheet-list]');
+  if (!list) return;
+  list.innerHTML = rows.map((drawing) => {
     const markups = state.drawingMarkups.filter((m) => m.drawing_id === drawing.id).length;
     const quantities = state.estimateQuantities.filter((q) => q.drawing_id === drawing.id).length;
+    const linked = drawing.source_boundary ? ' · linked current set' : '';
     return `<button class="sheet-btn ${drawing.id === selectedDrawingId ? 'active' : ''}" data-sheet="${esc(drawing.id)}">
       <strong>${esc(drawing.drawing_number)} · ${esc(drawing.drawing_title)}</strong>
-      <span class="muted">${esc(drawing.discipline)} · Rev ${esc(drawing.current_revision)} · ${markups} markups · ${quantities} AI quantities</span>
+      <span class="muted">${esc(drawing.discipline)} · Rev ${esc(drawing.current_revision)} · ${markups} markups · ${quantities} quantities${linked}</span>
     </button>`;
   }).join('');
 }
-
+function renderScaleStatus() {
+  const el = document.querySelector('[data-scale-status]');
+  if (!el) return;
+  const scale = currentScale();
+  if (calibration?.drawingId === selectedDrawingId) {
+    el.textContent = calibration.first ? 'Click second calibration point on the drawing.' : 'Click first calibration point on the drawing.';
+  } else if (scale) {
+    el.textContent = `Scale set: ${scale.knownLength} ${scale.unit} = ${scale.percentDistance.toFixed(2)}% screen distance.`;
+  } else {
+    el.textContent = 'Scale not calibrated for this sheet.';
+  }
+}
 function renderPdfStage() {
   const viewer = document.querySelector('[data-viewer]');
   const stage = document.querySelector('[data-pdf-stage]');
   const frame = document.querySelector('[data-pdf-frame]');
   const status = document.querySelector('[data-pdf-status]');
+  const drawing = selectedDrawing();
   const usingPdf = hasUploadedPdf();
   viewer?.classList.toggle('has-pdf', usingPdf);
   if (stage) stage.hidden = !usingPdf;
   if (frame) frame.data = usingPdf ? uploadedPdfUrl : '';
-  if (status) status.textContent = usingPdf ? `Viewing ${uploadedPdfName} · click the overlay to place CAST markups` : 'No uploaded PDF · using sample plan';
+  if (status) {
+    if (usingPdf) status.textContent = `Viewing ${uploadedPdfName} · click the overlay to place CAST markups`;
+    else if (drawing?.source_boundary) status.textContent = `Linked: ${drawing.source_name || drawing.drawing_number} · PDF stream pending authenticated file gate; editing/takeoff overlay is active.`;
+    else status.textContent = 'No PDF stream · using sample plan overlay';
+  }
+  renderScaleStatus();
 }
-
+function markupLabel(markup) {
+  if (markup.measurement_value) return `${Number(markup.measurement_value).toLocaleString()} ${markup.measurement_unit || ''}`.trim();
+  if (markup.tool === 'Count') return '1';
+  if (markup.tool === 'Area Measurement') return '□';
+  if (markup.tool === 'Line Measurement') return '—';
+  return '!';
+}
 function renderViewer() {
   const drawing = selectedDrawing();
   if (!drawing) return;
   document.querySelector('[data-viewer-title]').textContent = `${drawing.drawing_number} · ${drawing.drawing_title} · Rev ${drawing.current_revision}`;
   document.querySelectorAll('.markup').forEach((el) => el.remove());
   renderPdfStage();
+  renderCurrentSetSummary();
   const viewer = document.querySelector('[data-viewer]');
   const annotationLayer = document.querySelector('[data-annotation-layer]');
   const targetLayer = hasUploadedPdf() && annotationLayer ? annotationLayer : viewer;
@@ -82,29 +207,29 @@ function renderViewer() {
     if (markup.height) el.style.height = `${markup.height}%`;
     el.title = markup.subject;
     el.dataset.markup = markup.id;
-    el.textContent = markup.tool === 'Area Measurement' ? '□' : '!';
+    el.textContent = markupLabel(markup);
     targetLayer.appendChild(el);
   });
 }
-
 function renderMarkups() {
   const drawing = selectedDrawing();
   const rows = state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id);
   document.querySelector('[data-markup-list]').innerHTML = rows.length ? rows.map((m) => {
     const assignee = byId(state.users, m.assignee_user_id);
+    const measurement = m.measurement_value ? `<p class="muted"><strong>Takeoff:</strong> ${Number(m.measurement_value).toLocaleString()} ${esc(m.measurement_unit || '')} · scale ${esc(m.scale_label || 'sheet scale')}</p>` : '';
     return `<article class="comment-card" data-card="${esc(m.id)}">
       <div class="actions"><span class="badge ${m.status === 'Open' ? 'open' : ''}">${esc(m.status)}</span><span class="badge ${m.priority === 'High' || m.priority === 'Urgent' ? 'high' : ''}">${esc(m.priority)}</span></div>
       <h3>${esc(m.subject || m.tool)}</h3>
       <p class="muted">${esc(m.body)}</p>
+      ${measurement}
       <p class="muted"><strong>${esc(m.tool)}</strong> · ${esc(m.trade || 'Unassigned trade')} · ${esc(m.cost_code || 'No cost code')} · Assigned to ${esc(assignee?.name || 'Unassigned')}</p>
       <div class="actions">
         <button class="cb-btn small cb-btn--ghost" data-resolve="${esc(m.id)}">Resolve</button>
         <button class="cb-btn small cb-btn--ghost" data-rfi="${esc(m.id)}">Convert to RFI</button>
       </div>
     </article>`;
-  }).join('') : '<p class="muted">No markups on this sheet yet. Click Add Markup or click the PDF overlay to place a comment pin using the selected tool.</p>';
+  }).join('') : '<p class="muted">No markups on this sheet yet. Click Add Markup or click the drawing overlay to place a comment, measurement, count, cloud, or takeoff item.</p>';
 }
-
 function renderQuantities() {
   document.querySelector('[data-quantity-rows]').innerHTML = state.estimateQuantities.map((q) => {
     const statusClass = q.verification_status === 'Verified' ? 'ok' : 'open';
@@ -121,7 +246,6 @@ function renderQuantities() {
     </tr>`;
   }).join('');
 }
-
 function renderFindings() {
   document.querySelector('[data-finding-list]').innerHTML = state.estimateFindings.map((f) => `<article class="risk">
     <div class="actions"><span class="badge ${f.severity === 'High' ? 'high' : 'open'}">${esc(f.severity)}</span><span class="badge">${esc(f.finding_type)}</span><span class="badge">${esc(f.status)}</span></div>
@@ -130,7 +254,6 @@ function renderFindings() {
     <p><strong>Suggested action:</strong> ${esc(f.suggested_action)}</p>
   </article>`).join('');
 }
-
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -140,10 +263,21 @@ function render() {
   renderQuantities();
   renderFindings();
 }
-
+function measurementFor(tool, x, y) {
+  const scale = currentScale();
+  if (!['Line Measurement', 'Area Measurement', 'Count'].includes(tool)) return {};
+  if (tool === 'Count') return { measurement_value: 1, measurement_unit: 'EA', scale_label: 'count item' };
+  if (!scale) return { measurement_value: 0, measurement_unit: tool === 'Area Measurement' ? 'SF' : 'LF', scale_label: 'scale required' };
+  const dx = Math.abs(x - 50) || 12;
+  const dy = Math.abs(y - 50) || 8;
+  const unitsPerPercent = scale.knownLength / scale.percentDistance;
+  if (tool === 'Line Measurement') return { measurement_value: Number((Math.hypot(dx, dy) * unitsPerPercent).toFixed(2)), measurement_unit: scale.unit === 'IN' ? 'IN' : 'LF', scale_label: `${scale.knownLength} ${scale.unit}` };
+  return { measurement_value: Number((dx * unitsPerPercent * dy * unitsPerPercent).toFixed(2)), measurement_unit: scale.unit === 'IN' ? 'SQ IN' : 'SF', scale_label: `${scale.knownLength} ${scale.unit}` };
+}
 function markupDefaults(drawing, x, y) {
-  const toolMap = { 'Pin': 'pin', 'Cloud + Callout': 'cloud', 'Area Measurement': 'measurement', 'Count': 'pin', 'Overlay Compare': 'cloud' };
-  const label = activeTool === 'Area Measurement' ? 'Verify measured quantity' : activeTool === 'Overlay Compare' ? 'Review revision overlay delta' : 'New drawing comment';
+  const toolMap = { 'Pin': 'pin', 'Cloud + Callout': 'cloud', 'Text Box': 'pin', 'Highlight': 'cloud', 'Arrow': 'pin', 'Line Measurement': 'measurement', 'Area Measurement': 'measurement', 'Count': 'pin', 'Overlay Compare': 'cloud' };
+  const label = activeTool === 'Area Measurement' ? 'Measured area takeoff' : activeTool === 'Line Measurement' ? 'Measured length takeoff' : activeTool === 'Count' ? 'Count takeoff item' : activeTool === 'Overlay Compare' ? 'Review revision overlay delta' : 'New drawing comment';
+  const measurement = measurementFor(activeTool, x, y);
   return {
     project_id: drawing.project_id,
     drawing_id: drawing.id,
@@ -151,42 +285,85 @@ function markupDefaults(drawing, x, y) {
     markup_type: toolMap[activeTool] || 'pin',
     tool: activeTool,
     subject: label,
-    body: `${activeTool} added in CAST CAD. Route to estimator/PM before budget or RFI write-back.`,
-    x,
-    y,
+    body: `${activeTool} added in CAST CAD. Route to estimator/PM before budget, RFI, or PDF write-back.`,
+    x, y,
+    width: activeTool.includes('Measurement') || activeTool === 'Highlight' ? 18 : 0,
+    height: activeTool === 'Area Measurement' || activeTool === 'Highlight' ? 12 : 0,
     priority: activeTool === 'Overlay Compare' ? 'High' : 'Normal',
-    trade: drawing.discipline === 'E' ? 'Electrical' : drawing.discipline === 'P' ? 'Plumbing' : drawing.discipline === 'M' ? 'Mechanical' : 'Coordination',
-    cost_code: drawing.discipline === 'E' ? '26-0500' : drawing.discipline === 'P' ? '22-0500' : drawing.discipline === 'M' ? '23-0500' : '01-3100',
+    trade: ['Electrical', 'Plumbing', 'Mechanical'].find((trade) => drawing.discipline?.includes(trade)) || (drawing.discipline === 'Electrical' ? 'Electrical' : drawing.discipline === 'Plumbing' ? 'Plumbing' : drawing.discipline === 'Mechanical' ? 'Mechanical' : 'Coordination'),
+    cost_code: drawing.discipline === 'Electrical' ? '26-0500' : drawing.discipline === 'Plumbing' ? '22-0500' : drawing.discipline === 'Mechanical' ? '23-0500' : '01-3100',
     assignee_user_id: state.users[2]?.id,
-    source: hasUploadedPdf() ? 'CAST PDF Overlay' : 'CAST Drawing Review'
+    source: hasUploadedPdf() ? 'CAST PDF Overlay' : drawing.source_boundary ? 'CAST Current Drawing Set Overlay' : 'CAST Drawing Review',
+    ...measurement,
   };
 }
-
 function createMarkupAt(x, y) {
   const drawing = selectedDrawing();
   if (!drawing) return;
   const result = CPC.createDrawingMarkup(state, markupDefaults(drawing, x, y), actor());
   if (result.ok) {
     CPC.createDrawingComment(state, { drawing_id: drawing.id, markup_id: result.markup.id, body: result.markup.body }, actor());
+    if (result.markup.measurement_value || result.markup.tool === 'Count') {
+      state.estimateQuantities.unshift({
+        id: `qty_${result.markup.id}`,
+        project_id: drawing.project_id,
+        drawing_id: drawing.id,
+        source_sheet: drawing.drawing_number,
+        item: result.markup.subject,
+        trade: result.markup.trade,
+        cost_code: result.markup.cost_code,
+        quantity: Number(result.markup.measurement_value || 1),
+        unit: result.markup.measurement_unit || 'EA',
+        ai_tool: 'CAST CAD manual takeoff',
+        confidence: result.markup.scale_label === 'scale required' ? 35 : 100,
+        verification_status: 'Needs Review',
+        proforma_quantity: 0,
+        proforma_delta_amount: 0,
+        reviewed_by_user_id: '',
+        reviewed_at: '',
+        notes: result.markup.scale_label === 'scale required' ? 'Set sheet scale before budget-authoritative use.' : `Measured from calibrated sheet scale (${result.markup.scale_label}).`,
+      });
+    }
     save();
     window.CASTShell?.toast?.('Drawing markup added to review queue.', { kind: 'success' });
     render();
   }
 }
-
-function addMarkup() {
-  createMarkupAt(22 + Math.floor(Math.random() * 54), 24 + Math.floor(Math.random() * 46));
-}
-
-function addMarkupFromOverlay(event) {
-  if (!event.target.closest('[data-annotation-layer]')) return;
-  if (event.target.closest('[data-markup]')) return;
+function addMarkup() { createMarkupAt(22 + Math.floor(Math.random() * 54), 24 + Math.floor(Math.random() * 46)); }
+function percentPoint(event) {
   const rect = event.currentTarget.getBoundingClientRect();
-  const x = Math.max(2, Math.min(98, ((event.clientX - rect.left) / rect.width) * 100));
-  const y = Math.max(2, Math.min(98, ((event.clientY - rect.top) / rect.height) * 100));
-  createMarkupAt(Number(x.toFixed(1)), Number(y.toFixed(1)));
+  return {
+    x: Math.max(2, Math.min(98, ((event.clientX - rect.left) / rect.width) * 100)),
+    y: Math.max(2, Math.min(98, ((event.clientY - rect.top) / rect.height) * 100)),
+  };
 }
-
+function handleCalibrationClick(point) {
+  if (!calibration || calibration.drawingId !== selectedDrawingId) return false;
+  if (!calibration.first) {
+    calibration.first = point;
+    renderScaleStatus();
+    return true;
+  }
+  const knownLength = Number(document.querySelector('[data-scale-known]')?.value || 0);
+  const unit = document.querySelector('[data-scale-unit]')?.value || 'FT';
+  const percentDistance = Math.hypot(point.x - calibration.first.x, point.y - calibration.first.y);
+  if (knownLength > 0 && percentDistance > 0) {
+    drawingScales[selectedDrawingId] = { knownLength, unit, percentDistance, calibratedAt: new Date().toISOString() };
+    saveDrawingScales();
+    window.CASTShell?.toast?.('Sheet scale calibrated. Length, area, and count takeoffs are now enabled for this sheet.', { kind: 'success' });
+  }
+  calibration = null;
+  render();
+  return true;
+}
+function addMarkupFromOverlay(event) {
+  const interactive = event.target.closest('[data-annotation-layer], [data-viewer]');
+  if (!interactive) return;
+  if (event.target.closest('[data-markup]')) return;
+  const point = percentPoint(event);
+  if (handleCalibrationClick(point)) return;
+  createMarkupAt(Number(point.x.toFixed(1)), Number(point.y.toFixed(1)));
+}
 function handlePdfUpload(file) {
   if (!file) return;
   if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
@@ -199,24 +376,11 @@ function handlePdfUpload(file) {
   window.CASTShell?.toast?.('PDF loaded locally. Markups remain CAST structured data.', { kind: 'success' });
   renderViewer();
 }
-
 function verifyQuantity(id) {
   const result = CPC.verifyEstimateQuantity(state, id, actor(), { status: 'Verified', notes: 'Verified in CAST estimate log; ready for controlled export.' });
-  if (result.ok) {
-    save();
-    window.CASTShell?.toast?.('AI quantity verified and locked in CAST estimate log.', { kind: 'success' });
-    render();
-  }
+  if (result.ok) { save(); window.CASTShell?.toast?.('Quantity verified and locked in CAST estimate log.', { kind: 'success' }); render(); }
 }
-
-function resolveMarkup(id) {
-  const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor());
-  if (result.ok) {
-    save();
-    render();
-  }
-}
-
+function resolveMarkup(id) { const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor()); if (result.ok) { save(); render(); } }
 function exportCsv() {
   const rows = state.drawingMarkups.map((m) => {
     const drawing = byId(state.drawings, m.drawing_id);
@@ -230,6 +394,8 @@ function exportCsv() {
       priority: m.priority,
       trade: m.trade,
       cost_code: m.cost_code,
+      quantity: m.measurement_value || '',
+      unit: m.measurement_unit || '',
       assignee: assignee?.name || '',
       body: m.body,
     };
@@ -244,6 +410,8 @@ function exportCsv() {
       { key: 'priority', header: 'Priority' },
       { key: 'trade', header: 'Trade' },
       { key: 'cost_code', header: 'Cost Code' },
+      { key: 'quantity', header: 'Quantity' },
+      { key: 'unit', header: 'Unit' },
       { key: 'assignee', header: 'Assignee', width: 24 },
       { key: 'body', header: 'Notes', width: 50 },
     ], rows);
@@ -261,44 +429,27 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) {
-    selectedDrawingId = sheet.dataset.sheet;
-    render();
-    return;
-  }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; render(); return; }
   const tool = event.target.closest('[data-tool]');
-  if (tool) {
-    activeTool = tool.dataset.tool;
-    document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool));
-    return;
-  }
+  if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
-  if (event.target.closest('[data-clear-pdf]')) {
-    clearUploadedPdf();
-    renderViewer();
-    return;
-  }
-  const verify = event.target.closest('[data-verify-qty]');
-  if (verify) verifyQuantity(verify.dataset.verifyQty);
-  const resolve = event.target.closest('[data-resolve]');
-  if (resolve) resolveMarkup(resolve.dataset.resolve);
-  const rfi = event.target.closest('[data-rfi]');
-  if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
+  if (event.target.closest('[data-load-current-set]')) { loadCurrentDrawingSet({ force: true, toast: true }); return; }
+  if (event.target.closest('[data-calibrate-scale]')) { calibration = { drawingId: selectedDrawingId, first: null }; renderScaleStatus(); window.CASTShell?.toast?.('Click two points on the sheet that match the known length.', { kind: 'info' }); return; }
+  if (event.target.closest('[data-clear-pdf]')) { clearUploadedPdf(); renderViewer(); return; }
+  const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
+  const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
+  const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
   if (event.target.closest('[data-export]')) exportCsv();
-  if (event.target.closest('[data-reset]')) {
-    clearUploadedPdf();
-    state = CPC.ensureDrawingIntelligenceState(CPC.resetState());
-    selectedDrawingId = state.drawings[0]?.id || '';
-    render();
-  }
+  if (event.target.closest('[data-reset]')) { clearUploadedPdf(); calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
 });
 
 document.addEventListener('change', (event) => {
   const input = event.target.closest('[data-pdf-input]');
   if (input) handlePdfUpload(input.files?.[0]);
 });
-
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
+document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFromOverlay);
 window.addEventListener('beforeunload', clearUploadedPdf);
 
 render();
+loadCurrentDrawingSet({ force: false, toast: false });

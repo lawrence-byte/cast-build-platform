@@ -6,7 +6,7 @@
   const HOME = '/projects/golden-hill-procore.html';
   const rawPath = window.location.pathname;
   const path = rawPath.endsWith('.html') ? rawPath : rawPath + '.html';
-  if (!/^\/projects\/(alum-|golden-hill)/.test(path)) return;
+  if (!/^\/projects\/(alum-|golden-hill|cast-)/.test(path)) return;
   if (document.querySelector('.alum-project-nav')) return;
 
   const groups = [
@@ -25,11 +25,11 @@
       label: 'Documents',
       summary: 'RFIs, submittals, drawings, specs, data room',
       items: [
+        ['CAST CAD', '/projects/cast-cad.html', 'i-search'],
         ['RFIs', '/projects/alum-rfis.html', 'i-help'],
         ['Submittals', '/projects/alum-submittals.html', 'i-clipboard'],
         ['Meeting Minutes', '/projects/alum-meeting-minutes.html', 'i-clock'],
         ['Drawing Log', '/projects/cast-drawing-log.html', 'i-document'],
-        ['CAST CAD', '/projects/cast-cad.html', 'i-search'],
         ['Document Register', '/projects/cast-document-register.html', 'i-data'],
         ['Documents', '/projects/golden-hill-documents.html', 'i-document'],
         ['Doc Intelligence', '/projects/alum-document-intelligence.html', 'i-search'],

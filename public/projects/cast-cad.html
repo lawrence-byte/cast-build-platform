@@ -62,14 +62,25 @@
         <section class="cad-panel">
           <div class="cad-panel-head"><h2>PDF Review Workbench</h2><span class="badge">PDF viewer + overlay</span></div>
           <div class="cad-panel-body">
-            <div class="pdf-intake" aria-label="Local PDF upload">
-              <label>Upload PDF <input type="file" name="drawing_pdf" accept="application/pdf" data-pdf-input autocomplete="off"></label>
-              <button class="cb-btn small cb-btn--ghost" type="button" data-clear-pdf>Use sample plan</button>
-              <span class="pdf-status" data-pdf-status aria-live="polite">No uploaded PDF · using sample plan</span>
+            <div class="pdf-intake" aria-label="Current drawing set and local PDF upload">
+              <button class="cb-btn small" type="button" data-load-current-set>Load current drawing set</button>
+              <label>Optional PDF override <input type="file" name="drawing_pdf" accept="application/pdf" data-pdf-input autocomplete="off"></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-clear-pdf>Use linked sheet / sample plan</button>
+              <span class="pdf-status" data-pdf-status aria-live="polite">Current Alüm drawing set metadata loading…</span>
             </div>
-            <div class="toolbar" role="toolbar" aria-label="Markup tools">
+            <div class="pdf-intake cad-scale-bar" aria-label="Scale and takeoff controls">
+              <label>Known length <input type="number" min="0" step="0.01" value="20" data-scale-known autocomplete="off"></label>
+              <label>Unit <select data-scale-unit><option>FT</option><option>IN</option><option>LF</option><option>SF</option><option>EA</option></select></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-calibrate-scale>Calibrate scale</button>
+              <span class="pdf-status" data-scale-status>Scale not calibrated for this sheet.</span>
+            </div>
+            <div class="toolbar" role="toolbar" aria-label="Markup and takeoff tools">
               <button class="tool active" type="button" data-tool="Pin">Pin</button>
               <button class="tool" type="button" data-tool="Cloud + Callout">Cloud</button>
+              <button class="tool" type="button" data-tool="Text Box">Text</button>
+              <button class="tool" type="button" data-tool="Highlight">Highlight</button>
+              <button class="tool" type="button" data-tool="Arrow">Arrow</button>
+              <button class="tool" type="button" data-tool="Line Measurement">Length</button>
               <button class="tool" type="button" data-tool="Area Measurement">Area</button>
               <button class="tool" type="button" data-tool="Count">Count</button>
               <button class="tool" type="button" data-tool="Overlay Compare">Overlay</button>
@@ -108,6 +119,29 @@
         </article>
       </section>
 
+      <section class="cad-grid" aria-label="Bluebeam capability parity">
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Bluebeam-style markup parity target</h2><span class="badge">Build scope</span></div>
+          <div class="cad-panel-body">
+            <div class="tool-list">
+              <div class="tool-card"><em>Comments</em><strong>Pin · cloud · callout · text · highlight · arrow</strong><span>Structured CAST markups with status, assignee, priority, trade, cost code, comments, and Excel export.</span></div>
+              <div class="tool-card"><em>Takeoff</em><strong>Scale calibration · length · area · count</strong><span>Set a known construction dimension per sheet, then create length/area/count quantities that stay in Needs Review until verified.</span></div>
+              <div class="tool-card"><em>Drawing control</em><strong>Current set · revisions · overlay compare</strong><span>Loads the current Alüm drawing register automatically and keeps raw source drawings inside the approved private document boundary until authenticated file streaming is enabled.</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Current drawing set source</h2><span class="badge">No manual file load</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">CAST CAD reads the published Alüm drawing metadata index, selects sheets from the current drawing set, and stores markups/takeoff edits as CAST structured data. PDF streaming remains guarded so private project drawings are not published as raw public assets.</p>
+            <div class="tool-list">
+              <div class="tool-card"><em>Source index</em><strong>Alüm Current Drawings</strong><span data-current-set-summary>Loading current drawing set metadata…</span></div>
+              <div class="tool-card"><em>Next backend gate</em><strong>Authenticated PDF stream</strong><span>Connect approved Dropbox/CAST Server file streaming after auth so selected sheets render directly without exposing public PDF URLs.</span></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
       <section class="cad-grid" aria-label="Integration radar">
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Seamless tool path</h2><span class="badge">GitHub scan</span></div>
@@ -135,5 +169,7 @@
   <script src="/cast-xlsx-export.js"></script>
   <script src="/projects/cast-project-controls-data.js"></script>
   <script src="/projects/cast-cad.js"></script>
+  <script src="/projects/alum-project-nav.js" defer></script>
+  <script src="/cast-team-assistant.js" defer></script>
 </body>
 </html>

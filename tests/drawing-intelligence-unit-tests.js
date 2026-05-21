@@ -43,8 +43,22 @@ assert.ok(metrics.openMarkups >= 1, 'metrics include open markup count');
 assert.ok(metrics.verifiedQuantities >= 2, 'metrics include verified quantities');
 assert.ok(metrics.proformaDeltaAmount > 0, 'metrics include pro forma delta');
 
+const measured = CPC.createDrawingMarkup(state, {
+  drawing_id: state.drawings[2].id,
+  tool: 'Line Measurement',
+  subject: 'Unit test measured length',
+  body: 'Measured from calibrated CAST CAD sheet scale',
+  measurement_value: 42.5,
+  measurement_unit: 'LF',
+  scale_label: '20 FT',
+}, actor);
+assert.equal(measured.ok, true, 'createDrawingMarkup stores measured takeoff markup');
+assert.equal(measured.markup.measurement_value, 42.5, 'measurement value persists on markup');
+assert.equal(measured.markup.measurement_unit, 'LF', 'measurement unit persists on markup');
+
 const csv = CPC.exportDrawingReviewCsv(state);
-assert.ok(csv.includes('drawing_number,subject,tool,status'), 'CSV includes drawing review headers');
+assert.ok(csv.includes('drawing_number,subject,tool,status,priority,trade,cost_code,measurement_value,measurement_unit,scale_label,body'), 'CSV includes drawing review and takeoff headers');
 assert.ok(csv.includes('Test constructability note'), 'CSV includes created markup');
+assert.ok(csv.includes('42.5'), 'CSV includes measured takeoff value');
 
 console.log('CAST CAD unit tests passed.');

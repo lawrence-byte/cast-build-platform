@@ -190,13 +190,13 @@ for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawi
 }
 const drawingIntelligencePage = fs.readFileSync(path.join(root, 'public/projects/cast-cad.html'), 'utf8');
 const drawingIntelligenceScript = fs.readFileSync(path.join(root, 'public/projects/cast-cad.js'), 'utf8');
-for (const requiredDrawingSignal of ['CAST CAD', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore', 'Upload PDF', 'data-pdf-frame', 'data-annotation-layer', 'PDF viewer + overlay', 'mozilla/pdf.js', 'wojtekmaj/react-pdf', 'rudi-q/leed_pdf_viewer', 'mlightcad/cad-viewer', 'vagran/dxf-viewer', 'elstruck/pdf-takeoff']) {
+for (const requiredDrawingSignal of ['CAST CAD', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'Bluebeam-style markup parity target', 'Scale calibration', 'Load current drawing set', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore', 'Optional PDF override', 'data-pdf-frame', 'data-annotation-layer', 'PDF viewer + overlay', 'mozilla/pdf.js', 'wojtekmaj/react-pdf', 'rudi-q/leed_pdf_viewer', 'mlightcad/cad-viewer', 'vagran/dxf-viewer', 'elstruck/pdf-takeoff']) {
   if (!drawingIntelligencePage.includes(requiredDrawingSignal)) {
     console.error(`CAST CAD page missing signal: ${requiredDrawingSignal}`);
     failed = true;
   }
 }
-for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty', 'handlePdfUpload', 'URL.createObjectURL', 'data-pdf-input', 'addMarkupFromOverlay', 'CAST PDF Overlay']) {
+for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty', 'handlePdfUpload', 'URL.createObjectURL', 'data-pdf-input', 'addMarkupFromOverlay', 'CAST PDF Overlay', 'CURRENT_DRAWING_INDEX_URL', 'linkCurrentDrawingSet', 'currentDrawingFiles', 'data-calibrate-scale', 'Line Measurement', 'measurement_value']) {
   if (!drawingIntelligenceScript.includes(requiredDrawingScriptSignal)) {
     console.error(`CAST CAD script missing workflow signal: ${requiredDrawingScriptSignal}`);
     failed = true;
