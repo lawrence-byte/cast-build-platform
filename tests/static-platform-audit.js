@@ -5,7 +5,7 @@ const XLSX = require('xlsx');
 const root = path.join(__dirname, '..');
 const publicDir = path.join(root, 'public');
 const distDir = path.join(root, 'dist');
-const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/cast-team-assistant.js', 'api/cast-team-assistant.js', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/cast-document-intake.js', 'public/cast-document-intake.css', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/procore-workflow-read-model.md', 'docs/platform-guardrails.md'];
+const files = ['public/index.html', 'public/admin.html', 'public/projects.html', 'public/procore.html', 'public/construction-cost-forecasting.html', 'public/schedule-brain.html', 'public/cast-team-assistant.js', 'api/cast-team-assistant.js', 'public/projects/alum-rfis.html', 'public/projects/alum-rfis.js', 'public/projects/alum-submittals.html', 'public/projects/alum-submittals.js', 'public/projects/alum-change-events.html', 'public/projects/alum-change-events.js', 'public/projects/alum-daily-log.html', 'public/projects/alum-daily-log.js', 'public/projects/alum-executive-report.html', 'public/projects/alum-executive-report.js', 'public/projects/alum-command-center.html', 'public/projects/alum-command-center.js', 'public/projects/alum-meeting-minutes.html', 'public/projects/alum-meeting-minutes.js', 'public/projects/alum-schedule.html', 'public/projects/alum-schedule.js', 'public/projects/alum-management-control-center.html', 'public/projects/alum-management-control-center.js', 'public/projects/alum-closeout.html', 'public/projects/alum-closeout.js', 'public/projects/alum-directory.html', 'public/projects/alum-directory.js', 'public/projects/alum-quality.html', 'public/projects/alum-quality.js', 'public/projects/alum-punch-list.html', 'public/projects/alum-punch-list.js', 'public/projects/alum-contracts.html', 'public/projects/alum-contracts.js', 'public/projects/alum-potential-change-orders.html', 'public/projects/alum-potential-change-orders.js', 'public/projects/alum-owner-billings.html', 'public/projects/alum-owner-billings.js', 'public/projects/alum-specifications.html', 'public/projects/alum-specifications.js', 'public/projects/alum-reports.html', 'public/cast-xlsx-export.js', 'public/cast-document-intake.js', 'public/cast-document-intake.css', 'public/projects/cast-project-controls-data.js', 'public/projects/cast-rfi-tracker.html', 'public/projects/cast-rfi-tracker.js', 'public/projects/cast-drawing-log.html', 'public/projects/cast-drawing-log.js', 'public/projects/cast-cad.html', 'public/projects/cast-cad.js', 'public/projects/cast-document-register.html', 'public/projects/cast-document-register.js', 'public/projects/cast-submittal-controls-data.js', 'public/projects/cast-submittal-tracker.html', 'public/projects/cast-submittal-tracker.js', 'docs/cast-build-platform-map.md', 'docs/procore-integration-plan.md', 'docs/procore-workflow-read-model.md', 'docs/platform-guardrails.md'];
 let failed = false;
 function fail(message) {
   console.error(message);
@@ -185,6 +185,26 @@ for (const requiredScaffold of [['public/projects/cast-drawing-log.html', 'Drawi
   const text = fs.readFileSync(path.join(root, requiredScaffold[0]), 'utf8');
   if (!text.includes(requiredScaffold[1]) || !text.includes('RFIs')) {
     console.error(`${requiredScaffold[0]} missing document-control scaffold signals.`);
+    failed = true;
+  }
+}
+const drawingIntelligencePage = fs.readFileSync(path.join(root, 'public/projects/cast-cad.html'), 'utf8');
+const drawingIntelligenceScript = fs.readFileSync(path.join(root, 'public/projects/cast-cad.js'), 'utf8');
+for (const requiredDrawingSignal of ['CAST CAD', 'PDF Review Workbench', 'AI Estimate Quantity Intake', 'No AI quantity becomes budget-authoritative', 'Drawboard', 'Kreo', 'Togal', 'STACK', 'Autodesk Forma', 'Procore', 'Upload PDF', 'data-pdf-frame', 'data-annotation-layer', 'PDF viewer + overlay', 'mozilla/pdf.js', 'wojtekmaj/react-pdf', 'rudi-q/leed_pdf_viewer', 'mlightcad/cad-viewer', 'vagran/dxf-viewer', 'elstruck/pdf-takeoff']) {
+  if (!drawingIntelligencePage.includes(requiredDrawingSignal)) {
+    console.error(`CAST CAD page missing signal: ${requiredDrawingSignal}`);
+    failed = true;
+  }
+}
+for (const requiredDrawingScriptSignal of ['createDrawingMarkup', 'verifyEstimateQuantity', 'exportDrawingReviewCsv', 'draft-only', 'data-verify-qty', 'handlePdfUpload', 'URL.createObjectURL', 'data-pdf-input', 'addMarkupFromOverlay', 'CAST PDF Overlay']) {
+  if (!drawingIntelligenceScript.includes(requiredDrawingScriptSignal)) {
+    console.error(`CAST CAD script missing workflow signal: ${requiredDrawingScriptSignal}`);
+    failed = true;
+  }
+}
+for (const requiredDrawingDomainSignal of ['drawingReviewSessions', 'drawingMarkups', 'estimateQuantities', 'estimateFindings', 'verifyEstimateQuantity', 'drawingIntelligenceMetrics']) {
+  if (!controlsDataScript.includes(requiredDrawingDomainSignal)) {
+    console.error(`CAST project controls data missing CAST CAD domain signal: ${requiredDrawingDomainSignal}`);
     failed = true;
   }
 }

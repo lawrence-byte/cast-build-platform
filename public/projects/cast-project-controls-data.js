@@ -139,6 +139,75 @@
     return { ok: true, previous: old, rfi: next };
   }
   function addComment(state, rfiId, actor, body) { const c = { id: id('comment'), rfi_id: rfiId, user_id: actor.id, body, created_at: new Date().toISOString() }; state.rfiComments.push(c); audit(state, 'RFI', rfiId, 'Added comment', actor.id, null, c); return c; }
+
+  function ensureDrawingIntelligenceState(state) {
+    state.drawingReviewSessions ||= [];
+    state.drawingMarkups ||= [];
+    state.drawingComments ||= [];
+    state.drawingIssues ||= [];
+    state.estimateQuantities ||= [];
+    state.estimateFindings ||= [];
+    return state;
+  }
+  function createDrawingMarkup(state, input, actor) {
+    ensureDrawingIntelligenceState(state);
+    const now = new Date().toISOString();
+    const markup = {
+      id: id('markup'), project_id: input.project_id || 'broderick', drawing_id: input.drawing_id, revision_id: input.revision_id || '', markup_type: input.markup_type || 'comment-pin', tool: input.tool || 'Pin', subject: input.subject || '', body: input.body || '',
+      x: Number(input.x ?? 50), y: Number(input.y ?? 50), width: Number(input.width || 0), height: Number(input.height || 0), page_number: Number(input.page_number || 1), status: input.status || 'Open', priority: input.priority || 'Normal', trade: input.trade || '', cost_code: input.cost_code || '',
+      assignee_user_id: input.assignee_user_id || '', created_by_user_id: actor.id, created_at: now, updated_at: now, source: input.source || 'CAST Drawing Review'
+    };
+    state.drawingMarkups.push(markup);
+    audit(state, 'DrawingMarkup', markup.id, 'Created drawing markup', actor.id, null, markup);
+    if (markup.assignee_user_id) notify(state, [markup.assignee_user_id], 'Drawing markup assigned', markup.id, `${markup.subject || markup.tool} assigned`);
+    return { ok: true, markup };
+  }
+  function createDrawingComment(state, input, actor) {
+    ensureDrawingIntelligenceState(state);
+    const comment = { id: id('draw_comment'), markup_id: input.markup_id || '', drawing_id: input.drawing_id, user_id: actor.id, body: input.body || '', status: input.status || 'Open', created_at: new Date().toISOString() };
+    state.drawingComments.push(comment);
+    audit(state, 'DrawingComment', comment.id, 'Added drawing comment', actor.id, null, comment);
+    return { ok: true, comment };
+  }
+  function updateDrawingIssueStatus(state, markupId, status, actor) {
+    ensureDrawingIntelligenceState(state);
+    const markup = byId(state.drawingMarkups, markupId);
+    if (!markup) return { ok: false, errors: ['Drawing markup not found.'] };
+    const previous = clone(markup);
+    markup.status = status;
+    markup.updated_at = new Date().toISOString();
+    audit(state, 'DrawingMarkup', markupId, 'Updated drawing markup status', actor.id, previous, markup);
+    return { ok: true, markup };
+  }
+  function verifyEstimateQuantity(state, quantityId, actor, overrides = {}) {
+    ensureDrawingIntelligenceState(state);
+    const quantity = byId(state.estimateQuantities, quantityId);
+    if (!quantity) return { ok: false, errors: ['Estimate quantity not found.'] };
+    const previous = clone(quantity);
+    if (overrides.quantity !== undefined) quantity.quantity = Number(overrides.quantity);
+    if (overrides.cost_code) quantity.cost_code = overrides.cost_code;
+    if (overrides.notes !== undefined) quantity.notes = overrides.notes;
+    quantity.verification_status = overrides.status || 'Verified';
+    quantity.reviewed_by_user_id = actor.id;
+    quantity.reviewed_at = new Date().toISOString();
+    audit(state, 'EstimateQuantity', quantityId, 'Verified estimate quantity', actor.id, previous, quantity);
+    return { ok: true, quantity };
+  }
+  function drawingIntelligenceMetrics(state) {
+    ensureDrawingIntelligenceState(state);
+    const openMarkups = state.drawingMarkups.filter((m) => m.status !== 'Resolved');
+    const verified = state.estimateQuantities.filter((q) => q.verification_status === 'Verified');
+    const needsReview = state.estimateQuantities.filter((q) => q.verification_status === 'Needs Review');
+    const highRiskFindings = state.estimateFindings.filter((f) => f.severity === 'High' && f.status !== 'Closed');
+    const deltaTotal = state.estimateQuantities.reduce((sum, q) => sum + Number(q.proforma_delta_amount || 0), 0);
+    return { openMarkups: openMarkups.length, resolvedMarkups: state.drawingMarkups.length - openMarkups.length, verifiedQuantities: verified.length, quantitiesNeedingReview: needsReview.length, highRiskFindings: highRiskFindings.length, proformaDeltaAmount: deltaTotal };
+  }
+  function exportDrawingReviewCsv(state) {
+    ensureDrawingIntelligenceState(state);
+    const cols = ['drawing_number','subject','tool','status','priority','trade','cost_code','body'];
+    const rows = state.drawingMarkups.map((m) => { const drawing = byId(state.drawings, m.drawing_id); return { ...m, drawing_number: drawing?.drawing_number || m.drawing_id }; });
+    return [cols.join(','), ...rows.map((r) => cols.map((c) => csvEscape(r[c])).join(','))].join('\n');
+  }
   function csvEscape(v) { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }
   function exportRfiCsv(state, rfis = state.rfis) { const cols = ['rfi_number','revision_number','subject','status','priority','due_date','date_closed','drawing_number','cost_impact_status','schedule_impact_status']; return [cols.join(','), ...rfis.map((r) => cols.map((c) => csvEscape(r[c])).join(','))].join('\n'); }
   function dashboardMetrics(state, asOf = today()) {
@@ -174,11 +243,28 @@
     rfis[19].root_rfi_id = rfis[18].id; rfis[19].previous_revision_id = rfis[18].id; rfis[19].rfi_number = rfis[18].rfi_number;
     const rfiResponses = rfis.filter((r, i) => i % 3 === 0).map((r, i) => ({ id: `resp${i+1}`, rfi_id: r.id, responder_user_id: r.assignee_user_ids[0], body: `Response for ${r.rfi_number}: proceed as noted.`, status: i % 2 === 0 ? 'Official' : 'Submitted', submitted_at: addDays(-4+i) }));
     rfiResponses.filter((r) => r.status === 'Official').forEach((resp) => { const rfi = rfis.find((r) => r.id === resp.rfi_id); if (rfi) rfi.official_response_id = resp.id; });
-    return { projects, users, companies, projectTeamMembers: users.map((u) => ({ id: `ptm_${u.id}`, project_id: 'broderick', user_id: u.id, company_id: u.company_id, role: u.role })), rfis, rfiRevisions: [], rfiResponses, rfiComments: [], rfiAttachments: [], rfiDistributionList: [], rfiAssignees: rfis.flatMap((r) => (r.assignee_user_ids || []).map((uid) => ({ id: `asg_${r.id}_${uid}`, rfi_id: r.id, user_id: uid }))), drawings, drawingRevisions, drawingSets: [{ id: 'set1', project_id: 'broderick', name: 'Permit Set' }, { id: 'set2', project_id: 'broderick', name: 'Construction Set' }], documents, documentRevisions, specSections, locations, auditLog: [], notifications: [], permissions: [] };
+    const drawingReviewSessions = [{ id: 'drs1', project_id: 'broderick', name: 'Permit Set constructability review', status: 'Active', vendor_layer: 'Drawboard / CAST native viewer candidate', started_at: addDays(-5), due_date: addDays(5), reviewer_user_ids: [users[0].id, users[2].id, users[4].id] }];
+    const drawingMarkups = [
+      { id: 'markup1', project_id: 'broderick', drawing_id: drawings[0].id, revision_id: `dwgrev_${drawings[0].id}_${drawings[0].current_revision}`, markup_type: 'cloud', tool: 'Cloud + Callout', subject: 'Confirm lobby wall assembly', body: 'AI takeoff flags wall length variance against budget line 09-2116.', x: 22, y: 34, width: 24, height: 16, page_number: 1, status: 'Open', priority: 'High', trade: 'Drywall', cost_code: '09-2116', assignee_user_id: users[4].id, created_by_user_id: users[2].id, created_at: addDays(-3), updated_at: addDays(-1), source: 'CAST Drawing Review' },
+      { id: 'markup2', project_id: 'broderick', drawing_id: drawings[6].id, revision_id: `dwgrev_${drawings[6].id}_${drawings[6].current_revision}`, markup_type: 'measurement', tool: 'Area Measurement', subject: 'Verify roof deck area', body: 'Measured roof area is above pro forma assumption; estimator review required before budget update.', x: 48, y: 26, width: 30, height: 18, page_number: 1, status: 'In Review', priority: 'Normal', trade: 'Roofing', cost_code: '07-5400', assignee_user_id: users[2].id, created_by_user_id: users[1].id, created_at: addDays(-2), updated_at: addDays(-1), source: 'AI estimating layer' },
+      { id: 'markup3', project_id: 'broderick', drawing_id: drawings[12].id, revision_id: `dwgrev_${drawings[12].id}_${drawings[12].current_revision}`, markup_type: 'pin', tool: 'Issue Pin', subject: 'Door count mismatch', body: 'Door schedule count differs from plan symbols. Resolve before issuing bid package.', x: 64, y: 58, width: 0, height: 0, page_number: 1, status: 'Open', priority: 'Urgent', trade: 'Openings', cost_code: '08-1113', assignee_user_id: users[3].id, created_by_user_id: users[0].id, created_at: addDays(-1), updated_at: addDays(-1), source: 'Scope gap detector' }
+    ];
+    const drawingComments = drawingMarkups.map((m, i) => ({ id: `draw_comment${i+1}`, markup_id: m.id, drawing_id: m.drawing_id, user_id: users[i].id, body: m.body, status: m.status, created_at: m.created_at }));
+    const estimateQuantities = [
+      { id: 'qty1', project_id: 'broderick', drawing_id: drawings[0].id, source_sheet: drawings[0].drawing_number, item: 'Interior partition walls', trade: 'Drywall', cost_code: '09-2116', quantity: 1245, unit: 'LF', ai_tool: 'Kreo/Togal pilot import', confidence: 82, verification_status: 'Needs Review', proforma_quantity: 1010, proforma_delta_amount: 23500, reviewed_by_user_id: '', reviewed_at: '', notes: 'Scale and partition type require estimator verification.' },
+      { id: 'qty2', project_id: 'broderick', drawing_id: drawings[6].id, source_sheet: drawings[6].drawing_number, item: 'Roof deck waterproofing', trade: 'Roofing', cost_code: '07-5400', quantity: 18400, unit: 'SF', ai_tool: 'STACK Assist / manual check', confidence: 76, verification_status: 'Needs Review', proforma_quantity: 14900, proforma_delta_amount: 42000, reviewed_by_user_id: '', reviewed_at: '', notes: 'Confirm parapet returns and excluded mechanical pad zones.' },
+      { id: 'qty3', project_id: 'broderick', drawing_id: drawings[12].id, source_sheet: drawings[12].drawing_number, item: 'Hollow metal door frames', trade: 'Openings', cost_code: '08-1113', quantity: 42, unit: 'EA', ai_tool: 'Togal.AI pilot import', confidence: 91, verification_status: 'Verified', proforma_quantity: 40, proforma_delta_amount: 3200, reviewed_by_user_id: users[2].id, reviewed_at: addDays(-1), notes: 'Verified against schedule; update estimate for two added frames.' }
+    ];
+    const estimateFindings = [
+      { id: 'find1', project_id: 'broderick', finding_type: 'Scope Gap', severity: 'High', status: 'Open', title: 'EV charger infrastructure shown without matching allowance', body: 'Electrical sheets include EV infrastructure, but current cost-code map has no corresponding allowance.', linked_drawing_ids: [drawings[4].id], suggested_action: 'Add allowance or confirm exclusion before bid release.' },
+      { id: 'find2', project_id: 'broderick', finding_type: 'Budget Delta', severity: 'Medium', status: 'Open', title: 'Roof area exceeds pro forma by 23.5%', body: 'AI takeoff estimated 18,400 SF vs. 14,900 SF in current pro forma.', linked_drawing_ids: [drawings[6].id], suggested_action: 'Estimator to verify area and update budget assumption if confirmed.' },
+      { id: 'find3', project_id: 'broderick', finding_type: 'Human Verification', severity: 'Low', status: 'Monitoring', title: 'AI quantities require reviewer sign-off', body: 'No AI quantity becomes budget-authoritative until a human verifies scale, assemblies, exclusions, alternates, and addenda.', linked_drawing_ids: [], suggested_action: 'Keep all imported quantities in Needs Review until verified.' }
+    ];
+    return { projects, users, companies, projectTeamMembers: users.map((u) => ({ id: `ptm_${u.id}`, project_id: 'broderick', user_id: u.id, company_id: u.company_id, role: u.role })), rfis, rfiRevisions: [], rfiResponses, rfiComments: [], rfiAttachments: [], rfiDistributionList: [], rfiAssignees: rfis.flatMap((r) => (r.assignee_user_ids || []).map((uid) => ({ id: `asg_${r.id}_${uid}`, rfi_id: r.id, user_id: uid }))), drawings, drawingRevisions, drawingSets: [{ id: 'set1', project_id: 'broderick', name: 'Permit Set' }, { id: 'set2', project_id: 'broderick', name: 'Construction Set' }], drawingReviewSessions, drawingMarkups, drawingComments, drawingIssues: [], estimateQuantities, estimateFindings, documents, documentRevisions, specSections, locations, auditLog: [], notifications: [], permissions: [] };
   }
   function loadState() { if (typeof localStorage === 'undefined') return buildSeedState(); const raw = localStorage.getItem(STORAGE_KEY); if (!raw) { const seed = buildSeedState(); localStorage.setItem(STORAGE_KEY, JSON.stringify(seed)); return seed; } return JSON.parse(raw); }
   function saveState(state) { if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
   function resetState() { const seed = buildSeedState(); saveState(seed); return seed; }
 
-  return { RFI_STATUSES, RESPONSE_STATUSES, IMPACT_STATUSES, ROLES, STORAGE_KEY, buildSeedState, loadState, saveState, resetState, generateRfiNumber, validateRfi, createRfi, submitResponse, markOfficialResponse, closeRfi, reopenRfi, reviseRfi, addComment, canViewRfi, canPerform, dashboardMetrics, filterRfis, exportRfiCsv, isOverdue, daysOpen };
+  return { RFI_STATUSES, RESPONSE_STATUSES, IMPACT_STATUSES, ROLES, STORAGE_KEY, buildSeedState, loadState, saveState, resetState, generateRfiNumber, validateRfi, createRfi, submitResponse, markOfficialResponse, closeRfi, reopenRfi, reviseRfi, addComment, ensureDrawingIntelligenceState, createDrawingMarkup, createDrawingComment, updateDrawingIssueStatus, verifyEstimateQuantity, drawingIntelligenceMetrics, exportDrawingReviewCsv, canViewRfi, canPerform, dashboardMetrics, filterRfis, exportRfiCsv, isOverdue, daysOpen };
 });
