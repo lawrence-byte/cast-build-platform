@@ -56,6 +56,25 @@ assert.equal(measured.ok, true, 'createDrawingMarkup stores measured takeoff mar
 assert.equal(measured.markup.measurement_value, 42.5, 'measurement value persists on markup');
 assert.equal(measured.markup.measurement_unit, 'LF', 'measurement unit persists on markup');
 
+const scale = CPC.calibrateCastCadScale({ knownLength: 20, unit: 'FT', firstPoint: { x: 10, y: 10 }, secondPoint: { x: 30, y: 10 } });
+assert.equal(scale.ok, true, 'scale calibration succeeds from two page points');
+assert.equal(scale.scale.unit, 'FT', 'scale unit is preserved');
+assert.equal(scale.scale.units_per_percent, 1, 'scale computes units per normalized page percent');
+
+const length = CPC.measureCastCadGeometry({ tool: 'Length', scale: scale.scale, points: [{ x: 10, y: 10 }, { x: 40, y: 10 }] });
+assert.equal(length.value, 30, 'length measurement uses calibrated scale');
+assert.equal(length.unit, 'LF', 'length measurement emits linear-foot unit');
+
+const area = CPC.measureCastCadGeometry({ tool: 'Area', scale: scale.scale, points: [{ x: 10, y: 10 }, { x: 30, y: 10 }, { x: 30, y: 25 }, { x: 10, y: 25 }] });
+assert.equal(area.value, 300, 'area measurement computes polygon area from calibrated scale');
+assert.equal(area.unit, 'SF', 'area measurement emits square-foot unit');
+
+const featureSnapshot = CPC.castCadArchitectureSnapshot();
+assert.ok(featureSnapshot.featureFlags.some((flag) => flag.key === 'castCadAiReview'), 'feature flags include AI review scaffold');
+assert.ok(featureSnapshot.modules.some((module) => module.key === 'comparisonCenter'), 'modules include comparison center scaffold');
+assert.ok(featureSnapshot.agents.some((agent) => agent.name === 'Plan Reviewer'), 'AI agent registry includes Plan Reviewer');
+assert.ok(featureSnapshot.databaseTables.includes('markups') && featureSnapshot.databaseTables.includes('measurements'), 'database table plan includes markups and measurements');
+
 const csv = CPC.exportDrawingReviewCsv(state);
 assert.ok(csv.includes('drawing_number,subject,tool,status,priority,trade,cost_code,measurement_value,measurement_unit,scale_label,body'), 'CSV includes drawing review and takeoff headers');
 assert.ok(csv.includes('Test constructability note'), 'CSV includes created markup');
