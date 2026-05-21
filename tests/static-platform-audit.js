@@ -1052,13 +1052,21 @@ if (failed) process.exit(1);
 const projectsPage = fs.readFileSync(path.join(root, 'public/projects.html'), 'utf8');
 if (!projectsPage.includes('/projects/cast-cad.html') || !projectsPage.includes('CAST CAD')) fail('projects portfolio must expose CAST CAD from the platform project list');
 const castCadArchitecturePath = path.join(root, 'docs/cast-cad-architecture.md');
+const castCadAuditPath = path.join(root, 'docs/cast-cad-implementation-audit.md');
 const castCadSchemaPath = path.join(root, 'db/migrations/001_cast_cad_schema.sql');
 if (!fs.existsSync(castCadArchitecturePath)) fail('CAST CAD architecture note is required');
+if (!fs.existsSync(castCadAuditPath)) fail('CAST CAD implementation audit is required');
 if (!fs.existsSync(castCadSchemaPath)) fail('CAST CAD database migration scaffold is required');
 if (fs.existsSync(castCadArchitecturePath)) {
   const castCadArchitecture = fs.readFileSync(castCadArchitecturePath, 'utf8');
   for (const signal of ['Repository assessment', 'Proposed architecture', 'Build plan by phase', 'Database schema', 'API endpoints', 'Component tree', 'Background worker design', 'Integration strategy', 'AI agent strategy', 'Security model', 'MVP implementation', 'Test plan', 'Known limitations', 'Next phase backlog']) {
     if (!castCadArchitecture.includes(signal)) fail(`CAST CAD architecture note missing section: ${signal}`);
+  }
+}
+if (fs.existsSync(castCadAuditPath)) {
+  const castCadAudit = fs.readFileSync(castCadAuditPath, 'utf8');
+  for (const signal of ['Phase 1: Foundation', 'Phase 2: Markups', 'Phase 3: Measurements', 'Acceptance criteria status', 'Authenticated raw PDF stream/proxy', '3D model ingestion', 'symbol detection']) {
+    if (!castCadAudit.includes(signal)) fail(`CAST CAD implementation audit missing signal: ${signal}`);
   }
 }
 if (fs.existsSync(castCadSchemaPath)) {

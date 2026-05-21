@@ -19,8 +19,8 @@ CAST CAD should become a modular app inside the CAST platform, not a Bluebeam cl
 
 Recommended layers:
 
-1. **Viewer layer:** PDF.js or a commercial PDF SDK for production-grade PDF rendering, with lazy rendering, thumbnails, search, page labels, split view, and tabs.
-2. **Overlay layer:** SVG/canvas vector layer for CAST markups, measurement geometry, comments, collaboration cursors, and AI issue pins.
+1. **Viewer layer:** PDF.js or a commercial PDF SDK for production-grade PDF rendering of multi page drawings, with lazy rendering, thumbnails, search, page labels, split view, side-by-side review, and tabs.
+2. **Overlay layer:** SVG/canvas vector layer for CAST markups, measurement geometry, measurement captions, comments, collaboration cursors, and AI issue pins.
 3. **Workflow layer:** normalized CAST records for markups, issues, takeoffs, RFIs, submittals, review sessions, comparison jobs, and audit logs.
 4. **Storage layer:** authenticated document pointers to Dropbox/CAST server/S3-compatible storage; avoid duplicating massive files unless required.
 5. **Processing layer:** workers for OCR, page labels, thumbnails, comparisons, symbol search, batch links, exports, and AI review.
@@ -47,7 +47,7 @@ Recommended layers:
 
 - Calibrate sheet scale from known distance.
 - Support length, polyline, area, perimeter, and count MVP.
-- Store measurement metadata and generate takeoff rows.
+- Store measurement metadata and editable measurement captions, then generate takeoff rows.
 - Export takeoff workbook to Excel/XLSX.
 - Keep all takeoffs in Needs Review until human-verified.
 
@@ -134,7 +134,7 @@ Use BullMQ or Temporal once a backend exists. Worker queues:
 - `ocr.extract`: OCR text and coordinates by page.
 - `drawing.index`: sheet number/title/discipline/title block extraction.
 - `compare.run`: raster/vector comparison and overlay alignment.
-- `visual.search`: OpenCV template matching and future CV models.
+- `visual.search`: OpenCV template matching, symbol detection, and future CV models.
 - `batch.run`: batch OCR, links, stamps, slip sheets, exports, flatten/reduce.
 - `export.run`: annotated PDF, clean PDF, XLSX, issue reports, lender packages.
 - `ai.review`: plan review, RFI draft, submittal review, cost risk, lender exhibit.
@@ -148,7 +148,7 @@ Workers must write job records, logs, progress, failure reasons, output artifact
 - Procore-style workflows: mirror RFI/submittal/document status and links without writing externally until approved.
 - Yardi: document/exhibit storage where relevant, not construction system of record.
 - Gmail/Outlook/Slack/Teams: notifications and distribution lists.
-- Autodesk/Revit/AutoCAD/Speckle/IFC: future BIM ingestion and model coordination.
+- Autodesk/Revit/AutoCAD/Speckle/IFC/DWG: future BIM ingestion, 3D model preview, and model coordination.
 
 ## AI agent strategy
 
@@ -234,7 +234,7 @@ Coverage added/required:
 6. Build CAST Tool Library.
 7. Add drawing set upload, sheet extraction, versioning, supersede/slip-sheet workflow.
 8. Add comparison center and revision reports.
-9. Add OCR/search/auto link/visual search workers.
+9. Add OCR/search/auto link/symbol detection/visual search workers.
 10. Add RFI/submittal creation from markup with snapshots.
 11. Add review rooms and presence/collaboration.
 12. Add CAST CAD AI panel and agent workflows.
