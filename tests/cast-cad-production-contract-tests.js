@@ -68,6 +68,27 @@ const comparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetI
 assert.equal(comparison.ok, true, 'comparison job contract created');
 assert.equal(comparison.job.status, 'provider-required', 'comparison job reports worker requirement when no worker configured');
 
+const drawingSetV1 = cad.createDrawingSetVersion(state, { projectId: 'alum', setName: 'Permit Set', sheets: [
+  { sheetId: 'A-101', drawingNumber: 'A-101', title: 'Floor Plan', revision: '0', sourcePath: 'Current Drawings/A/A-101.pdf' },
+  { sheetId: 'S-201', drawingNumber: 'S-201', title: 'Framing Plan', revision: '0', sourcePath: 'Current Drawings/S/S-201.pdf' },
+] }, owner);
+assert.equal(drawingSetV1.ok, true, 'drawing set version creates provider-independently');
+assert.equal(drawingSetV1.version.status, 'Current', 'new drawing set version is current');
+const slipSheet = cad.slipSheetDrawingSet(state, { baseVersionId: drawingSetV1.version.id, replacements: [
+  { sheetId: 'A-101', drawingNumber: 'A-101', title: 'Floor Plan', revision: '1', sourcePath: 'Current Drawings/A/A-101 Rev 1.pdf' },
+  { sheetId: 'M-301', drawingNumber: 'M-301', title: 'Mechanical Plan', revision: '0', sourcePath: 'Current Drawings/M/M-301.pdf' },
+] }, owner);
+assert.equal(slipSheet.ok, true, 'slip-sheet job creates a revised drawing set version');
+assert.equal(slipSheet.job.status, 'ready', 'slip-sheet metadata job is ready without PDF worker');
+assert.equal(slipSheet.job.pdfBytesTouched, false, 'slip-sheet contract does not expose private PDF bytes');
+assert.equal(slipSheet.job.diff.summary.revised, 1, 'slip-sheet diff detects revised sheets');
+assert.equal(slipSheet.job.diff.summary.added, 1, 'slip-sheet diff detects added sheets');
+assert.equal(drawingSetV1.version.status, 'Superseded', 'previous drawing set version is superseded');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_SLIP_SHEET_JOB'), 'slip-sheet job is audited');
+const deniedDrawingSet = cad.createDrawingSetVersion(state, { projectId: 'alum', setName: 'Blocked', sheets: [{ sheetId: 'A-102' }] }, readOnly);
+assert.equal(deniedDrawingSet.ok, false, 'read-only users cannot manage drawing set versions');
+assert.equal(deniedDrawingSet.status, 403, 'drawing set management denies with 403');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');

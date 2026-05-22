@@ -120,6 +120,11 @@
               <label>Font <input type="number" min="8" max="36" step="1" value="12" data-markup-font-size autocomplete="off"></label>
               <span class="pdf-status">New vector markups persist layer, group, stroke/fill, opacity, line width, and font controls.</span>
             </div>
+            <div class="pdf-intake cad-drawing-set-revisions" aria-label="Drawing set revision and slip-sheet controls">
+              <button class="cb-btn small cb-btn--ghost" type="button" data-register-drawing-set-version>Register set version</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-slip-sheet-sample>Slip-sheet sample</button>
+              <span class="pdf-status" data-drawing-set-revision-status>Drawing set revisions use audited metadata contracts; private PDF bytes stay behind authenticated streaming.</span>
+            </div>
             <div class="toolbar markup-toolbar" data-markup-toolbar role="toolbar" aria-label="Markup and takeoff tools"></div>
             <div class="viewer" data-viewer aria-label="PDF drawing viewer with CAST annotation overlay">
               <div class="sheet-title" data-viewer-title>Loading…</div>
@@ -208,6 +213,7 @@
               <div class="tool-card"><em>Authenticated PDF stream</em><strong>/api/cast-cad-pdf-stream</strong><span>Fail-closed private drawing stream contract with auth, no-store headers, expiring stream IDs, and provider-required status until Dropbox/CAST Server credentials are configured.</span></div>
               <div class="tool-card"><em>Persistent markups</em><strong>/api/cast-cad-markups</strong><span>Server-side create/list/update/export contract for vector markups, comments, layers, styles, measurements, status, assignees, and immutable audit entries.</span></div>
               <div class="tool-card"><em>Exports + workflows</em><strong>/api/cast-cad-exports · /api/cast-cad-rfi-link</strong><span>Takeoff workbook jobs, annotated PDF export jobs, drawing comparison jobs, and RFI-from-markup snapshot links report real worker/provider requirements instead of pretending private infrastructure is configured.</span></div>
+              <div class="tool-card"><em>Drawing set revisions</em><strong>/api/cast-cad-drawing-sets</strong><span>Audited current/superseded drawing set versions, revision deltas, and provider-independent slip-sheet metadata jobs are live without exposing private PDF bytes.</span></div>
               <div class="tool-card"><em>OCR + review rooms</em><strong>/api/cast-cad-search · /api/cast-cad-review-room</strong><span>Search index, symbol hits, review-room invitation contracts, participant state, and audit-backed collaboration workflow are ready for production providers.</span></div>
             </div>
           </div>

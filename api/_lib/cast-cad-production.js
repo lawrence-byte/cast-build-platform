@@ -18,6 +18,7 @@ const CAST_CAD_PERMISSIONS = {
 
 const DEFAULT_STATE = () => ({
   markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [],
+  drawingSets: [], drawingSetVersions: [], slipSheetJobs: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -328,6 +329,80 @@ function buildComparisonJob(state, input, actor) {
   audit(state, actor, 'Created drawing comparison job', 'CAST_CAD_COMPARISON_JOB', job.id, null, job);
   return { ok: true, job };
 }
+function normalizeSheetKey(sheet = {}) {
+  return String(sheet.sheetId || sheet.sheet_id || sheet.drawingNumber || sheet.drawing_number || sheet.number || sheet.sourcePath || sheet.source_path || '').trim();
+}
+function normalizeDrawingSetSheet(sheet = {}, index = 0) {
+  const sheetId = normalizeSheetKey(sheet) || `sheet-${index + 1}`;
+  return {
+    sheetId,
+    drawingNumber: String(sheet.drawingNumber || sheet.drawing_number || sheet.number || sheetId),
+    title: String(sheet.title || sheet.drawingTitle || sheet.drawing_title || ''),
+    discipline: String(sheet.discipline || ''),
+    revision: String(sheet.revision || sheet.current_revision || sheet.currentRevision || '0'),
+    revisionDate: String(sheet.revisionDate || sheet.revision_date || sheet.date || ''),
+    sourcePath: String(sheet.sourcePath || sheet.source_path || sheet.path || ''),
+    status: sheet.status || 'Current',
+  };
+}
+function createDrawingSetVersion(state, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const setName = input.setName || input.set_name;
+  const sheets = Array.isArray(input.sheets) ? input.sheets.map(normalizeDrawingSetSheet).filter((sheet) => sheet.sheetId) : [];
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!setName) errors.push('setName is required.');
+  if (!sheets.length) errors.push('At least one sheet is required.');
+  if (new Set(sheets.map((sheet) => sheet.sheetId)).size !== sheets.length) errors.push('Sheet IDs must be unique within a drawing set version.');
+  if (errors.length) return { ok: false, status: 422, errors };
+  const setKey = input.setKey || input.set_key || `${projectId}:${setName}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const previousCurrent = state.drawingSetVersions.find((row) => row.projectId === projectId && row.setKey === setKey && row.status === 'Current') || null;
+  const versionNumber = Number(input.versionNumber || input.version_number || ((previousCurrent?.versionNumber || 0) + 1));
+  const drawingSet = state.drawingSets.find((row) => row.projectId === projectId && row.setKey === setKey) || { id: id('cad_drawing_set'), projectId, setKey, setName, createdAt: now() };
+  drawingSet.setName = setName;
+  drawingSet.currentVersionNumber = versionNumber;
+  drawingSet.sheetCount = sheets.length;
+  drawingSet.updatedAt = now();
+  if (!state.drawingSets.some((row) => row.id === drawingSet.id)) state.drawingSets.push(drawingSet);
+  if (previousCurrent) previousCurrent.status = 'Superseded';
+  const version = { id: input.id || id('cad_dwgset_ver'), projectId, drawingSetId: drawingSet.id, setKey, setName, versionNumber, label: input.label || `Version ${versionNumber}`, status: input.status || 'Current', sheetCount: sheets.length, sheets, previousVersionId: previousCurrent?.id || '', createdByUserId: actor.id, createdAt: now() };
+  state.drawingSetVersions.push(version);
+  audit(state, actor, 'Created CAST CAD drawing set version', 'CAST_CAD_DRAWING_SET_VERSION', version.id, previousCurrent, version, previousCurrent ? `Superseded ${previousCurrent.id}` : 'Initial drawing set version');
+  return { ok: true, drawingSet, version };
+}
+function compareDrawingSetVersions(baseVersion = {}, revisedVersion = {}) {
+  const baseBySheet = new Map((baseVersion.sheets || []).map((sheet) => [sheet.sheetId, sheet]));
+  const revisedBySheet = new Map((revisedVersion.sheets || []).map((sheet) => [sheet.sheetId, sheet]));
+  const added = [], removed = [], revised = [], unchanged = [];
+  for (const [sheetId, sheet] of revisedBySheet) {
+    const base = baseBySheet.get(sheetId);
+    if (!base) added.push(sheet);
+    else if (base.revision !== sheet.revision || base.sourcePath !== sheet.sourcePath || base.title !== sheet.title) revised.push({ sheetId, before: base, after: sheet });
+    else unchanged.push(sheet);
+  }
+  for (const [sheetId, sheet] of baseBySheet) if (!revisedBySheet.has(sheetId)) removed.push(sheet);
+  return { added, removed, revised, unchanged, summary: { added: added.length, removed: removed.length, revised: revised.length, unchanged: unchanged.length } };
+}
+function getDrawingSetVersion(state, idOrKey) {
+  return state.drawingSetVersions.find((row) => row.id === idOrKey || `${row.setKey}:v${row.versionNumber}` === idOrKey) || null;
+}
+function slipSheetDrawingSet(state, input = {}, actor) {
+  const base = getDrawingSetVersion(state, input.baseVersionId || input.base_version_id || input.versionId || input.version_id);
+  if (!base) return { ok: false, status: 404, error: 'Base drawing set version not found.' };
+  const replacements = Array.isArray(input.replacements) ? input.replacements.map(normalizeDrawingSetSheet) : [];
+  if (!replacements.length) return { ok: false, status: 422, errors: ['At least one replacement sheet is required.'] };
+  const replacementById = new Map(replacements.map((sheet) => [sheet.sheetId, sheet]));
+  const carried = base.sheets.filter((sheet) => !replacementById.has(sheet.sheetId));
+  const next = createDrawingSetVersion(state, { projectId: base.projectId, setName: base.setName, setKey: base.setKey, sheets: [...carried, ...replacements].sort((a, b) => a.sheetId.localeCompare(b.sheetId, undefined, { numeric: true })), label: input.label || `Slip-sheet ${base.setName}` }, actor);
+  if (!next.ok) return next;
+  const diff = compareDrawingSetVersions(base, next.version);
+  const job = { id: id('cad_slipsheet'), projectId: base.projectId, baseVersionId: base.id, revisedVersionId: next.version.id, status: 'ready', replacementCount: replacements.length, diff, createdByUserId: actor.id, createdAt: now(), pdfBytesTouched: false, notes: 'Provider-independent slip-sheet contract updates sheet version metadata only; private PDF bytes remain behind the authenticated stream provider.' };
+  state.slipSheetJobs.push(job);
+  audit(state, actor, 'Created CAST CAD slip-sheet revision job', 'CAST_CAD_SLIP_SHEET_JOB', job.id, base, job);
+  return { ok: true, job, version: next.version, drawingSet: next.drawingSet };
+}
 function markupsCsv(markups) {
   const cols = ['id','projectId','sheetId','pageNumber','tool','subject','status','priority','trade','costCode','quantity','unit','createdByUserId','createdAt'];
   return [cols.join(','), ...markups.map((m) => cols.map((c) => csvEscape(c === 'quantity' ? (m.measurement?.value || '') : c === 'unit' ? (m.measurement?.unit || '') : m[c])).join(','))].join('\n');
@@ -338,5 +413,7 @@ module.exports = {
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
-  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob, markupsCsv,
+  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob,
+  createDrawingSetVersion, compareDrawingSetVersions, slipSheetDrawingSet, getDrawingSetVersion,
+  markupsCsv,
 };
