@@ -51,10 +51,16 @@ const measured = CPC.createDrawingMarkup(state, {
   measurement_value: 42.5,
   measurement_unit: 'LF',
   scale_label: '20 FT',
+  layer: 'ASI-002',
+  group_id: 'grp-level-1-partitions',
+  style: { stroke: '#2563eb', fill: 'rgba(37,99,235,.2)', opacity: 0.75, line_width: 4, font_size: 14 },
 }, actor);
 assert.equal(measured.ok, true, 'createDrawingMarkup stores measured takeoff markup');
 assert.equal(measured.markup.measurement_value, 42.5, 'measurement value persists on markup');
 assert.equal(measured.markup.measurement_unit, 'LF', 'measurement unit persists on markup');
+assert.equal(measured.markup.layer, 'ASI-002', 'vector markup layer persists');
+assert.equal(measured.markup.group_id, 'grp-level-1-partitions', 'vector markup group persists');
+assert.equal(measured.markup.style.stroke, '#2563eb', 'vector markup stroke style persists');
 
 const scale = CPC.calibrateCastCadScale({ knownLength: 20, unit: 'FT', firstPoint: { x: 10, y: 10 }, secondPoint: { x: 30, y: 10 } });
 assert.equal(scale.ok, true, 'scale calibration succeeds from two page points');
