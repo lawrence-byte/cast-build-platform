@@ -222,8 +222,16 @@ function renderViewer() {
     el.style.top = `${markup.y}%`;
     if (markup.width) el.style.width = `${markup.width}%`;
     if (markup.height) el.style.height = `${markup.height}%`;
-    el.title = markup.subject;
+    const style = markup.style || {};
+    if (style.stroke) el.style.borderColor = style.stroke;
+    if (style.fill) el.style.background = style.fill;
+    if (style.opacity) el.style.opacity = String(style.opacity);
+    if (style.line_width) el.style.borderWidth = `${style.line_width}px`;
+    if (style.font_size) el.style.fontSize = `${style.font_size}px`;
+    el.title = `${markup.subject}${markup.layer ? ` · layer ${markup.layer}` : ''}${markup.group_id ? ` · group ${markup.group_id}` : ''}`;
     el.dataset.markup = markup.id;
+    if (markup.layer) el.dataset.layer = markup.layer;
+    if (markup.group_id) el.dataset.group = markup.group_id;
     el.textContent = markupLabel(markup);
     targetLayer.appendChild(el);
   });
@@ -239,7 +247,7 @@ function renderMarkups() {
       <h3>${esc(m.subject || m.tool)}</h3>
       <p class="muted">${esc(m.body)}</p>
       ${measurement}
-      <p class="muted"><strong>${esc(m.tool)}</strong> · ${esc(m.trade || 'Unassigned trade')} · ${esc(m.cost_code || 'No cost code')} · Assigned to ${esc(assignee?.name || 'Unassigned')}</p>
+      <p class="muted"><strong>${esc(m.tool)}</strong> · ${esc(m.trade || 'Unassigned trade')} · ${esc(m.cost_code || 'No cost code')} · Layer ${esc(m.layer || 'Default')}${m.group_id ? ` · Group ${esc(m.group_id)}` : ''} · Assigned to ${esc(assignee?.name || 'Unassigned')}</p>
       <div class="actions">
         <button class="cb-btn small cb-btn--ghost" data-resolve="${esc(m.id)}">Resolve</button>
         <button class="cb-btn small cb-btn--ghost" data-rfi="${esc(m.id)}">Convert to RFI</button>
@@ -326,11 +334,33 @@ function takeoffInputs() {
     unitCost: document.querySelector('[data-takeoff-unit-cost]')?.value === '' ? null : Number(document.querySelector('[data-takeoff-unit-cost]')?.value),
   };
 }
+function rgbaFromHex(hex, opacity = 0.16) {
+  const clean = String(hex || '#f97316').replace('#', '');
+  const n = parseInt(clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean, 16);
+  if (Number.isNaN(n)) return `rgba(249,115,22,${opacity})`;
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${opacity})`;
+}
+function markupStyleInputs() {
+  const stroke = document.querySelector('[data-markup-stroke]')?.value || '#f97316';
+  const fill = document.querySelector('[data-markup-fill]')?.value || stroke;
+  const opacity = Math.max(0.1, Math.min(1, Number(document.querySelector('[data-markup-opacity]')?.value || 1)));
+  return {
+    layer: document.querySelector('[data-markup-layer]')?.value.trim() || 'Default',
+    group_id: document.querySelector('[data-markup-group]')?.value.trim() || '',
+    style: {
+      stroke,
+      fill: rgbaFromHex(fill, Math.min(opacity, 0.24)),
+      opacity,
+      line_width: Math.max(1, Number(document.querySelector('[data-markup-line-width]')?.value || 2)),
+      font_size: Math.max(8, Number(document.querySelector('[data-markup-font-size]')?.value || 12)),
+    },
+  };
+}
 function createMarkupAt(x, y) {
   const drawing = selectedDrawing();
   if (!drawing) return;
   const takeoff = takeoffInputs();
-  const defaults = markupDefaults(drawing, x, y);
+  const defaults = { ...markupDefaults(drawing, x, y), ...markupStyleInputs() };
   if (takeoff.caption && ['Line Measurement', 'Area Measurement', 'Count'].includes(activeTool)) defaults.subject = takeoff.caption;
   const result = CPC.createDrawingMarkup(state, defaults, actor());
   if (result.ok) {

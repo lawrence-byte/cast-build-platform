@@ -15,18 +15,23 @@ assert.equal(blockedPdf.status, 503, 'PDF stream reports provider-required statu
 assert.equal(blockedPdf.contract.publicExposure, false, 'PDF stream contract forbids public exposure');
 assert.equal(blockedPdf.contract.requiresAuth, true, 'PDF stream contract requires auth');
 
-const markup = cad.createMarkup(state, { projectId: 'alum', sheetId: 'A-101', tool: 'Area Measurement', subject: 'Test area', measurement: { value: 245.5, unit: 'SF' }, geometry: { type: 'polygon', points: [{x:1,y:1},{x:5,y:1},{x:5,y:5}] } }, owner);
+const markup = cad.createMarkup(state, { projectId: 'alum', sheetId: 'A-101', tool: 'Area Measurement', subject: 'Test area', layer: 'ASI-002', group_id: 'grp-envelope', style: { stroke: '#2563eb', fill: 'rgba(37,99,235,.2)', opacity: 0.75, lineWidth: 4, fontSize: 14 }, measurement: { value: 245.5, unit: 'SF' }, geometry: { type: 'polygon', points: [{x:1,y:1},{x:5,y:1},{x:5,y:5}] } }, owner);
 assert.equal(markup.ok, true, 'markup creates through production service');
+assert.equal(markup.markup.layer, 'ASI-002', 'markup create stores layer');
+assert.equal(markup.markup.groupId, 'grp-envelope', 'markup create stores group');
+assert.equal(markup.markup.style.opacity, 0.75, 'markup create stores opacity');
 assert.ok(state.auditLog.some((row) => row.entityId === markup.markup.id), 'markup creation is audited');
 
 const denied = cad.createMarkup(state, { projectId: 'alum', sheetId: 'A-101', tool: 'Pin', subject: 'Blocked' }, readOnly);
 assert.equal(denied.ok, false, 'read-only markup creation is denied');
 assert.equal(denied.status, 403, 'read-only denial is a 403 contract');
 
-const updated = cad.updateMarkup(state, markup.markup.id, { status: 'Resolved', layer: 'ASI-001' }, owner);
+const updated = cad.updateMarkup(state, markup.markup.id, { status: 'Resolved', layer: 'ASI-001', cost_code: '09-2116', assignee_user_id: 'u4' }, owner);
 assert.equal(updated.ok, true, 'markup updates through production service');
 assert.equal(updated.markup.status, 'Resolved', 'markup status persists');
 assert.equal(updated.markup.layer, 'ASI-001', 'markup layer persists');
+assert.equal(updated.markup.costCode, '09-2116', 'markup update accepts snake_case cost code from API payloads');
+assert.equal(updated.markup.assigneeUserId, 'u4', 'markup update accepts snake_case assignee from API payloads');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(workbook.ok, true, 'takeoff workbook export job created');

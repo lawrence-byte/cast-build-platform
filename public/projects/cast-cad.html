@@ -89,6 +89,16 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-calibrate-scale>Calibrate scale</button>
               <span class="pdf-status" data-scale-status>Scale not calibrated for this sheet.</span>
             </div>
+            <div class="pdf-intake cad-style-bar" aria-label="Markup layer, grouping, and style controls">
+              <label>Layer <input type="text" value="Default" data-markup-layer autocomplete="off"></label>
+              <label>Group <input type="text" placeholder="Optional group ID" data-markup-group autocomplete="off"></label>
+              <label>Stroke <input type="color" value="#f97316" data-markup-stroke autocomplete="off"></label>
+              <label>Fill <input type="color" value="#f97316" data-markup-fill autocomplete="off"></label>
+              <label>Opacity <input type="range" min="0.1" max="1" step="0.05" value="1" data-markup-opacity autocomplete="off"></label>
+              <label>Line <input type="number" min="1" max="12" step="1" value="2" data-markup-line-width autocomplete="off"></label>
+              <label>Font <input type="number" min="8" max="36" step="1" value="12" data-markup-font-size autocomplete="off"></label>
+              <span class="pdf-status">New vector markups persist layer, group, stroke/fill, opacity, line width, and font controls.</span>
+            </div>
             <div class="toolbar" role="toolbar" aria-label="Markup and takeoff tools">
               <button class="tool active" type="button" data-tool="Pin">Pin</button>
               <button class="tool" type="button" data-tool="Cloud + Callout">Cloud</button>

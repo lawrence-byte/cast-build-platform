@@ -119,6 +119,7 @@ function createMarkup(state, input, actor) {
     geometry: input.geometry || { type: 'point', points: [{ x: Number(input.x ?? 50), y: Number(input.y ?? 50) }] },
     measurement: input.measurement || null,
     layer: input.layer || 'Default',
+    groupId: input.groupId || input.group_id || '',
     style: input.style || { stroke: '#f97316', fill: 'rgba(249,115,22,.16)', opacity: 1, lineWidth: 2, fontSize: 12 },
     sourceSnapshot: input.sourceSnapshot || input.source_snapshot || {},
     createdByUserId: actor.id,
@@ -136,7 +137,9 @@ function updateMarkup(state, markupId, patch, actor) {
   const markup = state.markups.find((row) => row.id === markupId);
   if (!markup) return { ok: false, status: 404, error: 'Markup not found.' };
   const previous = clone(markup);
-  ['subject','body','status','priority','trade','costCode','assigneeUserId','geometry','measurement','layer','style'].forEach((key) => {
+  if (patch.cost_code !== undefined) patch.costCode = patch.cost_code;
+  if (patch.assignee_user_id !== undefined) patch.assigneeUserId = patch.assignee_user_id;
+  ['subject','body','status','priority','trade','costCode','assigneeUserId','geometry','measurement','layer','style','groupId'].forEach((key) => {
     if (patch[key] !== undefined) markup[key] = patch[key];
   });
   markup.updatedByUserId = actor.id;
