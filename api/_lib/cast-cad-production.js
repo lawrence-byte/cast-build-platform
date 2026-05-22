@@ -5,11 +5,11 @@ const { safeSegment, safeFileName } = require('./document-storage');
 
 const CAST_CAD_ROLES = ['Owner Admin','CAST Admin','Project Manager','Project Engineer','Architect','Consultant','General Contractor','Subcontractor','Read Only Viewer'];
 const CAST_CAD_PERMISSIONS = {
-  'Owner Admin': ['view','stream_pdf','create_markup','edit_markup','delete_markup','export','create_rfi','review_room','admin','audit'],
-  'CAST Admin': ['view','stream_pdf','create_markup','edit_markup','delete_markup','export','create_rfi','review_room','admin','audit'],
-  'Project Manager': ['view','stream_pdf','create_markup','edit_markup','export','create_rfi','review_room','audit'],
-  'Project Engineer': ['view','stream_pdf','create_markup','edit_markup','export','create_rfi','review_room'],
-  Architect: ['view','stream_pdf','create_markup','edit_markup','export','review_room'],
+  'Owner Admin': ['view','stream_pdf','create_markup','edit_markup','delete_markup','export','create_rfi','review_room','manage_drawing_sets','admin','audit'],
+  'CAST Admin': ['view','stream_pdf','create_markup','edit_markup','delete_markup','export','create_rfi','review_room','manage_drawing_sets','admin','audit'],
+  'Project Manager': ['view','stream_pdf','create_markup','edit_markup','export','create_rfi','review_room','manage_drawing_sets','audit'],
+  'Project Engineer': ['view','stream_pdf','create_markup','edit_markup','export','create_rfi','review_room','manage_drawing_sets'],
+  Architect: ['view','stream_pdf','create_markup','edit_markup','export','review_room','manage_drawing_sets'],
   Consultant: ['view','stream_pdf','create_markup','export','review_room'],
   'General Contractor': ['view','stream_pdf','create_markup','export','create_rfi','review_room'],
   Subcontractor: ['view','stream_pdf','create_markup'],
@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -328,6 +328,92 @@ function buildComparisonJob(state, input, actor) {
   audit(state, actor, 'Created drawing comparison job', 'CAST_CAD_COMPARISON_JOB', job.id, null, job);
   return { ok: true, job };
 }
+function normalizeSheetRevision(input = {}, setVersion, actor, status = 'current') {
+  const drawingNumber = input.drawingNumber || input.drawing_number || String(input.name || input.path || input.sheetId || '').replace(/\.pdf$/i, '');
+  const sourcePath = input.sourcePath || input.source_path || input.path || '';
+  return {
+    id: input.id || id('cad_sheet_rev'),
+    projectId: setVersion.projectId,
+    setId: setVersion.setId,
+    setVersionId: setVersion.id,
+    sheetId: input.sheetId || input.sheet_id || safeSegment(sourcePath || drawingNumber),
+    drawingNumber,
+    drawingTitle: input.drawingTitle || input.drawing_title || input.title || '',
+    revisionLabel: input.revisionLabel || input.revision_label || setVersion.revisionLabel,
+    revisionDate: input.revisionDate || input.revision_date || setVersion.revisionDate,
+    sourcePath,
+    fileName: safeFileName(input.fileName || input.file_name || input.name || `${drawingNumber}.pdf`),
+    contentHash: input.contentHash || input.content_hash || '',
+    status,
+    supersedesRevisionId: input.supersedesRevisionId || input.supersedes_revision_id || '',
+    supersededByRevisionId: '',
+    humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+}
+function createDrawingSetVersion(state, input = {}, actor) {
+  state.drawingSetVersions ||= [];
+  state.drawingSheetRevisions ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const setId = input.setId || input.set_id || safeSegment(input.name || 'drawing-set');
+  const sheets = Array.isArray(input.sheets) ? input.sheets : [];
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'] };
+  if (!sheets.length) return { ok: false, status: 422, errors: ['At least one sheet is required.'] };
+  const version = {
+    id: input.id || id('cad_set_version'),
+    projectId,
+    setId,
+    name: input.name || 'CAST CAD Drawing Set',
+    revisionLabel: input.revisionLabel || input.revision_label || `Set ${state.drawingSetVersions.filter((row) => row.projectId === projectId && row.setId === setId).length + 1}`,
+    revisionDate: input.revisionDate || input.revision_date || now().slice(0, 10),
+    sourceIndex: input.sourceIndex || input.source_index || '',
+    status: 'current',
+    sheetCount: sheets.length,
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.drawingSetVersions.filter((row) => row.projectId === projectId && row.setId === setId && row.status === 'current').forEach((row) => { row.status = 'superseded'; row.supersededByVersionId = version.id; });
+  const revisions = sheets.map((sheet) => normalizeSheetRevision(sheet, version, actor));
+  revisions.forEach((revision) => {
+    state.drawingSheetRevisions
+      .filter((row) => row.projectId === projectId && row.setId === setId && row.status === 'current' && (row.sheetId === revision.sheetId || row.drawingNumber === revision.drawingNumber))
+      .forEach((row) => { row.status = 'superseded'; row.supersededByRevisionId = revision.id; revision.supersedesRevisionId = revision.supersedesRevisionId || row.id; });
+  });
+  state.drawingSetVersions.push(version);
+  state.drawingSheetRevisions.push(...revisions);
+  audit(state, actor, 'Created drawing set version and superseded matching sheets', 'CAST_CAD_DRAWING_SET_VERSION', version.id, null, { version, revisions });
+  return { ok: true, version, revisions };
+}
+function slipSheetRevision(state, input = {}, actor) {
+  state.drawingSetVersions ||= [];
+  state.drawingSheetRevisions ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const targetId = input.targetRevisionId || input.target_revision_id || input.supersedesRevisionId || input.supersedes_revision_id;
+  const target = state.drawingSheetRevisions.find((row) => row.id === targetId);
+  if (!target) return { ok: false, status: 404, error: 'Target drawing revision not found.' };
+  if (!input.humanReviewApproved && !input.human_review_approved) return { ok: false, status: 409, error: 'Slip-sheeting requires human review approval before a current sheet can be superseded.', code: 'human-review-required', targetRevision: target };
+  const setVersion = state.drawingSetVersions.find((row) => row.id === target.setVersionId) || { projectId: target.projectId, setId: target.setId, id: target.setVersionId, revisionLabel: input.revisionLabel || target.revisionLabel, revisionDate: now().slice(0, 10) };
+  const replacement = normalizeSheetRevision({ ...target, ...input.replacementSheet, ...input, sheetId: target.sheetId, drawingNumber: target.drawingNumber, supersedesRevisionId: target.id, humanReviewApproved: true }, setVersion, actor, 'current');
+  target.status = 'superseded';
+  target.supersededByRevisionId = replacement.id;
+  state.drawingSheetRevisions.push(replacement);
+  audit(state, actor, 'Slip-sheeted drawing revision after human approval', 'CAST_CAD_DRAWING_REVISION', replacement.id, target, replacement);
+  return { ok: true, replacement, superseded: target };
+}
+function listDrawingSetVersions(state, filters = {}) {
+  state.drawingSetVersions ||= [];
+  state.drawingSheetRevisions ||= [];
+  let versions = state.drawingSetVersions.slice();
+  if (filters.projectId) versions = versions.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) versions = versions.filter((row) => row.setId === filters.setId);
+  const versionIds = new Set(versions.map((row) => row.id));
+  const revisions = state.drawingSheetRevisions.filter((row) => versionIds.has(row.setVersionId) || (!filters.projectId || row.projectId === filters.projectId));
+  return { versions, revisions };
+}
 function markupsCsv(markups) {
   const cols = ['id','projectId','sheetId','pageNumber','tool','subject','status','priority','trade','costCode','quantity','unit','createdByUserId','createdAt'];
   return [cols.join(','), ...markups.map((m) => cols.map((c) => csvEscape(c === 'quantity' ? (m.measurement?.value || '') : c === 'unit' ? (m.measurement?.unit || '') : m[c])).join(','))].join('\n');
@@ -338,5 +424,7 @@ module.exports = {
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
-  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob, markupsCsv,
+  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob,
+  createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
+  markupsCsv,
 };
