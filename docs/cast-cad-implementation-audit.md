@@ -2,7 +2,22 @@
 
 ## Audit result
 
-CAST CAD is implemented as a Phase 1–3 static-platform MVP plus an enterprise scaffold. The complete Bluebeam-comparable product list is not fully built yet; the repo now has the route, viewer/markup/takeoff foundation, architecture, schema target, feature flags, and tests that make the remaining modules explicit and guarded.
+CAST CAD is implemented as a Phase 1–3 static-platform MVP plus production API contracts for the remaining enterprise modules. The repo now has the route, viewer/markup/takeoff foundation, architecture, schema target, feature flags, backend contracts, fail-closed private-file gates, workflow endpoints, and tests that make provider-dependent infrastructure explicit and guarded.
+
+## 2026-05 production-completion update
+
+Implemented backend contracts and tests for the remaining non-static elements that can be completed without external provider credentials:
+
+- Authenticated raw PDF stream/proxy / authenticated private PDF stream contract: `/api/cast-cad-pdf-stream`.
+- Persistent markup create/list/update/CSV contract: `/api/cast-cad-markups`.
+- Takeoff workbook, annotated PDF export, and comparison job contracts: `/api/cast-cad-exports`.
+- RFI-from-markup snapshot workflow: `/api/cast-cad-rfi-link`.
+- OCR/symbol search index contract: `/api/cast-cad-search`.
+- Review-room/collaboration invite contract: `/api/cast-cad-review-room`.
+- Shared production service layer: `api/_lib/cast-cad-production.js`.
+- Regression coverage: `tests/cast-cad-production-contract-tests.js`.
+
+Provider-dependent jobs now fail closed with explicit `provider-required` / `503` states instead of pretending private infrastructure is configured. To make the provider-dependent pieces fully operational, production still needs the private runtime credentials/workers listed below.
 
 ## Phase 1: Foundation
 
@@ -15,10 +30,10 @@ CAST CAD is implemented as a Phase 1–3 static-platform MVP plus an enterprise 
   - Drawing set/sheet index metadata is available from the current drawing index.
   - Basic route/navigation discoverability is guarded by tests.
 - Remaining production work:
-  - Authenticated raw PDF stream/proxy.
-  - True PDF.js/commercial SDK multi-page drawing renderer with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences.
-  - Backend document metadata persistence.
-  - Backend-enforced permissions.
+  - Connect production provider credentials for the authenticated raw PDF stream/proxy (`CAST_CAD_PDF_STREAM_BASE`, Dropbox, or CAST Server API). The fail-closed API contract is implemented.
+  - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences.
+  - Connect database adapter for document metadata persistence. The server markup/search/export contracts are implemented and audited.
+  - Wire backend auth/session identity into the CAST CAD permission layer. Permission decisions are implemented in the service contract.
 
 ## Phase 2: Markups
 
@@ -29,7 +44,8 @@ CAST CAD is implemented as a Phase 1–3 static-platform MVP plus an enterprise 
   - Markups List/export includes sheet, subject, tool, status, priority, trade, cost code, measurement value, measurement unit, scale label, and body.
   - Status/comment/quantity verification flows exist in the shared data layer.
 - Remaining production work:
-  - Full vector editing, grouping, layer assignment, opacity/fill/stroke/font controls, import/export PDF annotations, flattening, unflattening from CAST database, threaded mentions, and backend audit history.
+  - Connect frontend vector editing UI to the implemented server markup contract for grouping, layer assignment, opacity/fill/stroke/font controls, threaded mentions, and backend audit history.
+  - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract.
 
 ## Phase 3: Measurements
 
@@ -40,7 +56,8 @@ CAST CAD is implemented as a Phase 1–3 static-platform MVP plus an enterprise 
   - Unit tests cover length, area, count, scale metadata, feature flags, module registry, AI registry, and schema planning.
   - Takeoff rows remain draft/needs-review until human verified.
 - Remaining production work:
-  - True PDF coordinate mapping, multiple viewports/scales on one sheet, precision controls, measurement captions rendered as first-class editable labels, assembly takeoffs, formula columns, cost database mapping, and XLSX export jobs.
+  - Connect true PDF coordinate mapping and multiple viewport scale persistence to the selected PDF renderer.
+  - Add frontend precision controls, editable measurement captions, assembly takeoffs, formula columns, and cost database mapping on top of the implemented workbook export contract.
 
 ## Enterprise modules scaffolded behind flags
 
@@ -59,18 +76,18 @@ CAST CAD is implemented as a Phase 1–3 static-platform MVP plus an enterprise 
 
 ## Acceptance criteria status
 
-- 300-sheet upload/navigation: scaffolded, not production-complete.
-- Create/edit/save/reload/filter/export markups: partially implemented in static MVP; backend persistence and advanced editing remain.
+- 300-sheet upload/navigation: metadata-backed sheet navigation implemented; authenticated raw PDF stream contract implemented; provider credentials still required for private file bytes.
+- Create/edit/save/reload/filter/export markups: server contract implemented with audit and CSV; production database adapter remains to be connected.
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
-- Excel takeoff report: CSV/Excel-compatible export scaffold exists; production XLSX export job remains.
+- Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
 - CAST Tool Library: scaffolded behind feature flag.
-- Drawing comparison report: scaffolded behind feature flag.
-- OCR/search: scaffolded behind feature flag.
-- RFI from markup with snapshot: scaffolded; backend workflow remains.
-- Review session invite: scaffolded; real-time collaboration remains.
-- Annotated PDF export: scaffolded; backend PDF export job remains.
+- Drawing comparison report: comparison job contract implemented; comparison worker remains to be connected.
+- OCR/search: search/index contract implemented; OCR worker remains to be connected.
+- RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot.
+- Review session invite: review-room invite contract implemented; real-time transport/email invite provider remains.
+- Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
 - Markups List report: implemented at CSV/export scaffold level.
-- Permissioned/audit logged actions: schema and static audit concepts exist; backend enforcement remains.
+- Permissioned/audit logged actions: implemented in service contract; production auth/session integration remains.
 - AI findings labeled AI detected and human verified: implemented in data/schema guardrails; agents remain disabled behind flags.
 - No Bluebeam proprietary UI/names/icons/trade dress copied: current CAST CAD UI uses CAST naming and generic construction workflow language.
 
