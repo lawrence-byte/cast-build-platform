@@ -147,6 +147,44 @@ function updateMarkup(state, markupId, patch, actor) {
   audit(state, actor, 'Updated CAST CAD markup', 'CAST_CAD_MARKUP', markup.id, previous, markup);
   return { ok: true, markup };
 }
+function mentionsFromText(text) {
+  return [...new Set(String(text || '').match(/@[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|@[a-z][a-z0-9._-]*/gi) || [])]
+    .map((mention) => mention.slice(1).replace(/[.,;:!?)]$/, ''));
+}
+function createMarkupComment(state, markupId, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const markup = state.markups.find((row) => row.id === markupId);
+  if (!markup) return { ok: false, status: 404, error: 'Markup not found.' };
+  if (!String(input.body || '').trim()) return { ok: false, status: 422, errors: ['Comment body is required.'] };
+  const parentId = input.parentId || input.parent_id || '';
+  if (parentId && !state.comments.some((row) => row.id === parentId && row.markupId === markupId)) return { ok: false, status: 422, errors: ['Parent comment must belong to the same markup thread.'] };
+  const comment = {
+    id: input.id || id('cad_comment'),
+    markupId,
+    parentId,
+    body: String(input.body).trim(),
+    mentions: input.mentions || mentionsFromText(input.body),
+    attachments: input.attachments || [],
+    createdByUserId: actor.id,
+    createdByName: actor.name,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+  state.comments.push(comment);
+  markup.updatedByUserId = actor.id;
+  markup.updatedAt = now();
+  audit(state, actor, 'Added CAST CAD markup thread comment', 'CAST_CAD_MARKUP_COMMENT', comment.id, null, comment, comment.mentions.length ? `Mentions: ${comment.mentions.join(', ')}` : '');
+  return { ok: true, comment };
+}
+function listMarkupComments(state, markupId) {
+  return state.comments.filter((row) => !markupId || row.markupId === markupId);
+}
+function listMarkupAudit(state, markupId) {
+  if (!markupId) return state.auditLog.slice();
+  const commentIds = new Set(state.comments.filter((row) => row.markupId === markupId).map((row) => row.id));
+  return state.auditLog.filter((row) => row.entityId === markupId || commentIds.has(row.entityId));
+}
 function listMarkups(state, filters = {}) {
   let rows = state.markups.slice();
   if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
@@ -226,5 +264,6 @@ function markupsCsv(markups) {
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, sheetFromIndex, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
+  createMarkupComment, listMarkupComments, listMarkupAudit,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob, markupsCsv,
 };

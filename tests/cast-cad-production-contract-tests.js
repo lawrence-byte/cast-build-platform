@@ -33,6 +33,16 @@ assert.equal(updated.markup.layer, 'ASI-001', 'markup layer persists');
 assert.equal(updated.markup.costCode, '09-2116', 'markup update accepts snake_case cost code from API payloads');
 assert.equal(updated.markup.assigneeUserId, 'u4', 'markup update accepts snake_case assignee from API payloads');
 
+const comment = cad.createMarkupComment(state, markup.markup.id, { body: 'Please confirm with @architect@example.com and @pm-team.' }, owner);
+assert.equal(comment.ok, true, 'threaded markup comment creates through production service');
+assert.deepEqual(comment.comment.mentions, ['architect@example.com', 'pm-team'], 'comment contract extracts email and handle mentions');
+const reply = cad.createMarkupComment(state, markup.markup.id, { parentId: comment.comment.id, body: 'Confirmed in review room.' }, owner);
+assert.equal(reply.ok, true, 'threaded markup replies enforce parent linkage');
+const badReply = cad.createMarkupComment(state, markup.markup.id, { parentId: 'other-thread', body: 'bad parent' }, owner);
+assert.equal(badReply.ok, false, 'threaded markup replies reject parents outside the same markup');
+assert.equal(cad.listMarkupComments(state, markup.markup.id).length, 2, 'markup comments list by markup');
+assert.ok(cad.listMarkupAudit(state, markup.markup.id).some((row) => row.entityType === 'CAST_CAD_MARKUP_COMMENT'), 'markup audit history includes thread comments');
+
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(workbook.ok, true, 'takeoff workbook export job created');
 assert.equal(workbook.exportJob.status, 'ready', 'takeoff workbook can be generated from stored measurements');
