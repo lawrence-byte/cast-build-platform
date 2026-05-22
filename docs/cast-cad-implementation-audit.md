@@ -102,11 +102,23 @@ npm run build
 npm run check:public-artifacts
 npm run check:third-party-scripts
 node --check public/projects/*.js
+node --check api/*.js api/_lib/*.js
 ```
 
-## Deployment requirement
+## Latest audit run
 
-For production, merge PR #4 to `main`; Vercel deploys `app.cast-bld.com` from the production branch. After deployment, verify:
+- Audited at: `2026-05-22T10:24:55Z`.
+- Branch audited: `main`.
+- Local validation result: passing.
+- Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
+- Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
+- Live markup API: `https://app.cast-bld.com/api/cast-cad-markups` returned `200` with an empty markups list in the clean runtime state.
+- Live PDF stream API: `https://app.cast-bld.com/api/cast-cad-pdf-stream?sheetId=Current%20Drawings/A/A-101.pdf` returned intentional fail-closed `503` because the authenticated PDF provider is not configured. The response includes `publicExposure: false`, `requiresAuth: true`, and private no-store stream contract metadata.
 
-- `https://app.cast-bld.com/projects/cast-cad.html`
-- `https://app.cast-bld.com/projects.html` includes a CAST CAD navigation/discovery path.
+## Deployment status
+
+Production deploys `app.cast-bld.com` from `main`. After each CAST CAD merge, verify:
+
+- `https://app.cast-bld.com/projects/cast-cad.html` includes CAST CAD navigation, production backend gates, and current module signals.
+- `https://app.cast-bld.com/api/cast-cad-markups` returns JSON successfully.
+- `https://app.cast-bld.com/api/cast-cad-pdf-stream?...` fails closed until private PDF provider credentials/workers are configured.
