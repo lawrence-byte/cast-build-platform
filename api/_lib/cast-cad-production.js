@@ -68,11 +68,27 @@ function sheetFromIndex(index, sheetId) {
   const files = index?.files || [];
   return files.find((file) => safeSegment(file.path) === safeSegment(sheetId) || safeSegment(file.name) === safeSegment(sheetId) || file.id === sheetId) || null;
 }
+function joinUrl(base, segment) {
+  const cleanBase = String(base || '').replace(/\/+$/, '');
+  const cleanSegment = String(segment || '').split('/').map(encodeURIComponent).join('/');
+  return `${cleanBase}/${cleanSegment}`;
+}
+function buildServerPdfUrls(sheet) {
+  const sourcePath = String(sheet?.path || '');
+  const streamBase = process.env.CAST_CAD_PDF_STREAM_BASE || '';
+  const editBase = process.env.CAST_CAD_PDF_EDIT_BASE || process.env.CAST_CAD_DRAWING_SET_EDIT_BASE || '';
+  const documentApi = process.env.CAST_SERVER_DOCUMENT_API_URL || '';
+  return {
+    streamUrl: streamBase ? joinUrl(streamBase, sourcePath) : documentApi ? `${documentApi.replace(/\/+$/, '')}/pdf?path=${encodeURIComponent(sourcePath)}` : '',
+    editUrl: editBase ? joinUrl(editBase, sourcePath) : '',
+  };
+}
 function buildPdfStreamContract({ sheet, actor, expiresInSeconds = 300 }) {
   const permission = requireCastCad(actor.role, 'stream_pdf');
   if (!permission.ok) return permission;
   if (!sheet || !sheet.path || sheet.extension !== 'pdf') return { ok: false, status: 404, error: 'PDF sheet not found in the approved drawing index.' };
   const providerConfigured = Boolean(process.env.CAST_CAD_PDF_STREAM_BASE || process.env.DROPBOX_ACCESS_TOKEN || process.env.CAST_SERVER_DOCUMENT_API_URL);
+  const urls = buildServerPdfUrls(sheet);
   const streamId = crypto.createHash('sha256').update(`${sheet.path}|${actor.id}|${Date.now()}`).digest('hex').slice(0, 24);
   const contract = {
     streamId,
@@ -85,6 +101,10 @@ function buildPdfStreamContract({ sheet, actor, expiresInSeconds = 300 }) {
     publicExposure: false,
     requiresAuth: true,
     provider: process.env.CAST_CAD_PDF_STREAM_BASE ? 'cast-server' : process.env.DROPBOX_ACCESS_TOKEN ? 'dropbox' : process.env.CAST_SERVER_DOCUMENT_API_URL ? 'cast-server-api' : 'unconfigured',
+    streamUrl: urls.streamUrl,
+    editUrl: urls.editUrl,
+    editableOnServer: Boolean(urls.editUrl),
+    editingModel: 'CAST CAD stores vector markups separately and opens the approved server drawing link for source-PDF edits.',
   };
   if (!providerConfigured) return { ok: false, status: 503, error: 'Authenticated PDF provider is not configured; refusing to expose private drawing files.', contract };
   return { ok: true, contract };
@@ -263,7 +283,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, getActor, getState, resetState, json, readBody, audit,
-  buildPdfStreamContract, sheetFromIndex, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
+  buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob, markupsCsv,
 };
