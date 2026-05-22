@@ -8,6 +8,9 @@ let selectedDrawingId = state.drawings[0]?.id || '';
 let activeTool = 'Pin';
 let uploadedPdfUrl = '';
 let uploadedPdfName = '';
+let streamedPdfUrl = '';
+let streamedPdfName = '';
+let drawingStreamState = { drawingId: '', status: 'idle', message: '' };
 let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
 let drawingScales = loadDrawingScales();
 let calibration = null;
@@ -31,6 +34,13 @@ function clearUploadedPdf() {
   const input = document.querySelector('[data-pdf-input]');
   if (input) input.value = '';
 }
+function clearStreamedPdf() {
+  if (streamedPdfUrl) URL.revokeObjectURL(streamedPdfUrl);
+  streamedPdfUrl = '';
+  streamedPdfName = '';
+}
+function activePdfUrl() { return uploadedPdfUrl || streamedPdfUrl; }
+function activePdfName() { return uploadedPdfName || streamedPdfName; }
 
 function slugId(input, fallback) {
   return `alum_${String(input || fallback || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 80)}`;
@@ -115,6 +125,7 @@ async function loadCurrentDrawingSet({ force = false, toast = false } = {}) {
     if (toast) window.CASTShell?.toast?.('Could not load current drawing set metadata.', { kind: 'error' });
   }
   render();
+  loadSelectedDrawingPdf({ toast: false });
 }
 
 function renderMetrics() {
@@ -153,6 +164,38 @@ function renderCurrentSetSummary() {
     summary.textContent = 'Loading current drawing set metadata…';
   }
 }
+
+const MARKUP_TOOLS = [
+  { tool: 'Pin', label: 'Pin', icon: '<path d="M12 3a4 4 0 0 1 4 4c0 3-4 8-4 8S8 10 8 7a4 4 0 0 1 4-4Z"/><circle cx="12" cy="7" r="1.3"/><path d="M12 15v6"/>' },
+  { tool: 'Cloud + Callout', label: 'Cloud', icon: '<path d="M7.5 16.5h8.8a3.2 3.2 0 0 0 .6-6.3 4.8 4.8 0 0 0-9.1-1.6A4 4 0 0 0 7.5 16.5Z"/><path d="M14 16.5l4 4"/>' },
+  { tool: 'Text Box', label: 'Text', icon: '<rect x="5" y="5" width="14" height="14" rx="1.5"/><path d="M8 9h8M12 9v7"/>' },
+  { tool: 'Highlight', label: 'Highlight', icon: '<path d="M6 16l7.5-7.5 2 2L8 18H6v-2Z"/><path d="M14 8l1.5-1.5 2 2L16 10"/><path d="M5 20h14"/>' },
+  { tool: 'Arrow', label: 'Arrow', icon: '<path d="M5 19L19 5"/><path d="M11 5h8v8"/>' },
+  { tool: 'Line Measurement', label: 'Length', icon: '<path d="M5 17L19 7"/><path d="M6 13l3 4M15 7l3 4"/><path d="M7 21h10"/>' },
+  { tool: 'Area Measurement', label: 'Area', icon: '<rect x="5" y="6" width="14" height="12" rx="1.5"/><path d="M8 15h8M8 12h8M8 9h8"/>' },
+  { tool: 'Count', label: 'Count', icon: '<circle cx="8" cy="8" r="2.5"/><circle cx="16" cy="8" r="2.5"/><circle cx="8" cy="16" r="2.5"/><path d="M15 16h4M17 14v4"/>' },
+  { tool: 'Overlay Compare', label: 'Overlay', icon: '<rect x="5" y="7" width="10" height="10" rx="1.5"/><rect x="9" y="5" width="10" height="10" rx="1.5"/><path d="M9 17l10-10"/>' },
+];
+function renderMarkupToolbar() {
+  const bar = document.querySelector('[data-markup-toolbar]');
+  if (!bar) return;
+  bar.innerHTML = MARKUP_TOOLS.map((item) => `<button class="tool icon-tool ${item.tool === activeTool ? 'active' : ''}" type="button" data-tool="${esc(item.tool)}" aria-label="${esc(item.label)} markup tool" title="${esc(item.label)}"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true">${item.icon}</svg><span class="tool-label">${esc(item.label)}</span></button>`).join('');
+}
+function renderDrawingSheet(drawing) {
+  const plan = document.querySelector('[data-drawing-sheet]');
+  if (!plan || !drawing) return;
+  const streamText = drawingStreamState.drawingId === drawing.id ? drawingStreamState.message : '';
+  plan.innerHTML = `
+    <div class="drawing-sheet-meta">
+      <span>${esc(drawing.discipline || 'Drawing')}</span>
+      <strong>${esc(drawing.drawing_number || drawing.source_name || 'Sheet')}</strong>
+      <small>${esc(drawing.source_name || drawing.drawing_title || 'Selected drawing')}</small>
+      ${streamText ? `<em>${esc(streamText)}</em>` : ''}
+    </div>
+    <div class="drawing-sheet-grid" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>`;
+}
 function renderSheets() {
   const rows = state.drawings.slice(0, 80);
   const countEl = document.querySelector('[data-sheet-count]');
@@ -187,15 +230,18 @@ function renderPdfStage() {
   const frame = document.querySelector('[data-pdf-frame]');
   const status = document.querySelector('[data-pdf-status]');
   const drawing = selectedDrawing();
-  const usingPdf = hasUploadedPdf();
+  const pdfUrl = activePdfUrl();
+  const usingPdf = Boolean(pdfUrl);
   viewer?.classList.toggle('has-pdf', usingPdf);
   if (stage) stage.hidden = !usingPdf;
-  if (frame) frame.data = usingPdf ? uploadedPdfUrl : '';
+  if (frame) frame.data = usingPdf ? pdfUrl : '';
   if (status) {
-    if (usingPdf) status.textContent = `Viewing ${uploadedPdfName} · click the overlay to place CAST markups`;
-    else if (drawing?.source_boundary) status.textContent = `Linked: ${drawing.source_name || drawing.drawing_number} · PDF stream pending authenticated file gate; editing/takeoff overlay is active.`;
+    if (usingPdf) status.textContent = `Viewing ${activePdfName()} · click the overlay to place CAST markups`;
+    else if (drawingStreamState.drawingId === drawing?.id && drawingStreamState.message) status.textContent = drawingStreamState.message;
+    else if (drawing?.source_boundary) status.textContent = `Linked: ${drawing.source_name || drawing.drawing_number} · loading authenticated PDF stream…`;
     else status.textContent = 'No PDF stream · using sample plan overlay';
   }
+  renderDrawingSheet(drawing);
   renderScaleStatus();
 }
 function markupLabel(markup) {
@@ -214,7 +260,7 @@ function renderViewer() {
   renderCurrentSetSummary();
   const viewer = document.querySelector('[data-viewer]');
   const annotationLayer = document.querySelector('[data-annotation-layer]');
-  const targetLayer = hasUploadedPdf() && annotationLayer ? annotationLayer : viewer;
+  const targetLayer = activePdfUrl() && annotationLayer ? annotationLayer : viewer;
   state.drawingMarkups.filter((m) => m.drawing_id === drawing.id).forEach((markup) => {
     const el = document.createElement('button');
     el.className = `markup ${markup.markup_type || 'pin'}`;
@@ -285,6 +331,7 @@ function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
   renderArchitectureScaffold();
+  renderMarkupToolbar();
   renderSheets();
   renderViewer();
   renderMarkups();
@@ -321,7 +368,7 @@ function markupDefaults(drawing, x, y) {
     trade: ['Electrical', 'Plumbing', 'Mechanical'].find((trade) => drawing.discipline?.includes(trade)) || (drawing.discipline === 'Electrical' ? 'Electrical' : drawing.discipline === 'Plumbing' ? 'Plumbing' : drawing.discipline === 'Mechanical' ? 'Mechanical' : 'Coordination'),
     cost_code: drawing.discipline === 'Electrical' ? '26-0500' : drawing.discipline === 'Plumbing' ? '22-0500' : drawing.discipline === 'Mechanical' ? '23-0500' : '01-3100',
     assignee_user_id: state.users[2]?.id,
-    source: hasUploadedPdf() ? 'CAST PDF Overlay' : drawing.source_boundary ? 'CAST Current Drawing Set Overlay' : 'CAST Drawing Review',
+    source: uploadedPdfUrl ? 'CAST PDF Overlay' : drawing.source_boundary ? 'CAST Current Drawing Set Overlay' : 'CAST Drawing Review',
     ...measurement,
   };
 }
@@ -408,6 +455,70 @@ function addMarkupFromOverlay(event) {
   if (handleCalibrationClick(point)) return;
   createMarkupAt(Number(point.x.toFixed(1)), Number(point.y.toFixed(1)));
 }
+
+function selectedDrawingPdfEndpoint(mode = 'view') {
+  const drawing = selectedDrawing();
+  if (!drawing?.source_path) return '';
+  const params = new URLSearchParams({ sheetId: drawing.source_path, mode });
+  return `/api/cast-cad-pdf-stream?${params.toString()}`;
+}
+async function fetchSelectedPdfContract() {
+  const endpoint = selectedDrawingPdfEndpoint('edit');
+  if (!endpoint) return null;
+  const response = await fetch(endpoint, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+  const contentType = response.headers.get('content-type') || '';
+  return contentType.includes('application/json') ? response.json() : { ok: response.ok, error: await response.text() };
+}
+function openSelectedPdf() {
+  const endpoint = selectedDrawingPdfEndpoint('view');
+  if (!endpoint) { window.CASTShell?.toast?.('Select a linked drawing sheet first.', { kind: 'error' }); return; }
+  window.open(endpoint, '_blank', 'noopener,noreferrer');
+}
+async function openSelectedEditLink() {
+  const drawing = selectedDrawing();
+  if (!drawing?.source_path) { window.CASTShell?.toast?.('Select a linked drawing sheet first.', { kind: 'error' }); return; }
+  try {
+    const payload = await fetchSelectedPdfContract();
+    const editUrl = payload?.contract?.editUrl || payload?.editUrl || '';
+    if (editUrl) { window.open(editUrl, '_blank', 'noopener,noreferrer'); return; }
+    window.CASTShell?.toast?.('Editable server drawing link is not configured yet for this sheet.', { kind: 'error' });
+  } catch (error) {
+    console.warn('Could not open editable drawing link', error);
+    window.CASTShell?.toast?.('Could not request the editable server drawing link.', { kind: 'error' });
+  }
+}
+async function loadSelectedDrawingPdf({ toast = false } = {}) {
+  const drawing = selectedDrawing();
+  if (!drawing || !drawing.source_path || hasUploadedPdf()) return;
+  const requestId = drawing.id;
+  clearStreamedPdf();
+  drawingStreamState = { drawingId: requestId, status: 'loading', message: `Loading ${drawing.source_name || drawing.drawing_number}…` };
+  renderPdfStage();
+  try {
+    const endpoint = selectedDrawingPdfEndpoint('view');
+    const response = await fetch(endpoint, { headers: { Accept: 'application/pdf, application/json' }, cache: 'no-store' });
+    if (selectedDrawingId !== requestId) return;
+    const contentType = response.headers.get('content-type') || '';
+    if (response.ok && contentType.includes('application/pdf')) {
+      const blob = await response.blob();
+      streamedPdfUrl = URL.createObjectURL(blob);
+      streamedPdfName = drawing.source_name || drawing.drawing_number || 'drawing.pdf';
+      drawingStreamState = { drawingId: requestId, status: 'loaded', message: `Viewing ${streamedPdfName}.` };
+      renderViewer();
+      return;
+    }
+    const payload = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
+    const message = payload?.error || (response.ok ? 'PDF stream is not returning a PDF yet.' : `PDF stream failed with HTTP ${response.status}.`);
+    drawingStreamState = { drawingId: requestId, status: response.ok ? 'contract-only' : 'provider-required', message: `${drawing.source_name || drawing.drawing_number} is selected. ${message}` };
+    if (toast && !response.ok) window.CASTShell?.toast?.('The selected sheet is linked, but the authenticated PDF provider is not connected yet.', { kind: 'error' });
+  } catch (error) {
+    if (selectedDrawingId !== requestId) return;
+    drawingStreamState = { drawingId: requestId, status: 'error', message: `${drawing.source_name || drawing.drawing_number} is selected, but the PDF stream could not be reached.` };
+    console.warn('Could not load CAST CAD PDF stream', error);
+    if (toast) window.CASTShell?.toast?.('Could not reach the PDF stream for this drawing.', { kind: 'error' });
+  }
+  renderViewer();
+}
 function handlePdfUpload(file) {
   if (!file) return;
   if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
@@ -415,6 +526,8 @@ function handlePdfUpload(file) {
     return;
   }
   clearUploadedPdf();
+  clearStreamedPdf();
+  drawingStreamState = { drawingId: selectedDrawingId, status: 'local-upload', message: '' };
   uploadedPdfUrl = URL.createObjectURL(file);
   uploadedPdfName = file.name;
   window.CASTShell?.toast?.('PDF loaded locally. Markups remain CAST structured data.', { kind: 'success' });
@@ -473,18 +586,20 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; render(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
   if (event.target.closest('[data-load-current-set]')) { loadCurrentDrawingSet({ force: true, toast: true }); return; }
   if (event.target.closest('[data-calibrate-scale]')) { calibration = { drawingId: selectedDrawingId, first: null }; renderScaleStatus(); window.CASTShell?.toast?.('Click two points on the sheet that match the known length.', { kind: 'info' }); return; }
-  if (event.target.closest('[data-clear-pdf]')) { clearUploadedPdf(); renderViewer(); return; }
+  if (event.target.closest('[data-clear-pdf]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; renderViewer(); loadSelectedDrawingPdf({ toast: true }); return; }
+  if (event.target.closest('[data-open-server-pdf]')) { openSelectedPdf(); return; }
+  if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
   if (event.target.closest('[data-export]')) exportCsv();
-  if (event.target.closest('[data-reset]')) { clearUploadedPdf(); calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
+  if (event.target.closest('[data-reset]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: '', status: 'idle', message: '' }; calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
 });
 
 document.addEventListener('change', (event) => {
@@ -493,7 +608,7 @@ document.addEventListener('change', (event) => {
 });
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
 document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFromOverlay);
-window.addEventListener('beforeunload', clearUploadedPdf);
+window.addEventListener('beforeunload', () => { clearUploadedPdf(); clearStreamedPdf(); });
 
 render();
 loadCurrentDrawingSet({ force: false, toast: false });
