@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -320,6 +320,110 @@ function createReviewRoom(state, input, actor) {
   audit(state, actor, 'Created CAST CAD review room', 'CAST_CAD_REVIEW_ROOM', room.id, null, room);
   return { ok: true, room };
 }
+function normalizeToolLibraryItem(input = {}, actor) {
+  const unit = String(input.unit || input.measurementUnit || input.measurement_unit || 'EA').trim().toUpperCase();
+  const toolType = String(input.toolType || input.tool_type || input.type || 'count').trim().toLowerCase();
+  const defaultMarkupTool = toolType === 'area' ? 'Area Measurement' : toolType === 'length' ? 'Line Measurement' : 'Count';
+  return {
+    id: input.id || id('cad_tool'),
+    projectId: input.projectId || input.project_id || 'global',
+    name: String(input.name || '').trim(),
+    category: String(input.category || 'General').trim(),
+    trade: String(input.trade || 'Coordination').trim(),
+    costCode: input.costCode || input.cost_code || '',
+    assemblyCode: input.assemblyCode || input.assembly_code || '',
+    toolType,
+    markupTool: input.markupTool || input.markup_tool || defaultMarkupTool,
+    unit,
+    unitCost: input.unitCost === undefined && input.unit_cost === undefined ? null : Number(input.unitCost ?? input.unit_cost),
+    formula: String(input.formula || 'quantity').trim(),
+    defaultLayer: String(input.defaultLayer || input.default_layer || input.category || 'Default').trim(),
+    style: input.style || { stroke: '#0f766e', fill: 'rgba(15,118,110,.16)', opacity: 1, lineWidth: 2, fontSize: 12 },
+    requiresHumanReview: input.requiresHumanReview !== undefined ? Boolean(input.requiresHumanReview) : input.requires_human_review !== undefined ? Boolean(input.requires_human_review) : true,
+    status: input.status || 'active',
+    createdByUserId: input.createdByUserId || input.created_by_user_id || actor.id,
+    updatedByUserId: actor.id,
+    createdAt: input.createdAt || input.created_at || now(),
+    updatedAt: now(),
+  };
+}
+function validateToolLibraryItem(item) {
+  const errors = [];
+  if (!item.name) errors.push('name is required.');
+  if (!['count','length','area','symbol','stamp'].includes(item.toolType)) errors.push('toolType must be count, length, area, symbol, or stamp.');
+  if (item.unitCost !== null && (!Number.isFinite(item.unitCost) || item.unitCost < 0)) errors.push('unitCost must be a non-negative number when provided.');
+  if (!item.requiresHumanReview) errors.push('Tool Library items must require human review before quantities can affect budget or exports.');
+  return errors;
+}
+function createToolLibraryItem(state, input = {}, actor) {
+  state.toolLibraryItems ||= [];
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const item = normalizeToolLibraryItem(input, actor);
+  const errors = validateToolLibraryItem(item);
+  if (errors.length) return { ok: false, status: 422, errors };
+  state.toolLibraryItems.push(item);
+  audit(state, actor, 'Created CAST CAD Tool Library item', 'CAST_CAD_TOOL_LIBRARY_ITEM', item.id, null, item);
+  return { ok: true, item };
+}
+function updateToolLibraryItem(state, itemId, patch = {}, actor) {
+  state.toolLibraryItems ||= [];
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const item = state.toolLibraryItems.find((row) => row.id === itemId);
+  if (!item) return { ok: false, status: 404, error: 'Tool Library item not found.' };
+  const previous = clone(item);
+  const next = normalizeToolLibraryItem({ ...item, ...patch, id: item.id, createdAt: item.createdAt, createdByUserId: item.createdByUserId }, actor);
+  const errors = validateToolLibraryItem(next);
+  if (errors.length) return { ok: false, status: 422, errors };
+  Object.assign(item, next, { id: previous.id, createdAt: previous.createdAt, createdByUserId: previous.createdByUserId, updatedByUserId: actor.id, updatedAt: now() });
+  audit(state, actor, 'Updated CAST CAD Tool Library item', 'CAST_CAD_TOOL_LIBRARY_ITEM', item.id, previous, item);
+  return { ok: true, item };
+}
+function listToolLibraryItems(state, filters = {}) {
+  state.toolLibraryItems ||= [];
+  let rows = state.toolLibraryItems.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId || row.projectId === 'global');
+  if (filters.trade) rows = rows.filter((row) => row.trade === filters.trade);
+  if (filters.category) rows = rows.filter((row) => row.category === filters.category);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.search) { const q = String(filters.search).toLowerCase(); rows = rows.filter((row) => `${row.name} ${row.category} ${row.trade} ${row.costCode} ${row.assemblyCode}`.toLowerCase().includes(q)); }
+  return rows;
+}
+function applyToolLibraryItemToMarkup(state, input = {}, actor) {
+  state.toolLibraryItems ||= [];
+  state.toolLibraryPlacements ||= [];
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const itemId = input.itemId || input.item_id || input.toolLibraryItemId || input.tool_library_item_id;
+  const item = state.toolLibraryItems.find((row) => row.id === itemId && row.status !== 'archived');
+  if (!item) return { ok: false, status: 404, error: 'Active Tool Library item not found.' };
+  const quantity = Number(input.quantity || input.measurement?.value || 1);
+  if (!Number.isFinite(quantity) || quantity <= 0) return { ok: false, status: 422, errors: ['quantity must be a positive number.'] };
+  const created = createMarkup(state, {
+    projectId: input.projectId || item.projectId,
+    sheetId: input.sheetId || input.drawing_id,
+    pageNumber: input.pageNumber || input.page_number || 1,
+    tool: item.markupTool,
+    markupType: input.markupType || (item.toolType === 'area' || item.toolType === 'length' ? 'measurement' : 'pin'),
+    subject: input.subject || item.name,
+    body: input.body || `Placed from CAST Tool Library item ${item.name}. Human review required before budget use.`,
+    status: input.status || 'Needs Review',
+    priority: input.priority || 'Normal',
+    trade: item.trade,
+    costCode: item.costCode,
+    geometry: input.geometry || { type: item.toolType === 'area' ? 'polygon' : item.toolType === 'length' ? 'line' : 'point', points: input.points || [{ x: Number(input.x ?? 50), y: Number(input.y ?? 50) }] },
+    measurement: { value: quantity, unit: item.unit, source: 'tool-library', humanReviewRequired: true, formula: item.formula, unitCost: item.unitCost, assemblyCode: item.assemblyCode },
+    layer: input.layer || item.defaultLayer,
+    style: input.style || item.style,
+    sourceSnapshot: { toolLibraryItemId: item.id, itemName: item.name, category: item.category, assemblyCode: item.assemblyCode, requiresHumanReview: true },
+  }, actor);
+  if (!created.ok) return created;
+  const placement = { id: id('cad_tool_place'), itemId: item.id, markupId: created.markup.id, projectId: created.markup.projectId, sheetId: created.markup.sheetId, quantity, unit: item.unit, budgetAuthoritative: false, humanReviewRequired: true, createdByUserId: actor.id, createdAt: now() };
+  state.toolLibraryPlacements.push(placement);
+  audit(state, actor, 'Placed CAST CAD Tool Library item as review-gated markup', 'CAST_CAD_TOOL_LIBRARY_PLACEMENT', placement.id, null, placement);
+  return { ok: true, item, markup: created.markup, placement };
+}
 function buildComparisonJob(state, input, actor) {
   const permission = requireCastCad(actor.role, 'export');
   if (!permission.ok) return permission;
@@ -424,7 +528,9 @@ module.exports = {
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
-  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob,
+  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom,
+  createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
+  buildComparisonJob,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   markupsCsv,
 };

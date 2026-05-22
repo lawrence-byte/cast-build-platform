@@ -64,6 +64,25 @@ const room = cad.createReviewRoom(state, { projectId: 'alum', name: 'Permit revi
 assert.equal(room.ok, true, 'review room created');
 assert.equal(room.room.participants[0].status, 'Invited', 'review room participants are invited');
 
+const badTool = cad.createToolLibraryItem(state, { projectId: 'alum', name: 'Unsafe auto-budget count', toolType: 'count', requiresHumanReview: false }, owner);
+assert.equal(badTool.ok, false, 'Tool Library items fail closed when human review is disabled');
+assert.equal(badTool.status, 422, 'Tool Library review gate returns validation error');
+const toolItem = cad.createToolLibraryItem(state, { projectId: 'alum', name: 'Fire extinguisher cabinet', category: 'Life Safety', trade: 'Fire Protection', costCode: '10-4400', assemblyCode: 'FEC-001', toolType: 'count', unit: 'EA', unitCost: 850, formula: 'count * unitCost' }, owner);
+assert.equal(toolItem.ok, true, 'Tool Library item creates through production service');
+assert.equal(toolItem.item.requiresHumanReview, true, 'Tool Library item is human-review gated by default');
+assert.equal(cad.listToolLibraryItems(state, { projectId: 'alum', search: 'extinguisher' }).length, 1, 'Tool Library list filters by project and search');
+const updatedTool = cad.updateToolLibraryItem(state, toolItem.item.id, { unitCost: 900, defaultLayer: 'Life Safety' }, owner);
+assert.equal(updatedTool.ok, true, 'Tool Library item updates through production service');
+assert.equal(updatedTool.item.unitCost, 900, 'Tool Library item unit cost persists');
+const deniedToolAdmin = cad.createToolLibraryItem(state, { projectId: 'alum', name: 'Viewer-created item' }, readOnly);
+assert.equal(deniedToolAdmin.ok, false, 'read-only users cannot administer Tool Library items');
+const placedTool = cad.applyToolLibraryItemToMarkup(state, { itemId: toolItem.item.id, projectId: 'alum', sheetId: 'A-101', quantity: 3, x: 42, y: 58 }, owner);
+assert.equal(placedTool.ok, true, 'Tool Library item places a markup/takeoff row contract');
+assert.equal(placedTool.markup.status, 'Needs Review', 'Tool Library placement remains review-gated');
+assert.equal(placedTool.markup.measurement.humanReviewRequired, true, 'Tool Library measurement is not budget-authoritative without review');
+assert.equal(placedTool.placement.budgetAuthoritative, false, 'Tool Library placement explicitly blocks budget authority');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_TOOL_LIBRARY_PLACEMENT'), 'Tool Library placement is audited');
+
 const comparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetId: 'A-101-r0', revisedSheetId: 'A-101-r1' }, owner);
 assert.equal(comparison.ok, true, 'comparison job contract created');
 assert.equal(comparison.job.status, 'provider-required', 'comparison job reports worker requirement when no worker configured');
