@@ -2,6 +2,7 @@ const CPC = window.CastProjectControls;
 const CURRENT_DRAWING_INDEX_URL = '/safe-data/projects/golden-hill/procore-information/procore-data-tie-index.json';
 const DRAWING_STATE_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-current-set-linked`;
 const SCALES_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-sheet-scales`;
+const VIEWER_PREFS_KEY = `${CPC.STORAGE_KEY || 'cast-project-controls-v1'}:cad-viewer-preferences`;
 
 let state = CPC.ensureDrawingIntelligenceState(CPC.loadState());
 let selectedDrawingId = state.drawings[0]?.id || '';
@@ -13,6 +14,7 @@ let streamedPdfName = '';
 let drawingStreamState = { drawingId: '', status: 'idle', message: '' };
 let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
 let drawingScales = loadDrawingScales();
+let viewerPreferences = loadViewerPreferences();
 let calibration = null;
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
@@ -23,6 +25,21 @@ const actor = () => state.users[0];
 function save() { CPC.saveState(state); }
 function selectedDrawing() { return byId(state.drawings, selectedDrawingId) || state.drawings[0]; }
 function hasUploadedPdf() { return Boolean(uploadedPdfUrl); }
+function defaultViewerPreferences() { return { layout: 'single-page', zoomMode: 'fit-width', showThumbnails: true, showBookmarks: false, showPageLabels: true, splitView: false, sideBySide: false, keyboardShortcuts: true, searchPanelOpen: false }; }
+function normalizeViewerPreferences(input = {}) {
+  const base = defaultViewerPreferences();
+  const layout = ['single-page','continuous','split-view','side-by-side'].includes(input.layout) ? input.layout : base.layout;
+  return {
+    ...base,
+    ...input,
+    layout,
+    zoomMode: ['fit-width','fit-page','actual-size'].includes(input.zoomMode) ? input.zoomMode : base.zoomMode,
+    splitView: input.splitView !== undefined ? Boolean(input.splitView) : layout === 'split-view',
+    sideBySide: input.sideBySide !== undefined ? Boolean(input.sideBySide) : layout === 'side-by-side',
+  };
+}
+function loadViewerPreferences() { try { return normalizeViewerPreferences(JSON.parse(localStorage.getItem(VIEWER_PREFS_KEY) || '{}')); } catch { return defaultViewerPreferences(); } }
+function saveViewerPreferencesLocal() { try { localStorage.setItem(VIEWER_PREFS_KEY, JSON.stringify(viewerPreferences)); } catch {} }
 function loadDrawingScales() { try { return JSON.parse(localStorage.getItem(SCALES_KEY) || '{}'); } catch { return {}; } }
 function saveDrawingScales() { try { localStorage.setItem(SCALES_KEY, JSON.stringify(drawingScales)); } catch {} }
 function currentScale() { return drawingScales[selectedDrawingId] || null; }
@@ -224,6 +241,60 @@ function renderScaleStatus() {
     el.textContent = 'Scale not calibrated for this sheet.';
   }
 }
+function renderViewerPreferences() {
+  const layout = document.querySelector('[data-viewer-layout]');
+  const zoom = document.querySelector('[data-viewer-zoom]');
+  if (layout) layout.value = viewerPreferences.layout;
+  if (zoom) zoom.value = viewerPreferences.zoomMode;
+  ['showThumbnails','showBookmarks','showPageLabels','keyboardShortcuts','searchPanelOpen'].forEach((key) => {
+    const el = document.querySelector(`[data-viewer-pref="${key}"]`);
+    if (el) el.checked = Boolean(viewerPreferences[key]);
+  });
+  const status = document.querySelector('[data-viewer-pref-status]');
+  if (status) status.textContent = `${viewerPreferences.layout.replace(/-/g, ' ')} · ${viewerPreferences.zoomMode.replace(/-/g, ' ')} · thumbnails ${viewerPreferences.showThumbnails ? 'on' : 'off'} · shortcuts ${viewerPreferences.keyboardShortcuts ? 'on' : 'off'}`;
+  const viewer = document.querySelector('[data-viewer]');
+  if (viewer) {
+    viewer.dataset.layout = viewerPreferences.layout;
+    viewer.dataset.zoomMode = viewerPreferences.zoomMode;
+    viewer.dataset.pageLabels = String(Boolean(viewerPreferences.showPageLabels));
+  }
+}
+function viewerPreferencePayload() {
+  return {
+    layout: document.querySelector('[data-viewer-layout]')?.value || viewerPreferences.layout,
+    zoomMode: document.querySelector('[data-viewer-zoom]')?.value || viewerPreferences.zoomMode,
+    showThumbnails: Boolean(document.querySelector('[data-viewer-pref="showThumbnails"]')?.checked),
+    showBookmarks: Boolean(document.querySelector('[data-viewer-pref="showBookmarks"]')?.checked),
+    showPageLabels: Boolean(document.querySelector('[data-viewer-pref="showPageLabels"]')?.checked),
+    keyboardShortcuts: Boolean(document.querySelector('[data-viewer-pref="keyboardShortcuts"]')?.checked),
+    searchPanelOpen: Boolean(document.querySelector('[data-viewer-pref="searchPanelOpen"]')?.checked),
+  };
+}
+async function persistViewerPreferences({ toast = false } = {}) {
+  viewerPreferences = normalizeViewerPreferences(viewerPreferencePayload());
+  saveViewerPreferencesLocal();
+  renderViewerPreferences();
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'preferences', projectId: selectedDrawing()?.project_id || 'alum', preferences: viewerPreferences }) });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || payload?.ok === false) throw new Error(payload?.error || `HTTP ${response.status}`);
+    if (toast) window.CASTShell?.toast?.('Viewer preferences saved for this CAST CAD user.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not persist CAST CAD viewer preferences to API', error);
+    if (toast) window.CASTShell?.toast?.('Viewer preferences saved locally; backend preferences API is unavailable.', { kind: 'info' });
+  }
+}
+async function loadServerViewerPreferences() {
+  try {
+    const response = await fetch('/api/cast-cad-markups?action=preferences&projectId=alum', { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const payload = await response.json();
+    if (response.ok && payload?.ok && payload.preferences) {
+      viewerPreferences = normalizeViewerPreferences(payload.preferences);
+      saveViewerPreferencesLocal();
+      renderViewerPreferences();
+    }
+  } catch (error) { console.warn('Could not load CAST CAD server viewer preferences', error); }
+}
 function renderPdfStage() {
   const viewer = document.querySelector('[data-viewer]');
   const stage = document.querySelector('[data-pdf-stage]');
@@ -258,6 +329,7 @@ function renderViewer() {
   document.querySelectorAll('.markup').forEach((el) => el.remove());
   renderPdfStage();
   renderCurrentSetSummary();
+  renderViewerPreferences();
   const viewer = document.querySelector('[data-viewer]');
   const annotationLayer = document.querySelector('[data-annotation-layer]');
   const targetLayer = activePdfUrl() && annotationLayer ? annotationLayer : viewer;
@@ -595,6 +667,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-clear-pdf]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; renderViewer(); loadSelectedDrawingPdf({ toast: true }); return; }
   if (event.target.closest('[data-open-server-pdf]')) { openSelectedPdf(); return; }
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
+  if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
@@ -605,10 +678,12 @@ document.addEventListener('click', (event) => {
 document.addEventListener('change', (event) => {
   const input = event.target.closest('[data-pdf-input]');
   if (input) handlePdfUpload(input.files?.[0]);
+  if (event.target.closest('[data-viewer-layout], [data-viewer-zoom], [data-viewer-pref]')) persistViewerPreferences({ toast: false });
 });
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
 document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFromOverlay);
 window.addEventListener('beforeunload', () => { clearUploadedPdf(); clearStreamedPdf(); });
 
 render();
+loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });

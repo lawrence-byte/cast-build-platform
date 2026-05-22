@@ -68,4 +68,18 @@ const comparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetI
 assert.equal(comparison.ok, true, 'comparison job contract created');
 assert.equal(comparison.job.status, 'provider-required', 'comparison job reports worker requirement when no worker configured');
 
+const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
+assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
+assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
+assert.equal(defaultPrefs.preferences.showPageLabels, true, 'viewer preferences default page labels on');
+const savedPrefs = cad.saveViewerPreferences(state, owner, { projectId: 'alum', preferences: { layout: 'side-by-side', zoomMode: 'fit-page', showThumbnails: false, showBookmarks: true, keyboardShortcuts: false } });
+assert.equal(savedPrefs.ok, true, 'viewer preferences save through production service');
+assert.equal(savedPrefs.preferences.preferences.layout, 'side-by-side', 'viewer layout preference persists');
+assert.equal(savedPrefs.preferences.preferences.sideBySide, true, 'side-by-side preference derives rendering mode');
+assert.equal(savedPrefs.preferences.preferences.showThumbnails, false, 'viewer thumbnail preference persists');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_VIEWER_PREFERENCES'), 'viewer preference saves are audited');
+const loadedPrefs = cad.getViewerPreferences(state, owner, 'alum');
+assert.equal(loadedPrefs.source, 'stored', 'viewer preferences read stored project/user record');
+assert.equal(loadedPrefs.preferences.showBookmarks, true, 'viewer preferences reload stored bookmarks setting');
+
 console.log('CAST CAD production contract tests passed.');

@@ -17,6 +17,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent takeoff refinement controls for editable measurement captions, precision, assembly mapping, formula columns, unit-cost mapping, and human-review-gated quantity rows.
 - Provider-independent vector markup layer/group/style controls for stroke, fill, opacity, line width, and font size, persisted in local MVP data and server markup contracts.
 - Provider-independent threaded markup comment/mention contract plus markup audit-history read contract on `/api/cast-cad-markups`.
+- Provider-independent persisted viewer-preferences contract and workbench controls for layout, zoom mode, thumbnails, bookmarks, page labels, keyboard shortcuts, split view, side-by-side view, and search panel state: `/api/cast-cad-markups?action=preferences`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -34,7 +35,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Basic route/navigation discoverability is guarded by tests.
 - Remaining production work:
   - Connect production provider credentials for the authenticated raw PDF stream/proxy (`CAST_CAD_PDF_STREAM_BASE`, Dropbox, or CAST Server API). The fail-closed API contract is implemented.
-  - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences.
+  - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences. Provider-independent preference UI/API contract is implemented; renderer engine/worker remains provider/integration-dependent.
   - Connect database adapter for document metadata persistence. The server markup/search/export contracts are implemented and audited.
   - Wire backend auth/session identity into the CAST CAD permission layer. Permission decisions are implemented in the service contract.
 
