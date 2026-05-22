@@ -269,6 +269,71 @@
     const value = lengthPercent * unitsPerPercent;
     return { value: Number(value.toFixed(2)), unit: unit === 'IN' ? 'IN' : 'LF', precision: 2, source: 'CAST CAD calibrated length' };
   }
+  const CAST_CAD_ASSEMBLIES = [
+    { key: 'coordination', label: 'Coordination / review item', trade: 'Coordination', cost_code: '01-3100', unit: 'EA', unit_cost: 0, formula: 'quantity' },
+    { key: 'drywall_partition', label: 'Drywall partition wall', trade: 'Drywall', cost_code: '09-2116', unit: 'LF', unit_cost: 85, formula: 'quantity * 1.05' },
+    { key: 'roof_waterproofing', label: 'Roof waterproofing membrane', trade: 'Roofing', cost_code: '07-5400', unit: 'SF', unit_cost: 18, formula: 'quantity * 1.03' },
+    { key: 'door_frame', label: 'Hollow metal door/frame', trade: 'Openings', cost_code: '08-1113', unit: 'EA', unit_cost: 1600, formula: 'quantity' },
+    { key: 'electrical_branch', label: 'Electrical branch rough-in', trade: 'Electrical', cost_code: '26-0500', unit: 'LF', unit_cost: 42, formula: 'quantity * 1.08' },
+    { key: 'mechanical_duct', label: 'Mechanical duct run', trade: 'Mechanical', cost_code: '23-0500', unit: 'LF', unit_cost: 64, formula: 'quantity * 1.10' },
+    { key: 'plumbing_pipe', label: 'Plumbing pipe rough-in', trade: 'Plumbing', cost_code: '22-0500', unit: 'LF', unit_cost: 58, formula: 'quantity * 1.10' },
+  ];
+  function castCadAssemblyLibrary() { return clone(CAST_CAD_ASSEMBLIES); }
+  function castCadAssemblyFor(input = {}) {
+    const key = String(input.assemblyKey || input.assembly_key || '').toLowerCase();
+    const costCode = String(input.costCode || input.cost_code || '').toLowerCase();
+    const trade = String(input.trade || '').toLowerCase();
+    const unit = String(input.unit || input.measurement_unit || '').toUpperCase();
+    return CAST_CAD_ASSEMBLIES.find((row) => row.key === key)
+      || CAST_CAD_ASSEMBLIES.find((row) => row.cost_code.toLowerCase() === costCode)
+      || CAST_CAD_ASSEMBLIES.find((row) => row.trade.toLowerCase() === trade && (!unit || row.unit === unit))
+      || CAST_CAD_ASSEMBLIES[0];
+  }
+  function evaluateCastCadFormula(formula, quantity) {
+    const expression = String(formula || 'quantity').trim();
+    if (!/^[0-9+\-*/().\squantity]+$/i.test(expression)) return Number(quantity || 0);
+    try {
+      const result = Function('quantity', '"use strict"; return (' + expression.replace(/quantity/gi, 'quantity') + ');')(Number(quantity || 0));
+      return Number.isFinite(Number(result)) ? Number(Number(result).toFixed(6)) : Number(quantity || 0);
+    } catch { return Number(quantity || 0); }
+  }
+  function buildCastCadTakeoffRow(state, { drawing, markup, assemblyKey = '', caption = '', precision = 2, formula = '', unitCost = null } = {}) {
+    ensureDrawingIntelligenceState(state);
+    const measurementValue = Number(markup?.measurement_value ?? markup?.measurement?.value ?? (markup?.tool === 'Count' ? 1 : 0));
+    const measurementUnit = String(markup?.measurement_unit || markup?.measurement?.unit || (markup?.tool === 'Count' ? 'EA' : '')).toUpperCase();
+    const assembly = castCadAssemblyFor({ assemblyKey, cost_code: markup?.cost_code, trade: markup?.trade, unit: measurementUnit });
+    const decimals = Math.max(0, Math.min(6, Number(precision ?? 2)));
+    const takeoffFormula = formula || assembly.formula || 'quantity';
+    const roundedQuantity = Number(measurementValue.toFixed(decimals));
+    const formulaQuantity = Number(evaluateCastCadFormula(takeoffFormula, roundedQuantity).toFixed(decimals));
+    const mappedUnitCost = Number(unitCost ?? assembly.unit_cost ?? 0);
+    const proformaQuantity = Number(markup?.proforma_quantity || 0);
+    return {
+      id: `qty_${markup.id}`,
+      project_id: drawing?.project_id || markup?.project_id || '',
+      drawing_id: drawing?.id || markup?.drawing_id || '',
+      source_sheet: drawing?.drawing_number || markup?.drawing_id || '',
+      item: caption || markup?.measurement_caption || markup?.subject || assembly.label,
+      trade: markup?.trade || assembly.trade,
+      cost_code: markup?.cost_code || assembly.cost_code,
+      assembly_key: assembly.key,
+      assembly_label: assembly.label,
+      quantity: formulaQuantity,
+      measured_quantity: roundedQuantity,
+      unit: measurementUnit || assembly.unit,
+      unit_cost: mappedUnitCost,
+      formula: takeoffFormula,
+      precision: decimals,
+      ai_tool: 'CAST CAD manual takeoff',
+      confidence: markup?.scale_label === 'scale required' ? 35 : 100,
+      verification_status: 'Needs Review',
+      proforma_quantity: proformaQuantity,
+      proforma_delta_amount: Number(((formulaQuantity - proformaQuantity) * mappedUnitCost).toFixed(2)),
+      reviewed_by_user_id: '',
+      reviewed_at: '',
+      notes: markup?.scale_label === 'scale required' ? 'Set sheet scale before budget-authoritative use.' : `Measured from calibrated sheet scale (${markup?.scale_label || 'sheet scale'}); assembly/cost mapping requires human verification.`,
+    };
+  }
   function castCadArchitectureSnapshot() {
     return { featureFlags: clone(CAST_CAD_FEATURE_FLAGS), modules: clone(CAST_CAD_MODULES), agents: clone(CAST_CAD_AGENTS), databaseTables: clone(CAST_CAD_DATABASE_TABLES) };
   }
@@ -330,5 +395,5 @@
   function saveState(state) { if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
   function resetState() { const seed = buildSeedState(); saveState(seed); return seed; }
 
-  return { RFI_STATUSES, RESPONSE_STATUSES, IMPACT_STATUSES, ROLES, STORAGE_KEY, CAST_CAD_FEATURE_FLAGS, CAST_CAD_MODULES, CAST_CAD_AGENTS, CAST_CAD_DATABASE_TABLES, buildSeedState, loadState, saveState, resetState, generateRfiNumber, validateRfi, createRfi, submitResponse, markOfficialResponse, closeRfi, reopenRfi, reviseRfi, addComment, ensureDrawingIntelligenceState, createDrawingMarkup, createDrawingComment, updateDrawingIssueStatus, verifyEstimateQuantity, drawingIntelligenceMetrics, exportDrawingReviewCsv, normalizeCastCadPoint, calibrateCastCadScale, measureCastCadGeometry, castCadArchitectureSnapshot, canViewRfi, canPerform, dashboardMetrics, filterRfis, exportRfiCsv, isOverdue, daysOpen };
+  return { RFI_STATUSES, RESPONSE_STATUSES, IMPACT_STATUSES, ROLES, STORAGE_KEY, CAST_CAD_FEATURE_FLAGS, CAST_CAD_MODULES, CAST_CAD_AGENTS, CAST_CAD_DATABASE_TABLES, buildSeedState, loadState, saveState, resetState, generateRfiNumber, validateRfi, createRfi, submitResponse, markOfficialResponse, closeRfi, reopenRfi, reviseRfi, addComment, ensureDrawingIntelligenceState, createDrawingMarkup, createDrawingComment, updateDrawingIssueStatus, verifyEstimateQuantity, drawingIntelligenceMetrics, exportDrawingReviewCsv, normalizeCastCadPoint, calibrateCastCadScale, measureCastCadGeometry, castCadAssemblyLibrary, castCadAssemblyFor, evaluateCastCadFormula, buildCastCadTakeoffRow, castCadArchitectureSnapshot, canViewRfi, canPerform, dashboardMetrics, filterRfis, exportRfiCsv, isOverdue, daysOpen };
 });

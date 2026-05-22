@@ -250,12 +250,14 @@ function renderMarkups() {
 function renderQuantities() {
   document.querySelector('[data-quantity-rows]').innerHTML = state.estimateQuantities.map((q) => {
     const statusClass = q.verification_status === 'Verified' ? 'ok' : 'open';
+    const measured = q.measured_quantity !== undefined && q.measured_quantity !== q.quantity ? `<br><span class="muted">Measured ${Number(q.measured_quantity).toLocaleString()} ${esc(q.unit)} · ${esc(q.notes)}</span>` : `<br><span class="muted">${esc(q.trade)} · ${esc(q.notes)}</span>`;
     return `<tr>
       <td><strong>${esc(q.source_sheet)}</strong></td>
-      <td>${esc(q.item)}<br><span class="muted">${esc(q.trade)} · ${esc(q.notes)}</span></td>
-      <td>${Number(q.quantity).toLocaleString()} ${esc(q.unit)}</td>
+      <td>${esc(q.item)}<br><span class="muted">${esc(q.assembly_label || q.trade || 'Unmapped assembly')} · ${esc(q.trade)}</span>${measured}</td>
+      <td>${Number(q.quantity).toLocaleString(undefined, { maximumFractionDigits: Number(q.precision ?? 2) })} ${esc(q.unit)}</td>
       <td>${esc(q.cost_code)}</td>
-      <td>${esc(q.ai_tool)}</td>
+      <td>${esc(q.formula || q.ai_tool || 'quantity')}</td>
+      <td>${q.unit_cost !== undefined ? money(q.unit_cost) : '<span class="muted">—</span>'}</td>
       <td>${esc(q.confidence)}%</td>
       <td><span class="badge ${statusClass}">${esc(q.verification_status)}</span></td>
       <td>${money(q.proforma_delta_amount)}</td>
@@ -315,32 +317,26 @@ function markupDefaults(drawing, x, y) {
     ...measurement,
   };
 }
+function takeoffInputs() {
+  return {
+    assemblyKey: document.querySelector('[data-takeoff-assembly]')?.value || 'coordination',
+    caption: document.querySelector('[data-takeoff-caption]')?.value.trim() || '',
+    precision: Number(document.querySelector('[data-takeoff-precision]')?.value ?? 2),
+    formula: document.querySelector('[data-takeoff-formula]')?.value.trim() || '',
+    unitCost: document.querySelector('[data-takeoff-unit-cost]')?.value === '' ? null : Number(document.querySelector('[data-takeoff-unit-cost]')?.value),
+  };
+}
 function createMarkupAt(x, y) {
   const drawing = selectedDrawing();
   if (!drawing) return;
-  const result = CPC.createDrawingMarkup(state, markupDefaults(drawing, x, y), actor());
+  const takeoff = takeoffInputs();
+  const defaults = markupDefaults(drawing, x, y);
+  if (takeoff.caption && ['Line Measurement', 'Area Measurement', 'Count'].includes(activeTool)) defaults.subject = takeoff.caption;
+  const result = CPC.createDrawingMarkup(state, defaults, actor());
   if (result.ok) {
     CPC.createDrawingComment(state, { drawing_id: drawing.id, markup_id: result.markup.id, body: result.markup.body }, actor());
     if (result.markup.measurement_value || result.markup.tool === 'Count') {
-      state.estimateQuantities.unshift({
-        id: `qty_${result.markup.id}`,
-        project_id: drawing.project_id,
-        drawing_id: drawing.id,
-        source_sheet: drawing.drawing_number,
-        item: result.markup.subject,
-        trade: result.markup.trade,
-        cost_code: result.markup.cost_code,
-        quantity: Number(result.markup.measurement_value || 1),
-        unit: result.markup.measurement_unit || 'EA',
-        ai_tool: 'CAST CAD manual takeoff',
-        confidence: result.markup.scale_label === 'scale required' ? 35 : 100,
-        verification_status: 'Needs Review',
-        proforma_quantity: 0,
-        proforma_delta_amount: 0,
-        reviewed_by_user_id: '',
-        reviewed_at: '',
-        notes: result.markup.scale_label === 'scale required' ? 'Set sheet scale before budget-authoritative use.' : `Measured from calibrated sheet scale (${result.markup.scale_label}).`,
-      });
+      state.estimateQuantities.unshift(CPC.buildCastCadTakeoffRow(state, { drawing, markup: result.markup, ...takeoff }));
     }
     save();
     window.CASTShell?.toast?.('Drawing markup added to review queue.', { kind: 'success' });

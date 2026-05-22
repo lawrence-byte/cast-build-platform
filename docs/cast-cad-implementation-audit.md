@@ -14,6 +14,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - RFI-from-markup snapshot workflow: `/api/cast-cad-rfi-link`.
 - OCR/symbol search index contract: `/api/cast-cad-search`.
 - Review-room/collaboration invite contract: `/api/cast-cad-review-room`.
+- Provider-independent takeoff refinement controls for editable measurement captions, precision, assembly mapping, formula columns, unit-cost mapping, and human-review-gated quantity rows.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -57,7 +58,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Takeoff rows remain draft/needs-review until human verified.
 - Remaining production work:
   - Connect true PDF coordinate mapping and multiple viewport scale persistence to the selected PDF renderer.
-  - Add frontend precision controls, editable measurement captions, assembly takeoffs, formula columns, and cost database mapping on top of the implemented workbook export contract.
+  - Completed provider-independent frontend precision controls, editable measurement captions, assembly takeoffs, formula columns, and seed cost-code/unit-cost mapping on top of the workbook export contract. Remaining work is to connect the production cost database adapter once provider/storage decisions are available.
 
 ## Enterprise modules scaffolded behind flags
 
