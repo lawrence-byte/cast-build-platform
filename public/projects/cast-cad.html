@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>CAST CAD — PDF Review + AI Takeoff</title>
-  <meta name="description" content="CAST CAD portal for web-based drawing review, PDF markup, CAD viewing, AI takeoff intake, and human-verified estimate controls.">
+  <title>CAST CAD — Drawing Set Editor</title>
+  <meta name="description" content="CAST CAD drawing-set editor for server-linked PDF review, Bluebeam-inspired markup, takeoff intake, and human-verified estimate controls.">
+  <meta name="theme-color" content="#050505">
   <link rel="stylesheet" href="/cast-build.css">
   <link rel="stylesheet" href="/cast-build-components.css">
   <link rel="icon" href="/assets/brand/cast-monogram-logo.svg" type="image/svg+xml">
@@ -15,6 +16,11 @@
     .cad-drawing-center{position:relative;box-shadow:0 32px 110px rgba(0,0,0,.42),0 0 0 1px rgba(147,197,253,.12)}
     .cad-drawing-center .cad-panel-head{background:linear-gradient(90deg,rgba(15,23,42,.72),rgba(245,243,239,.045))}.cad-drawing-center .viewer{min-height:72vh;border-color:rgba(147,197,253,.45);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
     .cad-workbench{grid-template-columns:minmax(220px,.24fr) minmax(760px,1fr) minmax(260px,.28fr);align-items:start}.cad-workbench>.cad-drawing-center{order:2}.cad-workbench>aside:first-child{order:1}.cad-workbench>aside:last-child{order:3}.cad-hero{grid-template-columns:minmax(0,.9fr) minmax(300px,.55fr)}
+
+    html{color-scheme:dark}.skip-link{position:absolute;left:18px;top:12px;z-index:100000;transform:translateY(-140%);background:var(--ivory);color:var(--dark);padding:10px 12px;text-decoration:none;font-family:var(--font-caption);font-size:.7rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.skip-link:focus-visible{transform:translateY(0);outline:2px solid #93c5fd;outline-offset:2px}
+    .cad-control-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.sheet-filter{display:grid;gap:6px;margin:0 0 10px;font-family:var(--font-caption);font-size:.58rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(212,201,178,.82)}.sheet-filter input,.pdf-intake select,.pdf-intake input[type=search],.pdf-intake input[type=text],.pdf-intake input[type=number]{border:1px solid rgba(191,184,162,.34);background:rgba(245,243,239,.94);color:#181816;padding:8px 9px;min-width:0}.sheet-filter input{width:100%;font:600 .82rem/1.2 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-transform:none;letter-spacing:0}.sheet-btn{touch-action:manipulation}.sheet-btn strong,.comment-card h3,.risk h3,.tool-card strong{overflow-wrap:anywhere}.pdf-intake{border-style:solid;border-radius:6px}.pdf-intake label{min-width:0}.pdf-status{overflow-wrap:anywhere}.cad-drawing-center .pdf-intake:first-child{background:rgba(15,23,42,.5);border-color:rgba(147,197,253,.32)}
+    .viewer[data-stream-status=provider-required] .drawing-sheet-meta{border-color:rgba(251,191,36,.5)}.viewer[data-stream-status=loaded]{border-color:rgba(125,211,252,.72)}.viewer[data-layout=continuous] .pdf-frame{height:150%}.viewer[data-layout=split-view],.viewer[data-layout=side-by-side]{background-image:linear-gradient(90deg,transparent 0,transparent calc(50% - 1px),rgba(147,197,253,.22) 50%,transparent calc(50% + 1px))}
+    @media (prefers-reduced-motion: reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
     .markup-toolbar{gap:6px;align-items:center;padding:8px;border:1px solid rgba(191,184,162,.22);background:rgba(5,5,5,.24)}
     .markup-toolbar .icon-tool{width:58px;min-height:54px;display:grid;place-items:center;gap:4px;padding:7px 6px;border-radius:4px;background:linear-gradient(180deg,rgba(248,250,252,.08),rgba(148,163,184,.04));color:#dbeafe;border-color:rgba(125,154,184,.36);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
     .markup-toolbar .icon-tool:hover,.markup-toolbar .icon-tool:focus-visible{background:rgba(30,64,175,.26);color:#eff6ff;border-color:rgba(147,197,253,.72)}
@@ -23,6 +29,7 @@
   </style>
 </head>
 <body class="project-admin-body">
+  <a class="skip-link" href="#cast-cad-workbench">Skip to drawing editor</a>
   <main class="cad-shell">
     <div class="cad-frame">
       <header class="cad-top">
@@ -39,7 +46,7 @@
         <article class="cad-card">
           <div class="cad-eyebrow">CAST Build · PDF / CAD Portal</div>
           <h1 class="cad-title">CAST CAD</h1>
-          <p class="cad-subtitle">A web-based drawing command center for PDF review, CAD viewing, Bluebeam/Drawboard-style markup, AI takeoff intake, cost-code mapping, pro forma comparison, and human verification.</p>
+          <p class="cad-subtitle">A server-linked drawing-set editor for opening project PDFs, placing Bluebeam/Drawboard-inspired markups, capturing takeoffs, mapping cost codes, and keeping every AI-assisted quantity human-verified.</p>
           <div class="actions" style="margin-top:22px">
             <button class="cb-btn cb-btn--primary" data-export>Export Review Excel</button>
             <button class="cb-btn cb-btn--ghost" data-reset>Reset Demo Data</button>
@@ -49,7 +56,7 @@
           <div class="cad-eyebrow">Guardrail</div>
           <h2>AI is assistant, not authority.</h2>
           <p>No AI quantity becomes budget-authoritative until a human verifies scale, assemblies, exclusions, alternates, specs, addenda, scope gaps, and cost-code mapping.</p>
-          <div class="cad-drop"><strong>Local PDF viewer enabled</strong><br><span class="cad-muted">Upload a drawing PDF in the workbench. The file stays in your browser session while CAST stores structured markups, comments, verification status, and exports.</span></div>
+          <div class="cad-drop"><strong>Server drawing set first</strong><br><span class="cad-muted">Select a sheet from the current drawing set to open the guarded PDF stream. Optional local uploads stay browser-only while CAST stores structured markups, comments, verification status, and exports.</span></div>
         </aside>
       </section>
 
@@ -71,10 +78,10 @@
         </div>
       </section>
 
-      <section class="cad-workbench">
+      <section class="cad-workbench" id="cast-cad-workbench">
         <aside class="cad-panel">
           <div class="cad-panel-head"><h2>Sheets</h2><span data-sheet-count class="cad-muted">—</span></div>
-          <div class="cad-panel-body"><div class="sheet-list" data-sheet-list></div></div>
+          <div class="cad-panel-body"><label class="sheet-filter">Find Sheet <input type="search" name="sheet_search" placeholder="A-101, slab, plumbing…" data-sheet-filter autocomplete="off"></label><div class="sheet-list" data-sheet-list></div></div>
         </aside>
 
         <section class="cad-panel cad-drawing-center">
@@ -82,11 +89,11 @@
           <div class="cad-panel-body">
             <div class="pdf-intake" aria-label="Current drawing set and local PDF upload">
               <button class="cb-btn small" type="button" data-load-current-set>Load current drawing set</button>
-              <label>Optional PDF override <input type="file" name="drawing_pdf" accept="application/pdf" data-pdf-input autocomplete="off"></label>
-              <button class="cb-btn small cb-btn--ghost" type="button" data-clear-pdf>Use server drawing</button>
-              <button class="cb-btn small cb-btn--ghost" type="button" data-open-server-pdf>Open PDF</button>
-              <button class="cb-btn small cb-btn--ghost" type="button" data-open-edit-link>Open editable server link</button>
-              <span class="pdf-status" data-pdf-status aria-live="polite">Current Alüm drawing set metadata loading…</span>
+              <label>Local PDF Override <input type="file" name="drawing_pdf" accept="application/pdf" data-pdf-input autocomplete="off"></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-clear-pdf>Use Server Drawing</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-open-server-pdf>Open Server PDF</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-open-edit-link>Open Editable Link</button>
+              <span class="pdf-status" data-pdf-status aria-live="polite">Loading current drawing set metadata…</span>
             </div>
             <div class="pdf-intake cad-viewer-preferences" aria-label="Persisted viewer preferences">
               <label>Layout <select data-viewer-layout><option value="single-page">Single page</option><option value="continuous">Continuous</option><option value="split-view">Split view</option><option value="side-by-side">Side-by-side</option></select></label>
