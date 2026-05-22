@@ -18,6 +18,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent vector markup layer/group/style controls for stroke, fill, opacity, line width, and font size, persisted in local MVP data and server markup contracts.
 - Provider-independent threaded markup comment/mention contract plus markup audit-history read contract on `/api/cast-cad-markups`.
 - Provider-independent persisted viewer-preferences contract and workbench controls for layout, zoom mode, thumbnails, bookmarks, page labels, keyboard shortcuts, split view, side-by-side view, and search panel state: `/api/cast-cad-markups?action=preferences`.
+- Provider-independent drawing set revision index and slip-sheet diff/relink contract with human-review-gated markup relink policy: `/api/cast-cad-drawing-sets`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -66,7 +67,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 ## Enterprise modules scaffolded behind flags
 
 - CAST Tool Library
-- Drawing set versions and slip-sheeting
+- Drawing set versions and slip-sheeting (provider-independent revision/diff/relink contract implemented; PDF write-back worker still required)
 - Comparison Center
 - OCR, visual search, symbol detection, and Auto Link
 - RFIs/submittals/change-event links
@@ -81,6 +82,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 ## Acceptance criteria status
 
 - 300-sheet upload/navigation: metadata-backed sheet navigation implemented; authenticated raw PDF stream contract implemented; provider credentials still required for private file bytes.
+- Drawing set versions/slip-sheeting: provider-independent drawing set revision index, sheet diff, and human-review-gated relink contract implemented; `CAST_CAD_SLIP_SHEET_WORKER` remains required for PDF write-back/slip-sheet worker execution.
 - Create/edit/save/reload/filter/export markups: server contract implemented with audit and CSV; production database adapter remains to be connected.
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
@@ -108,9 +110,9 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-22T10:24:55Z`.
-- Branch audited: `main`.
-- Local validation result: passing.
+- Audited at: `2026-05-22T14:19:29Z`.
+- Branch audited: `sophie/cast-cad-drawing-set-revisions`.
+- Local validation result: passing (`npm test`, `npm run build`, `npm run check:public-artifacts`, `npm run check:third-party-scripts`, `node --check public/projects/*.js api/*.js api/_lib/*.js`).
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
 - Live markup API: `https://app.cast-bld.com/api/cast-cad-markups` returned `200` with an empty markups list in the clean runtime state.

@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetRevisions: [], slipSheetJobs: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -47,7 +47,7 @@ function audit(state, actor, action, entityType, entityId, previousValue, newVal
   return entry;
 }
 function getState() { return memoryState; }
-function resetState(seed) { memoryState = seed ? clone(seed) : DEFAULT_STATE(); return memoryState; }
+function resetState(seed) { memoryState = seed ? { ...DEFAULT_STATE(), ...clone(seed) } : DEFAULT_STATE(); return memoryState; }
 function json(res, status, body, headers = {}) {
   res.statusCode = status;
   Object.entries({ 'content-type': 'application/json; charset=utf-8', ...headers }).forEach(([k, v]) => res.setHeader(k, v));
@@ -265,6 +265,91 @@ function saveViewerPreferences(state, actor, input = {}) {
   audit(state, actor, 'Saved CAST CAD viewer preferences', 'CAST_CAD_VIEWER_PREFERENCES', record.id, previousSnapshot, record);
   return { ok: true, preferences: record };
 }
+function normalizeSheetRevision(sheet = {}, setRevision) {
+  const sheetId = sheet.sheetId || sheet.sheet_id || sheet.id || sheet.drawingNumber || sheet.drawing_number || sheet.name || sheet.path;
+  const drawingNumber = sheet.drawingNumber || sheet.drawing_number || sheetId;
+  const revision = sheet.revision || sheet.rev || setRevision.revision || setRevision.version || 'Current';
+  return {
+    id: sheet.id || `${safeSegment(drawingNumber)}-${safeSegment(revision)}`,
+    sheetId,
+    drawingNumber,
+    title: sheet.title || sheet.name || drawingNumber,
+    revision,
+    version: sheet.version || setRevision.version || revision,
+    discipline: sheet.discipline || '',
+    issuedAt: sheet.issuedAt || sheet.issued_at || setRevision.issuedAt || setRevision.createdAt,
+    sourcePath: sheet.sourcePath || sheet.source_path || sheet.path || '',
+    status: sheet.status || 'Current',
+  };
+}
+function createDrawingSetRevision(state, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  if (!input.projectId && !input.project_id) return { ok: false, status: 422, errors: ['projectId is required.'] };
+  if (!input.name && !input.setName && !input.set_name) return { ok: false, status: 422, errors: ['set name is required.'] };
+  const revision = {
+    id: input.id || id('cad_set_rev'),
+    projectId: input.projectId || input.project_id,
+    name: input.name || input.setName || input.set_name,
+    version: input.version || input.revision || `rev-${state.drawingSetRevisions.length + 1}`,
+    revision: input.revision || input.version || `rev-${state.drawingSetRevisions.length + 1}`,
+    source: input.source || 'metadata-import',
+    status: input.status || 'Indexed',
+    issuedAt: input.issuedAt || input.issued_at || now(),
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  revision.sheets = (input.sheets || []).map((sheet) => normalizeSheetRevision(sheet, revision));
+  revision.sheetCount = revision.sheets.length;
+  state.drawingSetRevisions.push(revision);
+  audit(state, actor, 'Created CAST CAD drawing set revision', 'CAST_CAD_DRAWING_SET_REVISION', revision.id, null, revision);
+  return { ok: true, revision };
+}
+function listDrawingSetRevisions(state, filters = {}) {
+  return state.drawingSetRevisions.filter((row) => (!filters.projectId || row.projectId === filters.projectId) && (!filters.status || row.status === filters.status));
+}
+function createSlipSheetJob(state, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const previousSetId = input.previousSetId || input.previous_set_id || input.baseSetId || input.base_set_id;
+  const newSetId = input.newSetId || input.new_set_id || input.revisedSetId || input.revised_set_id;
+  const previousSet = state.drawingSetRevisions.find((row) => row.id === previousSetId && (!projectId || row.projectId === projectId));
+  const newSet = state.drawingSetRevisions.find((row) => row.id === newSetId && (!projectId || row.projectId === projectId));
+  if (!previousSet || !newSet) return { ok: false, status: 404, error: 'Both previousSetId and newSetId must reference indexed drawing set revisions.' };
+  const previousByNumber = new Map(previousSet.sheets.map((sheet) => [sheet.drawingNumber, sheet]));
+  const newByNumber = new Map(newSet.sheets.map((sheet) => [sheet.drawingNumber, sheet]));
+  const added = newSet.sheets.filter((sheet) => !previousByNumber.has(sheet.drawingNumber));
+  const removed = previousSet.sheets.filter((sheet) => !newByNumber.has(sheet.drawingNumber));
+  const revised = newSet.sheets.filter((sheet) => {
+    const previous = previousByNumber.get(sheet.drawingNumber);
+    return previous && (previous.revision !== sheet.revision || previous.sourcePath !== sheet.sourcePath || previous.title !== sheet.title);
+  }).map((sheet) => ({ previous: previousByNumber.get(sheet.drawingNumber), current: sheet }));
+  const unchanged = newSet.sheets.filter((sheet) => {
+    const previous = previousByNumber.get(sheet.drawingNumber);
+    return previous && previous.revision === sheet.revision && previous.sourcePath === sheet.sourcePath && previous.title === sheet.title;
+  });
+  const providerConfigured = Boolean(process.env.CAST_CAD_SLIP_SHEET_WORKER);
+  const job = {
+    id: input.id || id('cad_slipsheet'),
+    projectId: projectId || newSet.projectId,
+    previousSetId,
+    newSetId,
+    status: providerConfigured ? 'queued' : 'provider-required',
+    providerRequired: !providerConfigured,
+    diff: { added, removed, revised, unchangedCount: unchanged.length },
+    relinkContract: {
+      markupRelink: 'drawingNumber-first with sheetId/sourcePath fallback; geometry remains normalized until renderer coordinate mapping is connected.',
+      conflictPolicy: input.conflictPolicy || input.conflict_policy || 'manual-review',
+      requiresHumanApproval: true,
+    },
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.slipSheetJobs.push(job);
+  audit(state, actor, 'Created CAST CAD slip-sheet diff job', 'CAST_CAD_SLIP_SHEET_JOB', job.id, null, job, job.providerRequired ? 'Slip-sheet worker not configured yet.' : 'Queued for slip-sheet worker.');
+  return { ok: true, job };
+}
 function createTakeoffWorkbookExport(state, { projectId, sheetId, format = 'xlsx' }, actor) {
   const permission = requireCastCad(actor.role, 'export');
   if (!permission.ok) return permission;
@@ -338,5 +423,6 @@ module.exports = {
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
+  createDrawingSetRevision, listDrawingSetRevisions, createSlipSheetJob,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob, markupsCsv,
 };
