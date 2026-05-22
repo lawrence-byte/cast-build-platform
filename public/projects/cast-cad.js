@@ -15,6 +15,7 @@ let drawingStreamState = { drawingId: '', status: 'idle', message: '' };
 let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
 let drawingScales = loadDrawingScales();
 let viewerPreferences = loadViewerPreferences();
+let toolLibrary = { toolSets: [], toolItems: [], status: 'loading' };
 let calibration = null;
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
@@ -399,6 +400,14 @@ function renderFindings() {
     <p><strong>Suggested action:</strong> ${esc(f.suggested_action)}</p>
   </article>`).join('');
 }
+function renderToolLibrary() {
+  const list = document.querySelector('[data-tool-library]');
+  const status = document.querySelector('[data-tool-library-status]');
+  if (!list) return;
+  const tools = toolLibrary.toolItems || [];
+  if (status) status.textContent = toolLibrary.status === 'loaded' ? `${tools.length} reusable tools · ${(toolLibrary.toolSets || []).length} sets` : toolLibrary.status === 'error' ? 'Tool library API unavailable; local tools still work.' : 'Loading reusable tools…';
+  list.innerHTML = tools.length ? tools.slice(0, 8).map((tool) => `<div class="tool-card"><em>${esc(tool.tool)} · ${esc(tool.mode)}</em><strong>${esc(tool.name)}</strong><span>${esc(tool.properties?.trade || 'Any trade')} · ${esc(tool.properties?.costCode || 'No cost code')} · layer ${esc(tool.properties?.layer || 'Default')}${tool.favorite ? ' · favorite' : ''}</span></div>`).join('') : '<div class="tool-card"><em>Reusable tools</em><strong>No saved CAST tools yet</strong><span>Save a markup as a company/project/trade/user tool to preserve its symbol, style, layer, cost code, trade, and takeoff defaults.</span></div>';
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -409,6 +418,7 @@ function render() {
   renderMarkups();
   renderQuantities();
   renderFindings();
+  renderToolLibrary();
 }
 function measurementFor(tool, x, y) {
   const scale = currentScale();
@@ -610,6 +620,40 @@ function verifyQuantity(id) {
   if (result.ok) { save(); window.CASTShell?.toast?.('Quantity verified and locked in CAST estimate log.', { kind: 'success' }); render(); }
 }
 function resolveMarkup(id) { const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor()); if (result.ok) { save(); render(); } }
+async function loadToolLibrary() {
+  try {
+    const response = await fetch('/api/cast-cad-tool-library?projectId=alum', { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const payload = await response.json();
+    if (!response.ok || payload?.ok === false) throw new Error(payload?.error || `HTTP ${response.status}`);
+    toolLibrary = { toolSets: payload.toolSets || [], toolItems: payload.toolItems || [], status: 'loaded' };
+  } catch (error) {
+    console.warn('Could not load CAST CAD tool library', error);
+    toolLibrary = { toolSets: [], toolItems: [], status: 'error' };
+  }
+  renderToolLibrary();
+}
+async function saveSelectedMarkupAsTool() {
+  const drawing = selectedDrawing();
+  const markup = state.drawingMarkups.find((row) => row.drawing_id === drawing?.id);
+  if (!markup) { window.CASTShell?.toast?.('Add or select a markup before saving a reusable CAST tool.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-tool-library', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'tool-item', toolSetId: toolLibrary.toolSets?.[0]?.id || 'local-project-tools', name: markup.subject || markup.tool, tool: markup.tool, markupType: markup.markup_type, favorite: true, properties: { layer: markup.layer, groupId: markup.group_id, style: markup.style, costCode: markup.cost_code, trade: markup.trade, subjectTemplate: markup.subject, bodyTemplate: markup.body } }) });
+    let payload = await response.json().catch(() => null);
+    if (response.status === 404 || /Tool set not found/i.test(payload?.error || '')) {
+      const setResponse = await fetch('/api/cast-cad-tool-library', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'tool-set', id: 'local-project-tools', projectId: drawing?.project_id || 'alum', name: 'Project reusable tools', scope: 'project' }) });
+      const setPayload = await setResponse.json().catch(() => null);
+      if (!setResponse.ok || setPayload?.ok === false) throw new Error(setPayload?.error || `HTTP ${setResponse.status}`);
+      toolLibrary.toolSets = [setPayload.toolSet, ...(toolLibrary.toolSets || [])];
+      return saveSelectedMarkupAsTool();
+    }
+    if (!response.ok || payload?.ok === false) throw new Error(payload?.error || `HTTP ${response.status}`);
+    window.CASTShell?.toast?.('Saved markup as a reusable CAST CAD tool.', { kind: 'success' });
+    loadToolLibrary();
+  } catch (error) {
+    console.warn('Could not save CAST CAD tool', error);
+    window.CASTShell?.toast?.('Tool library save failed; backend contract may be unavailable.', { kind: 'error' });
+  }
+}
 function exportCsv() {
   const rows = state.drawingMarkups.map((m) => {
     const drawing = byId(state.drawings, m.drawing_id);
@@ -668,6 +712,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-open-server-pdf]')) { openSelectedPdf(); return; }
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
+  if (event.target.closest('[data-save-as-tool]')) { saveSelectedMarkupAsTool(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
@@ -686,4 +731,5 @@ window.addEventListener('beforeunload', () => { clearUploadedPdf(); clearStreame
 
 render();
 loadServerViewerPreferences();
+loadToolLibrary();
 loadCurrentDrawingSet({ force: false, toast: false });
