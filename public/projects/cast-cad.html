@@ -81,6 +81,11 @@
             <div class="pdf-intake cad-scale-bar" aria-label="Scale and takeoff controls">
               <label>Known length <input type="number" min="0" step="0.01" value="20" data-scale-known autocomplete="off"></label>
               <label>Unit <select data-scale-unit><option>FT</option><option>IN</option><option>LF</option><option>SF</option><option>EA</option></select></label>
+              <label>Precision <input type="number" min="0" max="6" step="1" value="2" data-takeoff-precision autocomplete="off"></label>
+              <label>Assembly <select data-takeoff-assembly><option value="coordination">Coordination</option><option value="drywall_partition">Drywall partition</option><option value="roof_waterproofing">Roof waterproofing</option><option value="door_frame">Door/frame</option><option value="electrical_branch">Electrical branch</option><option value="mechanical_duct">Mechanical duct</option><option value="plumbing_pipe">Plumbing pipe</option></select></label>
+              <label>Caption <input type="text" placeholder="Editable measurement caption" data-takeoff-caption autocomplete="off"></label>
+              <label>Formula <input type="text" value="quantity" data-takeoff-formula autocomplete="off"></label>
+              <label>Unit cost <input type="number" min="0" step="0.01" placeholder="mapped" data-takeoff-unit-cost autocomplete="off"></label>
               <button class="cb-btn small cb-btn--ghost" type="button" data-calibrate-scale>Calibrate scale</button>
               <span class="pdf-status" data-scale-status>Scale not calibrated for this sheet.</span>
             </div>
@@ -121,7 +126,7 @@
       <section class="cad-grid">
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>AI Estimate Quantity Intake</h2><span class="cad-muted">Kreo · Togal · STACK · Autodesk Forma · Procore</span></div>
-          <div class="table-wrap"><table class="cad-table"><thead><tr><th>Source</th><th>Item</th><th>Qty</th><th>Cost Code</th><th>AI Tool</th><th>Confidence</th><th>Status</th><th>Pro Forma Delta</th><th>Action</th></tr></thead><tbody data-quantity-rows></tbody></table></div>
+          <div class="table-wrap"><table class="cad-table"><thead><tr><th>Source</th><th>Item / assembly</th><th>Qty</th><th>Cost Code</th><th>Formula</th><th>Unit Cost</th><th>Confidence</th><th>Status</th><th>Pro Forma Delta</th><th>Action</th></tr></thead><tbody data-quantity-rows></tbody></table></div>
         </article>
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Scope / Cost Risk Findings</h2><span class="cad-muted">Human review queue</span></div>

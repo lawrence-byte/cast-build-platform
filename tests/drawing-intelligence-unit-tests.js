@@ -69,6 +69,25 @@ const area = CPC.measureCastCadGeometry({ tool: 'Area', scale: scale.scale, poin
 assert.equal(area.value, 300, 'area measurement computes polygon area from calibrated scale');
 assert.equal(area.unit, 'SF', 'area measurement emits square-foot unit');
 
+const assemblies = CPC.castCadAssemblyLibrary();
+assert.ok(assemblies.some((row) => row.key === 'drywall_partition'), 'CAST CAD exposes provider-independent assembly library');
+assert.equal(CPC.castCadAssemblyFor({ cost_code: '09-2116', unit: 'LF' }).key, 'drywall_partition', 'cost-code mapping resolves assembly');
+assert.equal(CPC.evaluateCastCadFormula('quantity * 1.10', 100), 110, 'takeoff formula columns evaluate controlled quantity expressions');
+assert.equal(CPC.evaluateCastCadFormula('process.exit()', 100), 100, 'unsafe formulas fail closed to measured quantity');
+const takeoffRow = CPC.buildCastCadTakeoffRow(state, {
+  drawing: state.drawings[0],
+  markup: { id: 'markup_formula', project_id: state.drawings[0].project_id, drawing_id: state.drawings[0].id, tool: 'Line Measurement', subject: 'Editable caption fallback', trade: 'Drywall', cost_code: '09-2116', measurement_value: 123.456, measurement_unit: 'LF', scale_label: '20 FT' },
+  caption: 'Level 1 rated partition',
+  precision: 1,
+  formula: 'quantity * 1.05',
+});
+assert.equal(takeoffRow.item, 'Level 1 rated partition', 'editable measurement caption is used for takeoff row');
+assert.equal(takeoffRow.measured_quantity, 123.5, 'precision controls round measured quantity');
+assert.equal(takeoffRow.quantity, 129.7, 'formula column applies waste/assembly factor');
+assert.equal(takeoffRow.unit_cost, 85, 'cost database mapping supplies unit cost');
+assert.equal(takeoffRow.proforma_delta_amount, 11024.5, 'cost-code mapping computes pro forma delta');
+assert.equal(takeoffRow.verification_status, 'Needs Review', 'assembly takeoff remains human-review gated');
+
 const featureSnapshot = CPC.castCadArchitectureSnapshot();
 assert.ok(featureSnapshot.featureFlags.some((flag) => flag.key === 'castCadAiReview'), 'feature flags include AI review scaffold');
 assert.ok(featureSnapshot.modules.some((module) => module.key === 'comparisonCenter'), 'modules include comparison center scaffold');
