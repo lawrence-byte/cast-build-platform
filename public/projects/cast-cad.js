@@ -12,6 +12,7 @@ let uploadedPdfName = '';
 let streamedPdfUrl = '';
 let streamedPdfName = '';
 let drawingStreamState = { drawingId: '', status: 'idle', message: '' };
+let drawingSetRevisionState = { versionId: '', message: 'Drawing set revisions use audited metadata contracts; private PDF bytes stay behind authenticated streaming.' };
 let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
 let drawingScales = loadDrawingScales();
 let viewerPreferences = loadViewerPreferences();
@@ -181,6 +182,55 @@ function renderCurrentSetSummary() {
     summary.textContent = 'Loading current drawing set metadata…';
   }
 }
+function renderDrawingSetRevisionStatus() {
+  const status = document.querySelector('[data-drawing-set-revision-status]');
+  if (status) status.textContent = drawingSetRevisionState.message;
+}
+function drawingSetVersionPayload() {
+  const sheets = state.drawings.filter((drawing) => drawing.source_boundary).slice(0, 300).map((drawing) => ({
+    sheetId: drawing.id,
+    drawingNumber: drawing.drawing_number,
+    title: drawing.drawing_title,
+    discipline: drawing.discipline,
+    revision: drawing.current_revision,
+    revisionDate: drawing.drawing_date,
+    sourcePath: drawing.source_path,
+  }));
+  return { projectId: 'alum', setName: 'Alüm Current Drawings', sheets };
+}
+async function registerDrawingSetVersion({ toast = false } = {}) {
+  try {
+    const body = drawingSetVersionPayload();
+    if (!body.sheets.length) throw new Error('Load the current drawing set before registering a version.');
+    const response = await fetch('/api/cast-cad-drawing-sets', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(body) });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || payload?.ok === false) throw new Error(payload?.error || payload?.errors?.join(' ') || `HTTP ${response.status}`);
+    drawingSetRevisionState = { versionId: payload.version.id, message: `Registered ${payload.version.setName} v${payload.version.versionNumber} with ${payload.version.sheetCount.toLocaleString()} sheets; previous current version is superseded server-side.` };
+    if (toast) window.CASTShell?.toast?.('Drawing set version registered.', { kind: 'success' });
+  } catch (error) {
+    drawingSetRevisionState = { versionId: drawingSetRevisionState.versionId, message: `Drawing set version not registered: ${error.message}` };
+    if (toast) window.CASTShell?.toast?.('Drawing set version registration failed.', { kind: 'error' });
+  }
+  renderDrawingSetRevisionStatus();
+}
+async function slipSheetSample({ toast = false } = {}) {
+  try {
+    if (!drawingSetRevisionState.versionId) await registerDrawingSetVersion({ toast: false });
+    const drawing = selectedDrawing();
+    if (!drawingSetRevisionState.versionId || !drawing) throw new Error('Register a drawing set version and select a sheet first.');
+    const nextRevision = String(Number(drawing.current_revision || 0) + 1);
+    const replacement = { sheetId: drawing.id, drawingNumber: drawing.drawing_number, title: drawing.drawing_title, discipline: drawing.discipline, revision: nextRevision, revisionDate: new Date().toISOString().slice(0, 10), sourcePath: drawing.source_path || `${drawing.drawing_number}-Rev-${nextRevision}.pdf` };
+    const response = await fetch('/api/cast-cad-drawing-sets', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'slip-sheet', baseVersionId: drawingSetRevisionState.versionId, replacements: [replacement] }) });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || payload?.ok === false) throw new Error(payload?.error || payload?.errors?.join(' ') || `HTTP ${response.status}`);
+    drawingSetRevisionState = { versionId: payload.version.id, message: `Slip-sheeted ${drawing.drawing_number} to Rev ${nextRevision}; diff ${payload.job.diff.summary.revised} revised, ${payload.job.diff.summary.added} added, ${payload.job.diff.summary.removed} removed. PDF bytes touched: ${payload.job.pdfBytesTouched}.` };
+    if (toast) window.CASTShell?.toast?.('Slip-sheet metadata job created.', { kind: 'success' });
+  } catch (error) {
+    drawingSetRevisionState = { versionId: drawingSetRevisionState.versionId, message: `Slip-sheet job not created: ${error.message}` };
+    if (toast) window.CASTShell?.toast?.('Slip-sheet job failed.', { kind: 'error' });
+  }
+  renderDrawingSetRevisionStatus();
+}
 
 const MARKUP_TOOLS = [
   { tool: 'Pin', label: 'Pin', icon: '<path d="M12 3a4 4 0 0 1 4 4c0 3-4 8-4 8S8 10 8 7a4 4 0 0 1 4-4Z"/><circle cx="12" cy="7" r="1.3"/><path d="M12 15v6"/>' },
@@ -329,6 +379,7 @@ function renderViewer() {
   document.querySelectorAll('.markup').forEach((el) => el.remove());
   renderPdfStage();
   renderCurrentSetSummary();
+  renderDrawingSetRevisionStatus();
   renderViewerPreferences();
   const viewer = document.querySelector('[data-viewer]');
   const annotationLayer = document.querySelector('[data-annotation-layer]');
@@ -668,6 +719,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-open-server-pdf]')) { openSelectedPdf(); return; }
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
+  if (event.target.closest('[data-register-drawing-set-version]')) { registerDrawingSetVersion({ toast: true }); return; }
+  if (event.target.closest('[data-slip-sheet-sample]')) { slipSheetSample({ toast: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });

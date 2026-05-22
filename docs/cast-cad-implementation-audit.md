@@ -18,6 +18,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent vector markup layer/group/style controls for stroke, fill, opacity, line width, and font size, persisted in local MVP data and server markup contracts.
 - Provider-independent threaded markup comment/mention contract plus markup audit-history read contract on `/api/cast-cad-markups`.
 - Provider-independent persisted viewer-preferences contract and workbench controls for layout, zoom mode, thumbnails, bookmarks, page labels, keyboard shortcuts, split view, side-by-side view, and search panel state: `/api/cast-cad-markups?action=preferences`.
+- Provider-independent drawing set versioning, supersede/current tracking, revision diff summaries, and slip-sheet metadata jobs that do not touch or expose private PDF bytes: `/api/cast-cad-drawing-sets`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -66,7 +67,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 ## Enterprise modules scaffolded behind flags
 
 - CAST Tool Library
-- Drawing set versions and slip-sheeting
+- Drawing set versions and slip-sheeting (provider-independent metadata contract implemented; PDF page replacement/render worker still provider-dependent)
 - Comparison Center
 - OCR, visual search, symbol detection, and Auto Link
 - RFIs/submittals/change-event links
@@ -85,7 +86,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
 - CAST Tool Library: scaffolded behind feature flag.
-- Drawing comparison report: comparison job contract implemented; comparison worker remains to be connected.
+- Drawing comparison report: comparison job contract implemented; comparison worker remains to be connected. Drawing set version comparison/slip-sheet metadata diffs are implemented provider-independently.
 - OCR/search: search/index contract implemented; OCR worker remains to be connected.
 - RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot.
 - Review session invite: review-room invite contract implemented; real-time transport/email invite provider remains.
