@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolSets: [], toolItems: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -414,6 +414,120 @@ function listDrawingSetVersions(state, filters = {}) {
   const revisions = state.drawingSheetRevisions.filter((row) => versionIds.has(row.setVersionId) || (!filters.projectId || row.projectId === filters.projectId));
   return { versions, revisions };
 }
+function normalizeToolScope(scope) {
+  return ['company','project','trade','user'].includes(scope) ? scope : 'project';
+}
+function normalizeToolProperties(input = {}) {
+  return {
+    layer: input.layer || 'Default',
+    groupId: input.groupId || input.group_id || '',
+    style: input.style || { stroke: '#f97316', fill: 'rgba(249,115,22,.16)', opacity: 1, lineWidth: 2, fontSize: 12 },
+    measurement: input.measurement || null,
+    costCode: input.costCode || input.cost_code || '',
+    trade: input.trade || '',
+    subjectTemplate: input.subjectTemplate || input.subject_template || input.subject || '',
+    bodyTemplate: input.bodyTemplate || input.body_template || input.body || '',
+  };
+}
+function createToolSet(state, input = {}, actor) {
+  state.toolSets ||= [];
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || 'default';
+  const name = String(input.name || '').trim();
+  if (!name) return { ok: false, status: 422, errors: ['Tool set name is required.'] };
+  const toolSet = {
+    id: input.id || id('cad_tool_set'),
+    projectId,
+    name,
+    description: input.description || '',
+    scope: normalizeToolScope(input.scope),
+    trade: input.trade || '',
+    visibility: input.visibility || 'team',
+    ownerUserId: actor.id,
+    createdByUserId: actor.id,
+    updatedByUserId: actor.id,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+  state.toolSets.push(toolSet);
+  audit(state, actor, 'Created CAST CAD tool set', 'CAST_CAD_TOOL_SET', toolSet.id, null, toolSet);
+  return { ok: true, toolSet };
+}
+function createToolItem(state, input = {}, actor) {
+  state.toolSets ||= [];
+  state.toolItems ||= [];
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const toolSetId = input.toolSetId || input.tool_set_id;
+  const toolSet = state.toolSets.find((row) => row.id === toolSetId);
+  if (!toolSet) return { ok: false, status: 404, error: 'Tool set not found.' };
+  const name = String(input.name || input.label || '').trim();
+  if (!name) return { ok: false, status: 422, errors: ['Tool item name is required.'] };
+  const item = {
+    id: input.id || id('cad_tool'),
+    toolSetId,
+    projectId: toolSet.projectId,
+    name,
+    tool: input.tool || 'Pin',
+    markupType: input.markupType || input.markup_type || 'comment-pin',
+    mode: input.mode || 'properties',
+    symbolKey: input.symbolKey || input.symbol_key || safeSegment(name),
+    properties: normalizeToolProperties(input.properties || input),
+    favorite: Boolean(input.favorite),
+    createdByUserId: actor.id,
+    updatedByUserId: actor.id,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+  state.toolItems.push(item);
+  audit(state, actor, 'Created CAST CAD reusable tool item', 'CAST_CAD_TOOL_ITEM', item.id, null, item);
+  return { ok: true, toolItem: item };
+}
+function saveMarkupAsTool(state, markupId, input = {}, actor) {
+  state.markups ||= [];
+  const markup = state.markups.find((row) => row.id === markupId);
+  if (!markup) return { ok: false, status: 404, error: 'Markup not found.' };
+  let toolSetId = input.toolSetId || input.tool_set_id;
+  if (!toolSetId) {
+    const set = createToolSet(state, { projectId: markup.projectId, name: input.toolSetName || input.tool_set_name || 'Project reusable tools', scope: 'project' }, actor);
+    if (!set.ok) return set;
+    toolSetId = set.toolSet.id;
+  }
+  return createToolItem(state, {
+    ...input,
+    toolSetId,
+    name: input.name || markup.subject || markup.tool,
+    tool: markup.tool,
+    markupType: markup.markupType,
+    properties: {
+      layer: markup.layer,
+      groupId: markup.groupId,
+      style: markup.style,
+      measurement: markup.measurement,
+      costCode: markup.costCode,
+      trade: markup.trade,
+      subjectTemplate: markup.subject,
+      bodyTemplate: markup.body,
+    },
+  }, actor);
+}
+function listToolLibrary(state, filters = {}) {
+  state.toolSets ||= [];
+  state.toolItems ||= [];
+  let toolSets = state.toolSets.slice();
+  if (filters.projectId) toolSets = toolSets.filter((row) => row.projectId === filters.projectId || row.scope === 'company');
+  if (filters.scope) toolSets = toolSets.filter((row) => row.scope === filters.scope);
+  const setIds = new Set(toolSets.map((row) => row.id));
+  let toolItems = state.toolItems.filter((row) => setIds.has(row.toolSetId));
+  if (filters.search) { const q = String(filters.search).toLowerCase(); toolItems = toolItems.filter((row) => `${row.name} ${row.tool} ${row.properties?.trade || ''} ${row.properties?.costCode || ''}`.toLowerCase().includes(q)); }
+  if (filters.favorite) toolItems = toolItems.filter((row) => row.favorite);
+  return { toolSets, toolItems };
+}
+function exportToolLibrary(state, filters = {}) {
+  const rows = listToolLibrary(state, filters);
+  return { exportedAt: now(), schema: 'cast-cad-tool-library-v1', ...rows };
+}
 function markupsCsv(markups) {
   const cols = ['id','projectId','sheetId','pageNumber','tool','subject','status','priority','trade','costCode','quantity','unit','createdByUserId','createdAt'];
   return [cols.join(','), ...markups.map((m) => cols.map((c) => csvEscape(c === 'quantity' ? (m.measurement?.value || '') : c === 'unit' ? (m.measurement?.unit || '') : m[c])).join(','))].join('\n');
@@ -426,5 +540,6 @@ module.exports = {
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
+  createToolSet, createToolItem, saveMarkupAsTool, listToolLibrary, exportToolLibrary,
   markupsCsv,
 };

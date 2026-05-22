@@ -100,4 +100,24 @@ const loadedPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(loadedPrefs.source, 'stored', 'viewer preferences read stored project/user record');
 assert.equal(loadedPrefs.preferences.showBookmarks, true, 'viewer preferences reload stored bookmarks setting');
 
+const toolSet = cad.createToolSet(state, { projectId: 'alum', name: 'MEP coordination tools', scope: 'trade', trade: 'Mechanical' }, owner);
+assert.equal(toolSet.ok, true, 'CAST CAD tool set creates through production service');
+assert.equal(toolSet.toolSet.scope, 'trade', 'tool set stores normalized library scope');
+const toolItem = cad.createToolItem(state, { toolSetId: toolSet.toolSet.id, name: 'Fire damper callout', tool: 'Cloud + Callout', favorite: true, properties: { layer: 'MEP', trade: 'Mechanical', costCode: '23-3300', style: { stroke: '#dc2626', fill: 'rgba(220,38,38,.18)', opacity: 0.8 } } }, owner);
+assert.equal(toolItem.ok, true, 'reusable tool item creates through production service');
+assert.equal(toolItem.toolItem.properties.costCode, '23-3300', 'tool item stores cost-code defaults');
+assert.equal(toolItem.toolItem.favorite, true, 'tool item can be favorited');
+const savedTool = cad.saveMarkupAsTool(state, markup.markup.id, { toolSetId: toolSet.toolSet.id, name: 'Saved area takeoff' }, owner);
+assert.equal(savedTool.ok, true, 'existing markup can be saved as reusable tool');
+assert.equal(savedTool.toolItem.properties.layer, 'ASI-001', 'saved markup tool captures current markup layer/style defaults');
+const listedTools = cad.listToolLibrary(state, { projectId: 'alum', search: 'damper' });
+assert.equal(listedTools.toolItems.length, 1, 'tool library search filters reusable tools');
+const exportedTools = cad.exportToolLibrary(state, { projectId: 'alum' });
+assert.equal(exportedTools.schema, 'cast-cad-tool-library-v1', 'tool library export exposes schema version');
+assert.ok(exportedTools.toolItems.length >= 2, 'tool library export includes reusable items');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_TOOL_ITEM'), 'tool library changes are audited');
+const deniedToolSet = cad.createToolSet(state, { projectId: 'alum', name: 'Blocked tools' }, readOnly);
+assert.equal(deniedToolSet.ok, false, 'read-only users cannot create tool sets');
+assert.equal(deniedToolSet.status, 403, 'read-only tool set denial is a 403 contract');
+
 console.log('CAST CAD production contract tests passed.');
