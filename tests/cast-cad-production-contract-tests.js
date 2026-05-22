@@ -68,6 +68,24 @@ const comparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetI
 assert.equal(comparison.ok, true, 'comparison job contract created');
 assert.equal(comparison.job.status, 'provider-required', 'comparison job reports worker requirement when no worker configured');
 
+const setVersion = cad.createDrawingSetVersion(state, { projectId: 'alum', setId: 'current', name: 'Alüm Current Drawings', revisionLabel: 'Permit Set', sheets: [{ sheetId: 'A-101', drawingNumber: 'A-101', drawingTitle: 'Floor Plan', path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', contentHash: 'hash-a' }] }, owner);
+assert.equal(setVersion.ok, true, 'drawing set version creates through production service');
+assert.equal(setVersion.revisions.length, 1, 'drawing set version creates sheet revisions');
+assert.equal(setVersion.revisions[0].status, 'current', 'new sheet revision is current');
+const blockedSlipSheet = cad.slipSheetRevision(state, { targetRevisionId: setVersion.revisions[0].id, replacementSheet: { name: 'A-101 Rev 1.pdf', contentHash: 'hash-b' } }, owner);
+assert.equal(blockedSlipSheet.ok, false, 'slip-sheeting fails closed without human review approval');
+assert.equal(blockedSlipSheet.status, 409, 'slip-sheeting review gate reports conflict');
+assert.equal(blockedSlipSheet.code, 'human-review-required', 'slip-sheeting exposes exact review blocker');
+const slipSheeted = cad.slipSheetRevision(state, { targetRevisionId: setVersion.revisions[0].id, humanReviewApproved: true, replacementSheet: { name: 'A-101 Rev 1.pdf', revisionLabel: 'ASI-001', contentHash: 'hash-b' } }, owner);
+assert.equal(slipSheeted.ok, true, 'approved slip-sheet creates replacement revision');
+assert.equal(slipSheeted.superseded.status, 'superseded', 'target revision is superseded');
+assert.equal(slipSheeted.replacement.status, 'current', 'replacement revision becomes current');
+assert.equal(slipSheeted.replacement.supersedesRevisionId, setVersion.revisions[0].id, 'replacement keeps supersedence chain');
+const listedSets = cad.listDrawingSetVersions(state, { projectId: 'alum', setId: 'current' });
+assert.equal(listedSets.versions.length, 1, 'drawing set list filters versions');
+assert.equal(listedSets.revisions.filter((row) => row.sheetId === 'A-101').length, 2, 'drawing set list includes revision history');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_REVISION'), 'slip-sheeting is audited');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
