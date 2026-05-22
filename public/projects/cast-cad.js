@@ -13,6 +13,7 @@ let streamedPdfUrl = '';
 let streamedPdfName = '';
 let drawingStreamState = { drawingId: '', status: 'idle', message: '' };
 let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
+let sheetFilter = '';
 let drawingScales = loadDrawingScales();
 let viewerPreferences = loadViewerPreferences();
 let calibration = null;
@@ -214,16 +215,21 @@ function renderDrawingSheet(drawing) {
     </div>`;
 }
 function renderSheets() {
-  const rows = state.drawings.slice(0, 80);
+  const query = sheetFilter.trim().toLowerCase();
+  const filtered = query ? state.drawings.filter((drawing) => `${drawing.drawing_number} ${drawing.drawing_title} ${drawing.discipline} ${drawing.source_name || ''} ${drawing.source_path || ''}`.toLowerCase().includes(query)) : state.drawings;
+  const rows = filtered.slice(0, 100);
   const countEl = document.querySelector('[data-sheet-count]');
-  if (countEl) countEl.textContent = `${state.drawings.length.toLocaleString()} sheets`;
+  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} of ${filtered.length.toLocaleString()} shown${query ? ' · filtered' : ''}`;
+  const filterEl = document.querySelector('[data-sheet-filter]');
+  if (filterEl && filterEl.value !== sheetFilter) filterEl.value = sheetFilter;
   const list = document.querySelector('[data-sheet-list]');
   if (!list) return;
+  if (!rows.length) { list.innerHTML = '<p class="cad-muted">No sheets match the current filter.</p>'; return; }
   list.innerHTML = rows.map((drawing) => {
     const markups = state.drawingMarkups.filter((m) => m.drawing_id === drawing.id).length;
     const quantities = state.estimateQuantities.filter((q) => q.drawing_id === drawing.id).length;
     const linked = drawing.source_boundary ? ' · linked current set' : '';
-    return `<button class="sheet-btn ${drawing.id === selectedDrawingId ? 'active' : ''}" data-sheet="${esc(drawing.id)}">
+    return `<button class="sheet-btn ${drawing.id === selectedDrawingId ? 'active' : ''}" type="button" data-sheet="${esc(drawing.id)}" aria-pressed="${drawing.id === selectedDrawingId ? 'true' : 'false'}">
       <strong>${esc(drawing.drawing_number)} · ${esc(drawing.drawing_title)}</strong>
       <span class="muted">${esc(drawing.discipline)} · Rev ${esc(drawing.current_revision)} · ${markups} markups · ${quantities} quantities${linked}</span>
     </button>`;
@@ -257,6 +263,7 @@ function renderViewerPreferences() {
     viewer.dataset.layout = viewerPreferences.layout;
     viewer.dataset.zoomMode = viewerPreferences.zoomMode;
     viewer.dataset.pageLabels = String(Boolean(viewerPreferences.showPageLabels));
+    viewer.dataset.streamStatus = drawingStreamState.status || 'idle';
   }
 }
 function viewerPreferencePayload() {
@@ -307,7 +314,7 @@ function renderPdfStage() {
   if (stage) stage.hidden = !usingPdf;
   if (frame) frame.data = usingPdf ? pdfUrl : '';
   if (status) {
-    if (usingPdf) status.textContent = `Viewing ${activePdfName()} · click the overlay to place CAST markups`;
+    if (usingPdf) status.textContent = `Viewing ${activePdfName()} · click the overlay to place CAST markups.`;
     else if (drawingStreamState.drawingId === drawing?.id && drawingStreamState.message) status.textContent = drawingStreamState.message;
     else if (drawing?.source_boundary) status.textContent = `Linked: ${drawing.source_name || drawing.drawing_number} · loading authenticated PDF stream…`;
     else status.textContent = 'No PDF stream · using sample plan overlay';
@@ -580,8 +587,11 @@ async function loadSelectedDrawingPdf({ toast = false } = {}) {
       return;
     }
     const payload = contentType.includes('application/json') ? await response.json() : { error: await response.text() };
-    const message = payload?.error || (response.ok ? 'PDF stream is not returning a PDF yet.' : `PDF stream failed with HTTP ${response.status}.`);
-    drawingStreamState = { drawingId: requestId, status: response.ok ? 'contract-only' : 'provider-required', message: `${drawing.source_name || drawing.drawing_number} is selected. ${message}` };
+    const rawMessage = payload?.error || (response.ok ? 'PDF stream returned a contract but no PDF file yet.' : `PDF stream failed with HTTP ${response.status}.`);
+    const providerMessage = /provider is not configured|refusing to expose private drawing files/i.test(rawMessage)
+      ? 'Server PDF provider is not connected yet. Markups and takeoff edits remain available on the guarded sheet placeholder.'
+      : rawMessage;
+    drawingStreamState = { drawingId: requestId, status: response.ok ? 'contract-only' : 'provider-required', message: `${drawing.source_name || drawing.drawing_number} is selected. ${providerMessage}` };
     if (toast && !response.ok) window.CASTShell?.toast?.('The selected sheet is linked, but the authenticated PDF provider is not connected yet.', { kind: 'error' });
   } catch (error) {
     if (selectedDrawingId !== requestId) return;
@@ -673,6 +683,11 @@ document.addEventListener('click', (event) => {
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
   if (event.target.closest('[data-export]')) exportCsv();
   if (event.target.closest('[data-reset]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: '', status: 'idle', message: '' }; calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
+});
+
+document.addEventListener('input', (event) => {
+  const filter = event.target.closest('[data-sheet-filter]');
+  if (filter) { sheetFilter = filter.value; renderSheets(); }
 });
 
 document.addEventListener('change', (event) => {

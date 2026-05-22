@@ -82,4 +82,26 @@ const loadedPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(loadedPrefs.source, 'stored', 'viewer preferences read stored project/user record');
 assert.equal(loadedPrefs.preferences.showBookmarks, true, 'viewer preferences reload stored bookmarks setting');
 
+const baseSet = cad.createDrawingSetRevision(state, { projectId: 'alum', name: 'Permit Set', revision: 'ASI-001', sheets: [
+  { drawingNumber: 'A-101', title: 'Level 1 Plan', revision: '0', sourcePath: 'Current Drawings/A/A-101.pdf' },
+  { drawingNumber: 'A-102', title: 'Level 2 Plan', revision: '0', sourcePath: 'Current Drawings/A/A-102.pdf' },
+] }, owner);
+assert.equal(baseSet.ok, true, 'drawing set revision can be indexed');
+assert.equal(baseSet.revision.sheetCount, 2, 'drawing set revision stores normalized sheets');
+const nextSet = cad.createDrawingSetRevision(state, { projectId: 'alum', name: 'ASI 002 Set', revision: 'ASI-002', sheets: [
+  { drawingNumber: 'A-101', title: 'Level 1 Plan', revision: '1', sourcePath: 'Current Drawings/A/A-101-r1.pdf' },
+  { drawingNumber: 'A-103', title: 'Roof Plan', revision: '0', sourcePath: 'Current Drawings/A/A-103.pdf' },
+] }, owner);
+const listedSets = cad.listDrawingSetRevisions(state, { projectId: 'alum' });
+assert.equal(listedSets.length, 2, 'drawing set revisions list by project');
+const slipSheet = cad.createSlipSheetJob(state, { projectId: 'alum', previousSetId: baseSet.revision.id, newSetId: nextSet.revision.id }, owner);
+assert.equal(slipSheet.ok, true, 'slip-sheet diff job creates');
+assert.equal(slipSheet.job.status, 'provider-required', 'slip-sheet job fails closed until worker is configured');
+assert.equal(slipSheet.job.diff.added.length, 1, 'slip-sheet diff identifies added sheets');
+assert.equal(slipSheet.job.diff.removed.length, 1, 'slip-sheet diff identifies removed sheets');
+assert.equal(slipSheet.job.diff.revised.length, 1, 'slip-sheet diff identifies revised sheets');
+assert.equal(slipSheet.job.relinkContract.requiresHumanApproval, true, 'slip-sheet relink requires human review');
+const deniedSet = cad.createDrawingSetRevision(state, { projectId: 'alum', name: 'Blocked' }, readOnly);
+assert.equal(deniedSet.status, 403, 'read-only users cannot index drawing set revisions');
+
 console.log('CAST CAD production contract tests passed.');
