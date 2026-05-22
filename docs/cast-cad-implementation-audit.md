@@ -19,6 +19,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent threaded markup comment/mention contract plus markup audit-history read contract on `/api/cast-cad-markups`.
 - Provider-independent persisted viewer-preferences contract and workbench controls for layout, zoom mode, thumbnails, bookmarks, page labels, keyboard shortcuts, split view, side-by-side view, and search panel state: `/api/cast-cad-markups?action=preferences`.
 - Provider-independent drawing set versioning and slip-sheeting contract with audited supersedence chains and fail-closed human-review approval gates: `/api/cast-cad-exports` with `type=drawing-set-version`, `type=slip-sheet`, or `GET type=drawing-sets`.
+- Provider-independent CAST Tool Library contract for admin-managed count/length/area/symbol/stamp items, assembly/cost metadata, audited updates, and review-gated placement as markup/takeoff rows: `/api/cast-cad-tool-library`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -85,7 +86,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Create/edit/save/reload/filter/export markups: server contract implemented with audit and CSV; production database adapter remains to be connected.
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
-- CAST Tool Library: scaffolded behind feature flag.
+- CAST Tool Library: provider-independent API/service contract implemented with fail-closed human-review gates; production database/catalog adapter remains.
 - Drawing set versions and slip-sheeting: API/service contract implemented with human-review-gated supersedence/audit history; production database adapter remains to be connected.
 - Drawing comparison report: comparison job contract implemented; comparison worker remains to be connected.
 - OCR/search: search/index contract implemented; OCR worker remains to be connected.
