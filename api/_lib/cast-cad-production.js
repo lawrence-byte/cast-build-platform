@@ -213,6 +213,58 @@ function listMarkups(state, filters = {}) {
   if (filters.search) { const q = String(filters.search).toLowerCase(); rows = rows.filter((row) => `${row.subject} ${row.body} ${row.trade} ${row.costCode}`.toLowerCase().includes(q)); }
   return rows;
 }
+function defaultViewerPreferences() {
+  return {
+    renderer: 'browser-pdf',
+    layout: 'single-page',
+    zoomMode: 'fit-width',
+    showThumbnails: true,
+    showBookmarks: false,
+    showPageLabels: true,
+    splitView: false,
+    sideBySide: false,
+    keyboardShortcuts: true,
+    searchPanelOpen: false,
+  };
+}
+function normalizeViewerPreferences(input = {}) {
+  const allowedLayouts = new Set(['single-page','continuous','split-view','side-by-side']);
+  const allowedZoomModes = new Set(['fit-width','fit-page','actual-size']);
+  const base = defaultViewerPreferences();
+  const layout = allowedLayouts.has(input.layout) ? input.layout : base.layout;
+  return {
+    renderer: 'browser-pdf',
+    layout,
+    zoomMode: allowedZoomModes.has(input.zoomMode || input.zoom_mode) ? (input.zoomMode || input.zoom_mode) : base.zoomMode,
+    showThumbnails: input.showThumbnails !== undefined ? Boolean(input.showThumbnails) : input.show_thumbnails !== undefined ? Boolean(input.show_thumbnails) : base.showThumbnails,
+    showBookmarks: input.showBookmarks !== undefined ? Boolean(input.showBookmarks) : input.show_bookmarks !== undefined ? Boolean(input.show_bookmarks) : base.showBookmarks,
+    showPageLabels: input.showPageLabels !== undefined ? Boolean(input.showPageLabels) : input.show_page_labels !== undefined ? Boolean(input.show_page_labels) : base.showPageLabels,
+    splitView: input.splitView !== undefined ? Boolean(input.splitView) : input.split_view !== undefined ? Boolean(input.split_view) : layout === 'split-view',
+    sideBySide: input.sideBySide !== undefined ? Boolean(input.sideBySide) : input.side_by_side !== undefined ? Boolean(input.side_by_side) : layout === 'side-by-side',
+    keyboardShortcuts: input.keyboardShortcuts !== undefined ? Boolean(input.keyboardShortcuts) : input.keyboard_shortcuts !== undefined ? Boolean(input.keyboard_shortcuts) : base.keyboardShortcuts,
+    searchPanelOpen: input.searchPanelOpen !== undefined ? Boolean(input.searchPanelOpen) : input.search_panel_open !== undefined ? Boolean(input.search_panel_open) : base.searchPanelOpen,
+  };
+}
+function getViewerPreferences(state, actor, projectId = 'default') {
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const existing = state.userPreferences.find((row) => row.userId === actor.id && row.projectId === projectId && row.scope === 'cast-cad-viewer');
+  return { ok: true, preferences: existing ? existing.preferences : defaultViewerPreferences(), source: existing ? 'stored' : 'default' };
+}
+function saveViewerPreferences(state, actor, input = {}) {
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || 'default';
+  const preferences = normalizeViewerPreferences(input.preferences || input);
+  const previous = state.userPreferences.find((row) => row.userId === actor.id && row.projectId === projectId && row.scope === 'cast-cad-viewer') || null;
+  const previousSnapshot = previous ? clone(previous) : null;
+  const record = previous || { id: id('cad_pref'), userId: actor.id, projectId, scope: 'cast-cad-viewer', createdAt: now() };
+  record.preferences = preferences;
+  record.updatedAt = now();
+  if (!previous) state.userPreferences.push(record);
+  audit(state, actor, 'Saved CAST CAD viewer preferences', 'CAST_CAD_VIEWER_PREFERENCES', record.id, previousSnapshot, record);
+  return { ok: true, preferences: record };
+}
 function createTakeoffWorkbookExport(state, { projectId, sheetId, format = 'xlsx' }, actor) {
   const permission = requireCastCad(actor.role, 'export');
   if (!permission.ok) return permission;
@@ -285,5 +337,6 @@ module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
+  defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom, buildComparisonJob, markupsCsv,
 };

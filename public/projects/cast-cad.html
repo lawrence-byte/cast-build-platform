@@ -88,6 +88,17 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-open-edit-link>Open editable server link</button>
               <span class="pdf-status" data-pdf-status aria-live="polite">Current Alüm drawing set metadata loading…</span>
             </div>
+            <div class="pdf-intake cad-viewer-preferences" aria-label="Persisted viewer preferences">
+              <label>Layout <select data-viewer-layout><option value="single-page">Single page</option><option value="continuous">Continuous</option><option value="split-view">Split view</option><option value="side-by-side">Side-by-side</option></select></label>
+              <label>Zoom <select data-viewer-zoom><option value="fit-width">Fit width</option><option value="fit-page">Fit page</option><option value="actual-size">Actual size</option></select></label>
+              <label><input type="checkbox" data-viewer-pref="showThumbnails" autocomplete="off"> Thumbnails</label>
+              <label><input type="checkbox" data-viewer-pref="showBookmarks" autocomplete="off"> Bookmarks</label>
+              <label><input type="checkbox" data-viewer-pref="showPageLabels" autocomplete="off"> Page labels</label>
+              <label><input type="checkbox" data-viewer-pref="keyboardShortcuts" autocomplete="off"> Shortcuts</label>
+              <label><input type="checkbox" data-viewer-pref="searchPanelOpen" autocomplete="off"> Search panel</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-save-viewer-preferences>Save viewer prefs</button>
+              <span class="pdf-status" data-viewer-pref-status>Viewer preferences loading…</span>
+            </div>
             <div class="pdf-intake cad-scale-bar" aria-label="Scale and takeoff controls">
               <label>Known length <input type="number" min="0" step="0.01" value="20" data-scale-known autocomplete="off"></label>
               <label>Unit <select data-scale-unit><option>FT</option><option>IN</option><option>LF</option><option>SF</option><option>EA</option></select></label>
