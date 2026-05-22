@@ -16,6 +16,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Review-room/collaboration invite contract: `/api/cast-cad-review-room`.
 - Provider-independent takeoff refinement controls for editable measurement captions, precision, assembly mapping, formula columns, unit-cost mapping, and human-review-gated quantity rows.
 - Provider-independent vector markup layer/group/style controls for stroke, fill, opacity, line width, and font size, persisted in local MVP data and server markup contracts.
+- Provider-independent threaded markup comment/mention contract plus markup audit-history read contract on `/api/cast-cad-markups`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -46,7 +47,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Markups List/export includes sheet, subject, tool, status, priority, trade, cost code, measurement value, measurement unit, scale label, and body.
   - Status/comment/quantity verification flows exist in the shared data layer.
 - Remaining production work:
-  - Connect frontend vector editing UI to the implemented server markup contract for threaded mentions and backend audit history; layer/group/style controls are now implemented provider-independently in the static workbench and service contract.
+  - Connect frontend vector editing UI to the implemented server markup contract for backend persistence; threaded mentions and backend audit history are now covered by provider-independent API/service contracts. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
   - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract.
 
 ## Phase 3: Measurements
