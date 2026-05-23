@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -26,6 +26,21 @@ module.exports = async function handler(req, res) {
         const items = listToolLibraryItems(state, { projectId: url.searchParams.get('projectId'), trade: url.searchParams.get('trade'), category: url.searchParams.get('category'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
         return json(res, 200, { ok: true, itemCount: items.length, items, placements: state.toolLibraryPlacements || [] });
       }
+      if (action === 'admin' || action === 'permission-matrix') {
+        return json(res, 200, { ok: true, roles: buildPermissionMatrix(), authRequiredWhenEnabled: 'CAST_CAD_REQUIRE_AUTH=true' });
+      }
+      if (action === 'members') {
+        const result = listProjectMembers(state, { projectId: url.searchParams.get('projectId'), role: url.searchParams.get('role'), status: url.searchParams.get('status') }, actor);
+        return json(res, result.ok ? 200 : (result.status || 403), result);
+      }
+      if (action === 'effective-permissions') {
+        const result = getEffectivePermissions(state, { projectId: url.searchParams.get('projectId'), userId: url.searchParams.get('userId'), email: url.searchParams.get('email') }, actor);
+        return json(res, result.ok ? 200 : (result.status || 403), result);
+      }
+      if (action === 'audit-log') {
+        const result = readCastCadAuditLog(state, { entityType: url.searchParams.get('entityType'), entityId: url.searchParams.get('entityId'), actorUserId: url.searchParams.get('actorUserId') }, actor);
+        return json(res, result.ok ? 200 : (result.status || 403), result);
+      }
       const rows = listMarkups(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
       if (url.searchParams.get('format') === 'csv') {
         res.statusCode = 200; res.setHeader('content-type', 'text/csv; charset=utf-8'); res.end(markupsCsv(rows)); return;
@@ -41,6 +56,10 @@ module.exports = async function handler(req, res) {
       if (body.action === 'tool-library') {
         const result = body.operation === 'place-tool' ? applyToolLibraryItemToMarkup(state, body, actor) : body.operation === 'update-item' ? updateToolLibraryItem(state, body.id || body.itemId || body.item_id, body.patch || body, actor) : createToolLibraryItem(state, body, actor);
         return json(res, result.ok ? (body.operation === 'place-tool' ? 201 : 200) : (result.status || 422), result);
+      }
+      if (body.action === 'admin' || body.action === 'upsert-member-role') {
+        const result = upsertProjectMemberRole(state, body, actor);
+        return json(res, result.ok ? 200 : (result.status || 422), result);
       }
       if (body.action === 'comment' || body.comment || body.parentId || body.parent_id) {
         const result = createMarkupComment(state, body.markupId || body.id, body.comment || body, actor);

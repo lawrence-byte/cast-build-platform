@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -34,12 +34,20 @@ function requireCastCad(role, action) {
   return { ok: true };
 }
 function getActor(req = {}) {
+  const hasIdentityHeader = Boolean(req.headers?.['x-cast-user-id'] || req.headers?.['x-cast-user-email'] || req.headers?.authorization);
   return {
     id: req.headers?.['x-cast-user-id'] || 'cast-system-user',
     name: req.headers?.['x-cast-user-name'] || 'CAST User',
     role: normalizeRole(req.headers?.['x-cast-role'] || 'Owner Admin'),
     email: req.headers?.['x-cast-user-email'] || 'user@cast-dev.example',
+    authenticated: hasIdentityHeader || process.env.CAST_CAD_ALLOW_DEV_ACTOR === 'true',
   };
+}
+function requireAuthenticatedActor(actor) {
+  if (process.env.CAST_CAD_REQUIRE_AUTH === 'true' && !actor.authenticated) {
+    return { ok: false, status: 401, code: 'auth-required', error: 'CAST CAD production auth/session identity is required.' };
+  }
+  return { ok: true };
 }
 function audit(state, actor, action, entityType, entityId, previousValue, newValue, notes = '') {
   const entry = { id: id('cad_audit'), action, entityType, entityId, actorUserId: actor.id, actorRole: actor.role, previousValue: previousValue || null, newValue: newValue || null, notes, createdAt: now() };
@@ -660,13 +668,94 @@ function listDrawingSetVersions(state, filters = {}) {
   const revisions = state.drawingSheetRevisions.filter((row) => versionIds.has(row.setVersionId) || (!filters.projectId || row.projectId === filters.projectId));
   return { versions, revisions };
 }
+function normalizeProjectMember(input = {}, actor) {
+  const role = normalizeRole(input.role || 'Read Only Viewer');
+  return {
+    id: input.id || id('cad_member'),
+    projectId: input.projectId || input.project_id || 'default',
+    userId: String(input.userId || input.user_id || input.email || '').trim(),
+    name: String(input.name || input.userName || input.user_name || '').trim(),
+    email: String(input.email || '').trim().toLowerCase(),
+    role,
+    permissions: CAST_CAD_PERMISSIONS[role].slice(),
+    status: input.status || 'active',
+    source: input.source || 'cast-cad-admin-contract',
+    updatedByUserId: actor.id,
+    createdAt: input.createdAt || input.created_at || now(),
+    updatedAt: now(),
+  };
+}
+function validateProjectMember(member) {
+  const errors = [];
+  if (!member.projectId) errors.push('projectId is required.');
+  if (!member.userId && !member.email) errors.push('userId or email is required.');
+  if (!CAST_CAD_ROLES.includes(member.role)) errors.push(`role must be one of: ${CAST_CAD_ROLES.join(', ')}.`);
+  if (!['active','invited','suspended'].includes(member.status)) errors.push('status must be active, invited, or suspended.');
+  return errors;
+}
+function buildPermissionMatrix() {
+  return CAST_CAD_ROLES.map((role) => ({ role, permissions: CAST_CAD_PERMISSIONS[role].slice() }));
+}
+function upsertProjectMemberRole(state, input = {}, actor) {
+  state.projectMembers ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const member = normalizeProjectMember(input, actor);
+  const errors = validateProjectMember(member);
+  if (errors.length) return { ok: false, status: 422, errors };
+  const existing = state.projectMembers.find((row) => row.projectId === member.projectId && ((member.userId && row.userId === member.userId) || (member.email && row.email === member.email)));
+  const previous = existing ? clone(existing) : null;
+  if (existing) Object.assign(existing, member, { id: existing.id, createdAt: existing.createdAt });
+  else state.projectMembers.push(member);
+  const current = existing || member;
+  audit(state, actor, previous ? 'Updated CAST CAD project member role' : 'Assigned CAST CAD project member role', 'CAST_CAD_PROJECT_MEMBER', current.id, previous, current, `Effective permissions: ${current.permissions.join(', ')}`);
+  return { ok: true, member: current, permissionMatrix: buildPermissionMatrix() };
+}
+function listProjectMembers(state, filters = {}, actor = { role: 'Read Only Viewer' }) {
+  state.projectMembers ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'audit');
+  if (!permission.ok) return permission;
+  let members = state.projectMembers.slice();
+  if (filters.projectId) members = members.filter((row) => row.projectId === filters.projectId);
+  if (filters.role) members = members.filter((row) => row.role === filters.role);
+  if (filters.status) members = members.filter((row) => row.status === filters.status);
+  return { ok: true, members, memberCount: members.length, permissionMatrix: buildPermissionMatrix() };
+}
+function getEffectivePermissions(state, input = {}, actor = { role: 'Read Only Viewer' }) {
+  state.projectMembers ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || 'default';
+  const userId = input.userId || input.user_id || actor.id;
+  const email = String(input.email || actor.email || '').toLowerCase();
+  const member = state.projectMembers.find((row) => row.projectId === projectId && ((userId && row.userId === userId) || (email && row.email === email)) && row.status === 'active');
+  const role = member ? member.role : actor.role;
+  return { ok: true, projectId, userId, email, role, permissions: CAST_CAD_PERMISSIONS[role].slice(), source: member ? 'project-member-role' : 'actor-header-role' };
+}
+function readCastCadAuditLog(state, filters = {}, actor = { role: 'Read Only Viewer' }) {
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'audit');
+  if (!permission.ok) return permission;
+  let rows = state.auditLog.slice();
+  if (filters.entityType) rows = rows.filter((row) => row.entityType === filters.entityType);
+  if (filters.entityId) rows = rows.filter((row) => row.entityId === filters.entityId);
+  if (filters.actorUserId) rows = rows.filter((row) => row.actorUserId === filters.actorUserId);
+  return { ok: true, auditLog: rows, auditCount: rows.length };
+}
 function markupsCsv(markups) {
   const cols = ['id','projectId','sheetId','pageNumber','tool','subject','status','priority','trade','costCode','quantity','unit','createdByUserId','createdAt'];
   return [cols.join(','), ...markups.map((m) => cols.map((c) => csvEscape(c === 'quantity' ? (m.measurement?.value || '') : c === 'unit' ? (m.measurement?.unit || '') : m[c])).join(','))].join('\n');
 }
 
 module.exports = {
-  CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, getActor, getState, resetState, json, readBody, audit,
+  CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
@@ -674,5 +763,6 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
+  upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
 };
