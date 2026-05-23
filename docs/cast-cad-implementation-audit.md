@@ -24,6 +24,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent CAST CAD bulk-selection workbench controls for selecting visible markups and applying scoped status, assignee, layer, review-priority, and stamp operations against the batch API; sensitive stamp/resolved/verified changes remain human-review gated and fail closed if backend audit is unavailable.
 - Provider-independent mobile/tablet offline field package and sync contract for private no-store sheet/markup packages, audited device deltas, and fail-closed human-review gates before offline sync can verify/resolve markups: `/api/cast-cad-exports` with `type=field-package` or `type=field-sync`.
 - Provider-independent mobile/tablet field mode workbench controls for creating selected-sheet field packages, syncing offline notes, and fail-closed verification/resolution sync when backend audit or human-review approval is unavailable.
+- Provider-independent admin/governance contract for CAST CAD project member role assignments, effective permission resolution, permission matrix discovery, authenticated-session fail-closed mode, and audit-log reads: `/api/cast-cad-admin`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -80,7 +81,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - CAST CAD AI Review agents
 - Batch tools (provider-independent batch operation API/service contract and static workbench bulk-selection workflow implemented for scoped status/assignee/layer/review/stamp updates; production storage adapter remains)
 - Mobile/tablet field mode (provider-independent offline package/sync API/service contract and static workbench controls implemented; service worker and production storage adapter remain)
-- Admin, roles, permissions, governance, and audit logs
+- Admin, roles, permissions, governance, and audit logs (provider-independent API/service contract implemented; production auth/session provider and database adapter remain)
 - Integrations: Dropbox, Google Drive, SharePoint, Procore-style workflows, Yardi, and future Autodesk/Revit/AutoCAD/IFC/DWG/Speckle connectors
 - 3D model ingestion and preview strategy via IFC/xeokit/IFC.js/Three.js in later phases
 
@@ -98,7 +99,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Review session invite: review-room invite contract implemented; real-time transport/email invite provider remains.
 - Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
 - Markups List report: implemented at CSV/export scaffold level.
-- Permissioned/audit logged actions: implemented in service contract; production auth/session integration remains.
+- Permissioned/audit logged actions: provider-independent role matrix, project member role assignment, effective permission lookup, strict-auth fail-closed mode, and audit-log read contract are implemented; production auth/session integration and database persistence remain.
 - AI findings labeled AI detected and human verified: implemented in data/schema guardrails; agents remain disabled behind flags.
 - No Bluebeam proprietary UI/names/icons/trade dress copied: current CAST CAD UI uses CAST naming and generic construction workflow language.
 

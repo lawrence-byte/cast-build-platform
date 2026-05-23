@@ -3,8 +3,8 @@ const assert = require('assert');
 const cad = require('../api/_lib/cast-cad-production');
 
 const state = cad.resetState();
-const owner = { id: 'u1', role: 'Owner Admin', name: 'Owner' };
-const readOnly = { id: 'u2', role: 'Read Only Viewer', name: 'Viewer' };
+const owner = { id: 'u1', role: 'Owner Admin', name: 'Owner', email: 'owner@example.com', authenticated: true };
+const readOnly = { id: 'u2', role: 'Read Only Viewer', name: 'Viewer', email: 'viewer@example.com', authenticated: true };
 
 assert.equal(cad.canCastCad('Owner Admin', 'delete_markup'), true, 'owner admin can delete markups');
 assert.equal(cad.canCastCad('Read Only Viewer', 'create_markup'), false, 'read only cannot create markups');
@@ -150,5 +150,32 @@ assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_VIEWER_PREFE
 const loadedPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(loadedPrefs.source, 'stored', 'viewer preferences read stored project/user record');
 assert.equal(loadedPrefs.preferences.showBookmarks, true, 'viewer preferences reload stored bookmarks setting');
+
+const permissionMatrix = cad.buildPermissionMatrix();
+assert.equal(permissionMatrix.some((row) => row.role === 'Project Manager' && row.permissions.includes('audit')), true, 'permission matrix exposes role capabilities');
+const memberRole = cad.upsertProjectMemberRole(state, { projectId: 'alum', userId: 'pe-01', email: 'pe@example.com', name: 'Project Engineer', role: 'Project Engineer' }, owner);
+assert.equal(memberRole.ok, true, 'admin can assign CAST CAD project member roles');
+assert.equal(memberRole.member.permissions.includes('manage_drawing_sets'), true, 'member role stores effective permissions');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_PROJECT_MEMBER'), 'role assignment is audited');
+const memberList = cad.listProjectMembers(state, { projectId: 'alum' }, owner);
+assert.equal(memberList.ok, true, 'audit-capable roles can list project members');
+assert.equal(memberList.memberCount, 1, 'project member list filters by project');
+const effective = cad.getEffectivePermissions(state, { projectId: 'alum', userId: 'pe-01' }, readOnly);
+assert.equal(effective.role, 'Project Engineer', 'effective permissions resolve project member role over actor default');
+assert.equal(effective.source, 'project-member-role', 'effective permissions identify project member source');
+const deniedMemberAdmin = cad.upsertProjectMemberRole(state, { projectId: 'alum', userId: 'bad', role: 'Owner Admin' }, readOnly);
+assert.equal(deniedMemberAdmin.ok, false, 'read-only users cannot administer project member roles');
+assert.equal(deniedMemberAdmin.status, 403, 'member admin denial is a 403');
+const auditRead = cad.readCastCadAuditLog(state, { entityType: 'CAST_CAD_PROJECT_MEMBER' }, owner);
+assert.equal(auditRead.ok, true, 'audit-capable roles can read filtered CAST CAD audit log');
+assert.equal(auditRead.auditCount >= 1, true, 'audit log filter returns role assignment records');
+const deniedAuditRead = cad.readCastCadAuditLog(state, {}, readOnly);
+assert.equal(deniedAuditRead.ok, false, 'read-only users cannot read full CAST CAD audit log');
+const previousRequireAuth = process.env.CAST_CAD_REQUIRE_AUTH;
+process.env.CAST_CAD_REQUIRE_AUTH = 'true';
+const unauthenticatedRole = cad.upsertProjectMemberRole(state, { projectId: 'alum', userId: 'blocked', role: 'Project Manager' }, { id: 'anon', role: 'Owner Admin', authenticated: false });
+assert.equal(unauthenticatedRole.ok, false, 'admin governance fails closed when production auth is required but missing');
+assert.equal(unauthenticatedRole.code, 'auth-required', 'auth-required blocker is explicit');
+if (previousRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH; else process.env.CAST_CAD_REQUIRE_AUTH = previousRequireAuth;
 
 console.log('CAST CAD production contract tests passed.');
