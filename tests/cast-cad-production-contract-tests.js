@@ -62,6 +62,23 @@ const ocr = cad.indexOcrPage(state, { projectId: 'alum', sheetId: 'A-101', text:
 assert.equal(ocr.ok, true, 'OCR page indexed');
 assert.equal(cad.searchOcr(state, { projectId: 'alum', query: 'fire rating' }).length, 1, 'OCR search finds indexed text');
 
+const badAiFinding = cad.createAiFinding(state, { projectId: 'alum', sheetId: 'A-101', title: 'Uncited AI note', body: 'Missing source citation.' }, owner);
+assert.equal(badAiFinding.ok, false, 'AI findings fail closed without source citations');
+assert.equal(badAiFinding.status, 422, 'uncited AI finding returns validation error');
+const aiFinding = cad.createAiFinding(state, { type: 'ai-finding', projectId: 'alum', sheetId: 'A-101', pageNumber: 1, title: 'Possible fire rating conflict', body: 'Door D101 appears to lack a cited fire rating tag.', severity: 'High', confidence: 82, sourceCitations: [{ kind: 'ocr', sheetId: 'A-101', pageNumber: 1, pointer: ocr.page.id, excerpt: 'Door tag D101 requires fire rating review' }] }, owner);
+assert.equal(aiFinding.ok, true, 'AI finding creates through provider-independent review contract');
+assert.equal(aiFinding.finding.status, 'AI Detected', 'AI finding is labeled AI Detected by default');
+assert.equal(aiFinding.finding.humanVerified, false, 'AI finding is not human verified at creation');
+const blockedAiReview = cad.reviewAiFinding(state, aiFinding.finding.id, { decision: 'Human Verified' }, owner);
+assert.equal(blockedAiReview.ok, false, 'AI finding review fails closed without human approval');
+assert.equal(blockedAiReview.code, 'human-review-required', 'AI review exposes human approval blocker');
+const verifiedAiFinding = cad.reviewAiFinding(state, aiFinding.finding.id, { decision: 'convert-to-markup', humanReviewApproved: true, createMarkup: true, reviewNotes: 'Confirmed against sheet note.' }, owner);
+assert.equal(verifiedAiFinding.ok, true, 'human-approved AI finding can be verified');
+assert.equal(verifiedAiFinding.finding.humanVerified, true, 'AI finding stores human verification state');
+assert.equal(verifiedAiFinding.markup.sourceSnapshot.label, 'AI detected · human verified', 'converted markup preserves AI label and human verification proof');
+assert.equal(cad.listAiFindings(state, { projectId: 'alum', humanVerified: true }).length, 1, 'AI findings list filters human-verified rows');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_AI_FINDING'), 'AI finding create/review is audited');
+
 const room = cad.createReviewRoom(state, { projectId: 'alum', name: 'Permit review', sheetIds: ['A-101'], participants: [{ userId: 'u3', role: 'Architect' }] }, owner);
 assert.equal(room.ok, true, 'review room created');
 assert.equal(room.room.participants[0].status, 'Invited', 'review room participants are invited');
