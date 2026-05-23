@@ -17,6 +17,7 @@ let drawingScales = loadDrawingScales();
 let viewerPreferences = loadViewerPreferences();
 let calibration = null;
 let selectedMarkupIds = new Set();
+let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: [], status: 'idle', message: 'Field mode package not created.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -414,6 +415,7 @@ function render() {
   renderMarkups();
   renderQuantities();
   renderFindings();
+  renderFieldModeStatus();
 }
 function measurementFor(tool, x, y) {
   const scale = currentScale();
@@ -681,6 +683,92 @@ async function applyBatchOperation() {
     render();
   }
 }
+function renderFieldModeStatus() {
+  const status = document.querySelector('[data-field-status]');
+  if (!status) return;
+  const selected = selectedDrawing();
+  const packageText = fieldPackageState.packageId ? `Package ${fieldPackageState.packageId} · ${fieldPackageState.sheetIds.length || 1} sheet(s)` : 'Field mode package not created';
+  status.textContent = `${packageText}. ${fieldPackageState.message || `Selected sheet ${selected?.drawing_number || selectedDrawingId}; verification/resolution sync requires human review.`}`;
+}
+function fieldModePayload() {
+  const drawing = selectedDrawing();
+  return {
+    type: 'field-package',
+    projectId: drawing?.project_id || 'alum',
+    sheetIds: [selectedDrawingId].filter(Boolean),
+    deviceId: document.querySelector('[data-field-device]')?.value.trim() || fieldPackageState.deviceId || 'ipad-field-01',
+    expiresInHours: Number(document.querySelector('[data-field-expiry]')?.value || 24),
+  };
+}
+async function createFieldPackageForSelectedSheet() {
+  const payload = fieldModePayload();
+  if (!payload.sheetIds.length) { window.CASTShell?.toast?.('Select a sheet before creating a field package.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const fieldPackage = result.fieldPackage || result.package || {};
+    fieldPackageState = { packageId: fieldPackage.id || '', deviceId: payload.deviceId, sheetIds: payload.sheetIds, status: 'ready', message: `Private no-store package ready with ${fieldPackage.markupCount ?? visibleMarkups().length} markup(s); sync endpoint remains /api/cast-cad-exports type=field-sync.` };
+    window.CASTShell?.toast?.('CAST CAD field package created for tablet/offline review.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD field package API unavailable; using local package preview only.', error);
+    fieldPackageState = { packageId: `local-field-package-${Date.now()}`, deviceId: payload.deviceId, sheetIds: payload.sheetIds, status: 'local-only', message: 'Local field package preview only; backend package/audit API is unavailable.' };
+    window.CASTShell?.toast?.('Field package preview saved locally; backend package API is unavailable.', { kind: 'info' });
+  }
+  renderFieldModeStatus();
+}
+function fieldSyncPayload({ verify = false } = {}) {
+  const markups = visibleMarkups();
+  const target = markups[0];
+  const humanReviewApproved = Boolean(document.querySelector('[data-field-human-review]')?.checked);
+  return {
+    type: 'field-sync',
+    projectId: selectedDrawing()?.project_id || 'alum',
+    packageId: fieldPackageState.packageId,
+    deviceId: document.querySelector('[data-field-device]')?.value.trim() || fieldPackageState.deviceId || 'ipad-field-01',
+    humanReviewApproved,
+    deltas: target ? [{ operation: verify ? 'update-markup' : 'comment', markupId: target.id, patch: verify ? { status: 'Verified' } : undefined, comment: verify ? undefined : { body: 'Offline field note synced from CAST CAD tablet mode.' } }] : [{ operation: 'create-markup', markup: { sheetId: selectedDrawingId, tool: 'Pin', subject: 'Offline field note', body: 'Created from CAST CAD tablet field mode.' } }],
+  };
+}
+function applyLocalFieldSync(payload) {
+  payload.deltas.forEach((delta) => {
+    if (delta.operation === 'comment') return;
+    if (delta.operation === 'create-markup') {
+      const drawing = selectedDrawing();
+      const result = CPC.createDrawingMarkup(state, { ...markupDefaults(drawing, 28, 28), ...(delta.markup || {}), drawing_id: selectedDrawingId, project_id: drawing?.project_id || 'alum', source: 'CAST CAD offline field mode' }, actor());
+      if (result.ok) CPC.createDrawingComment(state, { drawing_id: selectedDrawingId, markup_id: result.markup.id, body: result.markup.body }, actor());
+      return;
+    }
+    if (delta.operation === 'update-markup') {
+      const markup = state.drawingMarkups.find((row) => row.id === delta.markupId);
+      if (markup) { Object.assign(markup, delta.patch || {}, { updated_at: new Date().toISOString(), source_snapshot: { ...(markup.source_snapshot || {}), fieldSync: { packageId: payload.packageId, deviceId: payload.deviceId, humanReviewApproved: payload.humanReviewApproved } } }); }
+    }
+  });
+}
+async function syncFieldModeDelta({ verify = false } = {}) {
+  if (!fieldPackageState.packageId) { window.CASTShell?.toast?.('Create a field package before syncing offline deltas.', { kind: 'error' }); return; }
+  const payload = fieldSyncPayload({ verify });
+  const sensitive = payload.deltas.some((delta) => delta.operation === 'update-markup' && ['Verified','Resolved'].includes(delta.patch?.status));
+  if (sensitive && !payload.humanReviewApproved) { window.CASTShell?.toast?.('Human review approval is required before offline field sync can verify or resolve markups.', { kind: 'error' }); fieldPackageState.message = 'Verification sync blocked: human review approval required.'; renderFieldModeStatus(); return; }
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    applyLocalFieldSync(payload);
+    save();
+    fieldPackageState.message = `Field sync applied: ${result.event?.appliedCount ?? payload.deltas.length} delta(s) audited by backend.`;
+    window.CASTShell?.toast?.('Field sync applied through the audited backend contract.', { kind: 'success' });
+    render();
+  } catch (error) {
+    console.warn('CAST CAD field sync API unavailable; fail closed for sensitive deltas.', error);
+    if (sensitive) { fieldPackageState.message = 'Backend field-sync audit unavailable; sensitive verification/resolution was not applied.'; window.CASTShell?.toast?.('Backend field-sync audit is unavailable; verification was not applied.', { kind: 'error' }); renderFieldModeStatus(); return; }
+    applyLocalFieldSync(payload);
+    save();
+    fieldPackageState.message = 'Field note saved locally; backend field-sync audit API is unavailable.';
+    window.CASTShell?.toast?.('Field note saved locally; backend field-sync audit API is unavailable.', { kind: 'info' });
+    render();
+  }
+}
 function exportCsv() {
   const rows = state.drawingMarkups.map((m) => {
     const drawing = byId(state.drawings, m.drawing_id);
@@ -742,6 +830,9 @@ document.addEventListener('click', (event) => {
   const batchMarkup = event.target.closest('[data-batch-markup]');
   if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
   if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
+  if (event.target.closest('[data-create-field-package]')) { createFieldPackageForSelectedSheet(); return; }
+  if (event.target.closest('[data-sync-field-note]')) { syncFieldModeDelta({ verify: false }); return; }
+  if (event.target.closest('[data-sync-field-verify]')) { syncFieldModeDelta({ verify: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
