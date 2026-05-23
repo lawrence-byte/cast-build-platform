@@ -16,6 +16,7 @@ let currentSetMeta = { status: 'loading', count: 0, disciplines: [] };
 let drawingScales = loadDrawingScales();
 let viewerPreferences = loadViewerPreferences();
 let calibration = null;
+let selectedMarkupIds = new Set();
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -357,11 +358,14 @@ function renderViewer() {
 function renderMarkups() {
   const drawing = selectedDrawing();
   const rows = state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id);
+  selectedMarkupIds = new Set([...selectedMarkupIds].filter((id) => rows.some((m) => m.id === id)));
   document.querySelector('[data-markup-list]').innerHTML = rows.length ? rows.map((m) => {
     const assignee = byId(state.users, m.assignee_user_id);
     const measurement = m.measurement_value ? `<p class="muted"><strong>Takeoff:</strong> ${Number(m.measurement_value).toLocaleString()} ${esc(m.measurement_unit || '')} · scale ${esc(m.scale_label || 'sheet scale')}</p>` : '';
+    const checked = selectedMarkupIds.has(m.id) ? 'checked' : '';
     return `<article class="comment-card" data-card="${esc(m.id)}">
       <div class="actions"><span class="badge ${m.status === 'Open' ? 'open' : ''}">${esc(m.status)}</span><span class="badge ${m.priority === 'High' || m.priority === 'Urgent' ? 'high' : ''}">${esc(m.priority)}</span></div>
+      <label class="cad-muted"><input type="checkbox" data-batch-markup="${esc(m.id)}" ${checked} autocomplete="off"> Select for batch operation</label>
       <h3>${esc(m.subject || m.tool)}</h3>
       <p class="muted">${esc(m.body)}</p>
       ${measurement}
@@ -372,6 +376,7 @@ function renderMarkups() {
       </div>
     </article>`;
   }).join('') : '<p class="muted">No markups on this sheet yet. Click Add Markup or click the drawing overlay to place a comment, measurement, count, cloud, or takeoff item.</p>';
+  renderBatchStatus(rows);
 }
 function renderQuantities() {
   document.querySelector('[data-quantity-rows]').innerHTML = state.estimateQuantities.map((q) => {
@@ -610,6 +615,72 @@ function verifyQuantity(id) {
   if (result.ok) { save(); window.CASTShell?.toast?.('Quantity verified and locked in CAST estimate log.', { kind: 'success' }); render(); }
 }
 function resolveMarkup(id) { const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor()); if (result.ok) { save(); render(); } }
+function visibleMarkups() {
+  const drawing = selectedDrawing();
+  return state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id);
+}
+function renderBatchStatus(rows = visibleMarkups()) {
+  const status = document.querySelector('[data-batch-status]');
+  if (status) status.textContent = `${selectedMarkupIds.size} of ${rows.length} visible markups selected. Sensitive stamp/resolved/verified changes require human review approval.`;
+  const selectVisible = document.querySelector('[data-batch-select-visible]');
+  if (selectVisible) selectVisible.checked = rows.length > 0 && rows.every((m) => selectedMarkupIds.has(m.id));
+}
+function batchPayload() {
+  const operation = document.querySelector('[data-batch-operation]')?.value || 'flag-for-review';
+  const value = document.querySelector('[data-batch-value]')?.value.trim() || '';
+  const patch = {};
+  const stamp = {};
+  if (operation === 'set-layer') patch.layer = value || 'Batch Review';
+  if (operation === 'assign-markups') patch.assigneeUserId = value || actor()?.id || '';
+  if (operation === 'update-markup-status') patch.status = value || 'Needs Review';
+  if (operation === 'flag-for-review') patch.priority = value || 'High';
+  if (operation === 'place-stamp') stamp.label = value || 'CAST reviewed';
+  return {
+    type: 'batch-operation',
+    operation,
+    projectId: selectedDrawing()?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    markupIds: [...selectedMarkupIds],
+    patch,
+    stamp,
+    humanReviewApproved: Boolean(document.querySelector('[data-batch-human-review]')?.checked),
+  };
+}
+function applyLocalBatch(payload) {
+  state.drawingMarkups.forEach((markup) => {
+    if (!payload.markupIds.includes(markup.id)) return;
+    if (payload.operation === 'set-layer') markup.layer = payload.patch.layer;
+    if (payload.operation === 'assign-markups') markup.assignee_user_id = payload.patch.assigneeUserId;
+    if (payload.operation === 'update-markup-status') markup.status = payload.patch.status;
+    if (payload.operation === 'flag-for-review') { markup.status = 'Needs Review'; markup.priority = payload.patch.priority || 'High'; }
+    if (payload.operation === 'place-stamp') { markup.status = payload.patch.status || markup.status; markup.source_snapshot = { ...(markup.source_snapshot || {}), batchStamp: { label: payload.stamp.label, humanReviewApproved: true, appliedAt: new Date().toISOString() } }; }
+    markup.updated_at = new Date().toISOString();
+  });
+}
+async function applyBatchOperation() {
+  if (!selectedMarkupIds.size) { window.CASTShell?.toast?.('Select at least one markup before applying a batch operation.', { kind: 'error' }); return; }
+  const payload = batchPayload();
+  const sensitive = payload.operation === 'place-stamp' || ['Verified', 'Resolved'].includes(payload.patch.status);
+  if (sensitive && !payload.humanReviewApproved) { window.CASTShell?.toast?.('Human review approval is required before batch stamping, resolving, or verifying markups.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    applyLocalBatch(payload);
+    save();
+    selectedMarkupIds.clear();
+    window.CASTShell?.toast?.(`Batch operation applied to ${payload.markupIds.length} markup(s).`, { kind: 'success' });
+    render();
+  } catch (error) {
+    console.warn('CAST CAD batch operation API unavailable; applying local reviewed state only when safe.', error);
+    if (sensitive) { window.CASTShell?.toast?.('Backend batch audit is unavailable; sensitive batch changes were not applied.', { kind: 'error' }); return; }
+    applyLocalBatch(payload);
+    save();
+    selectedMarkupIds.clear();
+    window.CASTShell?.toast?.('Batch operation saved locally; backend audit API is unavailable.', { kind: 'info' });
+    render();
+  }
+}
 function exportCsv() {
   const rows = state.drawingMarkups.map((m) => {
     const drawing = byId(state.drawings, m.drawing_id);
@@ -668,6 +739,9 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-open-server-pdf]')) { openSelectedPdf(); return; }
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
+  const batchMarkup = event.target.closest('[data-batch-markup]');
+  if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
+  if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
@@ -678,6 +752,8 @@ document.addEventListener('click', (event) => {
 document.addEventListener('change', (event) => {
   const input = event.target.closest('[data-pdf-input]');
   if (input) handlePdfUpload(input.files?.[0]);
+  const selectVisible = event.target.closest('[data-batch-select-visible]');
+  if (selectVisible) { visibleMarkups().forEach((m) => { if (selectVisible.checked) selectedMarkupIds.add(m.id); else selectedMarkupIds.delete(m.id); }); render(); return; }
   if (event.target.closest('[data-viewer-layout], [data-viewer-zoom], [data-viewer-pref]')) persistViewerPreferences({ toast: false });
 });
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
