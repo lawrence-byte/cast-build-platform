@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -493,6 +493,87 @@ function listBatchOperations(state, filters = {}) {
   if (filters.operation) rows = rows.filter((row) => row.operation === filters.operation);
   return rows;
 }
+function createFieldPackage(state, input = {}, actor) {
+  state.fieldPackages ||= [];
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const sheetIds = [...new Set((input.sheetIds || input.sheet_ids || []).map(String).filter(Boolean))];
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'] };
+  if (!sheetIds.length) return { ok: false, status: 422, errors: ['At least one sheetId is required for a field package.'] };
+  const expiresInHours = Math.max(1, Math.min(168, Number(input.expiresInHours || input.expires_in_hours || 24)));
+  const packageMarkups = state.markups
+    .filter((row) => row.projectId === projectId && sheetIds.includes(row.sheetId))
+    .map((row) => ({ id: row.id, sheetId: row.sheetId, pageNumber: row.pageNumber, tool: row.tool, subject: row.subject, body: row.body, status: row.status, priority: row.priority, trade: row.trade, costCode: row.costCode, assigneeUserId: row.assigneeUserId, geometry: row.geometry, measurement: row.measurement, layer: row.layer, groupId: row.groupId, style: row.style, updatedAt: row.updatedAt }));
+  const fieldPackage = {
+    id: input.id || id('cad_field_pkg'),
+    projectId,
+    sheetIds,
+    deviceId: String(input.deviceId || input.device_id || 'unassigned-device'),
+    mode: 'offline-field-review',
+    status: 'ready',
+    markupCount: packageMarkups.length,
+    cacheControl: 'private, max-age=0, no-store',
+    publicExposure: false,
+    requiresAuth: true,
+    syncContract: { endpoint: '/api/cast-cad-exports', type: 'field-sync', conflictPolicy: 'server-audited-human-review' },
+    package: { projectId, sheetIds, markups: packageMarkups, generatedAt: now() },
+    expiresAt: new Date(Date.now() + expiresInHours * 60 * 60 * 1000).toISOString(),
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.fieldPackages.push(fieldPackage);
+  audit(state, actor, 'Created CAST CAD offline field package', 'CAST_CAD_FIELD_PACKAGE', fieldPackage.id, null, { ...fieldPackage, package: { ...fieldPackage.package, markups: packageMarkups.map((row) => row.id) } });
+  return { ok: true, fieldPackage };
+}
+function syncFieldPackageDeltas(state, input = {}, actor) {
+  state.fieldSyncEvents ||= [];
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const packageId = input.packageId || input.package_id || '';
+  const deltas = Array.isArray(input.deltas) ? input.deltas : [];
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'] };
+  if (!deltas.length) return { ok: false, status: 422, errors: ['At least one field delta is required.'] };
+  const sensitiveDelta = deltas.find((delta) => delta.operation === 'update-markup' && ['Verified','Resolved'].includes(delta.patch?.status));
+  if (sensitiveDelta && !(input.humanReviewApproved || input.human_review_approved)) return { ok: false, status: 409, code: 'human-review-required', error: 'Offline field sync cannot verify or resolve markups without human review approval.', targetMarkupId: sensitiveDelta.markupId || sensitiveDelta.markup_id };
+  const applied = [];
+  const rejected = [];
+  deltas.forEach((delta) => {
+    const operation = delta.operation || 'comment';
+    if (operation === 'create-markup') {
+      const created = createMarkup(state, { ...delta.markup, projectId: delta.markup?.projectId || projectId }, actor);
+      if (created.ok) applied.push({ operation, markupId: created.markup.id }); else rejected.push({ operation, error: created.error || created.errors });
+      return;
+    }
+    if (operation === 'update-markup') {
+      const updated = updateMarkup(state, delta.markupId || delta.markup_id, delta.patch || {}, actor);
+      if (updated.ok) applied.push({ operation, markupId: updated.markup.id }); else rejected.push({ operation, markupId: delta.markupId || delta.markup_id, error: updated.error || updated.errors });
+      return;
+    }
+    if (operation === 'comment') {
+      const comment = createMarkupComment(state, delta.markupId || delta.markup_id, delta.comment || delta, actor);
+      if (comment.ok) applied.push({ operation, markupId: comment.comment.markupId, commentId: comment.comment.id }); else rejected.push({ operation, markupId: delta.markupId || delta.markup_id, error: comment.error || comment.errors });
+      return;
+    }
+    rejected.push({ operation, error: 'Unsupported field sync operation.' });
+  });
+  const event = { id: id('cad_field_sync'), projectId, packageId, deviceId: String(input.deviceId || input.device_id || 'unassigned-device'), status: rejected.length ? 'partial' : 'applied', appliedCount: applied.length, rejectedCount: rejected.length, humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved), applied, rejected, createdByUserId: actor.id, createdAt: now() };
+  state.fieldSyncEvents.push(event);
+  audit(state, actor, 'Synced CAST CAD offline field deltas', 'CAST_CAD_FIELD_SYNC', event.id, null, event);
+  return { ok: rejected.length === 0, status: rejected.length ? 207 : 200, event };
+}
+function listFieldPackages(state, filters = {}) {
+  state.fieldPackages ||= [];
+  state.fieldSyncEvents ||= [];
+  let packages = state.fieldPackages.slice();
+  if (filters.projectId) packages = packages.filter((row) => row.projectId === filters.projectId);
+  if (filters.deviceId) packages = packages.filter((row) => row.deviceId === filters.deviceId);
+  let syncEvents = state.fieldSyncEvents.slice();
+  if (filters.projectId) syncEvents = syncEvents.filter((row) => row.projectId === filters.projectId);
+  if (filters.packageId) syncEvents = syncEvents.filter((row) => row.packageId === filters.packageId);
+  return { packages, syncEvents };
+}
 function normalizeSheetRevision(input = {}, setVersion, actor, status = 'current') {
   const drawingNumber = input.drawingNumber || input.drawing_number || String(input.name || input.path || input.sheetId || '').replace(/\.pdf$/i, '');
   const sourcePath = input.sourcePath || input.source_path || input.path || '';
@@ -591,7 +672,7 @@ module.exports = {
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
-  buildComparisonJob, createBatchOperation, listBatchOperations,
+  buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   markupsCsv,
 };

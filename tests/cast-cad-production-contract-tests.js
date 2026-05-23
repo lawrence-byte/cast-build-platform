@@ -104,6 +104,21 @@ const deniedBatch = cad.createBatchOperation(state, { operation: 'set-layer', pr
 assert.equal(deniedBatch.ok, false, 'read-only users cannot run batch operations');
 assert.equal(deniedBatch.status, 403, 'read-only batch denial is a 403');
 
+const fieldPackage = cad.createFieldPackage(state, { projectId: 'alum', sheetIds: ['A-101'], deviceId: 'ipad-field-01', expiresInHours: 12 }, readOnly);
+assert.equal(fieldPackage.ok, true, 'read-only field users can receive an offline field package');
+assert.equal(fieldPackage.fieldPackage.publicExposure, false, 'field package contract forbids public exposure');
+assert.equal(fieldPackage.fieldPackage.requiresAuth, true, 'field package remains authenticated/private');
+assert.equal(fieldPackage.fieldPackage.package.markups.length >= 2, true, 'field package includes scoped markups for selected sheets');
+assert.equal(fieldPackage.fieldPackage.syncContract.type, 'field-sync', 'field package advertises sync contract');
+const blockedFieldSync = cad.syncFieldPackageDeltas(state, { projectId: 'alum', packageId: fieldPackage.fieldPackage.id, deltas: [{ operation: 'update-markup', markupId: markup.markup.id, patch: { status: 'Verified' } }] }, owner);
+assert.equal(blockedFieldSync.ok, false, 'offline field sync fails closed for verification without review');
+assert.equal(blockedFieldSync.code, 'human-review-required', 'offline field sync exposes review blocker');
+const fieldSync = cad.syncFieldPackageDeltas(state, { projectId: 'alum', packageId: fieldPackage.fieldPackage.id, deviceId: 'ipad-field-01', deltas: [{ operation: 'comment', markupId: markup.markup.id, comment: { body: 'Field photo confirms this condition.' } }, { operation: 'create-markup', markup: { sheetId: 'A-101', tool: 'Pin', subject: 'Field note', body: 'Observed onsite.' } }] }, owner);
+assert.equal(fieldSync.ok, true, 'offline field sync applies comments and new field markups');
+assert.equal(fieldSync.event.appliedCount, 2, 'field sync reports applied deltas');
+assert.equal(cad.listFieldPackages(state, { projectId: 'alum' }).syncEvents.length, 1, 'field package list includes sync events');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FIELD_SYNC'), 'field sync is audited');
+
 const setVersion = cad.createDrawingSetVersion(state, { projectId: 'alum', setId: 'current', name: 'Alüm Current Drawings', revisionLabel: 'Permit Set', sheets: [{ sheetId: 'A-101', drawingNumber: 'A-101', drawingTitle: 'Floor Plan', path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', contentHash: 'hash-a' }] }, owner);
 assert.equal(setVersion.ok, true, 'drawing set version creates through production service');
 assert.equal(setVersion.revisions.length, 1, 'drawing set version creates sheet revisions');
