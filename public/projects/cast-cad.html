@@ -183,7 +183,18 @@
         </article>
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Admin, collaboration, field mode</h2><span class="badge">Governed rollout</span></div>
-          <div class="cad-panel-body"><p class="cad-muted">Review Rooms, Project Rooms, roles/permissions, external collaborators, audit logs, mobile/tablet field mode, offline sync, and integration connectors are planned as backend-enabled modules.</p></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Review Rooms, Project Rooms, roles/permissions, external collaborators, audit logs, mobile/tablet field mode, offline sync, and integration connectors are planned as backend-enabled modules.</p>
+            <div class="pdf-intake cad-field-mode-controls" aria-label="CAST CAD mobile/tablet offline field mode controls">
+              <label>Device <input type="text" value="ipad-field-01" data-field-device autocomplete="off"></label>
+              <label>Package hours <input type="number" min="1" max="168" step="1" value="24" data-field-expiry autocomplete="off"></label>
+              <label><input type="checkbox" data-field-human-review autocomplete="off"> Human review approved</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-field-package>Create field package</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-sync-field-note>Sync field note</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-sync-field-verify>Sync verification</button>
+              <span class="pdf-status" data-field-status>Field mode package not created. Private packages use no-store contracts; verification/resolution sync requires human review.</span>
+            </div>
+          </div>
         </article>
       </section>
 
