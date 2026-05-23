@@ -21,6 +21,7 @@ let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: []
 let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache not registered yet; private PDFs/API payloads are never cached.' };
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
+let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -497,6 +498,8 @@ function mergeServerMarkup(serverMarkup) {
 function renderMarkupPersistenceStatus() {
   const status = document.querySelector('[data-markup-persistence-status]');
   if (status) status.textContent = markupPersistenceState.message;
+  const rfiStatus = document.querySelector('[data-rfi-link-status]');
+  if (rfiStatus) rfiStatus.textContent = rfiLinkState.message;
 }
 async function syncMarkupToServer(markup, { toast = false } = {}) {
   try {
@@ -513,6 +516,12 @@ async function syncMarkupToServer(markup, { toast = false } = {}) {
     if (toast) window.CASTShell?.toast?.('Markup saved locally; backend markup persistence API is unavailable.', { kind: 'info' });
   }
   renderMarkupPersistenceStatus();
+}
+async function ensureMarkupSyncedForWorkflow(markup) {
+  if (!markup) throw new Error('Markup not found.');
+  if (!markup.source_snapshot?.serverSyncedAt) await syncMarkupToServer(markup, { toast: false });
+  if (!markup.source_snapshot?.serverMarkupId) throw new Error('Backend markup persistence is required before workflow links can be created.');
+  return markup.source_snapshot.serverMarkupId;
 }
 async function loadServerMarkupsForSelectedDrawing() {
   const drawing = selectedDrawing();
@@ -732,6 +741,31 @@ function verifyQuantity(id) {
   if (result.ok) { save(); window.CASTShell?.toast?.('Quantity verified and locked in CAST estimate log.', { kind: 'success' }); render(); }
 }
 function resolveMarkup(id) { const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor()); if (result.ok) { save(); render(); } }
+async function convertMarkupToRfiDraft(id) {
+  const markup = state.drawingMarkups.find((row) => row.id === id);
+  if (!markup) { window.CASTShell?.toast?.('Markup not found for RFI conversion.', { kind: 'error' }); return; }
+  rfiLinkState = { status: 'pending', message: `Creating audited draft RFI snapshot for ${markup.subject || markup.tool}…` };
+  renderMarkupPersistenceStatus();
+  try {
+    const serverMarkupId = await ensureMarkupSyncedForWorkflow(markup);
+    const response = await fetch('/api/cast-cad-rfi-link', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ markupId: serverMarkupId, localMarkupId: markup.id, draftOnly: true }),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    markup.source_snapshot = { ...(markup.source_snapshot || {}), rfiLinkId: result.rfiLink?.id || '', rfiLinkStatus: result.rfiLink?.linkStatus || 'draft', rfiLinkedAt: new Date().toISOString(), draftOnly: true };
+    save();
+    rfiLinkState = { status: 'draft-linked', message: `Draft RFI snapshot ${result.rfiLink?.id || ''} created from ${markup.subject || markup.tool}; no external RFI write-back was attempted.` };
+    window.CASTShell?.toast?.('Draft RFI snapshot created through the audited backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD RFI link API unavailable or markup not synced', error);
+    rfiLinkState = { status: 'blocked', message: `RFI conversion blocked: ${error.message}. No local-only or external RFI was fabricated.` };
+    window.CASTShell?.toast?.('RFI conversion blocked until backend markup/RFI snapshot APIs are available.', { kind: 'error' });
+  }
+  render();
+}
 function visibleMarkups() {
   const drawing = selectedDrawing();
   return state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id);
@@ -1007,7 +1041,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-sync-field-verify]')) { syncFieldModeDelta({ verify: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
-  const rfi = event.target.closest('[data-rfi]'); if (rfi) window.CASTShell?.toast?.('RFI conversion queued as draft-only; no external write-back enabled.', { kind: 'info' });
+  const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
   if (event.target.closest('[data-export]')) exportCsv();
   if (event.target.closest('[data-reset]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: '', status: 'idle', message: '' }; calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
 });
