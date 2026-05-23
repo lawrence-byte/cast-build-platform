@@ -21,6 +21,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent drawing set versioning and slip-sheeting contract with audited supersedence chains and fail-closed human-review approval gates: `/api/cast-cad-exports` with `type=drawing-set-version`, `type=slip-sheet`, or `GET type=drawing-sets`.
 - Provider-independent CAST Tool Library contract for admin-managed count/length/area/symbol/stamp items, assembly/cost metadata, audited updates, and review-gated placement as markup/takeoff rows: `/api/cast-cad-markups?action=tool-library`.
 - Provider-independent CAST CAD batch operation contract for scoped status/assignee/layer/review/stamp updates, audited per target markup with fail-closed human-review gates for stamped/resolved/verified mutations: `/api/cast-cad-exports` with `type=batch-operation`.
+- Provider-independent CAST CAD bulk-selection workbench controls for selecting visible markups and applying scoped status, assignee, layer, review-priority, and stamp operations against the batch API; sensitive stamp/resolved/verified changes remain human-review gated and fail closed if backend audit is unavailable.
 - Provider-independent mobile/tablet offline field package and sync contract for private no-store sheet/markup packages, audited device deltas, and fail-closed human-review gates before offline sync can verify/resolve markups: `/api/cast-cad-exports` with `type=field-package` or `type=field-sync`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
@@ -76,7 +77,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - RFIs/submittals/change-event links
 - Review Rooms and Project Rooms
 - CAST CAD AI Review agents
-- Batch tools (provider-independent batch operation API/service contract implemented for scoped status/assignee/layer/review/stamp updates; UI bulk-selection workflow and production storage adapter remain)
+- Batch tools (provider-independent batch operation API/service contract and static workbench bulk-selection workflow implemented for scoped status/assignee/layer/review/stamp updates; production storage adapter remains)
 - Mobile/tablet field mode (provider-independent offline package/sync API/service contract implemented; mobile shell/service worker and production storage adapter remain)
 - Admin, roles, permissions, governance, and audit logs
 - Integrations: Dropbox, Google Drive, SharePoint, Procore-style workflows, Yardi, and future Autodesk/Revit/AutoCAD/IFC/DWG/Speckle connectors

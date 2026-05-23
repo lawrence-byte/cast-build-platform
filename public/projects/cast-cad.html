@@ -140,7 +140,17 @@
 
         <aside class="cad-panel">
           <div class="cad-panel-head"><h2>Comments + Issues</h2><button class="cb-btn small" type="button" data-add-markup>Add Markup</button></div>
-          <div class="cad-panel-body" data-markup-list></div>
+          <div class="cad-panel-body">
+            <div class="pdf-intake cad-batch-controls" aria-label="CAST CAD batch markup operation controls">
+              <label><input type="checkbox" data-batch-select-visible autocomplete="off"> Select visible</label>
+              <label>Batch action <select data-batch-operation><option value="flag-for-review">Flag for review</option><option value="set-layer">Set layer</option><option value="assign-markups">Assign</option><option value="update-markup-status">Update status</option><option value="place-stamp">Place reviewed stamp</option></select></label>
+              <label>Value <input type="text" data-batch-value placeholder="Layer, status, assignee, or stamp" autocomplete="off"></label>
+              <label><input type="checkbox" data-batch-human-review autocomplete="off"> Human review approved</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-apply-batch>Apply batch</button>
+              <span class="pdf-status" data-batch-status>0 markups selected. Sensitive stamp/resolved/verified changes require human review approval.</span>
+            </div>
+            <div data-markup-list></div>
+          </div>
         </aside>
       </section>
 
