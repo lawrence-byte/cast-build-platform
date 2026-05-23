@@ -179,8 +179,17 @@
 
       <section class="cad-grid" aria-label="Enterprise operations roadmap">
         <article class="cad-panel">
-          <div class="cad-panel-head"><h2>Batch + comparison center</h2><span class="badge">Roadmap</span></div>
-          <div class="cad-panel-body"><p class="cad-muted">Scaffolded behind feature flags: batch OCR, page labels, bookmarks, hyperlinks, compare, overlay, slip-sheet, flatten/unflatten, stamp, export, Auto Link, Dynamic Area Fill, Visual Search, and revision delta reports.</p></div>
+          <div class="cad-panel-head"><h2>Batch + comparison center</h2><span class="badge">Provider-gated</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Batch updates run through the audited backend contract. Drawing comparison requests now create fail-closed jobs that require the private comparison worker before any overlay/delta artifact is generated.</p>
+            <div class="pdf-intake cad-comparison-controls" aria-label="CAST CAD drawing comparison controls">
+              <label>Baseline <select data-compare-base autocomplete="off"><option value="">Baseline sheet/revision</option></select></label>
+              <label>Revised <select data-compare-revised autocomplete="off"><option value="">Revised sheet/revision</option></select></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-comparison>Create comparison job</button>
+              <span class="pdf-status" data-comparison-status>Comparison worker requires CAST_CAD_COMPARISON_WORKER before private delta artifacts are generated.</span>
+            </div>
+            <div class="tool-list" data-comparison-jobs><p class="cad-muted">No comparison jobs requested in this session.</p></div>
+          </div>
         </article>
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Admin, collaboration, field mode</h2><span class="badge">Governed rollout</span></div>

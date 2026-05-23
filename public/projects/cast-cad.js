@@ -20,6 +20,7 @@ let selectedMarkupIds = new Set();
 let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: [], status: 'idle', message: 'Field mode package not created.' };
 let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache not registered yet; private PDFs/API payloads are never cached.' };
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
+let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -408,6 +409,20 @@ function renderFindings() {
     <p><strong>Suggested action:</strong> ${esc(f.suggested_action)}</p>
   </article>`).join('');
 }
+function renderComparisonCenter() {
+  const base = document.querySelector('[data-compare-base]');
+  const revised = document.querySelector('[data-compare-revised]');
+  const status = document.querySelector('[data-comparison-status]');
+  const jobs = document.querySelector('[data-comparison-jobs]');
+  const options = state.drawings.slice(0, 200).map((drawing) => `<option value="${esc(drawing.id)}">${esc(drawing.drawing_number || drawing.source_name || drawing.id)} · ${esc(drawing.drawing_title || drawing.source_name || '')}</option>`).join('');
+  const optionCount = String(state.drawings.length);
+  if (base && base.dataset.optionCount !== optionCount) { const value = base.value; base.innerHTML = `<option value="">Baseline sheet/revision</option>${options}`; base.dataset.optionCount = optionCount; base.value = value; }
+  if (revised && revised.dataset.optionCount !== optionCount) { const value = revised.value || selectedDrawingId; revised.innerHTML = `<option value="">Revised sheet/revision</option>${options}`; revised.dataset.optionCount = optionCount; revised.value = value; }
+  if (status) status.textContent = comparisonCenterState.message;
+  if (jobs) {
+    jobs.innerHTML = comparisonCenterState.jobs.length ? comparisonCenterState.jobs.slice(-3).reverse().map((job) => `<div class="tool-card"><em>${esc(job.status || 'queued')}</em><strong>${esc(job.baseSheetId)} → ${esc(job.revisedSheetId)}</strong><span>${job.providerRequired ? 'Worker required: CAST_CAD_COMPARISON_WORKER. No private overlay/delta artifact is fabricated.' : 'Queued for the configured private comparison worker.'}</span></div>`).join('') : '<p class="cad-muted">No comparison jobs requested in this session.</p>';
+  }
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -418,6 +433,7 @@ function render() {
   renderMarkups();
   renderQuantities();
   renderFindings();
+  renderComparisonCenter();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
 }
@@ -782,6 +798,37 @@ async function applyBatchOperation() {
     render();
   }
 }
+function comparisonPayload() {
+  const drawing = selectedDrawing();
+  return {
+    type: 'comparison',
+    projectId: drawing?.project_id || 'alum',
+    baseSheetId: document.querySelector('[data-compare-base]')?.value || '',
+    revisedSheetId: document.querySelector('[data-compare-revised]')?.value || selectedDrawingId,
+  };
+}
+async function createComparisonJob() {
+  const payload = comparisonPayload();
+  if (!payload.baseSheetId || !payload.revisedSheetId || payload.baseSheetId === payload.revisedSheetId) {
+    comparisonCenterState = { ...comparisonCenterState, status: 'blocked', message: 'Choose two different baseline/revised sheets before creating a comparison job.' };
+    renderComparisonCenter();
+    window.CASTShell?.toast?.('Choose two different sheets/revisions before comparing.', { kind: 'error' });
+    return;
+  }
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const job = result.job || {};
+    comparisonCenterState = { status: job.status || 'queued', jobs: [...comparisonCenterState.jobs, job], message: job.providerRequired ? 'Comparison job recorded; CAST_CAD_COMPARISON_WORKER is required before private overlay/delta artifacts can be generated.' : 'Comparison job queued for the configured private worker.' };
+    window.CASTShell?.toast?.(comparisonCenterState.message, { kind: job.providerRequired ? 'info' : 'success' });
+  } catch (error) {
+    console.warn('CAST CAD comparison API unavailable', error);
+    comparisonCenterState = { ...comparisonCenterState, status: 'error', message: 'Comparison API unavailable; no local delta is fabricated because private drawing comparison must run in the audited backend worker.' };
+    window.CASTShell?.toast?.('Comparison API unavailable; no private delta artifact was fabricated.', { kind: 'error' });
+  }
+  renderComparisonCenter();
+}
 function renderFieldModeStatus() {
   const status = document.querySelector('[data-field-status]');
   const selected = selectedDrawing();
@@ -954,6 +1001,7 @@ document.addEventListener('click', (event) => {
   const batchMarkup = event.target.closest('[data-batch-markup]');
   if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
   if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
+  if (event.target.closest('[data-create-comparison]')) { createComparisonJob(); return; }
   if (event.target.closest('[data-create-field-package]')) { createFieldPackageForSelectedSheet(); return; }
   if (event.target.closest('[data-sync-field-note]')) { syncFieldModeDelta({ verify: false }); return; }
   if (event.target.closest('[data-sync-field-verify]')) { syncFieldModeDelta({ verify: true }); return; }
