@@ -87,6 +87,23 @@ const comparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetI
 assert.equal(comparison.ok, true, 'comparison job contract created');
 assert.equal(comparison.job.status, 'provider-required', 'comparison job reports worker requirement when no worker configured');
 
+const batchFlag = cad.createBatchOperation(state, { type: 'batch-operation', operation: 'flag-for-review', projectId: 'alum', sheetId: 'A-101', patch: { priority: 'Urgent' } }, owner);
+assert.equal(batchFlag.ok, true, 'batch operation applies provider-independent markup updates');
+assert.equal(batchFlag.batch.providerRequired, false, 'batch operation does not require a private provider');
+assert.equal(batchFlag.batch.targetCount >= 2, true, 'batch operation targets matching markups');
+assert.equal(batchFlag.markups.every((row) => row.status === 'Needs Review'), true, 'batch flag updates statuses');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_BATCH_OPERATION'), 'batch operation has an audit record');
+const blockedBatchStamp = cad.createBatchOperation(state, { operation: 'place-stamp', markupIds: [markup.markup.id], stamp: { label: 'Approved' } }, owner);
+assert.equal(blockedBatchStamp.ok, false, 'batch stamp fails closed without human approval');
+assert.equal(blockedBatchStamp.code, 'human-review-required', 'batch stamp exposes review approval blocker');
+const approvedBatchStamp = cad.createBatchOperation(state, { operation: 'place-stamp', markupIds: [markup.markup.id], humanReviewApproved: true, stamp: { label: 'Approved for RFI draft' } }, owner);
+assert.equal(approvedBatchStamp.ok, true, 'approved batch stamp applies');
+assert.equal(approvedBatchStamp.markups[0].sourceSnapshot.batchStamp.humanReviewApproved, true, 'approved batch stamp stores review gate proof');
+assert.equal(cad.listBatchOperations(state, { projectId: 'alum' }).length >= 2, true, 'batch operations list by project');
+const deniedBatch = cad.createBatchOperation(state, { operation: 'set-layer', projectId: 'alum', sheetId: 'A-101', layer: 'Read only change' }, readOnly);
+assert.equal(deniedBatch.ok, false, 'read-only users cannot run batch operations');
+assert.equal(deniedBatch.status, 403, 'read-only batch denial is a 403');
+
 const setVersion = cad.createDrawingSetVersion(state, { projectId: 'alum', setId: 'current', name: 'Alüm Current Drawings', revisionLabel: 'Permit Set', sheets: [{ sheetId: 'A-101', drawingNumber: 'A-101', drawingTitle: 'Floor Plan', path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', contentHash: 'hash-a' }] }, owner);
 assert.equal(setVersion.ok, true, 'drawing set version creates through production service');
 assert.equal(setVersion.revisions.length, 1, 'drawing set version creates sheet revisions');

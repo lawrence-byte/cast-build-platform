@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -432,6 +432,67 @@ function buildComparisonJob(state, input, actor) {
   audit(state, actor, 'Created drawing comparison job', 'CAST_CAD_COMPARISON_JOB', job.id, null, job);
   return { ok: true, job };
 }
+function normalizeBatchOperationInput(input = {}) {
+  const operation = String(input.operation || input.batchOperation || input.batch_operation || 'update-markup-status').trim();
+  const markupIds = [...new Set((input.markupIds || input.markup_ids || []).map(String).filter(Boolean))];
+  const filters = input.filters || {};
+  return {
+    projectId: input.projectId || input.project_id || filters.projectId || '',
+    sheetId: input.sheetId || input.sheet_id || filters.sheetId || '',
+    operation,
+    markupIds,
+    filters,
+    patch: input.patch || {},
+    stamp: input.stamp || {},
+    humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+  };
+}
+function targetMarkupsForBatch(state, normalized) {
+  if (normalized.markupIds.length) {
+    const ids = new Set(normalized.markupIds);
+    return state.markups.filter((row) => ids.has(row.id));
+  }
+  return listMarkups(state, { projectId: normalized.projectId, sheetId: normalized.sheetId, status: normalized.filters.status, search: normalized.filters.search });
+}
+function createBatchOperation(state, input = {}, actor) {
+  state.batchOperations ||= [];
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  const normalized = normalizeBatchOperationInput(input);
+  const allowed = new Set(['update-markup-status','assign-markups','set-layer','place-stamp','flag-for-review']);
+  if (!allowed.has(normalized.operation)) return { ok: false, status: 422, errors: ['operation must be update-markup-status, assign-markups, set-layer, place-stamp, or flag-for-review.'] };
+  const targets = targetMarkupsForBatch(state, normalized);
+  if (!targets.length) return { ok: false, status: 404, error: 'No CAST CAD markups matched the batch operation scope.' };
+  const sensitive = normalized.operation === 'place-stamp' || normalized.patch.status === 'Verified' || normalized.patch.status === 'Resolved';
+  if (sensitive && !normalized.humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Batch stamp/resolution/verification requires human review approval before mutating markups.', targetCount: targets.length };
+  const batch = { id: id('cad_batch'), projectId: normalized.projectId || targets[0]?.projectId || '', sheetId: normalized.sheetId || targets[0]?.sheetId || '', operation: normalized.operation, status: 'applied', targetCount: targets.length, updatedMarkupIds: [], humanReviewApproved: normalized.humanReviewApproved, providerRequired: false, createdByUserId: actor.id, createdAt: now() };
+  targets.forEach((markup) => {
+    const previous = clone(markup);
+    if (normalized.operation === 'update-markup-status') markup.status = normalized.patch.status || input.status || 'Needs Review';
+    if (normalized.operation === 'assign-markups') markup.assigneeUserId = normalized.patch.assigneeUserId || normalized.patch.assignee_user_id || input.assigneeUserId || input.assignee_user_id || markup.assigneeUserId;
+    if (normalized.operation === 'set-layer') markup.layer = normalized.patch.layer || input.layer || markup.layer || 'Default';
+    if (normalized.operation === 'flag-for-review') { markup.status = 'Needs Review'; markup.priority = normalized.patch.priority || input.priority || markup.priority || 'High'; }
+    if (normalized.operation === 'place-stamp') {
+      markup.status = normalized.patch.status || markup.status;
+      markup.sourceSnapshot = { ...(markup.sourceSnapshot || {}), batchStamp: { label: normalized.stamp.label || input.label || 'CAST reviewed', note: normalized.stamp.note || input.note || '', appliedByUserId: actor.id, appliedAt: now(), humanReviewApproved: true } };
+    }
+    markup.updatedByUserId = actor.id;
+    markup.updatedAt = now();
+    batch.updatedMarkupIds.push(markup.id);
+    audit(state, actor, `Batch ${normalized.operation} applied to CAST CAD markup`, 'CAST_CAD_MARKUP', markup.id, previous, markup, `Batch operation ${batch.id}`);
+  });
+  state.batchOperations.push(batch);
+  audit(state, actor, 'Created CAST CAD batch operation', 'CAST_CAD_BATCH_OPERATION', batch.id, null, batch);
+  return { ok: true, batch, markups: targets };
+}
+function listBatchOperations(state, filters = {}) {
+  state.batchOperations ||= [];
+  let rows = state.batchOperations.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.operation) rows = rows.filter((row) => row.operation === filters.operation);
+  return rows;
+}
 function normalizeSheetRevision(input = {}, setVersion, actor, status = 'current') {
   const drawingNumber = input.drawingNumber || input.drawing_number || String(input.name || input.path || input.sheetId || '').replace(/\.pdf$/i, '');
   const sourcePath = input.sourcePath || input.source_path || input.path || '';
@@ -530,7 +591,7 @@ module.exports = {
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
   createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
-  buildComparisonJob,
+  buildComparisonJob, createBatchOperation, listBatchOperations,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   markupsCsv,
 };
