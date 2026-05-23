@@ -210,6 +210,10 @@ assert.ok(castCadJs.includes("fetch('/api/cast-cad-markups'"), 'CAST CAD workben
 assert.ok(castCadJs.includes('function loadServerMarkupsForSelectedDrawing'), 'CAST CAD workbench reloads persisted server markups by sheet');
 assert.ok(castCadJs.includes('mergeServerMarkup'), 'CAST CAD workbench can merge server markup records into the local overlay');
 assert.ok(castCadHtml.includes('data-markup-persistence-status'), 'CAST CAD workbench exposes backend markup persistence status');
+assert.ok(castCadJs.includes('function convertMarkupToRfiDraft'), 'CAST CAD workbench creates audited draft RFI snapshots from markups');
+assert.ok(castCadJs.includes("fetch('/api/cast-cad-rfi-link'"), 'CAST CAD workbench calls the RFI snapshot API instead of fabricating local RFIs');
+assert.ok(castCadJs.includes('No local-only or external RFI was fabricated'), 'CAST CAD RFI conversion fails closed when backend workflow is unavailable');
+assert.ok(castCadHtml.includes('data-rfi-link-status'), 'CAST CAD workbench exposes RFI workflow status');
 assert.ok(castCadJs.includes('registerCastCadFieldServiceWorker'), 'CAST CAD workbench registers the field-mode service worker');
 assert.ok(castCadHtml.includes('data-field-service-worker-status'), 'CAST CAD workbench exposes field service worker status');
 assert.ok(fieldSw.includes("url.pathname.startsWith('/api/')"), 'field service worker never caches API responses');

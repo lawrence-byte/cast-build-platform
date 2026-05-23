@@ -28,6 +28,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent admin/governance contract for CAST CAD project member role assignments, effective permission resolution, permission matrix discovery, authenticated-session fail-closed mode, and audit-log reads: `/api/cast-cad-markups?action=admin|members|effective-permissions|audit-log`.
 - Provider-independent AI Review finding contract for source-cited `AI Detected` findings, fail-closed human-review verification, audit history, and optional human-verified conversion into markups: `/api/cast-cad-search?action=ai-findings` plus POST `type=ai-finding|review-ai-finding`.
 - Provider-independent frontend markup persistence bridge that posts newly created workbench markups to `/api/cast-cad-markups`, reloads server markups for the selected sheet, merges them into the overlay, and exposes local-only/server-synced status without claiming provider-backed database durability.
+- Provider-independent frontend RFI-from-markup workflow bridge that first confirms backend markup persistence, then creates an audited draft RFI snapshot through `/api/cast-cad-rfi-link`, exposes workflow status, and fails closed without fabricating local-only/external RFIs when backend contracts are unavailable.
 - Provider-independent comparison-center workbench controls that create audited `/api/cast-cad-exports` `type=comparison` jobs, validate baseline/revised sheet scope, and fail closed with the exact `CAST_CAD_COMPARISON_WORKER` requirement instead of fabricating private overlay/delta artifacts.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
@@ -99,7 +100,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Drawing set versions and slip-sheeting: API/service contract implemented with human-review-gated supersedence/audit history; production database adapter remains to be connected.
 - Drawing comparison report: provider-independent API/service contract and static comparison-center job controls are implemented with explicit `CAST_CAD_COMPARISON_WORKER` fail-closed status; comparison worker remains to be connected.
 - OCR/search: search/index contract implemented; OCR worker remains to be connected.
-- RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot.
+- RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot; frontend now calls the audited workflow contract and fails closed when backend markup/RFI contracts are unavailable.
 - Review session invite: review-room invite contract implemented; real-time transport/email invite provider remains.
 - Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
 - Markups List report: implemented at CSV/export scaffold level.
@@ -120,8 +121,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-23T15:40:38Z`.
-- Branch audited: `main`.
+- Audited at: `2026-05-23T19:51:15Z`.
+- Branch audited: `cast-cad-rfi-workflow-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
