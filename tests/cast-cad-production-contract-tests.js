@@ -83,6 +83,30 @@ const room = cad.createReviewRoom(state, { projectId: 'alum', name: 'Permit revi
 assert.equal(room.ok, true, 'review room created');
 assert.equal(room.room.participants[0].status, 'Invited', 'review room participants are invited');
 
+const docMetadata = cad.upsertDrawingDocumentMetadata(state, { projectId: 'alum', setId: 'current', sheetId: 'A-101', drawingNumber: 'A-101', drawingTitle: 'Floor Plan', discipline: 'Architecture', sourcePath: 'Current Drawings/A/A-101.pdf', pageCount: 1, contentHash: 'hash-a' }, owner);
+assert.equal(docMetadata.ok, true, 'drawing document metadata indexes through production service');
+assert.equal(docMetadata.document.publicExposure, false, 'drawing metadata remains private/no-store');
+assert.equal(docMetadata.document.requiresAuth, true, 'drawing metadata contract requires auth-backed stream access');
+assert.equal(docMetadata.document.providerRequired, true, 'drawing metadata names missing durable adapter without faking persistence');
+assert.deepEqual(docMetadata.document.requiredEnvVars, ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'], 'drawing metadata names required durable adapter env var');
+assert.equal(cad.listDrawingDocumentMetadata(state, { projectId: 'alum', search: 'Floor' }).length, 1, 'drawing metadata list filters by project/search');
+const blockedCurrentDoc = cad.upsertDrawingDocumentMetadata(state, { projectId: 'alum', setId: 'current', sheetId: 'A-102', drawingNumber: 'A-102', sourcePath: 'Current Drawings/A/A-102.pdf', status: 'current' }, owner);
+assert.equal(blockedCurrentDoc.ok, false, 'current drawing metadata fails closed without human review');
+assert.equal(blockedCurrentDoc.code, 'human-review-required', 'current metadata exposes human review blocker');
+const blockedDurableDoc = cad.upsertDrawingDocumentMetadata(state, { projectId: 'alum', setId: 'current', sheetId: 'A-103', drawingNumber: 'A-103', sourcePath: 'Current Drawings/A/A-103.pdf', authoritative: true, humanReviewApproved: true }, owner);
+assert.equal(blockedDurableDoc.ok, false, 'authoritative metadata fails closed without durable adapter');
+assert.equal(blockedDurableDoc.status, 503, 'authoritative metadata reports provider-required status');
+assert.deepEqual(blockedDurableDoc.requiredEnvVars, ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'], 'authoritative metadata exposes required adapter env var');
+const importedMetadata = cad.importDrawingDocumentMetadataFromIndex(state, { projectId: 'alum', setId: 'permit', files: [{ name: 'A-201.pdf', path: 'Current Drawings/A/A-201.pdf', title: 'Exterior Elevations', extension: 'pdf' }, { name: 'notes.txt', path: 'Current Drawings/notes.txt', extension: 'txt' }] }, owner);
+assert.equal(importedMetadata.ok, true, 'drawing metadata can import PDF rows from a drawing index');
+assert.equal(importedMetadata.summary.importedCount, 1, 'drawing metadata import ignores non-PDF files');
+assert.equal(importedMetadata.summary.providerRequired, true, 'drawing metadata import does not claim durable database persistence');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_DOCUMENT'), 'drawing document metadata is audited');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_DOCUMENT_IMPORT'), 'drawing document import is audited');
+const deniedDocMetadata = cad.upsertDrawingDocumentMetadata(state, { projectId: 'alum', sheetId: 'A-104', drawingNumber: 'A-104', sourcePath: 'Current Drawings/A/A-104.pdf' }, readOnly);
+assert.equal(deniedDocMetadata.ok, false, 'read-only users cannot mutate drawing metadata');
+assert.equal(deniedDocMetadata.status, 403, 'drawing metadata mutation denial is a 403');
+
 const badTool = cad.createToolLibraryItem(state, { projectId: 'alum', name: 'Unsafe auto-budget count', toolType: 'count', requiresHumanReview: false }, owner);
 assert.equal(badTool.ok, false, 'Tool Library items fail closed when human review is disabled');
 assert.equal(badTool.status, 422, 'Tool Library review gate returns validation error');
