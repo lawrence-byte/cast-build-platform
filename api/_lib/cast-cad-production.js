@@ -535,9 +535,40 @@ function applyToolLibraryItemToMarkup(state, input = {}, actor) {
 function buildComparisonJob(state, input, actor) {
   const permission = requireCastCad(actor.role, 'export');
   if (!permission.ok) return permission;
-  const job = { id: id('cad_compare'), projectId: input.projectId, baseSheetId: input.baseSheetId, revisedSheetId: input.revisedSheetId, status: process.env.CAST_CAD_COMPARISON_WORKER ? 'queued' : 'provider-required', providerRequired: !process.env.CAST_CAD_COMPARISON_WORKER, deltaReportPointer: '', createdByUserId: actor.id, createdAt: now() };
+  const projectId = input.projectId || input.project_id || '';
+  const baseSheetId = input.baseSheetId || input.base_sheet_id || input.baseRevisionId || input.base_revision_id || '';
+  const revisedSheetId = input.revisedSheetId || input.revised_sheet_id || input.revisedRevisionId || input.revised_revision_id || '';
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!baseSheetId) errors.push('baseSheetId is required.');
+  if (!revisedSheetId) errors.push('revisedSheetId is required.');
+  if (baseSheetId && revisedSheetId && baseSheetId === revisedSheetId) errors.push('baseSheetId and revisedSheetId must be different revisions or sheets.');
+  if (errors.length) return { ok: false, status: 422, errors };
+  const providerReady = Boolean(process.env.CAST_CAD_COMPARISON_WORKER);
+  const job = {
+    id: id('cad_compare'),
+    projectId,
+    baseSheetId,
+    revisedSheetId,
+    status: providerReady ? 'queued' : 'provider-required',
+    providerRequired: !providerReady,
+    requiredEnvVars: providerReady ? [] : ['CAST_CAD_COMPARISON_WORKER'],
+    contract: {
+      endpoint: '/api/cast-cad-exports',
+      type: 'comparison',
+      inputs: ['projectId', 'baseSheetId', 'revisedSheetId'],
+      outputs: ['deltaReportPointer', 'overlayPointer', 'changeSummary'],
+      privateArtifacts: true,
+      cacheControl: 'private, max-age=0, no-store',
+    },
+    deltaReportPointer: '',
+    overlayPointer: '',
+    changeSummary: [],
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
   state.comparisonJobs.push(job);
-  audit(state, actor, 'Created drawing comparison job', 'CAST_CAD_COMPARISON_JOB', job.id, null, job);
+  audit(state, actor, 'Created drawing comparison job', 'CAST_CAD_COMPARISON_JOB', job.id, null, job, job.providerRequired ? 'Comparison worker not configured; job is provider-required and no private artifact is fabricated.' : 'Queued for comparison worker.');
   return { ok: true, job };
 }
 function normalizeBatchOperationInput(input = {}) {

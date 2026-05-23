@@ -102,9 +102,14 @@ assert.equal(placedTool.markup.measurement.humanReviewRequired, true, 'Tool Libr
 assert.equal(placedTool.placement.budgetAuthoritative, false, 'Tool Library placement explicitly blocks budget authority');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_TOOL_LIBRARY_PLACEMENT'), 'Tool Library placement is audited');
 
+const blockedComparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetId: 'A-101-r1', revisedSheetId: 'A-101-r1' }, owner);
+assert.equal(blockedComparison.ok, false, 'comparison job rejects identical base/revised sheets');
+assert.equal(blockedComparison.status, 422, 'invalid comparison scope returns validation error');
 const comparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetId: 'A-101-r0', revisedSheetId: 'A-101-r1' }, owner);
 assert.equal(comparison.ok, true, 'comparison job contract created');
 assert.equal(comparison.job.status, 'provider-required', 'comparison job reports worker requirement when no worker configured');
+assert.deepEqual(comparison.job.requiredEnvVars, ['CAST_CAD_COMPARISON_WORKER'], 'comparison job names required worker env var');
+assert.equal(comparison.job.contract.privateArtifacts, true, 'comparison contract keeps delta artifacts private/no-store');
 
 const batchFlag = cad.createBatchOperation(state, { type: 'batch-operation', operation: 'flag-for-review', projectId: 'alum', sheetId: 'A-101', patch: { priority: 'Urgent' } }, owner);
 assert.equal(batchFlag.ok, true, 'batch operation applies provider-independent markup updates');
@@ -211,5 +216,9 @@ assert.ok(fieldSw.includes("url.pathname.startsWith('/api/')"), 'field service w
 assert.ok(fieldSw.includes("url.pathname.includes('/safe-data/')"), 'field service worker never caches safe-data private indexes/packages');
 assert.ok(fieldSw.includes("/\\.pdf$/i.test(url.pathname)"), 'field service worker never caches raw PDF drawing files');
 assert.ok(fieldSw.includes("privateAssetsCached: false"), 'field service worker reports private assets are not cached');
+assert.ok(castCadJs.includes('function createComparisonJob'), 'CAST CAD workbench creates provider-gated comparison jobs');
+assert.ok(castCadJs.includes('CAST_CAD_COMPARISON_WORKER'), 'CAST CAD workbench names comparison worker requirement');
+assert.ok(castCadHtml.includes('data-create-comparison'), 'CAST CAD workbench exposes comparison job controls');
+assert.ok(castCadHtml.includes('data-comparison-jobs'), 'CAST CAD workbench exposes comparison job status list');
 
 console.log('CAST CAD production contract tests passed.');
