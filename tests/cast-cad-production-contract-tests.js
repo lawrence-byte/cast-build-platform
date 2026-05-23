@@ -182,10 +182,17 @@ if (previousRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH;
 
 const castCadJs = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.js'), 'utf8');
 const castCadHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.html'), 'utf8');
+const fieldSw = fs.readFileSync(path.join(__dirname, '..', 'public', 'cast-cad-field-sw.js'), 'utf8');
 assert.ok(castCadJs.includes('function syncMarkupToServer'), 'CAST CAD workbench syncs new markups to backend contract');
 assert.ok(castCadJs.includes("fetch('/api/cast-cad-markups'"), 'CAST CAD workbench posts markups to /api/cast-cad-markups');
 assert.ok(castCadJs.includes('function loadServerMarkupsForSelectedDrawing'), 'CAST CAD workbench reloads persisted server markups by sheet');
 assert.ok(castCadJs.includes('mergeServerMarkup'), 'CAST CAD workbench can merge server markup records into the local overlay');
 assert.ok(castCadHtml.includes('data-markup-persistence-status'), 'CAST CAD workbench exposes backend markup persistence status');
+assert.ok(castCadJs.includes('registerCastCadFieldServiceWorker'), 'CAST CAD workbench registers the field-mode service worker');
+assert.ok(castCadHtml.includes('data-field-service-worker-status'), 'CAST CAD workbench exposes field service worker status');
+assert.ok(fieldSw.includes("url.pathname.startsWith('/api/')"), 'field service worker never caches API responses');
+assert.ok(fieldSw.includes("url.pathname.includes('/safe-data/')"), 'field service worker never caches safe-data private indexes/packages');
+assert.ok(fieldSw.includes("/\\.pdf$/i.test(url.pathname)"), 'field service worker never caches raw PDF drawing files');
+assert.ok(fieldSw.includes("privateAssetsCached: false"), 'field service worker reports private assets are not cached');
 
 console.log('CAST CAD production contract tests passed.');

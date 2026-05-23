@@ -18,6 +18,7 @@ let viewerPreferences = loadViewerPreferences();
 let calibration = null;
 let selectedMarkupIds = new Set();
 let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: [], status: 'idle', message: 'Field mode package not created.' };
+let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache not registered yet; private PDFs/API payloads are never cached.' };
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
@@ -783,10 +784,35 @@ async function applyBatchOperation() {
 }
 function renderFieldModeStatus() {
   const status = document.querySelector('[data-field-status]');
-  if (!status) return;
   const selected = selectedDrawing();
   const packageText = fieldPackageState.packageId ? `Package ${fieldPackageState.packageId} · ${fieldPackageState.sheetIds.length || 1} sheet(s)` : 'Field mode package not created';
-  status.textContent = `${packageText}. ${fieldPackageState.message || `Selected sheet ${selected?.drawing_number || selectedDrawingId}; verification/resolution sync requires human review.`}`;
+  if (status) status.textContent = `${packageText}. ${fieldPackageState.message || `Selected sheet ${selected?.drawing_number || selectedDrawingId}; verification/resolution sync requires human review.`}`;
+  const swStatus = document.querySelector('[data-field-service-worker-status]');
+  if (swStatus) swStatus.textContent = fieldServiceWorkerState.message;
+}
+
+async function registerCastCadFieldServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    fieldServiceWorkerState = { status: 'unsupported', message: 'Offline shell cache unsupported in this browser; field packages still fail closed through the backend sync contract.' };
+    renderFieldModeStatus();
+    return;
+  }
+  try {
+    const registration = await navigator.serviceWorker.register('/cast-cad-field-sw.js', { scope: '/' });
+    fieldServiceWorkerState = { status: 'registered', message: 'Offline shell cache registered for CAST CAD app assets only; /api, safe-data, data, sheetId streams, and PDFs remain network-only/no-store.' };
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'CAST_CAD_FIELD_CACHE_READY') {
+        fieldServiceWorkerState = { status: 'ready', message: `Offline shell cache refreshed (${event.data.cache}); private drawing/API payloads cached: ${event.data.privateAssetsCached ? 'yes' : 'no'}.` };
+        renderFieldModeStatus();
+      }
+    });
+    const worker = registration.active || registration.waiting || registration.installing;
+    worker?.postMessage?.({ type: 'CAST_CAD_FIELD_CACHE_REFRESH' });
+  } catch (error) {
+    console.warn('CAST CAD field service worker registration failed', error);
+    fieldServiceWorkerState = { status: 'error', message: 'Offline shell cache registration failed; private field sync remains backend-audited and fail-closed.' };
+  }
+  renderFieldModeStatus();
 }
 function fieldModePayload() {
   const drawing = selectedDrawing();
@@ -950,6 +976,7 @@ document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFrom
 window.addEventListener('beforeunload', () => { clearUploadedPdf(); clearStreamedPdf(); });
 
 render();
+registerCastCadFieldServiceWorker();
 loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
