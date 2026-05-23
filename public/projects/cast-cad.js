@@ -18,6 +18,7 @@ let viewerPreferences = loadViewerPreferences();
 let calibration = null;
 let selectedMarkupIds = new Set();
 let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: [], status: 'idle', message: 'Field mode package not created.' };
+let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -145,6 +146,7 @@ async function loadCurrentDrawingSet({ force = false, toast = false } = {}) {
   }
   render();
   loadSelectedDrawingPdf({ toast: false });
+  loadServerMarkupsForSelectedDrawing();
 }
 
 function renderMetrics() {
@@ -416,6 +418,101 @@ function render() {
   renderQuantities();
   renderFindings();
   renderFieldModeStatus();
+  renderMarkupPersistenceStatus();
+}
+function markupServerPayload(markup) {
+  return {
+    id: markup.id,
+    projectId: markup.project_id || selectedDrawing()?.project_id || 'alum',
+    sheetId: markup.drawing_id,
+    pageNumber: 1,
+    tool: markup.tool,
+    markupType: markup.markup_type || 'pin',
+    subject: markup.subject || markup.tool || 'CAST CAD markup',
+    body: markup.body || '',
+    status: markup.status || 'Open',
+    priority: markup.priority || 'Normal',
+    trade: markup.trade || '',
+    costCode: markup.cost_code || '',
+    assigneeUserId: markup.assignee_user_id || '',
+    geometry: markup.geometry || { type: markup.markup_type === 'measurement' ? 'line' : 'point', points: [{ x: Number(markup.x || 0), y: Number(markup.y || 0) }], width: Number(markup.width || 0), height: Number(markup.height || 0) },
+    measurement: markup.measurement_value ? { value: Number(markup.measurement_value), unit: markup.measurement_unit || '', scaleLabel: markup.scale_label || '', humanReviewRequired: markup.verification_status !== 'Verified' } : null,
+    layer: markup.layer || 'Default',
+    groupId: markup.group_id || '',
+    style: markup.style || {},
+    sourceSnapshot: { ...(markup.source_snapshot || {}), localMarkupId: markup.id, source: markup.source || 'CAST CAD workbench' },
+  };
+}
+function mergeServerMarkup(serverMarkup) {
+  if (!serverMarkup?.id || state.drawingMarkups.some((row) => row.id === serverMarkup.id)) return false;
+  const point = serverMarkup.geometry?.points?.[0] || { x: 50, y: 50 };
+  state.drawingMarkups.push({
+    id: serverMarkup.id,
+    project_id: serverMarkup.projectId || 'alum',
+    drawing_id: serverMarkup.sheetId,
+    revision_id: `server_${serverMarkup.sheetId}`,
+    markup_type: serverMarkup.markupType || 'pin',
+    tool: serverMarkup.tool || 'Pin',
+    subject: serverMarkup.subject || 'Server markup',
+    body: serverMarkup.body || '',
+    x: Number(point.x ?? 50),
+    y: Number(point.y ?? 50),
+    width: Number(serverMarkup.geometry?.width || 0),
+    height: Number(serverMarkup.geometry?.height || 0),
+    status: serverMarkup.status || 'Open',
+    priority: serverMarkup.priority || 'Normal',
+    trade: serverMarkup.trade || '',
+    cost_code: serverMarkup.costCode || '',
+    assignee_user_id: serverMarkup.assigneeUserId || '',
+    measurement_value: serverMarkup.measurement?.value || '',
+    measurement_unit: serverMarkup.measurement?.unit || '',
+    scale_label: serverMarkup.measurement?.scaleLabel || '',
+    layer: serverMarkup.layer || 'Default',
+    group_id: serverMarkup.groupId || '',
+    style: serverMarkup.style || {},
+    source: 'CAST CAD server markup contract',
+    source_snapshot: serverMarkup.sourceSnapshot || {},
+    created_at: serverMarkup.createdAt || new Date().toISOString(),
+    updated_at: serverMarkup.updatedAt || new Date().toISOString(),
+  });
+  return true;
+}
+function renderMarkupPersistenceStatus() {
+  const status = document.querySelector('[data-markup-persistence-status]');
+  if (status) status.textContent = markupPersistenceState.message;
+}
+async function syncMarkupToServer(markup, { toast = false } = {}) {
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(markupServerPayload(markup)) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    markup.source_snapshot = { ...(markup.source_snapshot || {}), serverMarkupId: result.markup?.id || markup.id, serverSyncedAt: new Date().toISOString() };
+    markupPersistenceState = { status: 'synced', syncedAt: new Date().toISOString(), message: `Markup ${markup.subject || markup.tool} saved to audited backend contract.` };
+    save();
+    if (toast) window.CASTShell?.toast?.('Markup saved to CAST CAD backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not persist CAST CAD markup to server contract', error);
+    markupPersistenceState = { status: 'local-only', syncedAt: '', message: 'Markup saved locally; backend markup persistence API is unavailable, so reload persistence is not guaranteed.' };
+    if (toast) window.CASTShell?.toast?.('Markup saved locally; backend markup persistence API is unavailable.', { kind: 'info' });
+  }
+  renderMarkupPersistenceStatus();
+}
+async function loadServerMarkupsForSelectedDrawing() {
+  const drawing = selectedDrawing();
+  if (!drawing?.id) return;
+  try {
+    const params = new URLSearchParams({ projectId: drawing.project_id || 'alum', sheetId: drawing.id });
+    const response = await fetch(`/api/cast-cad-markups?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const merged = (result.markups || []).reduce((count, row) => count + (mergeServerMarkup(row) ? 1 : 0), 0);
+    if (merged) { save(); render(); }
+    markupPersistenceState = { status: 'loaded', syncedAt: new Date().toISOString(), message: `${result.count || 0} server markup(s) checked for selected sheet; ${merged} merged locally.` };
+  } catch (error) {
+    console.warn('Could not load CAST CAD server markups', error);
+    markupPersistenceState = { status: 'local-only', syncedAt: '', message: 'Server markup persistence API unavailable; using local session markups only.' };
+  }
+  renderMarkupPersistenceStatus();
 }
 function measurementFor(tool, x, y) {
   const scale = currentScale();
@@ -497,6 +594,7 @@ function createMarkupAt(x, y) {
     save();
     window.CASTShell?.toast?.('Drawing markup added to review queue.', { kind: 'success' });
     render();
+    syncMarkupToServer(result.markup, { toast: false });
   }
 }
 function addMarkup() { createMarkupAt(22 + Math.floor(Math.random() * 54), 24 + Math.floor(Math.random() * 46)); }
@@ -817,7 +915,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -854,3 +952,4 @@ window.addEventListener('beforeunload', () => { clearUploadedPdf(); clearStreame
 render();
 loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
+loadServerMarkupsForSelectedDrawing();

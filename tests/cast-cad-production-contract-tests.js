@@ -1,5 +1,7 @@
 'use strict';
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const cad = require('../api/_lib/cast-cad-production');
 
 const state = cad.resetState();
@@ -177,5 +179,13 @@ const unauthenticatedRole = cad.upsertProjectMemberRole(state, { projectId: 'alu
 assert.equal(unauthenticatedRole.ok, false, 'admin governance fails closed when production auth is required but missing');
 assert.equal(unauthenticatedRole.code, 'auth-required', 'auth-required blocker is explicit');
 if (previousRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH; else process.env.CAST_CAD_REQUIRE_AUTH = previousRequireAuth;
+
+const castCadJs = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.js'), 'utf8');
+const castCadHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.html'), 'utf8');
+assert.ok(castCadJs.includes('function syncMarkupToServer'), 'CAST CAD workbench syncs new markups to backend contract');
+assert.ok(castCadJs.includes("fetch('/api/cast-cad-markups'"), 'CAST CAD workbench posts markups to /api/cast-cad-markups');
+assert.ok(castCadJs.includes('function loadServerMarkupsForSelectedDrawing'), 'CAST CAD workbench reloads persisted server markups by sheet');
+assert.ok(castCadJs.includes('mergeServerMarkup'), 'CAST CAD workbench can merge server markup records into the local overlay');
+assert.ok(castCadHtml.includes('data-markup-persistence-status'), 'CAST CAD workbench exposes backend markup persistence status');
 
 console.log('CAST CAD production contract tests passed.');
