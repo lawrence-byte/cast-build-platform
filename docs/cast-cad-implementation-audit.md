@@ -20,6 +20,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent persisted viewer-preferences contract and workbench controls for layout, zoom mode, thumbnails, bookmarks, page labels, keyboard shortcuts, split view, side-by-side view, and search panel state: `/api/cast-cad-markups?action=preferences`.
 - Provider-independent drawing set versioning and slip-sheeting contract with audited supersedence chains and fail-closed human-review approval gates: `/api/cast-cad-exports` with `type=drawing-set-version`, `type=slip-sheet`, or `GET type=drawing-sets`.
 - Provider-independent CAST Tool Library contract for admin-managed count/length/area/symbol/stamp items, assembly/cost metadata, audited updates, and review-gated placement as markup/takeoff rows: `/api/cast-cad-markups?action=tool-library`.
+- Provider-independent CAST CAD batch operation contract for scoped status/assignee/layer/review/stamp updates, audited per target markup with fail-closed human-review gates for stamped/resolved/verified mutations: `/api/cast-cad-exports` with `type=batch-operation`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -74,7 +75,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - RFIs/submittals/change-event links
 - Review Rooms and Project Rooms
 - CAST CAD AI Review agents
-- Batch tools
+- Batch tools (provider-independent batch operation API/service contract implemented for scoped status/assignee/layer/review/stamp updates; UI bulk-selection workflow and production storage adapter remain)
 - Mobile/tablet field mode
 - Admin, roles, permissions, governance, and audit logs
 - Integrations: Dropbox, Google Drive, SharePoint, Procore-style workflows, Yardi, and future Autodesk/Revit/AutoCAD/IFC/DWG/Speckle connectors
@@ -111,7 +112,7 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-22T10:24:55Z`.
+- Audited at: `2026-05-23T00:56:03Z`.
 - Branch audited: `main`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
