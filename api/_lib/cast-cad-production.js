@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -427,6 +427,97 @@ function createReviewRoom(state, input, actor) {
   state.reviewRooms.push(room);
   audit(state, actor, 'Created CAST CAD review room', 'CAST_CAD_REVIEW_ROOM', room.id, null, room);
   return { ok: true, room };
+}
+function normalizeDrawingDocumentMetadata(input = {}, actor) {
+  const sourcePath = String(input.sourcePath || input.source_path || input.path || '').trim();
+  const drawingNumber = String(input.drawingNumber || input.drawing_number || input.sheetNumber || input.sheet_number || input.name || sourcePath.replace(/\.pdf$/i, '')).trim();
+  const sheetId = String(input.sheetId || input.sheet_id || input.id || safeSegment(sourcePath || drawingNumber)).trim();
+  return {
+    id: input.id || id('cad_doc'),
+    projectId: input.projectId || input.project_id || 'default',
+    setId: input.setId || input.set_id || 'current',
+    sheetId,
+    drawingNumber,
+    drawingTitle: String(input.drawingTitle || input.drawing_title || input.title || '').trim(),
+    discipline: String(input.discipline || '').trim(),
+    revisionLabel: input.revisionLabel || input.revision_label || input.revision || '',
+    revisionDate: input.revisionDate || input.revision_date || '',
+    sourcePath,
+    fileName: safeFileName(input.fileName || input.file_name || input.name || `${drawingNumber || sheetId}.pdf`),
+    extension: String(input.extension || 'pdf').replace(/^\./, '').toLowerCase(),
+    contentHash: input.contentHash || input.content_hash || '',
+    pageCount: input.pageCount === undefined && input.page_count === undefined ? null : Number(input.pageCount ?? input.page_count),
+    status: input.status || 'indexed',
+    storagePointer: input.storagePointer || input.storage_pointer || '',
+    streamContractEndpoint: '/api/cast-cad-pdf-stream',
+    cacheControl: 'private, max-age=0, no-store',
+    publicExposure: false,
+    requiresAuth: true,
+    authoritative: Boolean(input.authoritative),
+    providerRequired: !process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER,
+    requiredEnvVars: process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER ? [] : ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'],
+    persistenceMode: process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER ? 'provider-adapter' : 'memory-contract-only',
+    humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    updatedByUserId: actor.id,
+    createdAt: input.createdAt || input.created_at || now(),
+    updatedAt: now(),
+  };
+}
+function validateDrawingDocumentMetadata(doc) {
+  const errors = [];
+  if (!doc.projectId) errors.push('projectId is required.');
+  if (!doc.sheetId) errors.push('sheetId is required.');
+  if (!doc.drawingNumber) errors.push('drawingNumber is required.');
+  if (!doc.sourcePath) errors.push('sourcePath is required.');
+  if (doc.extension !== 'pdf') errors.push('Only PDF drawing metadata is supported by the CAST CAD stream contract.');
+  if (doc.pageCount !== null && (!Number.isFinite(doc.pageCount) || doc.pageCount < 1)) errors.push('pageCount must be a positive number when provided.');
+  if (!['indexed','current','superseded','archived'].includes(doc.status)) errors.push('status must be indexed, current, superseded, or archived.');
+  return errors;
+}
+function upsertDrawingDocumentMetadata(state, input = {}, actor) {
+  state.drawingDocuments ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const doc = normalizeDrawingDocumentMetadata(input, actor);
+  const errors = validateDrawingDocumentMetadata(doc);
+  if (errors.length) return { ok: false, status: 422, errors };
+  const wantsAuthoritative = doc.authoritative || doc.status === 'current' || input.persistDurably || input.persist_durably;
+  if (wantsAuthoritative && !doc.humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Authoritative drawing metadata changes require human review approval before becoming current or durable.', document: doc };
+  if ((input.persistDurably || input.persist_durably || doc.authoritative) && doc.providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'Durable drawing document metadata persistence requires CAST_CAD_DOCUMENT_METADATA_ADAPTER.', requiredEnvVars: doc.requiredEnvVars, document: doc };
+  const existing = state.drawingDocuments.find((row) => row.projectId === doc.projectId && row.setId === doc.setId && row.sheetId === doc.sheetId);
+  const previous = existing ? clone(existing) : null;
+  if (existing) Object.assign(existing, doc, { id: existing.id, createdAt: existing.createdAt });
+  else state.drawingDocuments.push(doc);
+  const current = existing || doc;
+  audit(state, actor, previous ? 'Updated CAST CAD drawing document metadata' : 'Indexed CAST CAD drawing document metadata', 'CAST_CAD_DRAWING_DOCUMENT', current.id, previous, current, current.providerRequired ? 'Database adapter not configured; metadata is a provider-independent contract record only.' : 'Metadata ready for configured persistence adapter.');
+  return { ok: true, document: current };
+}
+function importDrawingDocumentMetadataFromIndex(state, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || 'default';
+  const setId = input.setId || input.set_id || 'current';
+  const files = Array.isArray(input.files) ? input.files : Array.isArray(input.index?.files) ? input.index.files : [];
+  if (!files.length) return { ok: false, status: 422, errors: ['At least one PDF drawing index file is required.'] };
+  const imported = [];
+  const rejected = [];
+  files.filter((file) => String(file.extension || file.name || file.path || '').toLowerCase().includes('pdf')).forEach((file) => {
+    const result = upsertDrawingDocumentMetadata(state, { ...file, projectId, setId, sourcePath: file.path || file.sourcePath, drawingNumber: file.drawingNumber || file.sheetNumber || file.name, drawingTitle: file.title || file.drawingTitle, status: input.status || 'indexed', humanReviewApproved: input.humanReviewApproved || input.human_review_approved }, actor);
+    if (result.ok) imported.push(result.document); else rejected.push({ file: file.path || file.name || file.id, error: result.error || result.errors, code: result.code });
+  });
+  const summary = { id: id('cad_doc_import'), projectId, setId, importedCount: imported.length, rejectedCount: rejected.length, providerRequired: !process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER, requiredEnvVars: process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER ? [] : ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'], importedDocumentIds: imported.map((row) => row.id), rejected, createdByUserId: actor.id, createdAt: now() };
+  audit(state, actor, 'Imported CAST CAD drawing index metadata', 'CAST_CAD_DRAWING_DOCUMENT_IMPORT', summary.id, null, summary);
+  return { ok: rejected.length === 0, status: rejected.length ? 207 : 200, summary, documents: imported };
+}
+function listDrawingDocumentMetadata(state, filters = {}) {
+  state.drawingDocuments ||= [];
+  let rows = state.drawingDocuments.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.search) { const q = String(filters.search).toLowerCase(); rows = rows.filter((row) => `${row.sheetId} ${row.drawingNumber} ${row.drawingTitle} ${row.discipline} ${row.sourcePath}`.toLowerCase().includes(q)); }
+  return rows;
 }
 function normalizeToolLibraryItem(input = {}, actor) {
   const unit = String(input.unit || input.measurementUnit || input.measurement_unit || 'EA').trim().toUpperCase();
@@ -891,6 +982,7 @@ module.exports = {
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
   createRfiFromMarkup, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
+  upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,

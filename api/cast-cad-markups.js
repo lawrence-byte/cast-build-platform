@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -21,6 +21,10 @@ module.exports = async function handler(req, res) {
       if (action === 'preferences') {
         const result = getViewerPreferences(state, actor, url.searchParams.get('projectId') || 'default');
         return json(res, result.ok ? 200 : (result.status || 403), result);
+      }
+      if (action === 'document-metadata' || action === 'drawing-documents') {
+        const documents = listDrawingDocumentMetadata(state, { projectId: url.searchParams.get('projectId'), setId: url.searchParams.get('setId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
+        return json(res, 200, { ok: true, documentCount: documents.length, documents, contract: { durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER', privateMetadata: true, streamEndpoint: '/api/cast-cad-pdf-stream' } });
       }
       if (action === 'tool-library') {
         const items = listToolLibraryItems(state, { projectId: url.searchParams.get('projectId'), trade: url.searchParams.get('trade'), category: url.searchParams.get('category'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
@@ -52,6 +56,10 @@ module.exports = async function handler(req, res) {
       if (body.action === 'preferences') {
         const result = saveViewerPreferences(state, actor, body);
         return json(res, result.ok ? 200 : (result.status || 422), result);
+      }
+      if (body.action === 'document-metadata' || body.action === 'drawing-documents') {
+        const result = body.operation === 'import-index' || body.importIndex ? importDrawingDocumentMetadataFromIndex(state, body, actor) : upsertDrawingDocumentMetadata(state, body, actor);
+        return json(res, result.ok ? (result.status || 200) : (result.status || 422), result);
       }
       if (body.action === 'tool-library') {
         const result = body.operation === 'place-tool' ? applyToolLibraryItemToMarkup(state, body, actor) : body.operation === 'update-item' ? updateToolLibraryItem(state, body.id || body.itemId || body.item_id, body.patch || body, actor) : createToolLibraryItem(state, body, actor);
