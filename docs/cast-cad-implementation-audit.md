@@ -25,6 +25,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent mobile/tablet offline field package and sync contract for private no-store sheet/markup packages, audited device deltas, and fail-closed human-review gates before offline sync can verify/resolve markups: `/api/cast-cad-exports` with `type=field-package` or `type=field-sync`.
 - Provider-independent mobile/tablet field mode workbench controls for creating selected-sheet field packages, syncing offline notes, and fail-closed verification/resolution sync when backend audit or human-review approval is unavailable.
 - Provider-independent admin/governance contract for CAST CAD project member role assignments, effective permission resolution, permission matrix discovery, authenticated-session fail-closed mode, and audit-log reads: `/api/cast-cad-markups?action=admin|members|effective-permissions|audit-log`.
+- Provider-independent frontend markup persistence bridge that posts newly created workbench markups to `/api/cast-cad-markups`, reloads server markups for the selected sheet, merges them into the overlay, and exposes local-only/server-synced status without claiming provider-backed database durability.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -55,7 +56,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Markups List/export includes sheet, subject, tool, status, priority, trade, cost code, measurement value, measurement unit, scale label, and body.
   - Status/comment/quantity verification flows exist in the shared data layer.
 - Remaining production work:
-  - Connect frontend vector editing UI to the implemented server markup contract for backend persistence; threaded mentions and backend audit history are now covered by provider-independent API/service contracts. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
+  - Frontend vector editing UI now posts created workbench markups to the implemented server markup contract, reloads server markups for the selected sheet, and displays backend/local-only persistence status. Remaining provider-dependent durability work is connecting the production database adapter; threaded mentions and backend audit history are covered by provider-independent API/service contracts. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
   - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract.
 
 ## Phase 3: Measurements
