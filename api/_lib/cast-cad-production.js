@@ -320,6 +320,106 @@ function excerpt(text, q) {
   const i = Math.max(0, lower.indexOf(q));
   return String(text || '').slice(Math.max(0, i - 60), i + q.length + 90);
 }
+function normalizeAiFinding(input = {}, actor) {
+  const sourceCitations = Array.isArray(input.sourceCitations || input.source_citations) ? (input.sourceCitations || input.source_citations) : [];
+  return {
+    id: input.id || id('cad_ai_finding'),
+    projectId: input.projectId || input.project_id || '',
+    sheetId: input.sheetId || input.sheet_id || '',
+    pageNumber: Number(input.pageNumber || input.page_number || 1),
+    findingType: String(input.findingType || input.finding_type || 'coordination').trim(),
+    title: String(input.title || '').trim(),
+    body: String(input.body || input.description || '').trim(),
+    severity: input.severity || 'Medium',
+    confidence: Math.max(0, Math.min(100, Number(input.confidence || 0))),
+    sourceCitations: sourceCitations.map((citation) => ({
+      kind: citation.kind || citation.type || 'sheet',
+      sheetId: citation.sheetId || citation.sheet_id || input.sheetId || input.sheet_id || '',
+      pageNumber: Number(citation.pageNumber || citation.page_number || input.pageNumber || input.page_number || 1),
+      pointer: citation.pointer || citation.ocrPageId || citation.ocr_page_id || citation.markupId || citation.markup_id || '',
+      excerpt: String(citation.excerpt || '').slice(0, 500),
+    })),
+    suggestedAction: String(input.suggestedAction || input.suggested_action || '').trim(),
+    status: input.status || 'AI Detected',
+    humanVerified: Boolean(input.humanVerified || input.human_verified),
+    linkedMarkupId: input.linkedMarkupId || input.linked_markup_id || '',
+    provider: input.provider || 'provider-independent-contract',
+    createdByUserId: input.createdByUserId || input.created_by_user_id || actor.id,
+    reviewedByUserId: input.reviewedByUserId || input.reviewed_by_user_id || '',
+    createdAt: input.createdAt || input.created_at || now(),
+    updatedAt: now(),
+  };
+}
+function validateAiFinding(finding) {
+  const errors = [];
+  if (!finding.projectId) errors.push('projectId is required.');
+  if (!finding.sheetId) errors.push('sheetId is required.');
+  if (!finding.title) errors.push('title is required.');
+  if (!finding.body) errors.push('body is required.');
+  if (!finding.sourceCitations.length) errors.push('At least one sheet/page/OCR/markup source citation is required.');
+  if (finding.humanVerified || finding.status === 'Human Verified') errors.push('AI findings cannot be created as human verified; use the review contract after human approval.');
+  return errors;
+}
+function createAiFinding(state, input = {}, actor) {
+  state.aiFindings ||= [];
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const providerReady = Boolean(process.env.CAST_CAD_AI_REVIEW_WORKER || input.provider === 'manual-test-fixture' || input.provider === 'provider-independent-contract');
+  const finding = normalizeAiFinding(input, actor);
+  const errors = validateAiFinding(finding);
+  if (errors.length) return { ok: false, status: 422, errors };
+  finding.status = 'AI Detected';
+  finding.humanVerified = false;
+  finding.providerRequired = !providerReady;
+  if (!providerReady) finding.workerStatus = 'provider-required';
+  state.aiFindings.push(finding);
+  audit(state, actor, 'Recorded CAST CAD AI-detected finding', 'CAST_CAD_AI_FINDING', finding.id, null, finding, finding.providerRequired ? 'AI review worker not configured; stored contract finding only.' : 'AI finding requires human verification before action.');
+  return { ok: true, finding };
+}
+function reviewAiFinding(state, findingId, input = {}, actor) {
+  state.aiFindings ||= [];
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  const finding = state.aiFindings.find((row) => row.id === findingId);
+  if (!finding) return { ok: false, status: 404, error: 'AI finding not found.' };
+  if (!(input.humanReviewApproved || input.human_review_approved)) return { ok: false, status: 409, code: 'human-review-required', error: 'AI findings cannot be accepted, rejected, verified, or converted without human review approval.', finding };
+  const previous = clone(finding);
+  const decision = input.decision || input.status || 'Human Verified';
+  finding.status = decision === 'reject' || decision === 'Rejected' ? 'Rejected by Human' : decision === 'convert-to-markup' ? 'Human Verified' : decision;
+  finding.humanVerified = finding.status === 'Human Verified' || Boolean(input.humanVerified || input.human_verified);
+  finding.reviewNotes = String(input.reviewNotes || input.review_notes || '').trim();
+  finding.reviewedByUserId = actor.id;
+  finding.updatedAt = now();
+  let markup = null;
+  if ((input.createMarkup || input.create_markup || decision === 'convert-to-markup') && finding.humanVerified) {
+    const created = createMarkup(state, {
+      projectId: finding.projectId,
+      sheetId: finding.sheetId,
+      pageNumber: finding.pageNumber,
+      tool: input.tool || 'AI Review Finding',
+      markupType: 'ai-finding',
+      subject: input.subject || finding.title,
+      body: `${finding.body}${finding.suggestedAction ? `\nSuggested action: ${finding.suggestedAction}` : ''}`,
+      status: input.markupStatus || input.markup_status || 'Needs Review',
+      priority: input.priority || finding.severity,
+      sourceSnapshot: { aiFindingId: finding.id, label: 'AI detected · human verified', sourceCitations: finding.sourceCitations, humanReviewApproved: true },
+    }, actor);
+    if (!created.ok) return created;
+    markup = created.markup;
+    finding.linkedMarkupId = markup.id;
+  }
+  audit(state, actor, 'Human reviewed CAST CAD AI finding', 'CAST_CAD_AI_FINDING', finding.id, previous, finding, finding.humanVerified ? 'AI finding is human verified.' : 'AI finding reviewed without verification.');
+  return { ok: true, finding, markup };
+}
+function listAiFindings(state, filters = {}) {
+  state.aiFindings ||= [];
+  let rows = state.aiFindings.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.humanVerified !== undefined) rows = rows.filter((row) => row.humanVerified === Boolean(filters.humanVerified));
+  return rows;
+}
 function createReviewRoom(state, input, actor) {
   const permission = requireCastCad(actor.role, 'review_room');
   if (!permission.ok) return permission;
@@ -759,7 +859,7 @@ module.exports = {
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
-  createRfiFromMarkup, indexOcrPage, searchOcr, createReviewRoom,
+  createRfiFromMarkup, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
