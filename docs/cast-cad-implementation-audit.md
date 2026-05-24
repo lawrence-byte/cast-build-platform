@@ -32,6 +32,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent drawing document metadata registry contract for private PDF sheet metadata, drawing-index import, audited updates, no-store stream linkage, and fail-closed durable/authoritative persistence gates requiring `CAST_CAD_DOCUMENT_METADATA_ADAPTER`: `/api/cast-cad-markups?action=document-metadata`.
 - Provider-independent frontend drawing document metadata registry bridge that imports the current drawing index into `/api/cast-cad-markups?action=document-metadata`, refreshes registry counts, surfaces `CAST_CAD_DOCUMENT_METADATA_ADAPTER` as the durable/authoritative persistence blocker, and fails closed without fabricating durable registry state when the backend contract is unavailable.
 - Provider-independent comparison-center workbench controls that create audited `/api/cast-cad-exports` `type=comparison` jobs, validate baseline/revised sheet scope, and fail closed with the exact `CAST_CAD_COMPARISON_WORKER` requirement instead of fabricating private overlay/delta artifacts.
+- Provider-independent frontend export job bridge that creates audited takeoff workbook and annotated-PDF jobs through `/api/cast-cad-exports`, surfaces job status in the CAST CAD workbench, and fails closed with the exact `CAST_CAD_PDF_EXPORT_WORKER` requirement instead of fabricating flattened/private PDF artifacts.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -63,7 +64,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Status/comment/quantity verification flows exist in the shared data layer.
 - Remaining production work:
   - Frontend vector editing UI now posts created workbench markups to the implemented server markup contract, reloads server markups for the selected sheet, and displays backend/local-only persistence status. Remaining provider-dependent durability work is connecting the production database adapter; threaded mentions and backend audit history are covered by provider-independent API/service contracts. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
-  - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract.
+  - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract. Frontend export controls now create audited backend export jobs and fail closed with `CAST_CAD_PDF_EXPORT_WORKER` when the private write-back worker is not configured.
 
 ## Phase 3: Measurements
 
@@ -123,8 +124,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-24T00:02:00Z`.
-- Branch audited: `cast-cad-document-metadata-bridge`.
+- Audited at: `2026-05-24T02:07:17Z`.
+- Branch audited: `cast-cad-export-job-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

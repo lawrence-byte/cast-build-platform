@@ -253,5 +253,11 @@ assert.ok(castCadJs.includes("action: 'document-metadata'"), 'CAST CAD workbench
 assert.ok(castCadJs.includes('No authoritative/durable registry state was fabricated'), 'CAST CAD document metadata import fails closed instead of fabricating durable state');
 assert.ok(castCadHtml.includes('data-import-document-metadata'), 'CAST CAD workbench exposes document metadata import controls');
 assert.ok(castCadHtml.includes('data-document-metadata-summary'), 'CAST CAD workbench exposes document metadata registry status');
+assert.ok(castCadJs.includes('function createBackendExportJob'), 'CAST CAD workbench creates audited backend export jobs');
+assert.ok(castCadJs.includes("createBackendExportJob('annotated-pdf')"), 'CAST CAD workbench calls annotated PDF export job contract');
+assert.ok(castCadJs.includes('CAST_CAD_PDF_EXPORT_WORKER'), 'CAST CAD workbench names annotated PDF export worker requirement');
+assert.ok(castCadHtml.includes('data-create-workbook-export'), 'CAST CAD workbench exposes takeoff workbook export job control');
+assert.ok(castCadHtml.includes('data-create-annotated-pdf-export'), 'CAST CAD workbench exposes annotated PDF export job control');
+assert.ok(castCadHtml.includes('data-export-job-status'), 'CAST CAD workbench exposes backend export status');
 
 console.log('CAST CAD production contract tests passed.');

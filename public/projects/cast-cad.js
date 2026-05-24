@@ -21,6 +21,7 @@ let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: []
 let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache not registered yet; private PDFs/API payloads are never cached.' };
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
+let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. Takeoff workbook can run from stored measurements; annotated PDF requires CAST_CAD_PDF_EXPORT_WORKER.', jobs: [] };
 let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 
@@ -488,6 +489,18 @@ function renderComparisonCenter() {
     jobs.innerHTML = comparisonCenterState.jobs.length ? comparisonCenterState.jobs.slice(-3).reverse().map((job) => `<div class="tool-card"><em>${esc(job.status || 'queued')}</em><strong>${esc(job.baseSheetId)} → ${esc(job.revisedSheetId)}</strong><span>${job.providerRequired ? 'Worker required: CAST_CAD_COMPARISON_WORKER. No private overlay/delta artifact is fabricated.' : 'Queued for the configured private comparison worker.'}</span></div>`).join('') : '<p class="cad-muted">No comparison jobs requested in this session.</p>';
   }
 }
+function renderExportCenter() {
+  const status = document.querySelector('[data-export-job-status]');
+  const jobs = document.querySelector('[data-export-jobs]');
+  if (status) status.textContent = exportCenterState.message;
+  if (jobs) {
+    jobs.innerHTML = exportCenterState.jobs.length ? exportCenterState.jobs.slice(-4).reverse().map((job) => {
+      const label = job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook';
+      const details = job.providerRequired ? 'Worker required: CAST_CAD_PDF_EXPORT_WORKER. No flattened/private PDF artifact is fabricated.' : `${job.rowCount ?? job.markupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
+      return `<div class="tool-card"><em>${esc(job.status || 'queued')}</em><strong>${esc(label)} · ${esc(job.sheetId || 'all sheets')}</strong><span>${esc(details)}</span></div>`;
+    }).join('') : '<p class="cad-muted">No backend export jobs requested in this session.</p>';
+  }
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -499,6 +512,7 @@ function render() {
   renderQuantities();
   renderFindings();
   renderComparisonCenter();
+  renderExportCenter();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
@@ -1039,6 +1053,39 @@ async function syncFieldModeDelta({ verify = false } = {}) {
     render();
   }
 }
+function exportJobPayload(type) {
+  const drawing = selectedDrawing();
+  return {
+    type,
+    projectId: drawing?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    format: type === 'takeoff-workbook' ? 'xlsx' : 'pdf',
+    flatten: type === 'annotated-pdf' ? Boolean(document.querySelector('[data-export-flatten]')?.checked ?? true) : undefined,
+  };
+}
+async function createBackendExportJob(type = 'takeoff-workbook') {
+  const payload = exportJobPayload(type);
+  if (!payload.sheetId) {
+    exportCenterState = { ...exportCenterState, status: 'blocked', message: 'Select a drawing sheet before requesting a backend export job.' };
+    renderExportCenter();
+    window.CASTShell?.toast?.('Select a sheet before requesting a CAST CAD export job.', { kind: 'error' });
+    return;
+  }
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const job = result.exportJob || result.job || {};
+    const providerRequired = Boolean(job.providerRequired);
+    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: providerRequired ? 'Annotated PDF export job recorded; CAST_CAD_PDF_EXPORT_WORKER is required before private flattened/annotated PDF artifacts can be generated.' : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook'} export job recorded by the audited backend contract.` };
+    window.CASTShell?.toast?.(exportCenterState.message, { kind: providerRequired ? 'info' : 'success' });
+  } catch (error) {
+    console.warn('CAST CAD export API unavailable', error);
+    exportCenterState = { ...exportCenterState, status: 'error', message: 'Backend export API unavailable; no local authoritative workbook or flattened private PDF artifact was fabricated.' };
+    window.CASTShell?.toast?.('Backend export API unavailable; export artifact was not fabricated.', { kind: 'error' });
+  }
+  renderExportCenter();
+}
 function exportCsv() {
   const rows = state.drawingMarkups.map((m) => {
     const drawing = byId(state.drawings, m.drawing_id);
@@ -1104,6 +1151,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-field-package]')) { createFieldPackageForSelectedSheet(); return; }
   if (event.target.closest('[data-sync-field-note]')) { syncFieldModeDelta({ verify: false }); return; }
   if (event.target.closest('[data-sync-field-verify]')) { syncFieldModeDelta({ verify: true }); return; }
+  if (event.target.closest('[data-create-workbook-export]')) { createBackendExportJob('takeoff-workbook'); return; }
+  if (event.target.closest('[data-create-annotated-pdf-export]')) { createBackendExportJob('annotated-pdf'); return; }
   if (event.target.closest('[data-import-document-metadata]')) { importCurrentSetDocumentMetadata({ toast: true }); return; }
   if (event.target.closest('[data-refresh-document-metadata]')) { loadDocumentMetadataRegistry(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
