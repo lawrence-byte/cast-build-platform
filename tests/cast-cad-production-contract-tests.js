@@ -248,5 +248,10 @@ assert.ok(castCadJs.includes('function createComparisonJob'), 'CAST CAD workbenc
 assert.ok(castCadJs.includes('CAST_CAD_COMPARISON_WORKER'), 'CAST CAD workbench names comparison worker requirement');
 assert.ok(castCadHtml.includes('data-create-comparison'), 'CAST CAD workbench exposes comparison job controls');
 assert.ok(castCadHtml.includes('data-comparison-jobs'), 'CAST CAD workbench exposes comparison job status list');
+assert.ok(castCadJs.includes('function importCurrentSetDocumentMetadata'), 'CAST CAD workbench imports drawing index metadata through backend registry contract');
+assert.ok(castCadJs.includes("action: 'document-metadata'"), 'CAST CAD workbench calls document metadata contract action');
+assert.ok(castCadJs.includes('No authoritative/durable registry state was fabricated'), 'CAST CAD document metadata import fails closed instead of fabricating durable state');
+assert.ok(castCadHtml.includes('data-import-document-metadata'), 'CAST CAD workbench exposes document metadata import controls');
+assert.ok(castCadHtml.includes('data-document-metadata-summary'), 'CAST CAD workbench exposes document metadata registry status');
 
 console.log('CAST CAD production contract tests passed.');

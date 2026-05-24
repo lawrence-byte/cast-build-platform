@@ -30,6 +30,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend markup persistence bridge that posts newly created workbench markups to `/api/cast-cad-markups`, reloads server markups for the selected sheet, merges them into the overlay, and exposes local-only/server-synced status without claiming provider-backed database durability.
 - Provider-independent frontend RFI-from-markup workflow bridge that first confirms backend markup persistence, then creates an audited draft RFI snapshot through `/api/cast-cad-rfi-link`, exposes workflow status, and fails closed without fabricating local-only/external RFIs when backend contracts are unavailable.
 - Provider-independent drawing document metadata registry contract for private PDF sheet metadata, drawing-index import, audited updates, no-store stream linkage, and fail-closed durable/authoritative persistence gates requiring `CAST_CAD_DOCUMENT_METADATA_ADAPTER`: `/api/cast-cad-markups?action=document-metadata`.
+- Provider-independent frontend drawing document metadata registry bridge that imports the current drawing index into `/api/cast-cad-markups?action=document-metadata`, refreshes registry counts, surfaces `CAST_CAD_DOCUMENT_METADATA_ADAPTER` as the durable/authoritative persistence blocker, and fails closed without fabricating durable registry state when the backend contract is unavailable.
 - Provider-independent comparison-center workbench controls that create audited `/api/cast-cad-exports` `type=comparison` jobs, validate baseline/revised sheet scope, and fail closed with the exact `CAST_CAD_COMPARISON_WORKER` requirement instead of fabricating private overlay/delta artifacts.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
@@ -49,7 +50,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Remaining production work:
   - Connect production provider credentials for the authenticated raw PDF stream/proxy (`CAST_CAD_PDF_STREAM_BASE`, Dropbox, or CAST Server API). The fail-closed API contract is implemented.
   - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences. Provider-independent preference UI/API contract is implemented; renderer engine/worker remains provider/integration-dependent.
-  - Connect database adapter for document metadata persistence. The provider-independent drawing document metadata registry/import/audit contract is implemented and fails closed for durable or authoritative writes without `CAST_CAD_DOCUMENT_METADATA_ADAPTER`.
+  - Connect database adapter for document metadata persistence. The provider-independent drawing document metadata registry/import/audit contract and frontend import/status bridge are implemented and fail closed for durable or authoritative writes without `CAST_CAD_DOCUMENT_METADATA_ADAPTER`.
   - Wire backend auth/session identity into the CAST CAD permission layer. Permission decisions are implemented in the service contract.
 
 ## Phase 2: Markups
@@ -122,8 +123,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-23T19:51:15Z`.
-- Branch audited: `cast-cad-rfi-workflow-bridge`.
+- Audited at: `2026-05-24T00:02:00Z`.
+- Branch audited: `cast-cad-document-metadata-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
