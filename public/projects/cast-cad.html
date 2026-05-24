@@ -234,6 +234,15 @@
           <div class="cad-panel-head"><h2>Admin, collaboration, field mode</h2><span class="badge">Governed rollout</span></div>
           <div class="cad-panel-body">
             <p class="cad-muted">Review Rooms, Project Rooms, roles/permissions, external collaborators, audit logs, mobile/tablet field mode, offline sync, and integration connectors are planned as backend-enabled modules.</p>
+            <div class="pdf-intake cad-review-room-controls" aria-label="CAST CAD review room controls">
+              <label>Room name <input type="text" value="Selected sheet review" data-review-room-name autocomplete="off"></label>
+              <label>Participant emails <input type="text" value="architect@example.com,pm@example.com" data-review-room-participants autocomplete="off"></label>
+              <label><input type="checkbox" data-review-room-include-markups checked autocomplete="off"> Include visible markups</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-review-room>Create review room</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-review-rooms>Refresh rooms</button>
+              <span class="pdf-status" data-review-room-status>Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.</span>
+            </div>
+            <div class="tool-list" data-review-rooms><p class="cad-muted">No Review Rooms loaded yet.</p></div>
             <div class="pdf-intake cad-field-mode-controls" aria-label="CAST CAD mobile/tablet offline field mode controls">
               <label>Device <input type="text" value="ipad-field-01" data-field-device autocomplete="off"></label>
               <label>Package hours <input type="number" min="1" max="168" step="1" value="24" data-field-expiry autocomplete="off"></label>

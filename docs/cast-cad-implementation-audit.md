@@ -35,6 +35,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend export job bridge that creates audited takeoff workbook and annotated-PDF jobs through `/api/cast-cad-exports`, surfaces job status in the CAST CAD workbench, and fails closed with the exact `CAST_CAD_PDF_EXPORT_WORKER` requirement instead of fabricating flattened/private PDF artifacts.
 - Provider-independent frontend CAST Tool Library bridge that loads/admin-seeds reusable count/length/area tools through `/api/cast-cad-markups?action=tool-library`, places selected tools as audited Needs Review markups/takeoff rows, and fails closed without fabricating local authoritative library, markup, or budget quantity state.
 - Provider-independent frontend AI Review bridge that loads source-cited `AI Detected` findings from `/api/cast-cad-search?action=ai-findings`, creates cited review findings, verifies/converts selected findings only through the human-review-gated backend audit contract, and fails closed without fabricating uncited findings or human-verified markups.
+- Provider-independent frontend Review Room bridge that creates selected-sheet/visible-markup review rooms through `/api/cast-cad-review-room`, lists audited participant invite records, and fails closed without fabricating local collaboration rooms or external email/realtime invite delivery.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -106,7 +107,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Drawing comparison report: provider-independent API/service contract and static comparison-center job controls are implemented with explicit `CAST_CAD_COMPARISON_WORKER` fail-closed status; comparison worker remains to be connected.
 - OCR/search: search/index contract implemented; OCR worker remains to be connected.
 - RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot; frontend now calls the audited workflow contract and fails closed when backend markup/RFI contracts are unavailable.
-- Review session invite: review-room invite contract implemented; real-time transport/email invite provider remains.
+- Review session invite: review-room invite contract implemented; frontend bridge creates/lists audited room participant records. Real-time transport/email invite provider remains.
 - Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
 - Markups List report: implemented at CSV/export scaffold level.
 - Permissioned/audit logged actions: provider-independent role matrix, project member role assignment, effective permission lookup, strict-auth fail-closed mode, and audit-log read contract are implemented; production auth/session integration and database persistence remain.
