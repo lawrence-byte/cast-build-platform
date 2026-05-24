@@ -273,5 +273,10 @@ assert.ok(castCadJs.includes('No uncited/local AI finding was fabricated'), 'CAS
 assert.ok(castCadJs.includes('No human-verified markup was fabricated'), 'CAST CAD AI Review conversion fails closed without backend human-review audit');
 assert.ok(castCadHtml.includes('data-ai-review-findings'), 'CAST CAD workbench exposes AI Review finding list');
 assert.ok(castCadHtml.includes('data-review-ai-finding'), 'CAST CAD workbench exposes human-review-gated AI finding conversion control');
+assert.ok(castCadJs.includes('function createReviewRoomForSelectedScope'), 'CAST CAD workbench creates Review Rooms through backend contract');
+assert.ok(castCadJs.includes("fetch('/api/cast-cad-review-room'"), 'CAST CAD workbench calls the Review Room API contract');
+assert.ok(castCadJs.includes('No local collaboration room or external invite was fabricated'), 'CAST CAD Review Room workflow fails closed without fabricating external invites');
+assert.ok(castCadHtml.includes('data-create-review-room'), 'CAST CAD workbench exposes Review Room creation controls');
+assert.ok(castCadHtml.includes('data-review-rooms'), 'CAST CAD workbench exposes Review Room status list');
 
 console.log('CAST CAD production contract tests passed.');

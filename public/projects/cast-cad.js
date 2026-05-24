@@ -26,6 +26,7 @@ let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until th
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
+let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -534,6 +535,22 @@ function renderAiReviewFindings() {
     return `<label class="tool-card" data-ai-finding-card="${esc(finding.id)}"><em>${esc(verified)} · ${esc(finding.severity || 'Medium')} · ${citationCount} cited source(s)</em><strong><input type="radio" name="cast-ai-finding" data-ai-finding="${esc(finding.id)}" ${selected} autocomplete="off"> ${esc(finding.title || 'AI Review finding')}</strong><span>${esc(finding.body || '')} ${finding.providerRequired ? 'Worker required: CAST_CAD_AI_REVIEW_WORKER. ' : ''}Human review approval is required before verification or markup conversion.</span></label>`;
   }).join('');
 }
+function renderReviewRooms() {
+  const status = document.querySelector('[data-review-room-status]');
+  const list = document.querySelector('[data-review-rooms]');
+  if (status) status.textContent = reviewRoomState.message;
+  if (!list) return;
+  if (!reviewRoomState.rooms.length) {
+    list.innerHTML = '<p class="cad-muted">No Review Rooms loaded yet. Create an audited room for the selected sheet; external email/realtime transport remains provider-dependent.</p>';
+    return;
+  }
+  list.innerHTML = reviewRoomState.rooms.slice(-4).reverse().map((room) => {
+    const participantCount = room.participants?.length || 0;
+    const sheetCount = room.sheetIds?.length || 0;
+    const markupCount = room.markupIds?.length || 0;
+    return `<div class="tool-card"><em>${esc(room.status || 'Active')} · ${participantCount} invited participant(s)</em><strong>${esc(room.name || 'CAST CAD Review Room')}</strong><span>${sheetCount} sheet(s) · ${markupCount} markup(s) scoped. Backend audit record ${esc(room.id || '')}; external email/realtime provider still required for delivered invites.</span></div>`;
+  }).join('');
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -548,9 +565,59 @@ function render() {
   renderExportCenter();
   renderToolLibrary();
   renderAiReviewFindings();
+  renderReviewRooms();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
+}
+function reviewRoomPayload() {
+  const drawing = selectedDrawing();
+  const rawParticipants = document.querySelector('[data-review-room-participants]')?.value || '';
+  const participants = rawParticipants.split(/[;,]/).map((email) => email.trim()).filter(Boolean).map((email) => ({ email, role: 'Reviewer', name: email.split('@')[0] || 'Reviewer' }));
+  const includeMarkups = Boolean(document.querySelector('[data-review-room-include-markups]')?.checked);
+  return {
+    projectId: drawing?.project_id || 'alum',
+    name: document.querySelector('[data-review-room-name]')?.value.trim() || `Review ${drawing?.drawing_number || selectedDrawingId}`,
+    sheetIds: [selectedDrawingId].filter(Boolean),
+    markupIds: includeMarkups ? visibleMarkups().map((row) => row.id) : [],
+    participants,
+    inviteDelivery: 'audit-record-only',
+    externalInviteProviderRequired: true,
+  };
+}
+async function loadReviewRooms({ toast = false } = {}) {
+  try {
+    const response = await fetch('/api/cast-cad-review-room', { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const projectId = selectedDrawing()?.project_id || 'alum';
+    const rooms = (result.reviewRooms || []).filter((room) => !room.projectId || room.projectId === projectId);
+    reviewRoomState = { status: 'loaded', rooms, message: `${rooms.length} Review Room(s) loaded from /api/cast-cad-review-room. Invites are audited participant records; external email/realtime delivery remains provider-dependent.` };
+    if (toast) window.CASTShell?.toast?.('Review Rooms refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD Review Room API unavailable', error);
+    reviewRoomState = { ...reviewRoomState, status: 'unavailable', message: 'Review Room API unavailable; no local collaboration room or external invite was fabricated.' };
+    if (toast) window.CASTShell?.toast?.('Review Room API unavailable; no invite was fabricated.', { kind: 'error' });
+  }
+  renderReviewRooms();
+}
+async function createReviewRoomForSelectedScope() {
+  const payload = reviewRoomPayload();
+  if (!payload.sheetIds.length) { window.CASTShell?.toast?.('Select a sheet before creating a Review Room.', { kind: 'error' }); return; }
+  if (!payload.participants.length) { window.CASTShell?.toast?.('Add at least one participant email for the Review Room audit record.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-review-room', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const room = result.room || {};
+    reviewRoomState = { status: 'created', rooms: [...reviewRoomState.rooms, room], message: `Review Room ${room.id || ''} created as an audited backend record for ${payload.sheetIds.length} sheet(s) and ${payload.markupIds.length} markup(s). No external email/realtime invite was fabricated.` };
+    window.CASTShell?.toast?.('Review Room created through audited backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not create CAST CAD Review Room', error);
+    reviewRoomState = { ...reviewRoomState, status: 'blocked', message: `Review Room creation blocked: ${error.message}. No local collaboration room or external invite was fabricated.` };
+    window.CASTShell?.toast?.('Review Room creation blocked; no invite was fabricated.', { kind: 'error' });
+  }
+  renderReviewRooms();
 }
 function aiReviewFindingPayload() {
   const drawing = selectedDrawing();
@@ -1335,6 +1402,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-ai-finding]')) { createAiReviewFinding(); return; }
   if (event.target.closest('[data-review-ai-finding]')) { reviewSelectedAiFinding(); return; }
   if (event.target.closest('[data-refresh-ai-findings]')) { loadAiReviewFindings({ toast: true }); return; }
+  if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }
+  if (event.target.closest('[data-refresh-review-rooms]')) { loadReviewRooms({ toast: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
@@ -1365,3 +1434,4 @@ loadServerMarkupsForSelectedDrawing();
 loadDocumentMetadataRegistry();
 loadToolLibraryItems();
 loadAiReviewFindings();
+loadReviewRooms();
