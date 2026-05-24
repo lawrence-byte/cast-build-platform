@@ -27,6 +27,7 @@ let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
+let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -551,6 +552,24 @@ function renderReviewRooms() {
     return `<div class="tool-card"><em>${esc(room.status || 'Active')} · ${participantCount} invited participant(s)</em><strong>${esc(room.name || 'CAST CAD Review Room')}</strong><span>${sheetCount} sheet(s) · ${markupCount} markup(s) scoped. Backend audit record ${esc(room.id || '')}; external email/realtime provider still required for delivered invites.</span></div>`;
   }).join('');
 }
+function renderGovernance() {
+  const status = document.querySelector('[data-governance-status]');
+  const members = document.querySelector('[data-governance-members]');
+  const permissions = document.querySelector('[data-governance-permissions]');
+  const audit = document.querySelector('[data-governance-audit]');
+  if (status) status.textContent = governanceState.message;
+  if (members) {
+    members.innerHTML = governanceState.members.length ? governanceState.members.slice(0, 6).map((member) => `<div class="tool-card"><em>${esc(member.status || 'active')} · ${esc(member.role || 'Read Only Viewer')}</em><strong>${esc(member.name || member.email || member.userId || 'CAST CAD member')}</strong><span>${esc((member.permissions || []).join(', '))}. Role changes are backend-audited and fail closed when CAST_CAD_REQUIRE_AUTH=true without a session identity.</span></div>`).join('') : '<p class="cad-muted">No project members loaded yet. Assign a reviewed role or refresh governance.</p>';
+  }
+  if (permissions) {
+    const effective = governanceState.permissions;
+    const matrix = governanceState.roles || [];
+    permissions.innerHTML = effective ? `<div class="tool-card"><em>${esc(effective.source || 'actor-header-role')}</em><strong>${esc(effective.role || 'Unknown role')}</strong><span>${esc((effective.permissions || []).join(', '))}</span></div>` : matrix.slice(0, 5).map((row) => `<div class="tool-card"><em>${esc(row.role)}</em><strong>${esc(row.permissions.length)} permission(s)</strong><span>${esc(row.permissions.join(', '))}</span></div>`).join('') || '<p class="cad-muted">Permission matrix not loaded yet.</p>';
+  }
+  if (audit) {
+    audit.innerHTML = governanceState.auditLog.length ? governanceState.auditLog.slice(-5).reverse().map((entry) => `<div class="tool-card"><em>${esc(entry.entityType || 'audit')} · ${esc(entry.actorRole || '')}</em><strong>${esc(entry.action || 'CAST CAD audit event')}</strong><span>${esc(entry.entityId || '')} · ${esc(entry.createdAt || '')}</span></div>`).join('') : '<p class="cad-muted">No governance audit entries loaded yet.</p>';
+  }
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -566,6 +585,7 @@ function render() {
   renderToolLibrary();
   renderAiReviewFindings();
   renderReviewRooms();
+  renderGovernance();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
@@ -618,6 +638,64 @@ async function createReviewRoomForSelectedScope() {
     window.CASTShell?.toast?.('Review Room creation blocked; no invite was fabricated.', { kind: 'error' });
   }
   renderReviewRooms();
+}
+function governanceMemberPayload() {
+  return {
+    action: 'admin',
+    projectId: selectedDrawing()?.project_id || 'alum',
+    name: document.querySelector('[data-governance-member-name]')?.value.trim() || 'CAST CAD Reviewer',
+    email: document.querySelector('[data-governance-member-email]')?.value.trim() || 'reviewer@example.com',
+    role: document.querySelector('[data-governance-role]')?.value || 'Project Engineer',
+    status: document.querySelector('[data-governance-member-status]')?.value || 'active',
+    source: 'cast-cad-workbench-governance-bridge',
+  };
+}
+async function loadGovernanceStatus({ toast = false } = {}) {
+  try {
+    const projectId = selectedDrawing()?.project_id || 'alum';
+    const [adminResponse, memberResponse, permissionResponse, auditResponse] = await Promise.all([
+      fetch('/api/cast-cad-markups?action=admin', { headers: { accept: 'application/json' }, cache: 'no-store' }),
+      fetch(`/api/cast-cad-markups?action=members&projectId=${encodeURIComponent(projectId)}`, { headers: { accept: 'application/json' }, cache: 'no-store' }),
+      fetch(`/api/cast-cad-markups?action=effective-permissions&projectId=${encodeURIComponent(projectId)}`, { headers: { accept: 'application/json' }, cache: 'no-store' }),
+      fetch('/api/cast-cad-markups?action=audit-log&entityType=CAST_CAD_PROJECT_MEMBER', { headers: { accept: 'application/json' }, cache: 'no-store' }),
+    ]);
+    const [admin, member, permission, audit] = await Promise.all([adminResponse.json().catch(() => null), memberResponse.json().catch(() => null), permissionResponse.json().catch(() => null), auditResponse.json().catch(() => null)]);
+    if (!adminResponse.ok || admin?.ok === false) throw new Error(admin?.error || `admin HTTP ${adminResponse.status}`);
+    if (!memberResponse.ok || member?.ok === false) throw new Error(member?.error || `members HTTP ${memberResponse.status}`);
+    if (!permissionResponse.ok || permission?.ok === false) throw new Error(permission?.error || `permissions HTTP ${permissionResponse.status}`);
+    if (!auditResponse.ok || audit?.ok === false) throw new Error(audit?.error || `audit HTTP ${auditResponse.status}`);
+    governanceState = {
+      status: 'loaded',
+      roles: admin.roles || member.permissionMatrix || [],
+      members: member.members || [],
+      permissions: permission,
+      auditLog: audit.auditLog || [],
+      message: `${member.memberCount || 0} project member role(s) loaded. Effective role: ${permission.role || 'unknown'}. Auth fail-closed gate: ${admin.authRequiredWhenEnabled || 'CAST_CAD_REQUIRE_AUTH=true'}.`,
+    };
+    if (toast) window.CASTShell?.toast?.('CAST CAD governance refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD governance API unavailable', error);
+    governanceState = { ...governanceState, status: 'blocked', message: `Governance blocked: ${error.message}. No local role, permission, or audit authority was fabricated; configure backend auth/session when CAST_CAD_REQUIRE_AUTH=true.` };
+    if (toast) window.CASTShell?.toast?.('Governance unavailable; no local role authority was fabricated.', { kind: 'error' });
+  }
+  renderGovernance();
+}
+async function assignGovernanceMemberRole() {
+  const payload = governanceMemberPayload();
+  if (!payload.email && !payload.userId) { window.CASTShell?.toast?.('Email or user ID is required before assigning a CAST CAD role.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    governanceState = { ...governanceState, members: [...governanceState.members.filter((row) => row.email !== result.member?.email), result.member].filter(Boolean), roles: result.permissionMatrix || governanceState.roles, message: `Assigned ${result.member?.role || payload.role} to ${result.member?.email || payload.email} through backend audit. Effective permissions are server-resolved; local role authority was not fabricated.` };
+    window.CASTShell?.toast?.('CAST CAD project member role assigned through backend audit.', { kind: 'success' });
+    await loadGovernanceStatus();
+  } catch (error) {
+    console.warn('Could not assign CAST CAD governance role', error);
+    governanceState = { ...governanceState, status: 'blocked', message: `Role assignment blocked: ${error.message}. Required when strict auth is enabled: CAST_CAD_REQUIRE_AUTH=false for dev or authenticated session headers from the production auth provider.` };
+    window.CASTShell?.toast?.('Role assignment blocked; no local permission was fabricated.', { kind: 'error' });
+    renderGovernance();
+  }
 }
 function aiReviewFindingPayload() {
   const drawing = selectedDrawing();
@@ -1404,6 +1482,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-refresh-ai-findings]')) { loadAiReviewFindings({ toast: true }); return; }
   if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }
   if (event.target.closest('[data-refresh-review-rooms]')) { loadReviewRooms({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-governance]')) { loadGovernanceStatus({ toast: true }); return; }
+  if (event.target.closest('[data-assign-governance-role]')) { assignGovernanceMemberRole(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
@@ -1435,3 +1515,4 @@ loadDocumentMetadataRegistry();
 loadToolLibraryItems();
 loadAiReviewFindings();
 loadReviewRooms();
+loadGovernanceStatus();

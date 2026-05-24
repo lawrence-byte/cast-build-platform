@@ -253,6 +253,18 @@
               <span class="pdf-status" data-field-status>Field mode package not created. Private packages use no-store contracts; verification/resolution sync requires human review.</span>
               <span class="pdf-status" data-field-service-worker-status>Offline shell cache not registered yet; private PDFs/API payloads are never cached by the field service worker.</span>
             </div>
+            <div class="pdf-intake cad-governance-controls" aria-label="CAST CAD admin governance and permissions controls">
+              <label>Name <input type="text" value="CAST CAD Reviewer" data-governance-member-name autocomplete="off"></label>
+              <label>Email <input type="email" value="reviewer@example.com" data-governance-member-email autocomplete="off"></label>
+              <label>Role <select data-governance-role><option>Project Engineer</option><option>Project Manager</option><option>Architect</option><option>Consultant</option><option>General Contractor</option><option>Subcontractor</option><option>Read Only Viewer</option><option>Owner Admin</option><option>CAST Admin</option></select></label>
+              <label>Status <select data-governance-member-status><option value="active">Active</option><option value="invited">Invited</option><option value="suspended">Suspended</option></select></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-assign-governance-role>Assign audited role</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-governance>Refresh governance</button>
+              <span class="pdf-status" data-governance-status>Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.</span>
+            </div>
+            <div class="tool-list" data-governance-members><p class="cad-muted">No project members loaded yet.</p></div>
+            <div class="tool-list" data-governance-permissions><p class="cad-muted">Permission matrix not loaded yet.</p></div>
+            <div class="tool-list" data-governance-audit><p class="cad-muted">No governance audit entries loaded yet.</p></div>
           </div>
         </article>
       </section>
