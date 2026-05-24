@@ -180,6 +180,19 @@
 
       <section class="cad-grid" aria-label="Enterprise operations roadmap">
         <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Exports + write-back</h2><span class="badge">Audited jobs</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Production exports now call the backend job contract. Takeoff workbooks capture audited measurement rows; annotated PDF write-back remains fail-closed until CAST_CAD_PDF_EXPORT_WORKER is configured.</p>
+            <div class="pdf-intake cad-export-controls" aria-label="CAST CAD export job controls">
+              <label><input type="checkbox" data-export-flatten checked autocomplete="off"> Flatten PDF markups</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-workbook-export>Create takeoff workbook job</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotated-pdf-export>Create annotated PDF job</button>
+              <span class="pdf-status" data-export-job-status>Backend export jobs not requested yet. Annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER.</span>
+            </div>
+            <div class="tool-list" data-export-jobs><p class="cad-muted">No backend export jobs requested in this session.</p></div>
+          </div>
+        </article>
+        <article class="cad-panel">
           <div class="cad-panel-head"><h2>Batch + comparison center</h2><span class="badge">Provider-gated</span></div>
           <div class="cad-panel-body">
             <p class="cad-muted">Batch updates run through the audited backend contract. Drawing comparison requests now create fail-closed jobs that require the private comparison worker before any overlay/delta artifact is generated.</p>
