@@ -34,6 +34,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent comparison-center workbench controls that create audited `/api/cast-cad-exports` `type=comparison` jobs, validate baseline/revised sheet scope, and fail closed with the exact `CAST_CAD_COMPARISON_WORKER` requirement instead of fabricating private overlay/delta artifacts.
 - Provider-independent frontend export job bridge that creates audited takeoff workbook and annotated-PDF jobs through `/api/cast-cad-exports`, surfaces job status in the CAST CAD workbench, and fails closed with the exact `CAST_CAD_PDF_EXPORT_WORKER` requirement instead of fabricating flattened/private PDF artifacts.
 - Provider-independent frontend CAST Tool Library bridge that loads/admin-seeds reusable count/length/area tools through `/api/cast-cad-markups?action=tool-library`, places selected tools as audited Needs Review markups/takeoff rows, and fails closed without fabricating local authoritative library, markup, or budget quantity state.
+- Provider-independent frontend AI Review bridge that loads source-cited `AI Detected` findings from `/api/cast-cad-search?action=ai-findings`, creates cited review findings, verifies/converts selected findings only through the human-review-gated backend audit contract, and fails closed without fabricating uncited findings or human-verified markups.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -109,7 +110,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
 - Markups List report: implemented at CSV/export scaffold level.
 - Permissioned/audit logged actions: provider-independent role matrix, project member role assignment, effective permission lookup, strict-auth fail-closed mode, and audit-log read contract are implemented; production auth/session integration and database persistence remain.
-- AI findings labeled AI detected and human verified: provider-independent source-cited AI Review finding contract implemented with fail-closed human verification and optional human-approved markup conversion; production AI review workers remain disabled until provider/worker configuration is supplied.
+- AI findings labeled AI detected and human verified: provider-independent source-cited AI Review finding contract implemented with fail-closed human verification and optional human-approved markup conversion; frontend workbench controls now load/create/review cited findings through the audited backend contract without fabricating uncited findings or human-verified markups. Production AI review workers remain disabled until provider/worker configuration is supplied.
 - No Bluebeam proprietary UI/names/icons/trade dress copied: current CAST CAD UI uses CAST naming and generic construction workflow language.
 
 ## Latest validation commands

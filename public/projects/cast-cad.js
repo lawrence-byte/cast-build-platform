@@ -25,6 +25,7 @@ let exportCenterState = { status: 'idle', message: 'Backend export jobs not requ
 let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
+let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -517,6 +518,22 @@ function renderToolLibrary() {
     return `<label class="tool-card" data-tool-library-card="${esc(item.id)}"><em>${esc(item.toolType || 'tool')} · ${esc(item.status || 'active')}</em><strong><input type="radio" name="cast-tool-library-item" data-tool-library-item="${esc(item.id)}" ${selected} autocomplete="off"> ${esc(item.name)}</strong><span>${esc(item.trade || 'Coordination')} · ${esc(item.category || 'General')} · ${esc(item.costCode || 'No cost code')} · ${esc(item.assemblyCode || 'No assembly')} · ${cost}. Human review required: ${item.requiresHumanReview === false ? 'no (blocked)' : 'yes'}.</span></label>`;
   }).join('');
 }
+function renderAiReviewFindings() {
+  const status = document.querySelector('[data-ai-review-status]');
+  const list = document.querySelector('[data-ai-review-findings]');
+  if (status) status.textContent = aiReviewState.message;
+  if (!list) return;
+  if (!aiReviewState.findings.length) {
+    list.innerHTML = '<p class="cad-muted">No AI Review findings loaded yet. Create a cited contract finding or refresh the backend list.</p>';
+    return;
+  }
+  list.innerHTML = aiReviewState.findings.slice(0, 8).map((finding) => {
+    const selected = finding.id === aiReviewState.selectedFindingId ? 'checked' : '';
+    const verified = finding.humanVerified ? 'Human Verified' : (finding.status || 'AI Detected');
+    const citationCount = finding.sourceCitations?.length || 0;
+    return `<label class="tool-card" data-ai-finding-card="${esc(finding.id)}"><em>${esc(verified)} · ${esc(finding.severity || 'Medium')} · ${citationCount} cited source(s)</em><strong><input type="radio" name="cast-ai-finding" data-ai-finding="${esc(finding.id)}" ${selected} autocomplete="off"> ${esc(finding.title || 'AI Review finding')}</strong><span>${esc(finding.body || '')} ${finding.providerRequired ? 'Worker required: CAST_CAD_AI_REVIEW_WORKER. ' : ''}Human review approval is required before verification or markup conversion.</span></label>`;
+  }).join('');
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -530,9 +547,89 @@ function render() {
   renderComparisonCenter();
   renderExportCenter();
   renderToolLibrary();
+  renderAiReviewFindings();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
+}
+function aiReviewFindingPayload() {
+  const drawing = selectedDrawing();
+  const firstMarkup = visibleMarkups()[0];
+  const sourcePointer = firstMarkup?.id || drawing?.source_path || drawing?.id || selectedDrawingId;
+  const title = document.querySelector('[data-ai-review-title]')?.value.trim() || `Possible coordination issue on ${drawing?.drawing_number || selectedDrawingId}`;
+  return {
+    type: 'ai-finding',
+    projectId: drawing?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    pageNumber: 1,
+    title,
+    body: document.querySelector('[data-ai-review-body]')?.value.trim() || 'AI Review contract finding for human estimator/PM verification before any action.',
+    severity: document.querySelector('[data-ai-review-severity]')?.value || 'Medium',
+    confidence: Number(document.querySelector('[data-ai-review-confidence]')?.value || 72),
+    provider: 'provider-independent-contract',
+    sourceCitations: [{ kind: firstMarkup ? 'markup' : 'sheet', sheetId: selectedDrawingId, pageNumber: 1, pointer: sourcePointer, excerpt: `${drawing?.drawing_number || selectedDrawingId} · ${drawing?.drawing_title || drawing?.source_name || 'Selected drawing'}${firstMarkup ? ` · markup ${firstMarkup.subject || firstMarkup.tool}` : ''}` }],
+    suggestedAction: 'Human reviewer must verify source sheet/page/markup evidence before conversion.',
+  };
+}
+async function loadAiReviewFindings({ toast = false } = {}) {
+  try {
+    const params = new URLSearchParams({ action: 'ai-findings', projectId: selectedDrawing()?.project_id || 'alum', sheetId: selectedDrawingId });
+    const response = await fetch(`/api/cast-cad-search?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const findings = result.findings || [];
+    aiReviewState = { status: 'loaded', findings, selectedFindingId: aiReviewState.selectedFindingId && findings.some((row) => row.id === aiReviewState.selectedFindingId) ? aiReviewState.selectedFindingId : (findings[0]?.id || ''), message: `${result.findingCount || findings.length} AI Review finding(s) loaded from /api/cast-cad-search?action=ai-findings. Label required: ${result.contract?.labelRequired || 'AI Detected'}; human verification required before conversion.` };
+    if (toast) window.CASTShell?.toast?.('AI Review findings refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD AI Review API unavailable', error);
+    aiReviewState = { ...aiReviewState, status: 'unavailable', message: 'AI Review API unavailable; no local AI finding or converted markup was fabricated.' };
+    if (toast) window.CASTShell?.toast?.('AI Review API unavailable; no AI finding was fabricated.', { kind: 'error' });
+  }
+  renderAiReviewFindings();
+}
+async function createAiReviewFinding() {
+  const payload = aiReviewFindingPayload();
+  if (!payload.sheetId || !payload.sourceCitations.length) { window.CASTShell?.toast?.('AI Review findings require a selected sheet and source citation.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    aiReviewState = { ...aiReviewState, selectedFindingId: result.finding?.id || aiReviewState.selectedFindingId, message: `AI Detected finding ${result.finding?.id || ''} recorded with source citation(s); human verification remains required.` };
+    window.CASTShell?.toast?.('AI Detected finding recorded through the audited backend contract.', { kind: 'success' });
+    await loadAiReviewFindings();
+  } catch (error) {
+    console.warn('Could not create CAST CAD AI Review finding', error);
+    aiReviewState = { ...aiReviewState, status: 'blocked', message: `AI Review finding blocked: ${error.message}. No uncited/local AI finding was fabricated.` };
+    window.CASTShell?.toast?.('AI Review finding blocked; no uncited finding was fabricated.', { kind: 'error' });
+    renderAiReviewFindings();
+  }
+}
+async function reviewSelectedAiFinding() {
+  const findingId = aiReviewState.selectedFindingId;
+  if (!findingId) { window.CASTShell?.toast?.('Select an AI Review finding before human review.', { kind: 'error' }); return; }
+  const humanReviewApproved = Boolean(document.querySelector('[data-ai-human-review]')?.checked);
+  if (!humanReviewApproved) {
+    aiReviewState = { ...aiReviewState, status: 'blocked', message: 'AI finding verification/conversion blocked: human review approval is required. No local markup was fabricated.' };
+    window.CASTShell?.toast?.('Human review approval is required before verifying AI findings.', { kind: 'error' });
+    renderAiReviewFindings();
+    return;
+  }
+  try {
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ type: 'review-ai-finding', findingId, decision: 'convert-to-markup', humanReviewApproved: true, createMarkup: true, markupStatus: 'Needs Review' }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    if (result.markup) mergeServerMarkup(result.markup);
+    save();
+    aiReviewState = { ...aiReviewState, message: `AI finding ${findingId} human verified${result.markup ? ' and converted to a Needs Review markup' : ''}; AI label/source citations preserved.` };
+    window.CASTShell?.toast?.('AI finding human verified through backend audit.', { kind: 'success' });
+    await loadAiReviewFindings();
+    render();
+  } catch (error) {
+    console.warn('Could not review CAST CAD AI finding', error);
+    aiReviewState = { ...aiReviewState, status: 'blocked', message: `AI finding review blocked: ${error.message}. No human-verified markup was fabricated.` };
+    window.CASTShell?.toast?.('AI finding review blocked; no markup was fabricated.', { kind: 'error' });
+    renderAiReviewFindings();
+  }
 }
 function toolLibrarySeedPayload() {
   const seed = document.querySelector('[data-tool-library-seed]')?.value || 'fec';
@@ -1235,6 +1332,9 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-tool-library-item]')) { createToolLibrarySeedItem(); return; }
   if (event.target.closest('[data-place-tool-library-item]')) { placeSelectedToolLibraryItem(); return; }
   if (event.target.closest('[data-refresh-tool-library]')) { loadToolLibraryItems({ toast: true }); return; }
+  if (event.target.closest('[data-create-ai-finding]')) { createAiReviewFinding(); return; }
+  if (event.target.closest('[data-review-ai-finding]')) { reviewSelectedAiFinding(); return; }
+  if (event.target.closest('[data-refresh-ai-findings]')) { loadAiReviewFindings({ toast: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
@@ -1250,6 +1350,8 @@ document.addEventListener('change', (event) => {
   if (event.target.closest('[data-viewer-layout], [data-viewer-zoom], [data-viewer-pref]')) persistViewerPreferences({ toast: false });
   const toolLibraryItem = event.target.closest('[data-tool-library-item]');
   if (toolLibraryItem) { toolLibraryState.selectedItemId = toolLibraryItem.dataset.toolLibraryItem; renderToolLibrary(); return; }
+  const aiFinding = event.target.closest('[data-ai-finding]');
+  if (aiFinding) { aiReviewState.selectedFindingId = aiFinding.dataset.aiFinding; renderAiReviewFindings(); return; }
 });
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
 document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFromOverlay);
@@ -1262,3 +1364,4 @@ loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
 loadDocumentMetadataRegistry();
 loadToolLibraryItems();
+loadAiReviewFindings();
