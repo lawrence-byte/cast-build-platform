@@ -329,5 +329,13 @@ assert.ok(castCadJs.includes("action: 'viewport-mapping'"), 'CAST CAD workbench 
 assert.ok(castCadJs.includes('no renderer integration was fabricated'), 'CAST CAD viewport mapping fails closed without fabricating renderer integration');
 assert.ok(castCadHtml.includes('data-save-viewport-mapping'), 'CAST CAD workbench exposes coordinate mapping controls');
 assert.ok(castCadHtml.includes('data-viewport-mapping-status'), 'CAST CAD workbench exposes coordinate mapping status');
+assert.ok(castCadJs.includes('function publishCurrentDrawingSetVersion'), 'CAST CAD workbench publishes current drawing indexes through drawing set version contract');
+assert.ok(castCadJs.includes("type: 'drawing-set-version'"), 'CAST CAD workbench calls drawing-set-version export contract');
+assert.ok(castCadJs.includes('function slipSheetSelectedRevision'), 'CAST CAD workbench slip-sheets revisions through backend audit');
+assert.ok(castCadJs.includes("type: 'slip-sheet'"), 'CAST CAD workbench calls slip-sheet contract instead of local supersedence');
+assert.ok(castCadJs.includes('No local current/superseded authority was fabricated'), 'CAST CAD drawing set controls fail closed without fabricating revision authority');
+assert.ok(castCadHtml.includes('data-publish-drawing-set-version'), 'CAST CAD workbench exposes drawing set version publish control');
+assert.ok(castCadHtml.includes('data-slip-sheet-revision'), 'CAST CAD workbench exposes human-review-gated slip-sheet control');
+assert.ok(castCadHtml.includes('data-drawing-set-revisions'), 'CAST CAD workbench exposes drawing set revision history');
 
 console.log('CAST CAD production contract tests passed.');

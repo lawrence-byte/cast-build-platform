@@ -320,11 +320,23 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-document-metadata>Refresh registry</button>
               <span class="pdf-status" data-document-metadata-status>Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.</span>
             </div>
+            <div class="pdf-intake cad-drawing-set-controls" aria-label="CAST CAD drawing set version and slip-sheet controls">
+              <button class="cb-btn small cb-btn--ghost" type="button" data-publish-drawing-set-version>Publish set version</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-drawing-set-history>Refresh versions</button>
+              <label>Slip target <select data-slip-sheet-target autocomplete="off"><option value="">Slip-sheet target revision</option></select></label>
+              <label>Replacement <input type="text" value="Reviewed replacement sheet.pdf" data-slip-sheet-name autocomplete="off"></label>
+              <label>Revision label <input type="text" value="Reviewed replacement" data-slip-sheet-label autocomplete="off"></label>
+              <label><input type="checkbox" data-slip-sheet-human-review autocomplete="off"> Human review approved</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-slip-sheet-revision>Slip-sheet revision</button>
+              <span class="pdf-status" data-drawing-set-status>Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.</span>
+            </div>
             <div class="tool-list">
               <div class="tool-card"><em>Source index</em><strong>Alüm Current Drawings</strong><span data-current-set-summary>Loading current drawing set metadata…</span></div>
               <div class="tool-card"><em>Metadata registry</em><strong>/api/cast-cad-markups?action=document-metadata</strong><span data-document-metadata-summary>Not checked yet. Imports are audited contract records and fail closed for authoritative durable persistence without CAST_CAD_DOCUMENT_METADATA_ADAPTER.</span></div>
+              <div class="tool-card"><em>Drawing set versions</em><strong>/api/cast-cad-exports?type=drawing-sets</strong><span>Audited current/superseded sheet-revision chains and slip-sheet controls are backend-only. Human review is required before a current sheet can be superseded.</span></div>
               <div class="tool-card"><em>Next backend gate</em><strong>Authenticated PDF stream</strong><span>Connect approved Dropbox/CAST Server file streaming after auth so selected sheets render directly without exposing public PDF URLs.</span></div>
             </div>
+            <div class="tool-list" data-drawing-set-revisions><p class="cad-muted">No drawing set versions loaded yet.</p></div>
           </div>
         </article>
       </section>
