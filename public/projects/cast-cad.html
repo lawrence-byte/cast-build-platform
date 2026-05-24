@@ -213,6 +213,27 @@
         </article>
       </section>
 
+      <section class="cad-grid" aria-label="CAST CAD OCR and symbol search">
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>OCR + Symbol Search</h2><span class="badge">Audited index contract</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Searches `/api/cast-cad-search` for source-cited OCR text and symbol hits. Production extraction still requires `CAST_CAD_OCR_WORKER`; the workbench does not fabricate private OCR text/artifacts when the worker is absent.</p>
+            <div class="pdf-intake cad-ocr-search-controls" aria-label="CAST CAD OCR and symbol search controls">
+              <label>Query <input type="text" value="fire rating" data-ocr-search-query autocomplete="off"></label>
+              <label>Page <input type="number" min="1" step="1" value="1" data-ocr-page-number autocomplete="off"></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-search-ocr-symbols>Search OCR/symbols</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-index-ocr-sample>Index reviewed sample</button>
+              <span class="pdf-status" data-ocr-search-status>OCR/symbol search not checked yet. Production OCR extraction requires CAST_CAD_OCR_WORKER.</span>
+            </div>
+            <div class="tool-list" data-ocr-search-results><p class="cad-muted">No OCR/symbol hits loaded yet.</p></div>
+          </div>
+        </article>
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Search contract guardrails</h2><span class="badge">Fail closed</span></div>
+          <div class="cad-panel-body"><p class="cad-muted">Reviewed index samples are explicit audited contract records for workflow testing only. Worker-generated OCR, searchable private text storage, visual search, and Auto Link remain blocked until the private OCR/symbol provider and storage adapter are configured.</p></div>
+        </article>
+      </section>
+
       <section class="cad-grid" aria-label="Enterprise operations roadmap">
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Exports + write-back</h2><span class="badge">Audited jobs</span></div>
