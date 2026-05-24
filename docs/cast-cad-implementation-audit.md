@@ -41,6 +41,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend admin/governance bridge that loads role matrices, project members, effective permissions, and member audit logs from `/api/cast-cad-markups?action=admin|members|effective-permissions|audit-log`, assigns project member roles only through backend audit, and fails closed without fabricating local permission authority when strict auth/session identity is required.
 - Provider-independent audited markup soft-delete contract on `/api/cast-cad-markups` using `DELETE`, default list/export filtering that excludes deleted markups, explicit `includeDeleted=true` audit discovery, hard-delete human-review gates, and frontend delete controls that fail closed rather than fabricating unaudited local deletion.
 - Provider-independent frontend drawing set version/slip-sheet bridge that publishes the current drawing index through `/api/cast-cad-exports` `type=drawing-set-version`, loads audited version/revision history, slip-sheets selected revisions only through the human-review-gated backend contract, and fails closed without fabricating local current/superseded authority.
+- Provider-independent frontend threaded markup comment/audit bridge that selects persisted markups, loads `/api/cast-cad-markups?action=comments|audit`, posts audited mention-aware comments, and fails closed without fabricating local-only comment history or audit authority.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -71,7 +72,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Markups List/export includes sheet, subject, tool, status, priority, trade, cost code, measurement value, measurement unit, scale label, and body.
   - Status/comment/quantity verification flows exist in the shared data layer.
 - Remaining production work:
-  - Frontend vector editing UI now posts created workbench markups to the implemented server markup contract, reloads server markups for the selected sheet, and displays backend/local-only persistence status. Remaining provider-dependent durability work is connecting the production database adapter; threaded mentions and backend audit history are covered by provider-independent API/service contracts. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
+  - Frontend vector editing UI now posts created workbench markups to the implemented server markup contract, reloads server markups for the selected sheet, displays backend/local-only persistence status, and bridges threaded mention-aware comments plus per-markup audit history through the backend contract. Remaining provider-dependent durability work is connecting the production database adapter. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
   - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract. Frontend export controls now create audited backend export jobs and fail closed with `CAST_CAD_PDF_EXPORT_WORKER` when the private write-back worker is not configured.
 
 ## Phase 3: Measurements
@@ -132,8 +133,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-24T12:45:40Z`.
-- Branch audited: `cast-cad-viewport-coordinate-mapping`.
+- Audited at: `2026-05-24T12:45:40Z` plus this follow-up CAST CAD threaded markup/audit bridge slice.
+- Branch audited: `cast-cad-markup-thread-frontend-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

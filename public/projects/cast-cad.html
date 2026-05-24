@@ -161,6 +161,16 @@
               <span class="pdf-status" data-markup-persistence-status>Server markup persistence not checked yet.</span>
               <span class="pdf-status" data-rfi-link-status>RFI links are draft-only until the backend snapshot contract confirms the markup.</span>
             </div>
+            <div class="pdf-intake cad-markup-thread-controls" aria-label="CAST CAD threaded markup comments and audit history controls">
+              <label>Thread <select data-markup-thread-target autocomplete="off"><option value="">Markup thread</option></select></label>
+              <label>Reply to <input type="text" data-markup-thread-parent placeholder="Optional backend comment ID" autocomplete="off"></label>
+              <label>Comment <input type="text" data-markup-thread-body placeholder="Add audited comment; @mentions extracted server-side" autocomplete="off"></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-markup-thread>Refresh thread/audit</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-add-markup-thread-comment>Add audited comment</button>
+              <span class="pdf-status" data-markup-thread-status>Select or refresh a markup thread to load backend comments and audit history.</span>
+            </div>
+            <div class="tool-list" data-markup-thread-list><p class="cad-muted">No backend thread comments loaded yet.</p></div>
+            <div class="tool-list" data-markup-audit-list><p class="cad-muted">No markup audit history loaded yet.</p></div>
             <div data-markup-list></div>
           </div>
         </aside>
