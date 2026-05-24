@@ -38,6 +38,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend AI Review bridge that loads source-cited `AI Detected` findings from `/api/cast-cad-search?action=ai-findings`, creates cited review findings, verifies/converts selected findings only through the human-review-gated backend audit contract, and fails closed without fabricating uncited findings or human-verified markups.
 - Provider-independent frontend Review Room bridge that creates selected-sheet/visible-markup review rooms through `/api/cast-cad-review-room`, lists audited participant invite records, and fails closed without fabricating local collaboration rooms or external email/realtime invite delivery.
 - Provider-independent frontend admin/governance bridge that loads role matrices, project members, effective permissions, and member audit logs from `/api/cast-cad-markups?action=admin|members|effective-permissions|audit-log`, assigns project member roles only through backend audit, and fails closed without fabricating local permission authority when strict auth/session identity is required.
+- Provider-independent audited markup soft-delete contract on `/api/cast-cad-markups` using `DELETE`, default list/export filtering that excludes deleted markups, explicit `includeDeleted=true` audit discovery, hard-delete human-review gates, and frontend delete controls that fail closed rather than fabricating unaudited local deletion.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -101,7 +102,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 ## Acceptance criteria status
 
 - 300-sheet upload/navigation: metadata-backed sheet navigation implemented; authenticated raw PDF stream contract implemented; provider credentials still required for private file bytes.
-- Create/edit/save/reload/filter/export markups: server contract implemented with audit and CSV; production database adapter remains to be connected.
+- Create/edit/save/reload/filter/export/delete markups: server contract implemented with audit, CSV, audited soft-delete, default deleted-row filtering, and fail-closed hard-delete review gates; production database adapter remains to be connected.
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
 - CAST Tool Library: provider-independent API/service contract implemented; frontend workbench bridge now loads/admin-seeds reviewed tools and places selected tools as audited Needs Review markups/takeoff rows; production database/catalog adapter remains.

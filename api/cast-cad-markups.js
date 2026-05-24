@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -49,7 +49,8 @@ module.exports = async function handler(req, res) {
         const result = readCastCadAuditLog(state, { entityType: url.searchParams.get('entityType'), entityId: url.searchParams.get('entityId'), actorUserId: url.searchParams.get('actorUserId') }, actor);
         return json(res, result.ok ? 200 : (result.status || 403), result);
       }
-      const rows = listMarkups(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
+      const includeDeleted = url.searchParams.get('includeDeleted') === 'true' || url.searchParams.get('include_deleted') === 'true';
+      const rows = listMarkups(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search'), includeDeleted });
       if (url.searchParams.get('format') === 'csv') {
         res.statusCode = 200; res.setHeader('content-type', 'text/csv; charset=utf-8'); res.end(markupsCsv(rows)); return;
       }
@@ -89,6 +90,12 @@ module.exports = async function handler(req, res) {
       const result = updateMarkup(state, body.id || body.markupId, body.patch || body, actor);
       return json(res, result.ok ? 200 : (result.status || 422), result);
     }
-    return json(res, 405, { ok: false, error: 'Method not allowed.' }, { allow: 'GET, POST, PATCH' });
+    if (req.method === 'DELETE') {
+      const url = new URL(req.url, 'http://localhost');
+      const body = await readBody(req).catch(() => ({}));
+      const result = deleteMarkup(state, body.id || body.markupId || url.searchParams.get('id') || url.searchParams.get('markupId'), { ...body, hardDelete: body.hardDelete || url.searchParams.get('hardDelete') === 'true', humanReviewApproved: body.humanReviewApproved || url.searchParams.get('humanReviewApproved') === 'true', reason: body.reason || url.searchParams.get('reason') || '' }, actor);
+      return json(res, result.ok ? 200 : (result.status || 422), result);
+    }
+    return json(res, 405, { ok: false, error: 'Method not allowed.' }, { allow: 'GET, POST, PATCH, DELETE' });
   } catch (error) { return json(res, 500, { ok: false, error: error.message }); }
 };
