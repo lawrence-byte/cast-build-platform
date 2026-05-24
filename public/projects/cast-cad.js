@@ -1430,7 +1430,41 @@ function verifyQuantity(id) {
   const result = CPC.verifyEstimateQuantity(state, id, actor(), { status: 'Verified', notes: 'Verified in CAST estimate log; ready for controlled export.' });
   if (result.ok) { save(); window.CASTShell?.toast?.('Quantity verified and locked in CAST estimate log.', { kind: 'success' }); render(); }
 }
-function resolveMarkup(id) { const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor()); if (result.ok) { save(); render(); } }
+async function updateMarkupWithBackend(id, patch, { actionLabel = 'update' } = {}) {
+  const markup = state.drawingMarkups.find((row) => row.id === id);
+  if (!markup) { window.CASTShell?.toast?.(`Markup not found for ${actionLabel}.`, { kind: 'error' }); return false; }
+  try {
+    const serverId = await ensureMarkupSyncedForWorkflow(markup);
+    const response = await fetch('/api/cast-cad-markups', { method: 'PATCH', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ id: serverId, patch }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const serverMarkup = result.markup || {};
+    Object.assign(markup, {
+      status: serverMarkup.status || patch.status || markup.status,
+      priority: serverMarkup.priority || patch.priority || markup.priority,
+      trade: serverMarkup.trade || patch.trade || markup.trade,
+      cost_code: serverMarkup.costCode || patch.costCode || patch.cost_code || markup.cost_code,
+      assignee_user_id: serverMarkup.assigneeUserId || patch.assigneeUserId || patch.assignee_user_id || markup.assignee_user_id,
+      layer: serverMarkup.layer || patch.layer || markup.layer,
+      updated_at: serverMarkup.updatedAt || new Date().toISOString(),
+      source_snapshot: { ...(markup.source_snapshot || {}), serverMarkupId: serverMarkup.id || serverId, serverUpdatedAt: serverMarkup.updatedAt || new Date().toISOString(), lastServerAction: actionLabel },
+    });
+    markupPersistenceState = { status: 'synced', syncedAt: new Date().toISOString(), message: `Markup ${actionLabel} saved through audited backend PATCH contract.` };
+    save();
+    window.CASTShell?.toast?.(`Markup ${actionLabel} saved through CAST CAD backend audit.`, { kind: 'success' });
+    render();
+    return true;
+  } catch (error) {
+    console.warn(`CAST CAD markup ${actionLabel} API unavailable`, error);
+    markupPersistenceState = { status: 'blocked', syncedAt: '', message: `Markup ${actionLabel} blocked: ${error.message}. No local-only edit was fabricated because backend audit is required.` };
+    window.CASTShell?.toast?.(`Markup ${actionLabel} blocked; backend audit is required.`, { kind: 'error' });
+    renderMarkupPersistenceStatus();
+    return false;
+  }
+}
+async function resolveMarkup(id) {
+  await updateMarkupWithBackend(id, { status: 'Resolved' }, { actionLabel: 'resolution' });
+}
 async function deleteMarkupWithBackend(id) {
   const markup = state.drawingMarkups.find((row) => row.id === id);
   if (!markup) { window.CASTShell?.toast?.('Markup not found for delete.', { kind: 'error' }); return; }

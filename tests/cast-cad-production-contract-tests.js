@@ -263,6 +263,9 @@ assert.ok(castCadJs.includes('mergeServerMarkup'), 'CAST CAD workbench can merge
 assert.ok(castCadJs.includes('function deleteMarkupWithBackend'), 'CAST CAD workbench deletes markups through backend audit contract');
 assert.ok(castCadJs.includes("method: 'DELETE'"), 'CAST CAD workbench uses DELETE /api/cast-cad-markups for audited soft-delete');
 assert.ok(castCadJs.includes('No local-only deletion was fabricated'), 'CAST CAD markup delete fails closed without fabricating an unaudited local deletion');
+assert.ok(castCadJs.includes('function updateMarkupWithBackend'), 'CAST CAD workbench updates markup status through backend audit contract');
+assert.ok(castCadJs.includes("method: 'PATCH'"), 'CAST CAD workbench uses PATCH /api/cast-cad-markups for audited markup edits');
+assert.ok(castCadJs.includes('No local-only edit was fabricated'), 'CAST CAD markup edit fails closed without fabricating an unaudited local update');
 assert.ok(castCadHtml.includes('data-markup-persistence-status'), 'CAST CAD workbench exposes backend markup persistence status');
 assert.ok(castCadJs.includes('function loadMarkupThreadForSelected'), 'CAST CAD workbench loads threaded markup comments from backend contract');
 assert.ok(castCadJs.includes("action: 'comments'"), 'CAST CAD workbench calls comments action on /api/cast-cad-markups');
