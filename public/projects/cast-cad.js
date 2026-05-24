@@ -22,6 +22,7 @@ let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
 let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
+let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -187,6 +188,69 @@ function renderCurrentSetSummary() {
   } else {
     summary.textContent = 'Loading current drawing set metadata…';
   }
+}
+function renderDocumentMetadataStatus() {
+  const status = document.querySelector('[data-document-metadata-status]');
+  const summary = document.querySelector('[data-document-metadata-summary]');
+  const adapter = documentMetadataState.providerRequired ? 'CAST_CAD_DOCUMENT_METADATA_ADAPTER required for durable/authoritative persistence' : 'durable metadata adapter configured';
+  const message = `${documentMetadataState.message} · ${adapter}`;
+  if (status) status.textContent = message;
+  if (summary) summary.textContent = documentMetadataState.documentCount
+    ? `${documentMetadataState.documentCount.toLocaleString()} document record(s) in the audited registry; imported ${documentMetadataState.importedCount.toLocaleString()} this session. ${adapter}.`
+    : message;
+}
+function documentMetadataImportPayload(index) {
+  const files = currentDrawingFiles(index).map((file) => ({
+    name: file.name,
+    fileName: file.name,
+    path: file.path,
+    sourcePath: file.path,
+    extension: file.extension || 'pdf',
+    drawingNumber: drawingNumberFromName(file.name),
+    drawingTitle: titleFromName(file.name),
+    discipline: disciplineFromPath(file.path),
+    revisionLabel: revisionFromName(file.name),
+    revisionDate: String(file.modifiedAt || '').slice(0, 10),
+    pageCount: 1,
+    contentHash: file.contentHash || file.sha256 || '',
+  }));
+  return { action: 'document-metadata', operation: 'import-index', projectId: 'alum', setId: 'alum-current-drawings', status: 'indexed', files };
+}
+async function importCurrentSetDocumentMetadata({ toast = false } = {}) {
+  documentMetadataState = { ...documentMetadataState, status: 'importing', message: 'Importing current drawing index into the audited document metadata contract…' };
+  renderDocumentMetadataStatus();
+  try {
+    const indexResponse = await fetch(CURRENT_DRAWING_INDEX_URL, { cache: 'no-store' });
+    if (!indexResponse.ok) throw new Error(`index HTTP ${indexResponse.status}`);
+    const index = await indexResponse.json();
+    const payload = documentMetadataImportPayload(index);
+    if (!payload.files.length) throw new Error('No current PDF drawing files found for metadata import.');
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || result?.summary?.rejected || []).join(' ') || `HTTP ${response.status}`);
+    const providerRequired = Boolean(result.summary?.providerRequired ?? true);
+    documentMetadataState = { status: 'indexed', documentCount: result.summary?.importedCount || payload.files.length, importedCount: result.summary?.importedCount || payload.files.length, providerRequired, message: `Indexed ${result.summary?.importedCount || payload.files.length} current drawing metadata record(s) through the backend contract.` };
+    if (toast) window.CASTShell?.toast?.('Current drawing metadata indexed through the CAST CAD backend contract.', { kind: 'success' });
+    await loadDocumentMetadataRegistry();
+  } catch (error) {
+    console.warn('CAST CAD document metadata import unavailable', error);
+    documentMetadataState = { ...documentMetadataState, status: 'blocked', message: `Document metadata import blocked: ${error.message}. No authoritative/durable registry state was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Document metadata import blocked; no authoritative registry was fabricated.', { kind: 'error' });
+    renderDocumentMetadataStatus();
+  }
+}
+async function loadDocumentMetadataRegistry() {
+  try {
+    const params = new URLSearchParams({ action: 'document-metadata', projectId: 'alum', setId: 'alum-current-drawings' });
+    const response = await fetch(`/api/cast-cad-markups?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    documentMetadataState = { ...documentMetadataState, status: 'loaded', documentCount: result.documentCount || 0, providerRequired: Boolean(result.contract?.durableAdapterRequired), message: `${result.documentCount || 0} drawing document metadata record(s) loaded from the backend registry contract.` };
+  } catch (error) {
+    console.warn('Could not load CAST CAD document metadata registry', error);
+    documentMetadataState = { ...documentMetadataState, status: 'unavailable', message: 'Document metadata registry API unavailable; source index remains local read-only metadata only.' };
+  }
+  renderDocumentMetadataStatus();
 }
 
 const MARKUP_TOOLS = [
@@ -437,6 +501,7 @@ function render() {
   renderComparisonCenter();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
+  renderDocumentMetadataStatus();
 }
 function markupServerPayload(markup) {
   return {
@@ -1039,6 +1104,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-field-package]')) { createFieldPackageForSelectedSheet(); return; }
   if (event.target.closest('[data-sync-field-note]')) { syncFieldModeDelta({ verify: false }); return; }
   if (event.target.closest('[data-sync-field-verify]')) { syncFieldModeDelta({ verify: true }); return; }
+  if (event.target.closest('[data-import-document-metadata]')) { importCurrentSetDocumentMetadata({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-document-metadata]')) { loadDocumentMetadataRegistry(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
@@ -1062,3 +1129,4 @@ registerCastCadFieldServiceWorker();
 loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
+loadDocumentMetadataRegistry();

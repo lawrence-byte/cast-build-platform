@@ -225,8 +225,14 @@
           <div class="cad-panel-head"><h2>Current drawing set source</h2><span class="badge">No manual file load</span></div>
           <div class="cad-panel-body">
             <p class="cad-muted">CAST CAD reads the published Alüm drawing metadata index, selects sheets from the current drawing set, and stores markups/takeoff edits as CAST structured data. PDF streaming remains guarded so private project drawings are not published as raw public assets.</p>
+            <div class="pdf-intake cad-document-metadata-controls" aria-label="CAST CAD drawing document metadata registry controls">
+              <button class="cb-btn small cb-btn--ghost" type="button" data-import-document-metadata>Index current set metadata</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-document-metadata>Refresh registry</button>
+              <span class="pdf-status" data-document-metadata-status>Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.</span>
+            </div>
             <div class="tool-list">
               <div class="tool-card"><em>Source index</em><strong>Alüm Current Drawings</strong><span data-current-set-summary>Loading current drawing set metadata…</span></div>
+              <div class="tool-card"><em>Metadata registry</em><strong>/api/cast-cad-markups?action=document-metadata</strong><span data-document-metadata-summary>Not checked yet. Imports are audited contract records and fail closed for authoritative durable persistence without CAST_CAD_DOCUMENT_METADATA_ADAPTER.</span></div>
               <div class="tool-card"><em>Next backend gate</em><strong>Authenticated PDF stream</strong><span>Connect approved Dropbox/CAST Server file streaming after auth so selected sheets render directly without exposing public PDF URLs.</span></div>
             </div>
           </div>
