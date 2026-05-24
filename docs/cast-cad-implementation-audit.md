@@ -33,6 +33,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend drawing document metadata registry bridge that imports the current drawing index into `/api/cast-cad-markups?action=document-metadata`, refreshes registry counts, surfaces `CAST_CAD_DOCUMENT_METADATA_ADAPTER` as the durable/authoritative persistence blocker, and fails closed without fabricating durable registry state when the backend contract is unavailable.
 - Provider-independent comparison-center workbench controls that create audited `/api/cast-cad-exports` `type=comparison` jobs, validate baseline/revised sheet scope, and fail closed with the exact `CAST_CAD_COMPARISON_WORKER` requirement instead of fabricating private overlay/delta artifacts.
 - Provider-independent frontend export job bridge that creates audited takeoff workbook and annotated-PDF jobs through `/api/cast-cad-exports`, surfaces job status in the CAST CAD workbench, and fails closed with the exact `CAST_CAD_PDF_EXPORT_WORKER` requirement instead of fabricating flattened/private PDF artifacts.
+- Provider-independent frontend CAST Tool Library bridge that loads/admin-seeds reusable count/length/area tools through `/api/cast-cad-markups?action=tool-library`, places selected tools as audited Needs Review markups/takeoff rows, and fails closed without fabricating local authoritative library, markup, or budget quantity state.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -99,7 +100,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Create/edit/save/reload/filter/export markups: server contract implemented with audit and CSV; production database adapter remains to be connected.
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
-- CAST Tool Library: provider-independent API/service contract implemented with fail-closed human-review gates; production database/catalog adapter remains.
+- CAST Tool Library: provider-independent API/service contract implemented; frontend workbench bridge now loads/admin-seeds reviewed tools and places selected tools as audited Needs Review markups/takeoff rows; production database/catalog adapter remains.
 - Drawing set versions and slip-sheeting: API/service contract implemented with human-review-gated supersedence/audit history; production database adapter remains to be connected.
 - Drawing comparison report: provider-independent API/service contract and static comparison-center job controls are implemented with explicit `CAST_CAD_COMPARISON_WORKER` fail-closed status; comparison worker remains to be connected.
 - OCR/search: search/index contract implemented; OCR worker remains to be connected.
@@ -124,8 +125,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-24T02:07:17Z`.
-- Branch audited: `cast-cad-export-job-bridge`.
+- Audited at: `2026-05-24T04:14:26Z`.
+- Branch audited: `cast-cad-tool-library-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

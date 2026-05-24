@@ -259,5 +259,11 @@ assert.ok(castCadJs.includes('CAST_CAD_PDF_EXPORT_WORKER'), 'CAST CAD workbench 
 assert.ok(castCadHtml.includes('data-create-workbook-export'), 'CAST CAD workbench exposes takeoff workbook export job control');
 assert.ok(castCadHtml.includes('data-create-annotated-pdf-export'), 'CAST CAD workbench exposes annotated PDF export job control');
 assert.ok(castCadHtml.includes('data-export-job-status'), 'CAST CAD workbench exposes backend export status');
+assert.ok(castCadJs.includes('function loadToolLibraryItems'), 'CAST CAD workbench loads Tool Library items from backend contract');
+assert.ok(castCadJs.includes("action=tool-library"), 'CAST CAD workbench calls Tool Library action on /api/cast-cad-markups');
+assert.ok(castCadJs.includes('function placeSelectedToolLibraryItem'), 'CAST CAD workbench places selected Tool Library items as backend markups');
+assert.ok(castCadJs.includes('No local markup or budget quantity was fabricated'), 'CAST CAD Tool Library placement fails closed without fabricating local budget authority');
+assert.ok(castCadHtml.includes('data-tool-library-items'), 'CAST CAD workbench exposes Tool Library item list');
+assert.ok(castCadHtml.includes('data-place-tool-library-item'), 'CAST CAD workbench exposes review-gated Tool Library placement control');
 
 console.log('CAST CAD production contract tests passed.');

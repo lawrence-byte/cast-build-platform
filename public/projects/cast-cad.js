@@ -24,6 +24,7 @@ let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revise
 let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. Takeoff workbook can run from stored measurements; annotated PDF requires CAST_CAD_PDF_EXPORT_WORKER.', jobs: [] };
 let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
+let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -501,6 +502,21 @@ function renderExportCenter() {
     }).join('') : '<p class="cad-muted">No backend export jobs requested in this session.</p>';
   }
 }
+function renderToolLibrary() {
+  const status = document.querySelector('[data-tool-library-status]');
+  const list = document.querySelector('[data-tool-library-items]');
+  if (status) status.textContent = toolLibraryState.message;
+  if (!list) return;
+  if (!toolLibraryState.items.length) {
+    list.innerHTML = '<p class="cad-muted">No Tool Library items loaded yet. Create a seed item or refresh the audited backend contract.</p>';
+    return;
+  }
+  list.innerHTML = toolLibraryState.items.slice(0, 8).map((item) => {
+    const selected = item.id === toolLibraryState.selectedItemId ? 'checked' : '';
+    const cost = item.unitCost === null || item.unitCost === undefined ? 'unit cost unset' : `${money(item.unitCost)} / ${esc(item.unit || 'EA')}`;
+    return `<label class="tool-card" data-tool-library-card="${esc(item.id)}"><em>${esc(item.toolType || 'tool')} · ${esc(item.status || 'active')}</em><strong><input type="radio" name="cast-tool-library-item" data-tool-library-item="${esc(item.id)}" ${selected} autocomplete="off"> ${esc(item.name)}</strong><span>${esc(item.trade || 'Coordination')} · ${esc(item.category || 'General')} · ${esc(item.costCode || 'No cost code')} · ${esc(item.assemblyCode || 'No assembly')} · ${cost}. Human review required: ${item.requiresHumanReview === false ? 'no (blocked)' : 'yes'}.</span></label>`;
+  }).join('');
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -513,9 +529,70 @@ function render() {
   renderFindings();
   renderComparisonCenter();
   renderExportCenter();
+  renderToolLibrary();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
+}
+function toolLibrarySeedPayload() {
+  const seed = document.querySelector('[data-tool-library-seed]')?.value || 'fec';
+  const seeds = {
+    fec: { name: 'Fire extinguisher cabinet', category: 'Life Safety', trade: 'Fire Protection', costCode: '10-4400', assemblyCode: 'FEC-001', toolType: 'count', unit: 'EA', unitCost: 850, formula: 'quantity * unitCost', defaultLayer: 'Life Safety', style: { stroke: '#dc2626', fill: 'rgba(220,38,38,.16)', opacity: 1, lineWidth: 2, fontSize: 12 } },
+    door: { name: 'Door/frame count', category: 'Openings', trade: 'Doors Frames Hardware', costCode: '08-1113', assemblyCode: 'DOOR-STD', toolType: 'count', unit: 'EA', unitCost: 2200, formula: 'quantity * unitCost', defaultLayer: 'Openings', style: { stroke: '#2563eb', fill: 'rgba(37,99,235,.16)', opacity: 1, lineWidth: 2, fontSize: 12 } },
+    wall: { name: 'Drywall partition length', category: 'Interiors', trade: 'Drywall', costCode: '09-2116', assemblyCode: 'GWB-PARTITION', toolType: 'length', unit: 'LF', unitCost: 74, formula: 'length * unitCost', defaultLayer: 'Partitions', style: { stroke: '#f97316', fill: 'rgba(249,115,22,.16)', opacity: 1, lineWidth: 3, fontSize: 12 } },
+    waterproofing: { name: 'Waterproofing area', category: 'Envelope', trade: 'Waterproofing', costCode: '07-1300', assemblyCode: 'WP-AREA', toolType: 'area', unit: 'SF', unitCost: 18, formula: 'area * unitCost', defaultLayer: 'Envelope', style: { stroke: '#0f766e', fill: 'rgba(15,118,110,.16)', opacity: 1, lineWidth: 2, fontSize: 12 } },
+  };
+  return { action: 'tool-library', projectId: 'alum', requiresHumanReview: true, ...(seeds[seed] || seeds.fec) };
+}
+async function loadToolLibraryItems({ toast = false } = {}) {
+  try {
+    const response = await fetch('/api/cast-cad-markups?action=tool-library&projectId=alum&status=active', { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const items = result.items || [];
+    toolLibraryState = { status: 'loaded', items, placements: result.placements || [], selectedItemId: toolLibraryState.selectedItemId && items.some((item) => item.id === toolLibraryState.selectedItemId) ? toolLibraryState.selectedItemId : (items[0]?.id || ''), message: `${result.itemCount || items.length} Tool Library item(s) loaded from the audited backend contract; placements remain review-gated.` };
+    if (toast) window.CASTShell?.toast?.('CAST Tool Library refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD Tool Library API unavailable', error);
+    toolLibraryState = { ...toolLibraryState, status: 'unavailable', message: 'Tool Library API unavailable; no local authoritative library or budget item was fabricated.' };
+    if (toast) window.CASTShell?.toast?.('Tool Library API unavailable; no authoritative library was fabricated.', { kind: 'error' });
+  }
+  renderToolLibrary();
+}
+async function createToolLibrarySeedItem() {
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(toolLibrarySeedPayload()) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    toolLibraryState = { ...toolLibraryState, selectedItemId: result.item?.id || toolLibraryState.selectedItemId, message: `Tool Library item ${result.item?.name || ''} created through backend audit; human review gate remains on.` };
+    window.CASTShell?.toast?.('CAST Tool Library item created through audited backend contract.', { kind: 'success' });
+    await loadToolLibraryItems();
+  } catch (error) {
+    console.warn('Could not create CAST CAD Tool Library item', error);
+    toolLibraryState = { ...toolLibraryState, status: 'blocked', message: `Tool Library create blocked: ${error.message}. No local authoritative item was fabricated.` };
+    window.CASTShell?.toast?.('Tool Library item create blocked; no local authoritative item was fabricated.', { kind: 'error' });
+    renderToolLibrary();
+  }
+}
+async function placeSelectedToolLibraryItem() {
+  const itemId = toolLibraryState.selectedItemId;
+  if (!itemId) { window.CASTShell?.toast?.('Select or create a Tool Library item before placement.', { kind: 'error' }); return; }
+  const quantity = Number(document.querySelector('[data-tool-library-quantity]')?.value || 1);
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'tool-library', operation: 'place-tool', itemId, projectId: selectedDrawing()?.project_id || 'alum', sheetId: selectedDrawingId, quantity, x: 48, y: 42 }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    if (result.markup) mergeServerMarkup(result.markup);
+    save();
+    toolLibraryState = { ...toolLibraryState, placements: [...toolLibraryState.placements, result.placement].filter(Boolean), message: `Placed ${result.item?.name || 'Tool Library item'} as a Needs Review markup/takeoff row; budgetAuthoritative=${Boolean(result.placement?.budgetAuthoritative)}.` };
+    window.CASTShell?.toast?.('Tool Library placement created as a review-gated markup.', { kind: 'success' });
+    render();
+  } catch (error) {
+    console.warn('Could not place CAST CAD Tool Library item', error);
+    toolLibraryState = { ...toolLibraryState, status: 'blocked', message: `Tool Library placement blocked: ${error.message}. No local markup or budget quantity was fabricated.` };
+    window.CASTShell?.toast?.('Tool Library placement blocked; no local markup was fabricated.', { kind: 'error' });
+    renderToolLibrary();
+  }
 }
 function markupServerPayload(markup) {
   return {
@@ -1155,6 +1232,9 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-annotated-pdf-export]')) { createBackendExportJob('annotated-pdf'); return; }
   if (event.target.closest('[data-import-document-metadata]')) { importCurrentSetDocumentMetadata({ toast: true }); return; }
   if (event.target.closest('[data-refresh-document-metadata]')) { loadDocumentMetadataRegistry(); return; }
+  if (event.target.closest('[data-create-tool-library-item]')) { createToolLibrarySeedItem(); return; }
+  if (event.target.closest('[data-place-tool-library-item]')) { placeSelectedToolLibraryItem(); return; }
+  if (event.target.closest('[data-refresh-tool-library]')) { loadToolLibraryItems({ toast: true }); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
@@ -1168,6 +1248,8 @@ document.addEventListener('change', (event) => {
   const selectVisible = event.target.closest('[data-batch-select-visible]');
   if (selectVisible) { visibleMarkups().forEach((m) => { if (selectVisible.checked) selectedMarkupIds.add(m.id); else selectedMarkupIds.delete(m.id); }); render(); return; }
   if (event.target.closest('[data-viewer-layout], [data-viewer-zoom], [data-viewer-pref]')) persistViewerPreferences({ toast: false });
+  const toolLibraryItem = event.target.closest('[data-tool-library-item]');
+  if (toolLibraryItem) { toolLibraryState.selectedItemId = toolLibraryItem.dataset.toolLibraryItem; renderToolLibrary(); return; }
 });
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
 document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFromOverlay);
@@ -1179,3 +1261,4 @@ loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
 loadDocumentMetadataRegistry();
+loadToolLibraryItems();
