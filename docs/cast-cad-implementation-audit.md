@@ -36,6 +36,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend CAST Tool Library bridge that loads/admin-seeds reusable count/length/area tools through `/api/cast-cad-markups?action=tool-library`, places selected tools as audited Needs Review markups/takeoff rows, and fails closed without fabricating local authoritative library, markup, or budget quantity state.
 - Provider-independent frontend AI Review bridge that loads source-cited `AI Detected` findings from `/api/cast-cad-search?action=ai-findings`, creates cited review findings, verifies/converts selected findings only through the human-review-gated backend audit contract, and fails closed without fabricating uncited findings or human-verified markups.
 - Provider-independent frontend Review Room bridge that creates selected-sheet/visible-markup review rooms through `/api/cast-cad-review-room`, lists audited participant invite records, and fails closed without fabricating local collaboration rooms or external email/realtime invite delivery.
+- Provider-independent frontend admin/governance bridge that loads role matrices, project members, effective permissions, and member audit logs from `/api/cast-cad-markups?action=admin|members|effective-permissions|audit-log`, assigns project member roles only through backend audit, and fails closed without fabricating local permission authority when strict auth/session identity is required.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -128,7 +129,7 @@ node --check api/*.js api/_lib/*.js
 ## Latest audit run
 
 - Audited at: `2026-05-24T04:14:26Z`.
-- Branch audited: `cast-cad-tool-library-bridge`.
+- Branch audited: `cast-cad-governance-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

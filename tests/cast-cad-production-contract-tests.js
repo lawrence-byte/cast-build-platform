@@ -278,5 +278,14 @@ assert.ok(castCadJs.includes("fetch('/api/cast-cad-review-room'"), 'CAST CAD wor
 assert.ok(castCadJs.includes('No local collaboration room or external invite was fabricated'), 'CAST CAD Review Room workflow fails closed without fabricating external invites');
 assert.ok(castCadHtml.includes('data-create-review-room'), 'CAST CAD workbench exposes Review Room creation controls');
 assert.ok(castCadHtml.includes('data-review-rooms'), 'CAST CAD workbench exposes Review Room status list');
+assert.ok(castCadJs.includes('function loadGovernanceStatus'), 'CAST CAD workbench loads governance roles, members, effective permissions, and audit logs');
+assert.ok(castCadJs.includes("action=members"), 'CAST CAD workbench calls members governance contract');
+assert.ok(castCadJs.includes("action=effective-permissions"), 'CAST CAD workbench calls effective permission contract');
+assert.ok(castCadJs.includes("action=audit-log"), 'CAST CAD workbench calls audit-log governance contract');
+assert.ok(castCadJs.includes('function assignGovernanceMemberRole'), 'CAST CAD workbench assigns project member roles through backend audit');
+assert.ok(castCadJs.includes('No local role, permission, or audit authority was fabricated'), 'CAST CAD governance fails closed without fabricating authority');
+assert.ok(castCadHtml.includes('data-assign-governance-role'), 'CAST CAD workbench exposes audited role assignment controls');
+assert.ok(castCadHtml.includes('data-governance-permissions'), 'CAST CAD workbench exposes effective permission status');
+assert.ok(castCadHtml.includes('data-governance-audit'), 'CAST CAD workbench exposes governance audit status');
 
 console.log('CAST CAD production contract tests passed.');
