@@ -30,6 +30,7 @@ let ocrSearchState = { status: 'idle', query: '', results: [], message: 'OCR/sym
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
+let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -206,6 +207,23 @@ function renderDocumentMetadataStatus() {
     ? `${documentMetadataState.documentCount.toLocaleString()} document record(s) in the audited registry; imported ${documentMetadataState.importedCount.toLocaleString()} this session. ${adapter}.`
     : message;
 }
+function renderDrawingSetControls() {
+  const status = document.querySelector('[data-drawing-set-status]');
+  const revisions = document.querySelector('[data-drawing-set-revisions]');
+  const target = document.querySelector('[data-slip-sheet-target]');
+  if (status) status.textContent = drawingSetControlState.message;
+  const currentRevisions = (drawingSetControlState.revisions || []).filter((row) => row.status === 'current');
+  if (target) {
+    const options = currentRevisions.slice(0, 200).map((row) => `<option value="${esc(row.id)}">${esc(row.drawingNumber || row.sheetId)} · ${esc(row.revisionLabel || 'current')} · ${esc(row.fileName || '')}</option>`).join('');
+    const value = drawingSetControlState.selectedRevisionId || target.value;
+    target.innerHTML = `<option value="">Slip-sheet target revision</option>${options}`;
+    target.value = value && currentRevisions.some((row) => row.id === value) ? value : (currentRevisions[0]?.id || '');
+    drawingSetControlState.selectedRevisionId = target.value;
+  }
+  if (revisions) {
+    revisions.innerHTML = drawingSetControlState.revisions.length ? drawingSetControlState.revisions.slice(-6).reverse().map((row) => `<div class="tool-card"><em>${esc(row.status || 'current')} · ${esc(row.revisionLabel || 'revision')}</em><strong>${esc(row.drawingNumber || row.sheetId)} · ${esc(row.drawingTitle || row.fileName || '')}</strong><span>${esc(row.fileName || row.sourcePath || '')}. Supersedes: ${esc(row.supersedesRevisionId || 'none')}; superseded by: ${esc(row.supersededByRevisionId || 'none')}. Backend audit controls current/superseded chains; no local slip-sheet authority is fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing set versions loaded yet. Publish the current set or refresh backend drawing-set history.</p>';
+  }
+}
 function documentMetadataImportPayload(index) {
   const files = currentDrawingFiles(index).map((file) => ({
     name: file.name,
@@ -258,6 +276,63 @@ async function loadDocumentMetadataRegistry() {
     documentMetadataState = { ...documentMetadataState, status: 'unavailable', message: 'Document metadata registry API unavailable; source index remains local read-only metadata only.' };
   }
   renderDocumentMetadataStatus();
+}
+function drawingSetVersionPayload(index) {
+  const sheets = documentMetadataImportPayload(index).files.map((file) => ({ ...file, sheetId: slugId(file.path, file.drawingNumber) }));
+  return { type: 'drawing-set-version', projectId: 'alum', setId: 'alum-current-drawings', name: 'Alüm Current Drawings', revisionLabel: `Current index ${new Date().toISOString().slice(0, 10)}`, revisionDate: new Date().toISOString().slice(0, 10), sourceIndex: CURRENT_DRAWING_INDEX_URL, sheets };
+}
+async function publishCurrentDrawingSetVersion({ toast = false } = {}) {
+  drawingSetControlState = { ...drawingSetControlState, status: 'publishing', message: 'Publishing current drawing index as an audited drawing set version…' };
+  renderDrawingSetControls();
+  try {
+    const indexResponse = await fetch(CURRENT_DRAWING_INDEX_URL, { cache: 'no-store' });
+    if (!indexResponse.ok) throw new Error(`index HTTP ${indexResponse.status}`);
+    const payload = drawingSetVersionPayload(await indexResponse.json());
+    if (!payload.sheets.length) throw new Error('No current PDF drawing files found for drawing set versioning.');
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    drawingSetControlState = { status: 'published', versions: [...drawingSetControlState.versions, result.version].filter(Boolean), revisions: [...drawingSetControlState.revisions, ...(result.revisions || [])], selectedRevisionId: result.revisions?.[0]?.id || drawingSetControlState.selectedRevisionId, message: `Audited drawing set version ${result.version?.id || ''} published with ${result.revisions?.length || payload.sheets.length} sheet revision(s). Supersedence is server-controlled.` };
+    if (toast) window.CASTShell?.toast?.('Current drawing set version published through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing set version API unavailable', error);
+    drawingSetControlState = { ...drawingSetControlState, status: 'blocked', message: `Drawing set version publish blocked: ${error.message}. No local current/superseded authority was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Drawing set version publish blocked; no local authority was fabricated.', { kind: 'error' });
+  }
+  renderDrawingSetControls();
+}
+async function loadDrawingSetHistory({ toast = false } = {}) {
+  try {
+    const params = new URLSearchParams({ type: 'drawing-sets', projectId: 'alum', setId: 'alum-current-drawings' });
+    const response = await fetch(`/api/cast-cad-exports?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    drawingSetControlState = { status: 'loaded', versions: result.versions || [], revisions: result.revisions || [], selectedRevisionId: drawingSetControlState.selectedRevisionId, message: `${result.versionCount || 0} drawing set version(s) and ${result.revisionCount || 0} sheet revision(s) loaded from backend audit history.` };
+    if (toast) window.CASTShell?.toast?.('Drawing set history refreshed from backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing set history unavailable', error);
+    drawingSetControlState = { ...drawingSetControlState, status: 'unavailable', message: `Drawing set history unavailable: ${error.message}. Local drawing list remains read-only metadata only.` };
+    if (toast) window.CASTShell?.toast?.('Drawing set history unavailable.', { kind: 'error' });
+  }
+  renderDrawingSetControls();
+}
+async function slipSheetSelectedRevision() {
+  const targetRevisionId = document.querySelector('[data-slip-sheet-target]')?.value || drawingSetControlState.selectedRevisionId;
+  const humanReviewApproved = Boolean(document.querySelector('[data-slip-sheet-human-review]')?.checked);
+  const replacementName = document.querySelector('[data-slip-sheet-name]')?.value.trim() || 'Reviewed replacement sheet.pdf';
+  if (!targetRevisionId) { window.CASTShell?.toast?.('Publish or load drawing revisions before slip-sheeting.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ type: 'slip-sheet', targetRevisionId, humanReviewApproved, replacementSheet: { name: replacementName, fileName: replacementName, revisionLabel: document.querySelector('[data-slip-sheet-label]')?.value.trim() || 'Reviewed replacement', contentHash: `manual-${Date.now()}` } }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || result?.code || `HTTP ${response.status}`);
+    drawingSetControlState = { ...drawingSetControlState, status: 'slip-sheeted', revisions: [...drawingSetControlState.revisions.filter((row) => row.id !== result.superseded?.id), result.superseded, result.replacement].filter(Boolean), selectedRevisionId: result.replacement?.id || '', message: `Slip-sheet ${result.replacement?.id || ''} created after backend human-review audit; target ${result.superseded?.id || ''} is superseded.` };
+    window.CASTShell?.toast?.('Slip-sheet replacement recorded through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD slip-sheet API blocked', error);
+    drawingSetControlState = { ...drawingSetControlState, status: 'blocked', message: `Slip-sheet blocked: ${error.message}. Human review and backend audit are required; no local supersedence was fabricated.` };
+    window.CASTShell?.toast?.('Slip-sheet blocked; human review/backend audit required.', { kind: 'error' });
+  }
+  renderDrawingSetControls();
 }
 
 const MARKUP_TOOLS = [
@@ -666,6 +741,7 @@ function render() {
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
+  renderDrawingSetControls();
   renderViewportMappingStatus();
 }
 function reviewRoomPayload() {
@@ -1631,6 +1707,9 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-annotated-pdf-export]')) { createBackendExportJob('annotated-pdf'); return; }
   if (event.target.closest('[data-import-document-metadata]')) { importCurrentSetDocumentMetadata({ toast: true }); return; }
   if (event.target.closest('[data-refresh-document-metadata]')) { loadDocumentMetadataRegistry(); return; }
+  if (event.target.closest('[data-publish-drawing-set-version]')) { publishCurrentDrawingSetVersion({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-drawing-set-history]')) { loadDrawingSetHistory({ toast: true }); return; }
+  if (event.target.closest('[data-slip-sheet-revision]')) { slipSheetSelectedRevision(); return; }
   if (event.target.closest('[data-create-tool-library-item]')) { createToolLibrarySeedItem(); return; }
   if (event.target.closest('[data-place-tool-library-item]')) { placeSelectedToolLibraryItem(); return; }
   if (event.target.closest('[data-refresh-tool-library]')) { loadToolLibraryItems({ toast: true }); return; }
@@ -1661,6 +1740,8 @@ document.addEventListener('change', (event) => {
   if (toolLibraryItem) { toolLibraryState.selectedItemId = toolLibraryItem.dataset.toolLibraryItem; renderToolLibrary(); return; }
   const aiFinding = event.target.closest('[data-ai-finding]');
   if (aiFinding) { aiReviewState.selectedFindingId = aiFinding.dataset.aiFinding; renderAiReviewFindings(); return; }
+  const slipSheetTarget = event.target.closest('[data-slip-sheet-target]');
+  if (slipSheetTarget) { drawingSetControlState.selectedRevisionId = slipSheetTarget.value; renderDrawingSetControls(); return; }
 });
 document.querySelector('[data-annotation-layer]')?.addEventListener('click', addMarkupFromOverlay);
 document.querySelector('[data-viewer]')?.addEventListener('click', addMarkupFromOverlay);
@@ -1674,6 +1755,7 @@ loadServerMarkupsForSelectedDrawing();
 loadViewportMappingForSelectedSheet();
 searchOcrSymbolIndex();
 loadDocumentMetadataRegistry();
+loadDrawingSetHistory();
 loadToolLibraryItems();
 loadAiReviewFindings();
 loadReviewRooms();

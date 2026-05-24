@@ -40,6 +40,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend Review Room bridge that creates selected-sheet/visible-markup review rooms through `/api/cast-cad-review-room`, lists audited participant invite records, and fails closed without fabricating local collaboration rooms or external email/realtime invite delivery.
 - Provider-independent frontend admin/governance bridge that loads role matrices, project members, effective permissions, and member audit logs from `/api/cast-cad-markups?action=admin|members|effective-permissions|audit-log`, assigns project member roles only through backend audit, and fails closed without fabricating local permission authority when strict auth/session identity is required.
 - Provider-independent audited markup soft-delete contract on `/api/cast-cad-markups` using `DELETE`, default list/export filtering that excludes deleted markups, explicit `includeDeleted=true` audit discovery, hard-delete human-review gates, and frontend delete controls that fail closed rather than fabricating unaudited local deletion.
+- Provider-independent frontend drawing set version/slip-sheet bridge that publishes the current drawing index through `/api/cast-cad-exports` `type=drawing-set-version`, loads audited version/revision history, slip-sheets selected revisions only through the human-review-gated backend contract, and fails closed without fabricating local current/superseded authority.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -107,7 +108,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
 - CAST Tool Library: provider-independent API/service contract implemented; frontend workbench bridge now loads/admin-seeds reviewed tools and places selected tools as audited Needs Review markups/takeoff rows; production database/catalog adapter remains.
-- Drawing set versions and slip-sheeting: API/service contract implemented with human-review-gated supersedence/audit history; production database adapter remains to be connected.
+- Drawing set versions and slip-sheeting: API/service contract and frontend bridge implemented with human-review-gated supersedence/audit history; production database adapter remains to be connected.
 - Drawing comparison report: provider-independent API/service contract and static comparison-center job controls are implemented with explicit `CAST_CAD_COMPARISON_WORKER` fail-closed status; comparison worker remains to be connected.
 - OCR/search: search/index contract implemented; frontend OCR/symbol bridge now queries the audited backend index, can create explicitly reviewed source-index samples for workflow testing, and surfaces `CAST_CAD_OCR_WORKER` as the production extraction blocker. OCR worker remains to be connected.
 - RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot; frontend now calls the audited workflow contract and fails closed when backend markup/RFI contracts are unavailable.
