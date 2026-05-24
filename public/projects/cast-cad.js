@@ -26,6 +26,7 @@ let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until th
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
+let ocrSearchState = { status: 'idle', query: '', results: [], message: 'OCR/symbol search not checked yet. Production OCR extraction remains provider-gated by CAST_CAD_OCR_WORKER.' };
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
@@ -597,6 +598,20 @@ function renderAiReviewFindings() {
     return `<label class="tool-card" data-ai-finding-card="${esc(finding.id)}"><em>${esc(verified)} · ${esc(finding.severity || 'Medium')} · ${citationCount} cited source(s)</em><strong><input type="radio" name="cast-ai-finding" data-ai-finding="${esc(finding.id)}" ${selected} autocomplete="off"> ${esc(finding.title || 'AI Review finding')}</strong><span>${esc(finding.body || '')} ${finding.providerRequired ? 'Worker required: CAST_CAD_AI_REVIEW_WORKER. ' : ''}Human review approval is required before verification or markup conversion.</span></label>`;
   }).join('');
 }
+function renderOcrSearchResults() {
+  const status = document.querySelector('[data-ocr-search-status]');
+  const list = document.querySelector('[data-ocr-search-results]');
+  if (status) status.textContent = ocrSearchState.message;
+  if (!list) return;
+  if (!ocrSearchState.results.length) {
+    list.innerHTML = '<p class="cad-muted">No OCR/symbol hits loaded yet. Search the audited index or create a reviewed source-cited index sample for the selected sheet.</p>';
+    return;
+  }
+  list.innerHTML = ocrSearchState.results.slice(0, 8).map((result) => {
+    const symbols = (result.symbols || []).length ? ` · symbols: ${(result.symbols || []).join(', ')}` : '';
+    return `<div class="tool-card"><em>${esc(result.sheetId || selectedDrawingId)} · page ${esc(result.pageNumber || 1)} · confidence ${esc(result.confidence ?? 'n/a')}</em><strong>${esc(ocrSearchState.query || 'OCR/symbol hit')}</strong><span>${esc(result.excerpt || 'No excerpt returned')}${esc(symbols)}</span></div>`;
+  }).join('');
+}
 function renderReviewRooms() {
   const status = document.querySelector('[data-review-room-status]');
   const list = document.querySelector('[data-review-rooms]');
@@ -645,6 +660,7 @@ function render() {
   renderExportCenter();
   renderToolLibrary();
   renderAiReviewFindings();
+  renderOcrSearchResults();
   renderReviewRooms();
   renderGovernance();
   renderFieldModeStatus();
@@ -836,6 +852,60 @@ async function reviewSelectedAiFinding() {
     aiReviewState = { ...aiReviewState, status: 'blocked', message: `AI finding review blocked: ${error.message}. No human-verified markup was fabricated.` };
     window.CASTShell?.toast?.('AI finding review blocked; no markup was fabricated.', { kind: 'error' });
     renderAiReviewFindings();
+  }
+}
+function ocrSearchQuery() {
+  return (document.querySelector('[data-ocr-search-query]')?.value || '').trim() || 'fire rating';
+}
+function ocrIndexPayload() {
+  const drawing = selectedDrawing();
+  const query = ocrSearchQuery();
+  return {
+    projectId: drawing?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    pageNumber: Number(document.querySelector('[data-ocr-page-number]')?.value || 1),
+    text: `${drawing?.drawing_number || selectedDrawingId} ${drawing?.drawing_title || drawing?.source_name || 'Selected drawing'} reviewed source text for ${query}. This is a manually reviewed contract index sample, not an OCR worker output.`,
+    symbols: [...new Set(query.split(/[^a-z0-9-]+/i).filter(Boolean).slice(0, 6))],
+    source: 'cast-cad-workbench-reviewed-source-index-sample',
+    confidence: 100,
+  };
+}
+async function searchOcrSymbolIndex({ toast = false } = {}) {
+  const drawing = selectedDrawing();
+  const query = ocrSearchQuery();
+  if (!query) { window.CASTShell?.toast?.('Enter OCR/symbol search text first.', { kind: 'error' }); return; }
+  ocrSearchState = { ...ocrSearchState, status: 'searching', query, message: `Searching audited OCR/symbol index for “${query}”…` };
+  renderOcrSearchResults();
+  try {
+    const params = new URLSearchParams({ projectId: drawing?.project_id || 'alum', sheetId: selectedDrawingId, q: query });
+    const response = await fetch(`/api/cast-cad-search?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const results = result.results || [];
+    ocrSearchState = { status: 'loaded', query, results, message: `${result.count || results.length} OCR/symbol result(s) loaded from /api/cast-cad-search for the selected sheet. OCR extraction worker still requires CAST_CAD_OCR_WORKER; no private OCR artifact was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('OCR/symbol search refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD OCR/symbol search unavailable', error);
+    ocrSearchState = { ...ocrSearchState, status: 'unavailable', results: [], message: `OCR/symbol search blocked: ${error.message}. No local OCR results or private text artifacts were fabricated.` };
+    if (toast) window.CASTShell?.toast?.('OCR/symbol search unavailable; no local OCR artifact was fabricated.', { kind: 'error' });
+  }
+  renderOcrSearchResults();
+}
+async function createReviewedOcrIndexSample() {
+  const payload = ocrIndexPayload();
+  if (!payload.sheetId) { window.CASTShell?.toast?.('Select a sheet before indexing reviewed OCR/symbol text.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    ocrSearchState = { ...ocrSearchState, status: 'indexed', message: `Reviewed OCR/symbol index sample ${result.page?.id || ''} recorded for ${payload.sheetId}; production extraction still requires CAST_CAD_OCR_WORKER.` };
+    window.CASTShell?.toast?.('Reviewed OCR/symbol index sample recorded through backend audit.', { kind: 'success' });
+    await searchOcrSymbolIndex();
+  } catch (error) {
+    console.warn('Could not create CAST CAD reviewed OCR/symbol index sample', error);
+    ocrSearchState = { ...ocrSearchState, status: 'blocked', message: `Reviewed OCR/symbol index sample blocked: ${error.message}. No worker output or private OCR artifact was fabricated.` };
+    window.CASTShell?.toast?.('OCR/symbol index sample blocked; no OCR artifact was fabricated.', { kind: 'error' });
+    renderOcrSearchResults();
   }
 }
 function toolLibrarySeedPayload() {
@@ -1539,7 +1609,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -1567,6 +1637,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-ai-finding]')) { createAiReviewFinding(); return; }
   if (event.target.closest('[data-review-ai-finding]')) { reviewSelectedAiFinding(); return; }
   if (event.target.closest('[data-refresh-ai-findings]')) { loadAiReviewFindings({ toast: true }); return; }
+  if (event.target.closest('[data-search-ocr-symbols]')) { searchOcrSymbolIndex({ toast: true }); return; }
+  if (event.target.closest('[data-index-ocr-sample]')) { createReviewedOcrIndexSample(); return; }
   if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }
   if (event.target.closest('[data-refresh-review-rooms]')) { loadReviewRooms({ toast: true }); return; }
   if (event.target.closest('[data-refresh-governance]')) { loadGovernanceStatus({ toast: true }); return; }
@@ -1600,6 +1672,7 @@ loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
 loadViewportMappingForSelectedSheet();
+searchOcrSymbolIndex();
 loadDocumentMetadataRegistry();
 loadToolLibraryItems();
 loadAiReviewFindings();

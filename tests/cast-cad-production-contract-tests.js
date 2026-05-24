@@ -297,6 +297,13 @@ assert.ok(castCadHtml.includes('data-tool-library-items'), 'CAST CAD workbench e
 assert.ok(castCadHtml.includes('data-place-tool-library-item'), 'CAST CAD workbench exposes review-gated Tool Library placement control');
 assert.ok(castCadJs.includes('function loadAiReviewFindings'), 'CAST CAD workbench loads AI Review findings from backend contract');
 assert.ok(castCadJs.includes("action: 'ai-findings'"), 'CAST CAD workbench calls AI findings contract on /api/cast-cad-search');
+assert.ok(castCadJs.includes('function searchOcrSymbolIndex'), 'CAST CAD workbench searches the OCR/symbol backend contract');
+assert.ok(castCadJs.includes('function createReviewedOcrIndexSample'), 'CAST CAD workbench can create reviewed source-cited OCR/symbol index samples through the backend contract');
+assert.ok(castCadJs.includes('CAST_CAD_OCR_WORKER'), 'CAST CAD workbench names the OCR worker requirement');
+assert.ok(castCadJs.includes('No local OCR results or private text artifacts were fabricated'), 'CAST CAD OCR/symbol search fails closed without fabricating private OCR artifacts');
+assert.ok(castCadHtml.includes('data-search-ocr-symbols'), 'CAST CAD workbench exposes OCR/symbol search controls');
+assert.ok(castCadHtml.includes('data-index-ocr-sample'), 'CAST CAD workbench exposes reviewed OCR/symbol index controls');
+assert.ok(castCadHtml.includes('data-ocr-search-results'), 'CAST CAD workbench exposes OCR/symbol result status');
 assert.ok(castCadJs.includes('function createAiReviewFinding'), 'CAST CAD workbench creates source-cited AI Detected findings');
 assert.ok(castCadJs.includes('function reviewSelectedAiFinding'), 'CAST CAD workbench verifies and converts AI findings through backend audit');
 assert.ok(castCadJs.includes('No uncited/local AI finding was fabricated'), 'CAST CAD AI Review creation fails closed without fabricating uncited findings');
