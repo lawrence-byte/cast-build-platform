@@ -469,7 +469,7 @@ function renderViewer() {
   const viewer = document.querySelector('[data-viewer]');
   const annotationLayer = document.querySelector('[data-annotation-layer]');
   const targetLayer = activePdfUrl() && annotationLayer ? annotationLayer : viewer;
-  state.drawingMarkups.filter((m) => m.drawing_id === drawing.id).forEach((markup) => {
+  visibleMarkups().forEach((markup) => {
     const el = document.createElement('button');
     el.className = `markup ${markup.markup_type || 'pin'}`;
     el.style.left = `${markup.x}%`;
@@ -492,7 +492,7 @@ function renderViewer() {
 }
 function renderMarkups() {
   const drawing = selectedDrawing();
-  const rows = state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id);
+  const rows = visibleMarkups();
   selectedMarkupIds = new Set([...selectedMarkupIds].filter((id) => rows.some((m) => m.id === id)));
   document.querySelector('[data-markup-list]').innerHTML = rows.length ? rows.map((m) => {
     const assignee = byId(state.users, m.assignee_user_id);
@@ -508,6 +508,7 @@ function renderMarkups() {
       <div class="actions">
         <button class="cb-btn small cb-btn--ghost" data-resolve="${esc(m.id)}">Resolve</button>
         <button class="cb-btn small cb-btn--ghost" data-rfi="${esc(m.id)}">Convert to RFI</button>
+        <button class="cb-btn small cb-btn--ghost" data-delete-markup="${esc(m.id)}">Delete</button>
       </div>
     </article>`;
   }).join('') : '<p class="muted">No markups on this sheet yet. Click Add Markup or click the drawing overlay to place a comment, measurement, count, cloud, or takeoff item.</p>';
@@ -921,6 +922,7 @@ function markupServerPayload(markup) {
   };
 }
 function mergeServerMarkup(serverMarkup) {
+  if (serverMarkup?.deletedAt || serverMarkup?.status === 'Deleted') return false;
   if (!serverMarkup?.id || state.drawingMarkups.some((row) => row.id === serverMarkup.id)) return false;
   const point = serverMarkup.geometry?.points?.[0] || { x: 50, y: 50 };
   state.drawingMarkups.push({
@@ -981,6 +983,9 @@ async function ensureMarkupSyncedForWorkflow(markup) {
   if (!markup.source_snapshot?.serverSyncedAt) await syncMarkupToServer(markup, { toast: false });
   if (!markup.source_snapshot?.serverMarkupId) throw new Error('Backend markup persistence is required before workflow links can be created.');
   return markup.source_snapshot.serverMarkupId;
+}
+function serverMarkupIdFor(markup) {
+  return markup?.source_snapshot?.serverMarkupId || markup?.sourceSnapshot?.serverMarkupId || '';
 }
 async function loadServerMarkupsForSelectedDrawing() {
   const drawing = selectedDrawing();
@@ -1200,6 +1205,26 @@ function verifyQuantity(id) {
   if (result.ok) { save(); window.CASTShell?.toast?.('Quantity verified and locked in CAST estimate log.', { kind: 'success' }); render(); }
 }
 function resolveMarkup(id) { const result = CPC.updateDrawingIssueStatus(state, id, 'Resolved', actor()); if (result.ok) { save(); render(); } }
+async function deleteMarkupWithBackend(id) {
+  const markup = state.drawingMarkups.find((row) => row.id === id);
+  if (!markup) { window.CASTShell?.toast?.('Markup not found for delete.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'DELETE', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ id: serverMarkupIdFor(markup) || markup.id, reason: 'Deleted from CAST CAD workbench' }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    state.drawingMarkups = state.drawingMarkups.filter((row) => row.id !== id && row.id !== result.markupId);
+    selectedMarkupIds.delete(id);
+    markupPersistenceState = { status: 'deleted', syncedAt: new Date().toISOString(), message: 'Markup soft-deleted through audited backend contract; retained in audit history and excluded from default lists.' };
+    save();
+    window.CASTShell?.toast?.('Markup deleted through CAST CAD backend audit.', { kind: 'success' });
+    render();
+  } catch (error) {
+    console.warn('CAST CAD markup delete API unavailable', error);
+    markupPersistenceState = { status: 'blocked', syncedAt: '', message: `Delete blocked: ${error.message}. No local-only deletion was fabricated because backend audit is required.` };
+    window.CASTShell?.toast?.('Markup delete blocked; backend audit is required.', { kind: 'error' });
+    renderMarkupPersistenceStatus();
+  }
+}
 async function convertMarkupToRfiDraft(id) {
   const markup = state.drawingMarkups.find((row) => row.id === id);
   if (!markup) { window.CASTShell?.toast?.('Markup not found for RFI conversion.', { kind: 'error' }); return; }
@@ -1227,7 +1252,7 @@ async function convertMarkupToRfiDraft(id) {
 }
 function visibleMarkups() {
   const drawing = selectedDrawing();
-  return state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id);
+  return state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id && m.status !== 'Deleted' && !m.deleted_at && !m.deletedAt);
 }
 function renderBatchStatus(rows = visibleMarkups()) {
   const status = document.querySelector('[data-batch-status]');
@@ -1548,6 +1573,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-assign-governance-role]')) { assignGovernanceMemberRole(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
+  const deleteMarkup = event.target.closest('[data-delete-markup]'); if (deleteMarkup) { deleteMarkupWithBackend(deleteMarkup.dataset.deleteMarkup); return; }
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
   if (event.target.closest('[data-export]')) exportCsv();
   if (event.target.closest('[data-reset]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: '', status: 'idle', message: '' }; calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }

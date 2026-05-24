@@ -35,6 +35,21 @@ assert.equal(updated.markup.layer, 'ASI-001', 'markup layer persists');
 assert.equal(updated.markup.costCode, '09-2116', 'markup update accepts snake_case cost code from API payloads');
 assert.equal(updated.markup.assigneeUserId, 'u4', 'markup update accepts snake_case assignee from API payloads');
 
+const markupToDelete = cad.createMarkup(state, { projectId: 'alum', sheetId: 'A-101', tool: 'Pin', subject: 'Delete contract test' }, owner);
+assert.equal(markupToDelete.ok, true, 'markup for delete contract creates');
+const softDeleted = cad.deleteMarkup(state, markupToDelete.markup.id, { reason: 'Duplicate pin' }, owner);
+assert.equal(softDeleted.ok, true, 'markup soft-delete succeeds through audited production service');
+assert.equal(softDeleted.markup.status, 'Deleted', 'soft-deleted markup is marked Deleted');
+assert.equal(cad.listMarkups(state, { projectId: 'alum', sheetId: 'A-101' }).some((row) => row.id === markupToDelete.markup.id), false, 'soft-deleted markups are excluded from default lists/exports');
+assert.equal(cad.listMarkups(state, { projectId: 'alum', sheetId: 'A-101', includeDeleted: true }).some((row) => row.id === markupToDelete.markup.id), true, 'deleted markups remain discoverable when includeDeleted is explicit');
+const blockedHardDelete = cad.deleteMarkup(state, markupToDelete.markup.id, { hardDelete: true }, owner);
+assert.equal(blockedHardDelete.ok, false, 'permanent markup deletion fails closed without human review');
+assert.equal(blockedHardDelete.code, 'human-review-required', 'permanent deletion exposes human review blocker');
+const deniedDelete = cad.deleteMarkup(state, markup.markup.id, {}, readOnly);
+assert.equal(deniedDelete.ok, false, 'read-only users cannot delete markups');
+assert.equal(deniedDelete.status, 403, 'read-only delete denial is a 403');
+assert.ok(state.auditLog.some((row) => row.action === 'Soft-deleted CAST CAD markup'), 'markup soft-delete is audited');
+
 const comment = cad.createMarkupComment(state, markup.markup.id, { body: 'Please confirm with @architect@example.com and @pm-team.' }, owner);
 assert.equal(comment.ok, true, 'threaded markup comment creates through production service');
 assert.deepEqual(comment.comment.mentions, ['architect@example.com', 'pm-team'], 'comment contract extracts email and handle mentions');
@@ -245,6 +260,9 @@ assert.ok(castCadJs.includes('function syncMarkupToServer'), 'CAST CAD workbench
 assert.ok(castCadJs.includes("fetch('/api/cast-cad-markups'"), 'CAST CAD workbench posts markups to /api/cast-cad-markups');
 assert.ok(castCadJs.includes('function loadServerMarkupsForSelectedDrawing'), 'CAST CAD workbench reloads persisted server markups by sheet');
 assert.ok(castCadJs.includes('mergeServerMarkup'), 'CAST CAD workbench can merge server markup records into the local overlay');
+assert.ok(castCadJs.includes('function deleteMarkupWithBackend'), 'CAST CAD workbench deletes markups through backend audit contract');
+assert.ok(castCadJs.includes("method: 'DELETE'"), 'CAST CAD workbench uses DELETE /api/cast-cad-markups for audited soft-delete');
+assert.ok(castCadJs.includes('No local-only deletion was fabricated'), 'CAST CAD markup delete fails closed without fabricating an unaudited local deletion');
 assert.ok(castCadHtml.includes('data-markup-persistence-status'), 'CAST CAD workbench exposes backend markup persistence status');
 assert.ok(castCadJs.includes('function convertMarkupToRfiDraft'), 'CAST CAD workbench creates audited draft RFI snapshots from markups');
 assert.ok(castCadJs.includes("fetch('/api/cast-cad-rfi-link'"), 'CAST CAD workbench calls the RFI snapshot API instead of fabricating local RFIs');

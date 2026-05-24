@@ -175,6 +175,32 @@ function updateMarkup(state, markupId, patch, actor) {
   audit(state, actor, 'Updated CAST CAD markup', 'CAST_CAD_MARKUP', markup.id, previous, markup);
   return { ok: true, markup };
 }
+function deleteMarkup(state, markupId, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'delete_markup');
+  if (!permission.ok) return permission;
+  const index = state.markups.findIndex((row) => row.id === markupId);
+  if (index === -1) return { ok: false, status: 404, error: 'Markup not found.' };
+  const markup = state.markups[index];
+  const previous = clone(markup);
+  const hardDelete = Boolean(input.hardDelete || input.hard_delete || input.purge);
+  if (hardDelete && !(input.humanReviewApproved || input.human_review_approved)) {
+    return { ok: false, status: 409, code: 'human-review-required', error: 'Permanent CAST CAD markup deletion requires human review approval; soft-delete/archive remains available.', markup };
+  }
+  if (hardDelete) {
+    state.markups.splice(index, 1);
+    audit(state, actor, 'Permanently deleted CAST CAD markup after human approval', 'CAST_CAD_MARKUP', markup.id, previous, null, 'Hard delete/purge was human-review approved and audited.');
+    return { ok: true, deleted: true, hardDeleted: true, markupId };
+  }
+  if (markup.deletedAt) return { ok: true, deleted: true, hardDeleted: false, markup };
+  markup.status = 'Deleted';
+  markup.deletedAt = now();
+  markup.deletedByUserId = actor.id;
+  markup.updatedByUserId = actor.id;
+  markup.updatedAt = now();
+  markup.sourceSnapshot = { ...(markup.sourceSnapshot || {}), deletion: { mode: 'soft-delete', reason: String(input.reason || input.deleteReason || input.delete_reason || '').trim(), deletedByUserId: actor.id, deletedAt: markup.deletedAt } };
+  audit(state, actor, 'Soft-deleted CAST CAD markup', 'CAST_CAD_MARKUP', markup.id, previous, markup, 'Markup is archived/deleted by default filters but retained for audit history.');
+  return { ok: true, deleted: true, hardDeleted: false, markup };
+}
 function mentionsFromText(text) {
   return [...new Set(String(text || '').match(/@[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|@[a-z][a-z0-9._-]*/gi) || [])]
     .map((mention) => mention.slice(1).replace(/[.,;:!?)]$/, ''));
@@ -215,6 +241,7 @@ function listMarkupAudit(state, markupId) {
 }
 function listMarkups(state, filters = {}) {
   let rows = state.markups.slice();
+  if (!filters.includeDeleted) rows = rows.filter((row) => !row.deletedAt && row.status !== 'Deleted');
   if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
   if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
@@ -1053,7 +1080,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
-  buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
+  buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
