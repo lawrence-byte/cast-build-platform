@@ -265,5 +265,13 @@ assert.ok(castCadJs.includes('function placeSelectedToolLibraryItem'), 'CAST CAD
 assert.ok(castCadJs.includes('No local markup or budget quantity was fabricated'), 'CAST CAD Tool Library placement fails closed without fabricating local budget authority');
 assert.ok(castCadHtml.includes('data-tool-library-items'), 'CAST CAD workbench exposes Tool Library item list');
 assert.ok(castCadHtml.includes('data-place-tool-library-item'), 'CAST CAD workbench exposes review-gated Tool Library placement control');
+assert.ok(castCadJs.includes('function loadAiReviewFindings'), 'CAST CAD workbench loads AI Review findings from backend contract');
+assert.ok(castCadJs.includes("action: 'ai-findings'"), 'CAST CAD workbench calls AI findings contract on /api/cast-cad-search');
+assert.ok(castCadJs.includes('function createAiReviewFinding'), 'CAST CAD workbench creates source-cited AI Detected findings');
+assert.ok(castCadJs.includes('function reviewSelectedAiFinding'), 'CAST CAD workbench verifies and converts AI findings through backend audit');
+assert.ok(castCadJs.includes('No uncited/local AI finding was fabricated'), 'CAST CAD AI Review creation fails closed without fabricating uncited findings');
+assert.ok(castCadJs.includes('No human-verified markup was fabricated'), 'CAST CAD AI Review conversion fails closed without backend human-review audit');
+assert.ok(castCadHtml.includes('data-ai-review-findings'), 'CAST CAD workbench exposes AI Review finding list');
+assert.ok(castCadHtml.includes('data-review-ai-finding'), 'CAST CAD workbench exposes human-review-gated AI finding conversion control');
 
 console.log('CAST CAD production contract tests passed.');

@@ -185,7 +185,21 @@
         </article>
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>AI Review agents</h2><span class="badge">Human verification required</span></div>
-          <div class="cad-panel-body"><div class="tool-list" data-ai-agents></div></div>
+          <div class="cad-panel-body">
+            <div class="pdf-intake cad-ai-review-controls" aria-label="CAST CAD AI Review controls">
+              <label>Finding title <input type="text" data-ai-review-title placeholder="Possible coordination issue" autocomplete="off"></label>
+              <label>Severity <select data-ai-review-severity><option>Medium</option><option>High</option><option>Low</option></select></label>
+              <label>Confidence <input type="number" min="0" max="100" step="1" value="72" data-ai-review-confidence autocomplete="off"></label>
+              <label>Body <input type="text" data-ai-review-body placeholder="Source-cited AI Detected finding" autocomplete="off"></label>
+              <label><input type="checkbox" data-ai-human-review autocomplete="off"> Human review approved</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-ai-finding>Create cited AI finding</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-review-ai-finding>Verify + convert selected</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-ai-findings>Refresh findings</button>
+              <span class="pdf-status" data-ai-review-status>AI Review findings not loaded yet. AI Detected findings require cited sources and human verification.</span>
+            </div>
+            <div class="tool-list" data-ai-review-findings><p class="cad-muted">AI Review findings loading…</p></div>
+            <div class="tool-list" data-ai-agents></div>
+          </div>
         </article>
       </section>
 
