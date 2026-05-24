@@ -31,6 +31,7 @@ let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not lo
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
 let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
+let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -743,6 +744,7 @@ function render() {
   renderDocumentMetadataStatus();
   renderDrawingSetControls();
   renderViewportMappingStatus();
+  renderMarkupThread();
 }
 function reviewRoomPayload() {
   const drawing = selectedDrawing();
@@ -1107,6 +1109,84 @@ function renderMarkupPersistenceStatus() {
   if (status) status.textContent = markupPersistenceState.message;
   const rfiStatus = document.querySelector('[data-rfi-link-status]');
   if (rfiStatus) rfiStatus.textContent = rfiLinkState.message;
+}
+function localMarkupForThread(markupId = markupThreadState.markupId) {
+  return state.drawingMarkups.find((row) => row.id === markupId || serverMarkupIdFor(row) === markupId) || null;
+}
+function renderMarkupThread() {
+  const status = document.querySelector('[data-markup-thread-status]');
+  const list = document.querySelector('[data-markup-thread-list]');
+  const audit = document.querySelector('[data-markup-audit-list]');
+  const selector = document.querySelector('[data-markup-thread-target]');
+  const rows = visibleMarkups();
+  if (selector) {
+    const options = rows.map((m) => `<option value="${esc(m.id)}">${esc(m.subject || m.tool)} · ${esc(m.status || 'Open')}</option>`).join('');
+    const current = selector.value || markupThreadState.markupId || rows[0]?.id || '';
+    selector.innerHTML = `<option value="">Markup thread</option>${options}`;
+    selector.value = current;
+    if (!markupThreadState.markupId && current) markupThreadState.markupId = current;
+  }
+  if (status) status.textContent = markupThreadState.message;
+  if (list) {
+    list.innerHTML = markupThreadState.comments.length ? markupThreadState.comments.map((comment) => {
+      const parent = comment.parentId ? `Reply to ${comment.parentId}` : 'Root comment';
+      const mentions = comment.mentions?.length ? ` · mentions ${comment.mentions.join(', ')}` : '';
+      return `<div class="tool-card"><em>${esc(parent)}${esc(mentions)} · ${esc(comment.createdAt || '')}</em><strong>${esc(comment.body || '')}</strong><span>Backend comment ${esc(comment.id || '')}; markup ${esc(comment.markupId || '')}</span></div>`;
+    }).join('') : '<p class="cad-muted">No backend thread comments loaded yet. Refresh a persisted markup or add a comment through the audited contract.</p>';
+  }
+  if (audit) {
+    audit.innerHTML = markupThreadState.auditLog.length ? markupThreadState.auditLog.slice(-6).reverse().map((entry) => `<div class="tool-card"><em>${esc(entry.entityType || 'audit')} · ${esc(entry.createdAt || '')}</em><strong>${esc(entry.action || 'CAST CAD audit event')}</strong><span>${esc(entry.entityId || '')} · ${esc(entry.note || '')}</span></div>`).join('') : '<p class="cad-muted">No markup audit history loaded yet.</p>';
+  }
+}
+async function loadMarkupThreadForSelected({ toast = false } = {}) {
+  const localMarkupId = document.querySelector('[data-markup-thread-target]')?.value || markupThreadState.markupId || visibleMarkups()[0]?.id || '';
+  const markup = localMarkupForThread(localMarkupId) || state.drawingMarkups.find((row) => row.id === localMarkupId);
+  if (!markup) { markupThreadState = { status: 'blocked', markupId: '', comments: [], auditLog: [], message: 'Select a markup before loading its backend thread.' }; renderMarkupThread(); return; }
+  markupThreadState = { ...markupThreadState, status: 'loading', markupId: markup.id, message: `Loading audited thread for ${markup.subject || markup.tool}…` };
+  renderMarkupThread();
+  try {
+    const serverId = await ensureMarkupSyncedForWorkflow(markup);
+    const params = new URLSearchParams({ action: 'comments', markupId: serverId });
+    const auditParams = new URLSearchParams({ action: 'audit', markupId: serverId });
+    const [commentsResponse, auditResponse] = await Promise.all([
+      fetch(`/api/cast-cad-markups?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' }),
+      fetch(`/api/cast-cad-markups?${auditParams.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' }),
+    ]);
+    const comments = await commentsResponse.json().catch(() => null);
+    const audit = await auditResponse.json().catch(() => null);
+    if (!commentsResponse.ok || comments?.ok === false) throw new Error(comments?.error || `comments HTTP ${commentsResponse.status}`);
+    if (!auditResponse.ok || audit?.ok === false) throw new Error(audit?.error || `audit HTTP ${auditResponse.status}`);
+    markupThreadState = { status: 'loaded', markupId: markup.id, comments: comments.comments || [], auditLog: audit.auditLog || [], message: `${comments.count || 0} backend comment(s) and ${audit.count || audit.auditLog?.length || 0} audit event(s) loaded for ${markup.subject || markup.tool}.` };
+    if (toast) window.CASTShell?.toast?.('Markup thread and audit history loaded from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD markup thread API unavailable', error);
+    markupThreadState = { ...markupThreadState, status: 'blocked', comments: [], auditLog: [], message: `Thread/audit load blocked: ${error.message}. No local comment history or audit authority was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Markup thread load blocked; backend audit is required.', { kind: 'error' });
+  }
+  renderMarkupThread();
+}
+async function addMarkupThreadComment() {
+  const localMarkupId = document.querySelector('[data-markup-thread-target]')?.value || markupThreadState.markupId || visibleMarkups()[0]?.id || '';
+  const markup = localMarkupForThread(localMarkupId) || state.drawingMarkups.find((row) => row.id === localMarkupId);
+  const body = document.querySelector('[data-markup-thread-body]')?.value.trim() || '';
+  if (!markup || !body) { window.CASTShell?.toast?.('Select a markup and enter a comment before posting.', { kind: 'error' }); return; }
+  try {
+    const serverId = await ensureMarkupSyncedForWorkflow(markup);
+    const parentId = document.querySelector('[data-markup-thread-parent]')?.value.trim() || '';
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'comment', markupId: serverId, parentId, body }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    document.querySelector('[data-markup-thread-body]').value = '';
+    document.querySelector('[data-markup-thread-parent]').value = '';
+    markupThreadState = { ...markupThreadState, status: 'commented', markupId: markup.id, message: `Comment ${result.comment?.id || ''} added through backend thread contract; mentions are extracted server-side.` };
+    window.CASTShell?.toast?.('Markup comment added through backend audit.', { kind: 'success' });
+    await loadMarkupThreadForSelected();
+  } catch (error) {
+    console.warn('Could not add CAST CAD markup thread comment', error);
+    markupThreadState = { ...markupThreadState, status: 'blocked', message: `Comment blocked: ${error.message}. No local-only comment or audit history was fabricated.` };
+    window.CASTShell?.toast?.('Markup comment blocked; backend audit is required.', { kind: 'error' });
+    renderMarkupThread();
+  }
 }
 async function syncMarkupToServer(markup, { toast = false } = {}) {
   try {
@@ -1685,7 +1765,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -1696,6 +1776,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
   if (event.target.closest('[data-save-viewport-mapping]')) { saveViewportMappingForSelectedSheet({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-markup-thread]')) { loadMarkupThreadForSelected({ toast: true }); return; }
+  if (event.target.closest('[data-add-markup-thread-comment]')) { addMarkupThreadComment(); return; }
   const batchMarkup = event.target.closest('[data-batch-markup]');
   if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
   if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
@@ -1738,6 +1820,8 @@ document.addEventListener('change', (event) => {
   if (event.target.closest('[data-viewer-layout], [data-viewer-zoom], [data-viewer-pref]')) persistViewerPreferences({ toast: false });
   const toolLibraryItem = event.target.closest('[data-tool-library-item]');
   if (toolLibraryItem) { toolLibraryState.selectedItemId = toolLibraryItem.dataset.toolLibraryItem; renderToolLibrary(); return; }
+  const markupThreadTarget = event.target.closest('[data-markup-thread-target]');
+  if (markupThreadTarget) { markupThreadState = { ...markupThreadState, markupId: markupThreadTarget.value, comments: [], auditLog: [], message: 'Markup thread selected; refresh to load backend comments and audit history.' }; renderMarkupThread(); return; }
   const aiFinding = event.target.closest('[data-ai-finding]');
   if (aiFinding) { aiReviewState.selectedFindingId = aiFinding.dataset.aiFinding; renderAiReviewFindings(); return; }
   const slipSheetTarget = event.target.closest('[data-slip-sheet-target]');

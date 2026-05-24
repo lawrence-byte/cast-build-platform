@@ -264,6 +264,13 @@ assert.ok(castCadJs.includes('function deleteMarkupWithBackend'), 'CAST CAD work
 assert.ok(castCadJs.includes("method: 'DELETE'"), 'CAST CAD workbench uses DELETE /api/cast-cad-markups for audited soft-delete');
 assert.ok(castCadJs.includes('No local-only deletion was fabricated'), 'CAST CAD markup delete fails closed without fabricating an unaudited local deletion');
 assert.ok(castCadHtml.includes('data-markup-persistence-status'), 'CAST CAD workbench exposes backend markup persistence status');
+assert.ok(castCadJs.includes('function loadMarkupThreadForSelected'), 'CAST CAD workbench loads threaded markup comments from backend contract');
+assert.ok(castCadJs.includes("action: 'comments'"), 'CAST CAD workbench calls comments action on /api/cast-cad-markups');
+assert.ok(castCadJs.includes("action: 'audit'"), 'CAST CAD workbench calls per-markup audit history action');
+assert.ok(castCadJs.includes('No local-only comment or audit history was fabricated'), 'CAST CAD markup thread workflow fails closed without fabricating comments or audit authority');
+assert.ok(castCadHtml.includes('data-markup-thread-target'), 'CAST CAD workbench exposes markup thread selector');
+assert.ok(castCadHtml.includes('data-add-markup-thread-comment'), 'CAST CAD workbench exposes audited comment creation control');
+assert.ok(castCadHtml.includes('data-markup-audit-list'), 'CAST CAD workbench exposes markup audit history list');
 assert.ok(castCadJs.includes('function convertMarkupToRfiDraft'), 'CAST CAD workbench creates audited draft RFI snapshots from markups');
 assert.ok(castCadJs.includes("fetch('/api/cast-cad-rfi-link'"), 'CAST CAD workbench calls the RFI snapshot API instead of fabricating local RFIs');
 assert.ok(castCadJs.includes('No local-only or external RFI was fabricated'), 'CAST CAD RFI conversion fails closed when backend workflow is unavailable');
