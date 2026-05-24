@@ -42,6 +42,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent audited markup soft-delete contract on `/api/cast-cad-markups` using `DELETE`, default list/export filtering that excludes deleted markups, explicit `includeDeleted=true` audit discovery, hard-delete human-review gates, and frontend delete controls that fail closed rather than fabricating unaudited local deletion.
 - Provider-independent frontend drawing set version/slip-sheet bridge that publishes the current drawing index through `/api/cast-cad-exports` `type=drawing-set-version`, loads audited version/revision history, slip-sheets selected revisions only through the human-review-gated backend contract, and fails closed without fabricating local current/superseded authority.
 - Provider-independent frontend threaded markup comment/audit bridge that selects persisted markups, loads `/api/cast-cad-markups?action=comments|audit`, posts audited mention-aware comments, and fails closed without fabricating local-only comment history or audit authority.
+- Provider-independent frontend audited markup-edit bridge that resolves/updates selected markups only through backend `PATCH /api/cast-cad-markups`, refreshes local state from the server response, and fails closed without fabricating unaudited local-only edit authority.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
