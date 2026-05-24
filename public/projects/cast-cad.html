@@ -169,8 +169,19 @@
 
       <section class="cad-grid" aria-label="Enterprise module scaffolds">
         <article class="cad-panel">
-          <div class="cad-panel-head"><h2>CAST Tool Library</h2><span class="badge">Feature flag</span></div>
-          <div class="cad-panel-body"><div class="tool-list"><div class="tool-card"><em>Standard libraries</em><strong>General · Architect · Structural · MEP · Punch · Cost takeoff</strong><span>Reusable company/project/trade/user tools with properties mode, symbol mode, permissions, favorites, and import/export planned behind `castCadToolLibrary`.</span></div><div class="tool-card"><em>Custom symbols</em><strong>Door tag · ADA · Firestopping · Scope gap · VE · Cost risk</strong><span>Save any markup/group as a CAST reusable tool without copying proprietary Bluebeam naming or interface patterns.</span></div></div></div>
+          <div class="cad-panel-head"><h2>CAST Tool Library</h2><span class="badge">Audited contract</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Reusable CAST count/length/area/symbol tools now load from `/api/cast-cad-markups?action=tool-library`; placements create review-gated markups/takeoff rows and never become budget-authoritative without human review.</p>
+            <div class="pdf-intake cad-tool-library-controls" aria-label="CAST CAD Tool Library controls">
+              <label>Seed item <select data-tool-library-seed><option value="fec">Fire extinguisher cabinet</option><option value="door">Door/frame count</option><option value="wall">Drywall partition length</option><option value="waterproofing">Waterproofing area</option></select></label>
+              <label>Quantity <input type="number" min="0.01" step="0.01" value="1" data-tool-library-quantity autocomplete="off"></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-tool-library-item>Create library item</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-place-tool-library-item>Place selected tool</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-tool-library>Refresh library</button>
+              <span class="pdf-status" data-tool-library-status>Tool Library not loaded yet. Items require human review before budget/export authority.</span>
+            </div>
+            <div class="tool-list" data-tool-library-items><p class="cad-muted">Tool Library loading…</p></div>
+          </div>
         </article>
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>AI Review agents</h2><span class="badge">Human verification required</span></div>
