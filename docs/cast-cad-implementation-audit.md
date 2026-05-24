@@ -18,6 +18,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent vector markup layer/group/style controls for stroke, fill, opacity, line width, and font size, persisted in local MVP data and server markup contracts.
 - Provider-independent threaded markup comment/mention contract plus markup audit-history read contract on `/api/cast-cad-markups`.
 - Provider-independent persisted viewer-preferences contract and workbench controls for layout, zoom mode, thumbnails, bookmarks, page labels, keyboard shortcuts, split view, side-by-side view, and search panel state: `/api/cast-cad-markups?action=preferences`.
+- Provider-independent PDF viewport coordinate mapping contract and workbench controls for page box, viewport dimensions, rotation, normalized-overlay-to-PDF point conversion, scale calibration linkage, and audited backend persistence: `/api/cast-cad-markups?action=viewport-mapping`.
 - Provider-independent drawing set versioning and slip-sheeting contract with audited supersedence chains and fail-closed human-review approval gates: `/api/cast-cad-exports` with `type=drawing-set-version`, `type=slip-sheet`, or `GET type=drawing-sets`.
 - Provider-independent CAST Tool Library contract for admin-managed count/length/area/symbol/stamp items, assembly/cost metadata, audited updates, and review-gated placement as markup/takeoff rows: `/api/cast-cad-markups?action=tool-library`.
 - Provider-independent CAST CAD batch operation contract for scoped status/assignee/layer/review/stamp updates, audited per target markup with fail-closed human-review gates for stamped/resolved/verified mutations: `/api/cast-cad-exports` with `type=batch-operation`.
@@ -54,7 +55,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Basic route/navigation discoverability is guarded by tests.
 - Remaining production work:
   - Connect production provider credentials for the authenticated raw PDF stream/proxy (`CAST_CAD_PDF_STREAM_BASE`, Dropbox, or CAST Server API). The fail-closed API contract is implemented.
-  - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences. Provider-independent preference UI/API contract is implemented; renderer engine/worker remains provider/integration-dependent.
+  - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences. Provider-independent preference UI/API and PDF viewport coordinate mapping contracts are implemented; renderer engine/worker remains provider/integration-dependent.
   - Connect database adapter for document metadata persistence. The provider-independent drawing document metadata registry/import/audit contract and frontend import/status bridge are implemented and fail closed for durable or authoritative writes without `CAST_CAD_DOCUMENT_METADATA_ADAPTER`.
   - Wire backend auth/session identity into the CAST CAD permission layer. Permission decisions are implemented in the service contract.
 
@@ -79,7 +80,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Unit tests cover length, area, count, scale metadata, feature flags, module registry, AI registry, and schema planning.
   - Takeoff rows remain draft/needs-review until human verified.
 - Remaining production work:
-  - Connect true PDF coordinate mapping and multiple viewport scale persistence to the selected PDF renderer.
+  - Provider-independent PDF viewport coordinate mapping, page box/rotation persistence, and normalized overlay-to-PDF point conversion are implemented in the backend/workbench contract. Remaining work is to connect the selected PDF renderer's native page events and viewport matrices to that contract.
   - Completed provider-independent frontend precision controls, editable measurement captions, assembly takeoffs, formula columns, and seed cost-code/unit-cost mapping on top of the workbook export contract. Remaining work is to connect the production cost database adapter once provider/storage decisions are available.
 
 ## Enterprise modules scaffolded behind flags
@@ -128,8 +129,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-24T04:14:26Z`.
-- Branch audited: `cast-cad-governance-bridge`.
+- Audited at: `2026-05-24T12:45:40Z`.
+- Branch audited: `cast-cad-viewport-coordinate-mapping`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

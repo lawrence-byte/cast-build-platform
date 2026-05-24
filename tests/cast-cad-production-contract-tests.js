@@ -199,6 +199,18 @@ const loadedPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(loadedPrefs.source, 'stored', 'viewer preferences read stored project/user record');
 assert.equal(loadedPrefs.preferences.showBookmarks, true, 'viewer preferences reload stored bookmarks setting');
 
+const invalidViewport = cad.saveViewportMapping(state, { projectId: 'alum', sheetId: 'A-101', pageWidth: 0, pageHeight: 792 }, owner);
+assert.equal(invalidViewport.ok, false, 'viewport mapping validates PDF page dimensions');
+assert.equal(invalidViewport.status, 422, 'invalid viewport mapping returns validation error');
+const viewportMapping = cad.saveViewportMapping(state, { projectId: 'alum', sheetId: 'A-101', pageNumber: 1, pageWidth: 612, pageHeight: 792, viewportWidth: 1224, viewportHeight: 1584, rotation: 0, samplePoint: { x: 25, y: 75 } }, owner);
+assert.equal(viewportMapping.ok, true, 'viewport coordinate mapping saves through production service');
+assert.deepEqual(viewportMapping.samplePoint, { x: 153, y: 198 }, 'normalized top-left point converts to PDF bottom-left coordinates');
+assert.equal(viewportMapping.mapping.coordinateSystem, 'pdf-points-bottom-left', 'viewport mapping names PDF coordinate system');
+assert.equal(cad.listViewportMappings(state, { projectId: 'alum', sheetId: 'A-101' }).length, 1, 'viewport mappings list by project and sheet');
+const rotatedPdfPoint = cad.normalizedPointToPdfPoint({ pageWidth: 612, pageHeight: 792, rotation: 90 }, { x: 25, y: 75 });
+assert.deepEqual(rotatedPdfPoint, { x: 198, y: 459 }, 'viewport mapping supports rotated PDF pages');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_VIEWPORT_MAPPING'), 'viewport mapping saves are audited');
+
 const permissionMatrix = cad.buildPermissionMatrix();
 assert.equal(permissionMatrix.some((row) => row.role === 'Project Manager' && row.permissions.includes('audit')), true, 'permission matrix exposes role capabilities');
 const memberRole = cad.upsertProjectMemberRole(state, { projectId: 'alum', userId: 'pe-01', email: 'pe@example.com', name: 'Project Engineer', role: 'Project Engineer' }, owner);
@@ -287,5 +299,10 @@ assert.ok(castCadJs.includes('No local role, permission, or audit authority was 
 assert.ok(castCadHtml.includes('data-assign-governance-role'), 'CAST CAD workbench exposes audited role assignment controls');
 assert.ok(castCadHtml.includes('data-governance-permissions'), 'CAST CAD workbench exposes effective permission status');
 assert.ok(castCadHtml.includes('data-governance-audit'), 'CAST CAD workbench exposes governance audit status');
+assert.ok(castCadJs.includes('function saveViewportMappingForSelectedSheet'), 'CAST CAD workbench saves PDF viewport coordinate mappings');
+assert.ok(castCadJs.includes("action: 'viewport-mapping'"), 'CAST CAD workbench calls viewport mapping backend contract');
+assert.ok(castCadJs.includes('no renderer integration was fabricated'), 'CAST CAD viewport mapping fails closed without fabricating renderer integration');
+assert.ok(castCadHtml.includes('data-save-viewport-mapping'), 'CAST CAD workbench exposes coordinate mapping controls');
+assert.ok(castCadHtml.includes('data-viewport-mapping-status'), 'CAST CAD workbench exposes coordinate mapping status');
 
 console.log('CAST CAD production contract tests passed.');
