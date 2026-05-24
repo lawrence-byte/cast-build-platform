@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -272,6 +272,81 @@ function saveViewerPreferences(state, actor, input = {}) {
   if (!previous) state.userPreferences.push(record);
   audit(state, actor, 'Saved CAST CAD viewer preferences', 'CAST_CAD_VIEWER_PREFERENCES', record.id, previousSnapshot, record);
   return { ok: true, preferences: record };
+}
+function normalizeViewportMapping(input = {}, actor) {
+  const pageWidth = Number(input.pageWidth ?? input.page_width ?? input.mediaBoxWidth ?? input.media_box_width ?? 0);
+  const pageHeight = Number(input.pageHeight ?? input.page_height ?? input.mediaBoxHeight ?? input.media_box_height ?? 0);
+  const viewportWidth = Number(input.viewportWidth ?? input.viewport_width ?? pageWidth);
+  const viewportHeight = Number(input.viewportHeight ?? input.viewport_height ?? pageHeight);
+  const scale = Number(input.scale || 1);
+  const rotation = ((Number(input.rotation || 0) % 360) + 360) % 360;
+  return {
+    id: input.id || id('cad_viewport'),
+    projectId: input.projectId || input.project_id || 'default',
+    sheetId: input.sheetId || input.sheet_id || '',
+    pageNumber: Number(input.pageNumber || input.page_number || 1),
+    pageWidth,
+    pageHeight,
+    viewportWidth,
+    viewportHeight,
+    scale: Number.isFinite(scale) && scale > 0 ? scale : 1,
+    rotation,
+    coordinateSystem: 'pdf-points-bottom-left',
+    normalizedOrigin: 'top-left-percent',
+    renderer: input.renderer || 'browser-pdf-contract',
+    source: input.source || 'cast-cad-workbench',
+    calibration: input.calibration || null,
+    updatedByUserId: actor.id,
+    createdAt: input.createdAt || input.created_at || now(),
+    updatedAt: now(),
+  };
+}
+function validateViewportMapping(mapping) {
+  const errors = [];
+  if (!mapping.projectId) errors.push('projectId is required.');
+  if (!mapping.sheetId) errors.push('sheetId is required.');
+  if (!Number.isFinite(mapping.pageNumber) || mapping.pageNumber < 1) errors.push('pageNumber must be a positive number.');
+  if (!Number.isFinite(mapping.pageWidth) || mapping.pageWidth <= 0) errors.push('pageWidth must be a positive number.');
+  if (!Number.isFinite(mapping.pageHeight) || mapping.pageHeight <= 0) errors.push('pageHeight must be a positive number.');
+  if (!Number.isFinite(mapping.viewportWidth) || mapping.viewportWidth <= 0) errors.push('viewportWidth must be a positive number.');
+  if (!Number.isFinite(mapping.viewportHeight) || mapping.viewportHeight <= 0) errors.push('viewportHeight must be a positive number.');
+  if (![0, 90, 180, 270].includes(mapping.rotation)) errors.push('rotation must be 0, 90, 180, or 270 degrees.');
+  return errors;
+}
+function normalizedPointToPdfPoint(mapping, point = {}) {
+  const xPct = Math.max(0, Math.min(100, Number(point.x ?? point.normalizedX ?? point.normalized_x ?? 0)));
+  const yPct = Math.max(0, Math.min(100, Number(point.y ?? point.normalizedY ?? point.normalized_y ?? 0)));
+  const x = (xPct / 100) * mapping.pageWidth;
+  const yTop = (yPct / 100) * mapping.pageHeight;
+  const y = mapping.pageHeight - yTop;
+  if (mapping.rotation === 90) return { x: Number(y.toFixed(3)), y: Number((mapping.pageWidth - x).toFixed(3)) };
+  if (mapping.rotation === 180) return { x: Number((mapping.pageWidth - x).toFixed(3)), y: Number((mapping.pageHeight - y).toFixed(3)) };
+  if (mapping.rotation === 270) return { x: Number((mapping.pageHeight - y).toFixed(3)), y: Number(x.toFixed(3)) };
+  return { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) };
+}
+function saveViewportMapping(state, input = {}, actor) {
+  state.viewportMappings ||= [];
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const mapping = normalizeViewportMapping(input, actor);
+  const errors = validateViewportMapping(mapping);
+  if (errors.length) return { ok: false, status: 422, errors };
+  const previous = state.viewportMappings.find((row) => row.projectId === mapping.projectId && row.sheetId === mapping.sheetId && row.pageNumber === mapping.pageNumber) || null;
+  const previousSnapshot = previous ? clone(previous) : null;
+  if (previous) Object.assign(previous, mapping, { id: previous.id, createdAt: previous.createdAt });
+  else state.viewportMappings.push(mapping);
+  const current = previous || mapping;
+  const samplePoint = normalizedPointToPdfPoint(current, input.samplePoint || input.sample_point || { x: 50, y: 50 });
+  audit(state, actor, previous ? 'Updated CAST CAD viewport coordinate mapping' : 'Saved CAST CAD viewport coordinate mapping', 'CAST_CAD_VIEWPORT_MAPPING', current.id, previousSnapshot, current, 'Provider-independent PDF coordinate contract; renderer worker can consume this mapping without fabricating private PDF artifacts.');
+  return { ok: true, mapping: current, samplePoint, contract: { normalizedOrigin: current.normalizedOrigin, coordinateSystem: current.coordinateSystem, durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER', rendererWorkerStillRequired: 'PDF.js/commercial renderer integration' } };
+}
+function listViewportMappings(state, filters = {}) {
+  state.viewportMappings ||= [];
+  let rows = state.viewportMappings.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.pageNumber) rows = rows.filter((row) => row.pageNumber === Number(filters.pageNumber));
+  return rows;
 }
 function createTakeoffWorkbookExport(state, { projectId, sheetId, format = 'xlsx' }, actor) {
   const permission = requireCastCad(actor.role, 'export');
@@ -980,7 +1055,7 @@ module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
-  defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences,
+  defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,

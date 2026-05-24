@@ -110,6 +110,16 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-calibrate-scale>Calibrate scale</button>
               <span class="pdf-status" data-scale-status>Scale not calibrated for this sheet.</span>
             </div>
+            <div class="pdf-intake cad-viewport-mapping" aria-label="PDF coordinate mapping controls">
+              <label>Page <input type="number" min="1" step="1" value="1" data-pdf-page-number autocomplete="off"></label>
+              <label>PDF W <input type="number" min="1" step="0.01" value="612" data-pdf-page-width autocomplete="off"></label>
+              <label>PDF H <input type="number" min="1" step="0.01" value="792" data-pdf-page-height autocomplete="off"></label>
+              <label>Viewport W <input type="number" min="1" step="0.01" value="612" data-pdf-viewport-width autocomplete="off"></label>
+              <label>Viewport H <input type="number" min="1" step="0.01" value="792" data-pdf-viewport-height autocomplete="off"></label>
+              <label>Rotation <select data-pdf-rotation autocomplete="off"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-save-viewport-mapping>Save coordinate map</button>
+              <span class="pdf-status" data-viewport-mapping-status>PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.</span>
+            </div>
             <div class="pdf-intake cad-style-bar" aria-label="Markup layer, grouping, and style controls">
               <label>Layer <input type="text" value="Default" data-markup-layer autocomplete="off"></label>
               <label>Group <input type="text" placeholder="Optional group ID" data-markup-group autocomplete="off"></label>

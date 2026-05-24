@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -21,6 +21,10 @@ module.exports = async function handler(req, res) {
       if (action === 'preferences') {
         const result = getViewerPreferences(state, actor, url.searchParams.get('projectId') || 'default');
         return json(res, result.ok ? 200 : (result.status || 403), result);
+      }
+      if (action === 'viewport-mapping' || action === 'coordinate-mapping') {
+        const mappings = listViewportMappings(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), pageNumber: url.searchParams.get('pageNumber') });
+        return json(res, 200, { ok: true, mappingCount: mappings.length, mappings, contract: { normalizedOrigin: 'top-left-percent', coordinateSystem: 'pdf-points-bottom-left', durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER', rendererWorkerStillRequired: 'PDF.js/commercial renderer integration' } });
       }
       if (action === 'document-metadata' || action === 'drawing-documents') {
         const documents = listDrawingDocumentMetadata(state, { projectId: url.searchParams.get('projectId'), setId: url.searchParams.get('setId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
@@ -55,6 +59,10 @@ module.exports = async function handler(req, res) {
       const body = await readBody(req);
       if (body.action === 'preferences') {
         const result = saveViewerPreferences(state, actor, body);
+        return json(res, result.ok ? 200 : (result.status || 422), result);
+      }
+      if (body.action === 'viewport-mapping' || body.action === 'coordinate-mapping') {
+        const result = saveViewportMapping(state, body, actor);
         return json(res, result.ok ? 200 : (result.status || 422), result);
       }
       if (body.action === 'document-metadata' || body.action === 'drawing-documents') {

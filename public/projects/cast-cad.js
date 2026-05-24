@@ -28,6 +28,7 @@ let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItem
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
+let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -335,6 +336,65 @@ function renderViewerPreferences() {
     viewer.dataset.pageLabels = String(Boolean(viewerPreferences.showPageLabels));
   }
 }
+function renderViewportMappingStatus() {
+  const status = document.querySelector('[data-viewport-mapping-status]');
+  if (status) status.textContent = viewportMappingState.message;
+}
+function viewportMappingPayload(samplePoint = { x: 50, y: 50 }) {
+  const drawing = selectedDrawing();
+  return {
+    action: 'viewport-mapping',
+    projectId: drawing?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    pageNumber: Number(document.querySelector('[data-pdf-page-number]')?.value || 1),
+    pageWidth: Number(document.querySelector('[data-pdf-page-width]')?.value || 612),
+    pageHeight: Number(document.querySelector('[data-pdf-page-height]')?.value || 792),
+    viewportWidth: Number(document.querySelector('[data-pdf-viewport-width]')?.value || document.querySelector('[data-viewer]')?.clientWidth || 612),
+    viewportHeight: Number(document.querySelector('[data-pdf-viewport-height]')?.value || document.querySelector('[data-viewer]')?.clientHeight || 792),
+    rotation: Number(document.querySelector('[data-pdf-rotation]')?.value || 0),
+    renderer: activePdfUrl() ? 'browser-pdf-object-contract' : 'mock-plan-contract',
+    source: 'cast-cad-workbench-viewport-controls',
+    samplePoint,
+    calibration: currentScale(),
+  };
+}
+function localPdfCoordinate(point = { x: 50, y: 50 }) {
+  const mapping = viewportMappingState.mapping || viewportMappingPayload().mapping || viewportMappingPayload();
+  const x = (Math.max(0, Math.min(100, Number(point.x || 0))) / 100) * Number(mapping.pageWidth || 612);
+  const y = Number(mapping.pageHeight || 792) - ((Math.max(0, Math.min(100, Number(point.y || 0))) / 100) * Number(mapping.pageHeight || 792));
+  return { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) };
+}
+async function saveViewportMappingForSelectedSheet({ toast = false, samplePoint = { x: 50, y: 50 } } = {}) {
+  const payload = viewportMappingPayload(samplePoint);
+  if (!payload.sheetId) { window.CASTShell?.toast?.('Select a sheet before saving PDF coordinate mapping.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    viewportMappingState = { status: 'saved', mapping: result.mapping, message: `PDF coordinate mapping saved for page ${result.mapping?.pageNumber || payload.pageNumber}; 50%/50% maps to PDF ${result.samplePoint?.x}, ${result.samplePoint?.y}. Renderer worker still required for native page events.` };
+    if (toast) window.CASTShell?.toast?.('PDF coordinate mapping saved through backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not persist CAST CAD viewport mapping', error);
+    const local = localPdfCoordinate(samplePoint);
+    viewportMappingState = { status: 'local-only', mapping: payload, message: `Coordinate mapping saved locally only; backend contract unavailable (${error.message}). Sample PDF point ${local.x}, ${local.y}; no renderer integration was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Coordinate mapping contract unavailable; local preview only.', { kind: 'info' });
+  }
+  renderViewportMappingStatus();
+}
+async function loadViewportMappingForSelectedSheet() {
+  try {
+    const params = new URLSearchParams({ action: 'viewport-mapping', projectId: selectedDrawing()?.project_id || 'alum', sheetId: selectedDrawingId, pageNumber: '1' });
+    const response = await fetch(`/api/cast-cad-markups?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const mapping = result.mappings?.[0] || null;
+    viewportMappingState = mapping ? { status: 'loaded', mapping, message: `Loaded PDF coordinate mapping for page ${mapping.pageNumber}; normalized top-left overlay points convert to PDF bottom-left coordinates.` } : { ...viewportMappingState, status: 'empty', message: 'No saved PDF coordinate mapping for this sheet yet; save page box/viewport dimensions before renderer integration.' };
+  } catch (error) {
+    console.warn('Could not load CAST CAD viewport mapping', error);
+    viewportMappingState = { ...viewportMappingState, status: 'unavailable', message: 'Viewport mapping API unavailable; coordinate conversion remains local preview only.' };
+  }
+  renderViewportMappingStatus();
+}
 function viewerPreferencePayload() {
   return {
     layout: document.querySelector('[data-viewer-layout]')?.value || viewerPreferences.layout,
@@ -589,6 +649,7 @@ function render() {
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderDocumentMetadataStatus();
+  renderViewportMappingStatus();
 }
 function reviewRoomPayload() {
   const drawing = selectedDrawing();
@@ -1453,7 +1514,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -1463,6 +1524,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-open-server-pdf]')) { openSelectedPdf(); return; }
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
+  if (event.target.closest('[data-save-viewport-mapping]')) { saveViewportMappingForSelectedSheet({ toast: true }); return; }
   const batchMarkup = event.target.closest('[data-batch-markup]');
   if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
   if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
@@ -1511,6 +1573,7 @@ registerCastCadFieldServiceWorker();
 loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
+loadViewportMappingForSelectedSheet();
 loadDocumentMetadataRegistry();
 loadToolLibraryItems();
 loadAiReviewFindings();
