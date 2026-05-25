@@ -1211,6 +1211,7 @@ function createModelQuantityLink(state, input = {}, actor) {
   if (requestedVerified && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Model-derived quantities cannot become verified/resolved or budget-authoritative without human review approval.', contract: modelQuantityLinkContract() };
   const link = {
     id: input.id || id('cad_model_qty'), projectId, sheetId, modelIngestionJobId, sourcePointer, elementId,
+    type: 'model-quantity-link',
     elementName: String(input.elementName || input.element_name || '').trim(), discipline: String(input.discipline || '').trim(),
     quantity, unit, costCode: input.costCode || input.cost_code || '', assemblyCode: input.assemblyCode || input.assembly_code || '',
     status: humanReviewApproved ? (input.status || 'Reviewed') : 'Needs Review', humanReviewApproved,

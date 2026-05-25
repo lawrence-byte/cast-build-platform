@@ -249,6 +249,7 @@ assert.equal(blockedVerifiedModelQuantity.code, 'human-review-required', 'model 
 const modelQuantity = cad.createModelQuantityLink(state, { projectId: 'alum', sheetId: 'A-101', modelIngestionJobId: modelImport.job.id, elementId: 'IfcWall-2', elementName: 'Rated corridor wall', quantity: 22.5, unit: 'LF', costCode: '09-2116', createMarkup: true, humanReviewApproved: true }, owner);
 assert.equal(modelQuantity.ok, true, 'model-derived quantity link creates through audited contract');
 assert.equal(modelQuantity.quantityLink.publicExposure, false, 'model quantity link forbids public exposure');
+assert.equal(modelQuantity.quantityLink.type, 'model-quantity-link', 'model quantity link exposes its export-center type');
 assert.equal(modelQuantity.quantityLink.budgetAuthoritative, false, 'model quantity link is not budget-authoritative');
 assert.equal(modelQuantity.markup.measurement.source, 'model-quantity-link', 'model quantity can create a linked takeoff markup');
 assert.equal(modelQuantity.contract.humanReviewRequiredBeforeVerifiedQuantities, true, 'model quantity contract gates verified quantities with human review');
