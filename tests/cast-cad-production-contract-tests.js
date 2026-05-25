@@ -131,9 +131,16 @@ assert.equal(verifiedAiFinding.markup.sourceSnapshot.label, 'AI detected · huma
 assert.equal(cad.listAiFindings(state, { projectId: 'alum', humanVerified: true }).length, 1, 'AI findings list filters human-verified rows');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_AI_FINDING'), 'AI finding create/review is audited');
 
-const room = cad.createReviewRoom(state, { projectId: 'alum', name: 'Permit review', sheetIds: ['A-101'], participants: [{ userId: 'u3', role: 'Architect' }] }, owner);
+const room = cad.createReviewRoom(state, { projectId: 'alum', name: 'Permit review', sheetIds: ['A-101'], participants: [{ userId: 'u3', email: 'architect@example.com', role: 'Architect' }] }, owner);
 assert.equal(room.ok, true, 'review room created');
-assert.equal(room.room.participants[0].status, 'Invited', 'review room participants are invited');
+assert.equal(room.room.participants[0].status, 'Pending Delivery', 'review room participants wait for audited delivery contract');
+const blockedInviteDelivery = cad.createReviewRoomInviteDelivery(state, { roomId: room.room.id, message: 'Please review A-101.' }, owner);
+assert.equal(blockedInviteDelivery.ok, false, 'review room invite delivery fails closed without email/realtime transport');
+assert.equal(blockedInviteDelivery.code, 'provider-required', 'review room invite delivery exposes provider-required blocker');
+assert.equal(blockedInviteDelivery.inviteEvent.noPublicJoinLinks, true, 'review room invite contract refuses public join links');
+assert.deepEqual(blockedInviteDelivery.requiredEnvVars, ['CAST_CAD_REVIEW_ROOM_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_CAD_REALTIME_PROVIDER'], 'review room invite delivery names required transport env vars');
+assert.equal(cad.listReviewRoomInviteEvents(state, { projectId: 'alum', roomId: room.room.id }).length, 1, 'review room invite delivery events list by room');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_REVIEW_ROOM_INVITE'), 'review room invite delivery is audited');
 
 const docMetadata = cad.upsertDrawingDocumentMetadata(state, { projectId: 'alum', setId: 'current', sheetId: 'A-101', drawingNumber: 'A-101', drawingTitle: 'Floor Plan', discipline: 'Architecture', sourcePath: 'Current Drawings/A/A-101.pdf', pageCount: 1, contentHash: 'hash-a' }, owner);
 assert.equal(docMetadata.ok, true, 'drawing document metadata indexes through production service');

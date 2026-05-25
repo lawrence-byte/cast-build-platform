@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -667,12 +667,74 @@ function listAiFindings(state, filters = {}) {
   return rows;
 }
 function createReviewRoom(state, input, actor) {
+  state.reviewRooms ||= [];
   const permission = requireCastCad(actor.role, 'review_room');
   if (!permission.ok) return permission;
-  const room = { id: input.id || id('cad_room'), projectId: input.projectId, name: input.name || 'CAST CAD Review Room', status: input.status || 'Active', sheetIds: input.sheetIds || [], markupIds: input.markupIds || [], participants: (input.participants || []).map((p) => ({ ...p, invitedAt: now(), status: 'Invited' })), auditRequired: true, createdByUserId: actor.id, createdAt: now(), updatedAt: now() };
+  const participants = (input.participants || []).map((p) => ({ ...p, invitedAt: now(), status: 'Pending Delivery' }));
+  const room = { id: input.id || id('cad_room'), projectId: input.projectId, name: input.name || 'CAST CAD Review Room', status: input.status || 'Active', sheetIds: input.sheetIds || [], markupIds: input.markupIds || [], participants, inviteDelivery: { status: 'not-requested', providerRequired: true, requiredEnvVars: ['CAST_CAD_REVIEW_ROOM_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_CAD_REALTIME_PROVIDER'] }, auditRequired: true, createdByUserId: actor.id, createdAt: now(), updatedAt: now() };
   state.reviewRooms.push(room);
   audit(state, actor, 'Created CAST CAD review room', 'CAST_CAD_REVIEW_ROOM', room.id, null, room);
   return { ok: true, room };
+}
+function reviewRoomTransportConfigured() { return Boolean(process.env.CAST_CAD_REVIEW_ROOM_TRANSPORT || process.env.CAST_CAD_EMAIL_PROVIDER || process.env.CAST_CAD_REALTIME_PROVIDER); }
+function createReviewRoomInviteDelivery(state, input = {}, actor) {
+  state.reviewRooms ||= [];
+  state.reviewRoomInviteEvents ||= [];
+  const permission = requireCastCad(actor.role, 'review_room');
+  if (!permission.ok) return permission;
+  const roomId = input.roomId || input.room_id || input.reviewRoomId || input.review_room_id;
+  const room = state.reviewRooms.find((row) => row.id === roomId);
+  if (!room) return { ok: false, status: 404, error: 'CAST CAD review room not found.' };
+  const recipients = (Array.isArray(input.recipients) && input.recipients.length ? input.recipients : room.participants || [])
+    .map((recipient) => ({
+      userId: String(recipient.userId || recipient.user_id || '').trim(),
+      email: String(recipient.email || '').trim().toLowerCase(),
+      name: String(recipient.name || '').trim(),
+      role: normalizeRole(recipient.role || 'Read Only Viewer'),
+      status: reviewRoomTransportConfigured() ? 'queued' : 'provider-required',
+    }))
+    .filter((recipient) => recipient.userId || recipient.email);
+  if (!recipients.length) return { ok: false, status: 422, errors: ['At least one review-room recipient with userId or email is required.'] };
+  const providerReady = reviewRoomTransportConfigured();
+  const event = {
+    id: id('cad_room_invite'),
+    projectId: room.projectId,
+    roomId: room.id,
+    deliveryType: input.deliveryType || input.delivery_type || 'review-room-invite',
+    status: providerReady ? 'queued' : 'provider-required',
+    providerRequired: !providerReady,
+    requiredEnvVars: providerReady ? [] : ['CAST_CAD_REVIEW_ROOM_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_CAD_REALTIME_PROVIDER'],
+    provider: process.env.CAST_CAD_REVIEW_ROOM_TRANSPORT || (process.env.CAST_CAD_EMAIL_PROVIDER ? 'email-provider' : process.env.CAST_CAD_REALTIME_PROVIDER ? 'realtime-provider' : 'unconfigured'),
+    recipientCount: recipients.length,
+    recipients,
+    noPublicJoinLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    message: String(input.message || '').slice(0, 2000),
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.reviewRoomInviteEvents.push(event);
+  const previous = clone(room);
+  room.inviteDelivery = { status: event.status, providerRequired: event.providerRequired, requiredEnvVars: event.requiredEnvVars, lastInviteEventId: event.id, recipientCount: event.recipientCount, updatedAt: now() };
+  room.participants = room.participants.map((participant) => {
+    const key = String(participant.userId || participant.user_id || participant.email || '').toLowerCase();
+    const matched = recipients.find((recipient) => key && [recipient.userId, recipient.email].includes(key));
+    return matched ? { ...participant, status: matched.status === 'queued' ? 'Invite Queued' : 'Provider Required', inviteEventId: event.id } : participant;
+  });
+  room.updatedAt = now();
+  audit(state, actor, 'Created CAST CAD review room invite delivery event', 'CAST_CAD_REVIEW_ROOM_INVITE', event.id, null, event, event.providerRequired ? 'Invite delivery transport is not configured; no external email/realtime invite or public join link was fabricated.' : 'Invite delivery queued for configured private transport.');
+  audit(state, actor, 'Updated CAST CAD review room invite delivery status', 'CAST_CAD_REVIEW_ROOM', room.id, previous, room);
+  if (!providerReady) return { ok: false, status: 503, code: 'provider-required', error: 'Review Room invite delivery requires CAST_CAD_REVIEW_ROOM_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_CAD_REALTIME_PROVIDER; refusing to fabricate delivered invites.', requiredEnvVars: event.requiredEnvVars, inviteEvent: event, room };
+  return { ok: true, inviteEvent: event, room };
+}
+function listReviewRoomInviteEvents(state, filters = {}) {
+  state.reviewRoomInviteEvents ||= [];
+  let rows = state.reviewRoomInviteEvents.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.roomId) rows = rows.filter((row) => row.roomId === filters.roomId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
 }
 function normalizeDrawingDocumentMetadata(input = {}, actor) {
   const sourcePath = String(input.sourcePath || input.source_path || input.path || '').trim();
@@ -1227,7 +1289,7 @@ module.exports = {
   buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
-  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
+  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
