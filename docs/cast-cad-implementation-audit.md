@@ -52,6 +52,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent PDF annotation import/unflatten job contract and frontend bridge that accepts only private source pointers/stream lease IDs, rejects public URLs, audits import attempts, keeps imported markups human-review gated, and fails closed with `CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER` or `CAST_CAD_PDF_EXPORT_WORKER` until a private PDF annotation worker is configured: `/api/cast-cad-exports` with `type=pdf-annotation-import`.
 - Provider-independent cost catalog/cost database contract and frontend bridge for reviewed unit-cost and assembly rows, audited imports/updates, no budget-authoritative claims, and fail-closed durable/private cost database gates requiring `CAST_CAD_COST_CATALOG_ADAPTER` or `CAST_CAD_COST_DATABASE_ADAPTER`: `/api/cast-cad-markups?action=cost-catalog`.
 - Provider-independent CAD/model ingestion job contract and frontend bridge for private IFC/DWG/DXF/RVT/etc. source pointers, no public URLs, private no-store viewer artifacts, and human-review-gated linked quantities; fails closed with `CAST_CAD_MODEL_INGESTION_WORKER`, `CAST_CAD_IFC_CONVERSION_WORKER`, or `CAST_CAD_CAD_CONVERSION_WORKER` until a private model conversion worker is configured: `/api/cast-cad-exports` with `type=model-ingestion`.
+- Provider-independent model-derived quantity link contract and frontend bridge for source-cited model element quantities, optional review-gated takeoff markup creation, private/no-public-artifact guarantees, and fail-closed human-review gates before verified/resolved/budget-authoritative use: `/api/cast-cad-exports` with `type=model-quantity-link`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -132,7 +133,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Markups List report: implemented at CSV/export scaffold level.
 - Permissioned/audit logged actions: provider-independent role matrix, project member role assignment, effective permission lookup, strict-auth fail-closed mode, and audit-log read contract are implemented; production auth/session integration and database persistence remain.
 - AI findings labeled AI detected and human verified: provider-independent source-cited AI Review finding contract implemented with fail-closed human verification and optional human-approved markup conversion; frontend workbench controls now load/create/review cited findings through the audited backend contract without fabricating uncited findings or human-verified markups. Production AI review workers remain disabled until provider/worker configuration is supplied.
-- CAD/model ingestion and preview: provider-independent private ingestion job contract and frontend bridge implemented for IFC/DWG/DXF/RVT/RFA/SKP/OBJ/GLB/GLTF source pointers, no public URLs, no-store private artifacts, and human-review-gated linked quantities; production conversion/viewer artifacts remain blocked until `CAST_CAD_MODEL_INGESTION_WORKER`, `CAST_CAD_IFC_CONVERSION_WORKER`, or `CAST_CAD_CAD_CONVERSION_WORKER` is configured.
+- CAD/model ingestion and preview: provider-independent private ingestion job contract and workbench bridge implemented for IFC/DWG/DXF/RVT/RFA/SKP/OBJ/GLB/GLTF source pointers, no public URLs, no-store private artifacts, and human-review-gated linked quantities; production conversion/viewer artifacts remain blocked until `CAST_CAD_MODEL_INGESTION_WORKER`, `CAST_CAD_IFC_CONVERSION_WORKER`, or `CAST_CAD_CAD_CONVERSION_WORKER` is configured. Source-cited model quantity links can now create audited, review-gated takeoff markups via `/api/cast-cad-exports` `type=model-quantity-link` without fabricating public model artifacts or budget-authoritative quantities.
 - No Bluebeam proprietary UI/names/icons/trade dress copied: current CAST CAD UI uses CAST naming and generic construction workflow language.
 
 ## Latest validation commands
@@ -148,8 +149,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-25T20:52:45Z` for the CAST CAD CAD/model ingestion contract slice.
-- Branch audited: `cast-cad-model-ingestion-contract`.
+- Audited at: `2026-05-25T23:01:26Z` for the CAST CAD model-derived quantity link contract slice.
+- Branch audited: `cast-cad-model-quantity-link`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
