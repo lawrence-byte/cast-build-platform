@@ -1,7 +1,7 @@
 'use strict';
 const path = require('path');
 const fs = require('fs');
-const { getActor, json, buildPdfStreamContract, sheetFromIndex } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, createPdfStreamLease, sheetFromIndex } = require('./_lib/cast-cad-production');
 
 async function proxyPdf(res, result, sheet) {
   const contract = result.contract || {};
@@ -41,7 +41,8 @@ module.exports = async function handler(req, res) {
     const indexPath = path.join(process.cwd(), 'public/safe-data/projects/golden-hill/procore-information/procore-data-tie-index.json');
     const index = fs.existsSync(indexPath) ? JSON.parse(fs.readFileSync(indexPath, 'utf8')) : { files: [] };
     const sheet = sheetFromIndex(index, sheetId) || (sheetId ? { path: sheetId, name: path.basename(sheetId), extension: 'pdf' } : null);
-    const result = buildPdfStreamContract({ sheet, actor });
+    const projectId = url.searchParams.get('projectId') || 'golden-hill';
+    const result = createPdfStreamLease(getState(), { sheet, projectId }, actor);
     const accept = String(req.headers.accept || '');
     if (result.ok && accept.includes('application/pdf')) return proxyPdf(res, result, sheet);
     return json(res, result.ok ? 200 : (result.status || 503), result);
