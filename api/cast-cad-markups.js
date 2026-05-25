@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -42,6 +42,10 @@ module.exports = async function handler(req, res) {
         const items = listToolLibraryItems(state, { projectId: url.searchParams.get('projectId'), trade: url.searchParams.get('trade'), category: url.searchParams.get('category'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
         return json(res, 200, { ok: true, itemCount: items.length, items, placements: state.toolLibraryPlacements || [] });
       }
+      if (action === 'cost-catalog' || action === 'cost-database') {
+        const items = listCostCatalogItems(state, { projectId: url.searchParams.get('projectId'), costCode: url.searchParams.get('costCode'), assemblyCode: url.searchParams.get('assemblyCode'), trade: url.searchParams.get('trade'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
+        return json(res, 200, { ok: true, itemCount: items.length, items, imports: state.costCatalogImports || [], contract: costCatalogContract() });
+      }
       if (action === 'admin' || action === 'permission-matrix') {
         return json(res, 200, { ok: true, roles: buildPermissionMatrix(), authRequiredWhenEnabled: 'CAST_CAD_REQUIRE_AUTH=true' });
       }
@@ -81,6 +85,10 @@ module.exports = async function handler(req, res) {
       if (body.action === 'tool-library') {
         const result = body.operation === 'place-tool' ? applyToolLibraryItemToMarkup(state, body, actor) : body.operation === 'update-item' ? updateToolLibraryItem(state, body.id || body.itemId || body.item_id, body.patch || body, actor) : createToolLibraryItem(state, body, actor);
         return json(res, result.ok ? (body.operation === 'place-tool' ? 201 : 200) : (result.status || 422), result);
+      }
+      if (body.action === 'cost-catalog' || body.action === 'cost-database') {
+        const result = body.operation === 'import' || body.importItems ? importCostCatalogItems(state, body, actor) : upsertCostCatalogItem(state, body, actor);
+        return json(res, result.ok ? (result.status || 200) : (result.status || 422), result);
       }
       if (body.action === 'admin' || body.action === 'upsert-member-role') {
         const result = upsertProjectMemberRole(state, body, actor);

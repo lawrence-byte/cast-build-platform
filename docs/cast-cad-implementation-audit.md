@@ -50,6 +50,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent Review Room invite delivery contract and frontend bridge that creates audited private invite-delivery events, updates room participant delivery status, forbids public join links, and fails closed with `CAST_CAD_REVIEW_ROOM_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` until email/realtime transport is configured: `/api/cast-cad-review-room?action=invite-events` plus POST `action=invite-delivery`.
 - Provider-independent markup comment @mention notification delivery contract that records audited private delivery events, forbids public links/exposure, includes events in per-markup audit history, and fails closed with `CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` until email/realtime transport is configured: `/api/cast-cad-markups?action=mention-events` plus POST `action=mention-delivery`.
 - Provider-independent PDF annotation import/unflatten job contract and frontend bridge that accepts only private source pointers/stream lease IDs, rejects public URLs, audits import attempts, keeps imported markups human-review gated, and fails closed with `CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER` or `CAST_CAD_PDF_EXPORT_WORKER` until a private PDF annotation worker is configured: `/api/cast-cad-exports` with `type=pdf-annotation-import`.
+- Provider-independent cost catalog/cost database contract and frontend bridge for reviewed unit-cost and assembly rows, audited imports/updates, no budget-authoritative claims, and fail-closed durable/private cost database gates requiring `CAST_CAD_COST_CATALOG_ADAPTER` or `CAST_CAD_COST_DATABASE_ADAPTER`: `/api/cast-cad-markups?action=cost-catalog`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -93,7 +94,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Takeoff rows remain draft/needs-review until human verified.
 - Remaining production work:
   - Provider-independent PDF viewport coordinate mapping, page box/rotation persistence, and normalized overlay-to-PDF point conversion are implemented in the backend/workbench contract. Remaining work is to connect the selected PDF renderer's native page events and viewport matrices to that contract.
-  - Completed provider-independent frontend precision controls, editable measurement captions, assembly takeoffs, formula columns, and seed cost-code/unit-cost mapping on top of the workbook export contract. Remaining work is to connect the production cost database adapter once provider/storage decisions are available.
+  - Completed provider-independent frontend precision controls, editable measurement captions, assembly takeoffs, formula columns, seed cost-code/unit-cost mapping, and audited cost catalog contract/frontend bridge on top of the workbook export contract. Remaining work is to connect the production cost database adapter once provider/storage decisions are available (`CAST_CAD_COST_CATALOG_ADAPTER` or `CAST_CAD_COST_DATABASE_ADAPTER`).
 
 ## Enterprise modules scaffolded behind flags
 
@@ -145,8 +146,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-25T16:34:42Z` for the CAST CAD PDF annotation import/unflatten contract slice.
-- Branch audited: `cast-cad-annotation-import-contract`.
+- Audited at: `2026-05-25T18:44:15Z` for the CAST CAD cost catalog/cost database contract slice.
+- Branch audited: `cast-cad-cost-catalog-contract`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

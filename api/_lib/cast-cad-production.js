@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1014,6 +1014,87 @@ function applyToolLibraryItemToMarkup(state, input = {}, actor) {
   audit(state, actor, 'Placed CAST CAD Tool Library item as review-gated markup', 'CAST_CAD_TOOL_LIBRARY_PLACEMENT', placement.id, null, placement);
   return { ok: true, item, markup: created.markup, placement };
 }
+
+function costCatalogAdapterConfigured() { return Boolean(process.env.CAST_CAD_COST_CATALOG_ADAPTER || process.env.CAST_CAD_COST_DATABASE_ADAPTER); }
+function normalizeCostCatalogItem(input = {}, actor) {
+  const quantityBasis = String(input.quantityBasis || input.quantity_basis || input.unit || 'EA').trim().toUpperCase();
+  return {
+    id: input.id || id('cad_cost_item'),
+    projectId: input.projectId || input.project_id || 'global',
+    costCode: String(input.costCode || input.cost_code || '').trim(),
+    assemblyCode: String(input.assemblyCode || input.assembly_code || '').trim(),
+    description: String(input.description || input.name || '').trim(),
+    trade: String(input.trade || 'Coordination').trim(),
+    quantityBasis,
+    unitCost: Number(input.unitCost ?? input.unit_cost),
+    currency: String(input.currency || 'USD').trim().toUpperCase(),
+    source: String(input.source || 'cast-cad-cost-catalog-contract').trim(),
+    effectiveDate: String(input.effectiveDate || input.effective_date || now().slice(0, 10)).slice(0, 10),
+    status: input.status || 'active',
+    humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    providerRequired: !costCatalogAdapterConfigured(),
+    requiredEnvVars: costCatalogAdapterConfigured() ? [] : ['CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER'],
+    persistenceMode: costCatalogAdapterConfigured() ? 'provider-adapter' : 'memory-contract-only',
+    budgetAuthoritative: false,
+    createdByUserId: input.createdByUserId || input.created_by_user_id || actor.id,
+    updatedByUserId: actor.id,
+    createdAt: input.createdAt || input.created_at || now(),
+    updatedAt: now(),
+  };
+}
+function validateCostCatalogItem(item) {
+  const errors = [];
+  if (!item.costCode) errors.push('costCode is required.');
+  if (!item.description) errors.push('description is required.');
+  if (!Number.isFinite(item.unitCost) || item.unitCost < 0) errors.push('unitCost must be a non-negative number.');
+  if (!item.quantityBasis) errors.push('quantityBasis is required.');
+  if (item.status && !['active','draft','archived'].includes(item.status)) errors.push('status must be active, draft, or archived.');
+  return errors;
+}
+function costCatalogContract() {
+  return { privateCostData: true, budgetAuthoritative: false, humanReviewRequiredBeforeBudgetUse: true, durableAdapterRequired: 'CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER', cacheControl: 'private, max-age=0, no-store' };
+}
+function upsertCostCatalogItem(state, input = {}, actor) {
+  state.costCatalogItems ||= [];
+  const permission = requireCastCad(actor.role, 'admin');
+  if (!permission.ok) return permission;
+  const item = normalizeCostCatalogItem(input, actor);
+  const errors = validateCostCatalogItem(item);
+  if (errors.length) return { ok: false, status: 422, errors };
+  if ((input.persistDurably || input.persist_durably || input.authoritative || input.budgetAuthoritative) && item.providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'Durable or budget-authoritative CAST CAD cost catalog persistence requires CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER.', requiredEnvVars: item.requiredEnvVars, item, contract: costCatalogContract() };
+  if ((input.authoritative || input.budgetAuthoritative) && !item.humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Budget-authoritative cost catalog changes require human review approval before use.', item, contract: costCatalogContract() };
+  const idx = state.costCatalogItems.findIndex((row) => row.id === item.id || (row.projectId === item.projectId && row.costCode === item.costCode && row.assemblyCode === item.assemblyCode && row.quantityBasis === item.quantityBasis));
+  const previous = idx >= 0 ? clone(state.costCatalogItems[idx]) : null;
+  const current = previous ? { ...previous, ...item, id: previous.id, createdAt: previous.createdAt, createdByUserId: previous.createdByUserId, budgetAuthoritative: false, updatedByUserId: actor.id, updatedAt: now() } : item;
+  if (idx >= 0) state.costCatalogItems[idx] = current; else state.costCatalogItems.push(current);
+  audit(state, actor, previous ? 'Updated CAST CAD cost catalog item' : 'Created CAST CAD cost catalog item', 'CAST_CAD_COST_CATALOG_ITEM', current.id, previous, current, current.providerRequired ? 'Cost database adapter not configured; item is a provider-independent contract record only and is not budget-authoritative.' : 'Cost catalog adapter configured; item still requires human review before budget authority.');
+  return { ok: true, item: current, contract: costCatalogContract() };
+}
+function importCostCatalogItems(state, input = {}, actor) {
+  state.costCatalogImports ||= [];
+  const rows = Array.isArray(input.items) ? input.items : [];
+  const imported = [];
+  const rejected = [];
+  rows.forEach((row, index) => {
+    const result = upsertCostCatalogItem(state, { ...row, projectId: row.projectId || input.projectId || input.project_id || 'global' }, actor);
+    if (result.ok) imported.push(result.item); else rejected.push({ index, errors: result.errors || [result.error || result.code || 'rejected'] });
+  });
+  const summary = { id: id('cad_cost_import'), projectId: input.projectId || input.project_id || 'global', importedCount: imported.length, rejectedCount: rejected.length, providerRequired: !costCatalogAdapterConfigured(), requiredEnvVars: costCatalogAdapterConfigured() ? [] : ['CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER'], importedItemIds: imported.map((row) => row.id), rejected, createdByUserId: actor.id, createdAt: now() };
+  state.costCatalogImports.push(summary);
+  audit(state, actor, 'Imported CAST CAD cost catalog contract rows', 'CAST_CAD_COST_CATALOG_IMPORT', summary.id, null, summary, summary.providerRequired ? 'Imported as audited memory contract only; no provider-backed cost database was claimed.' : 'Imported for configured cost catalog adapter review.');
+  return { ok: rejected.length === 0, status: rejected.length ? 207 : 200, summary, items: imported, contract: costCatalogContract() };
+}
+function listCostCatalogItems(state, filters = {}) {
+  state.costCatalogItems ||= [];
+  let rows = state.costCatalogItems.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId || row.projectId === 'global');
+  if (filters.costCode) rows = rows.filter((row) => row.costCode === filters.costCode);
+  if (filters.assemblyCode) rows = rows.filter((row) => row.assemblyCode === filters.assemblyCode);
+  if (filters.trade) rows = rows.filter((row) => row.trade === filters.trade);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.search) { const q = String(filters.search).toLowerCase(); rows = rows.filter((row) => `${row.costCode} ${row.assemblyCode} ${row.description} ${row.trade}`.toLowerCase().includes(q)); }
+  return rows;
+}
 function buildComparisonJob(state, input, actor) {
   const permission = requireCastCad(actor.role, 'export');
   if (!permission.ok) return permission;
@@ -1375,6 +1456,7 @@ module.exports = {
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
+  upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
