@@ -12,6 +12,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Persistent markup create/list/update/CSV contract: `/api/cast-cad-markups`.
 - Takeoff workbook, annotated PDF export, and comparison job contracts: `/api/cast-cad-exports`.
 - RFI-from-markup snapshot workflow: `/api/cast-cad-rfi-link`.
+- Provider-independent markup-to-workflow snapshot contract for RFI/submittal/change-event/issue/observation drafts with opt-in external-provider attempts that fail closed unless `CAST_CAD_WORKFLOW_PROVIDER`, `PROCORE_CLIENT_ID`, or `CAST_SERVER_WORKFLOW_API_URL` is configured: `/api/cast-cad-rfi-link`.
 - OCR/symbol search index contract: `/api/cast-cad-search`.
 - Review-room/collaboration invite contract: `/api/cast-cad-review-room`.
 - Provider-independent takeoff refinement controls for editable measurement captions, precision, assembly mapping, formula columns, unit-cost mapping, and human-review-gated quantity rows.
@@ -94,7 +95,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Drawing set versions and slip-sheeting (provider-independent API/service contract implemented; storage/provider adapter remains)
 - Comparison Center
 - OCR, visual search, symbol detection, and Auto Link
-- RFIs/submittals/change-event links
+- RFIs/submittals/change-event links (provider-independent markup workflow snapshot contract implemented; external provider write-back remains provider-gated)
 - Review Rooms and Project Rooms
 - CAST CAD AI Review agents
 - Batch tools (provider-independent batch operation API/service contract and static workbench bulk-selection workflow implemented for scoped status/assignee/layer/review/stamp updates; production storage adapter remains)
@@ -114,6 +115,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Drawing comparison report: provider-independent API/service contract and static comparison-center job controls are implemented with explicit `CAST_CAD_COMPARISON_WORKER` fail-closed status; comparison worker remains to be connected.
 - OCR/search: search/index contract implemented; frontend OCR/symbol bridge now queries the audited backend index, can create explicitly reviewed source-index samples for workflow testing, and surfaces `CAST_CAD_OCR_WORKER` as the production extraction blocker. OCR worker remains to be connected.
 - RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot; frontend now calls the audited workflow contract and fails closed when backend markup/RFI contracts are unavailable.
+- Submittal/change-event/issue/observation links from markup: provider-independent workflow snapshots now create audited draft records through `/api/cast-cad-rfi-link`; external Procore/CAST workflow write-back fails closed until `CAST_CAD_WORKFLOW_PROVIDER`, `PROCORE_CLIENT_ID`, or `CAST_SERVER_WORKFLOW_API_URL` is configured.
 - Review session invite: review-room invite contract implemented; frontend bridge creates/lists audited room participant records. Real-time transport/email invite provider remains.
 - Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
 - Markups List report: implemented at CSV/export scaffold level.

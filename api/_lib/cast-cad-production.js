@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
+  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -403,6 +403,56 @@ function createRfiFromMarkup(state, markupId, actor, overrides = {}) {
   state.rfiLinks.push(rfiLink);
   audit(state, actor, 'Created draft RFI from markup snapshot', 'CAST_CAD_RFI_LINK', rfiLink.id, null, rfiLink);
   return { ok: true, rfiLink };
+}
+function normalizeWorkflowType(value) {
+  const raw = String(value || 'rfi').toLowerCase().replace(/[_\s]+/g, '-');
+  if (['rfi','submittal','change-event','issue','observation'].includes(raw)) return raw;
+  return '';
+}
+function createWorkflowLinkFromMarkup(state, markupId, actor, input = {}) {
+  state.workflowLinks ||= [];
+  const permission = requireCastCad(actor.role, 'create_rfi');
+  if (!permission.ok) return permission;
+  const markup = state.markups.find((row) => row.id === markupId);
+  if (!markup) return { ok: false, status: 404, error: 'Markup not found.' };
+  const workflowType = normalizeWorkflowType(input.workflowType || input.workflow_type || input.type);
+  if (!workflowType) return { ok: false, status: 422, errors: ['workflowType must be one of: rfi, submittal, change-event, issue, observation.'] };
+  const externalProviderConfigured = Boolean(process.env.CAST_CAD_WORKFLOW_PROVIDER || process.env.PROCORE_CLIENT_ID || process.env.CAST_SERVER_WORKFLOW_API_URL);
+  const requestedExternal = Boolean(input.createExternal || input.create_external || input.externalProvider || input.external_provider);
+  if (requestedExternal && !externalProviderConfigured) {
+    return { ok: false, status: 503, code: 'provider-required', error: 'External workflow creation requires CAST_CAD_WORKFLOW_PROVIDER, PROCORE_CLIENT_ID, or CAST_SERVER_WORKFLOW_API_URL; refusing to fabricate provider records.', requiredEnvVars: ['CAST_CAD_WORKFLOW_PROVIDER or PROCORE_CLIENT_ID or CAST_SERVER_WORKFLOW_API_URL'] };
+  }
+  const link = {
+    id: input.id || id('cad_workflow'),
+    markupId: markup.id,
+    projectId: markup.projectId,
+    sheetId: markup.sheetId,
+    pageNumber: markup.pageNumber,
+    workflowType,
+    title: String(input.title || input.subject || markup.subject || `${workflowType} draft`).trim(),
+    description: String(input.description || input.body || markup.body || '').trim(),
+    status: requestedExternal && externalProviderConfigured ? 'queued-for-provider' : 'draft-snapshot',
+    linkStatus: requestedExternal && externalProviderConfigured ? 'queued-for-provider' : 'draft-snapshot',
+    providerRequired: requestedExternal && !externalProviderConfigured,
+    requiredEnvVars: externalProviderConfigured ? [] : ['CAST_CAD_WORKFLOW_PROVIDER', 'PROCORE_CLIENT_ID', 'CAST_SERVER_WORKFLOW_API_URL'],
+    externalProvider: externalProviderConfigured ? (process.env.CAST_CAD_WORKFLOW_PROVIDER || (process.env.PROCORE_CLIENT_ID ? 'procore' : 'cast-server-workflow-api')) : 'unconfigured',
+    externalId: '',
+    externalUrl: '',
+    snapshotPointer: { sheetId: markup.sheetId, pageNumber: markup.pageNumber, geometry: markup.geometry, subject: markup.subject, body: markup.body, status: markup.status, sourceMarkupId: markup.id, capturedAt: now() },
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.workflowLinks.push(link);
+  audit(state, actor, `Created CAST CAD ${workflowType} workflow snapshot from markup`, 'CAST_CAD_WORKFLOW_LINK', link.id, null, link, link.status === 'draft-snapshot' ? 'Provider-independent draft snapshot only; no external provider record was fabricated.' : 'Queued for configured workflow provider.');
+  return { ok: true, workflowLink: link };
+}
+function listWorkflowLinks(state, filters = {}) {
+  state.workflowLinks ||= [];
+  let rows = state.workflowLinks.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.markupId) rows = rows.filter((row) => row.markupId === filters.markupId);
+  if (filters.workflowType) rows = rows.filter((row) => row.workflowType === normalizeWorkflowType(filters.workflowType));
+  return rows;
 }
 function indexOcrPage(state, input, actor) {
   const permission = requireCastCad(actor.role, 'admin');
@@ -1083,7 +1133,7 @@ module.exports = {
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
-  createRfiFromMarkup, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
+  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,

@@ -159,7 +159,9 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-apply-batch>Apply batch</button>
               <span class="pdf-status" data-batch-status>0 markups selected. Sensitive stamp/resolved/verified changes require human review approval.</span>
               <span class="pdf-status" data-markup-persistence-status>Server markup persistence not checked yet.</span>
-              <span class="pdf-status" data-rfi-link-status>RFI links are draft-only until the backend snapshot contract confirms the markup.</span>
+              <label>Workflow <select data-workflow-link-type autocomplete="off"><option value="submittal">Submittal</option><option value="change-event">Change event</option><option value="issue">Issue</option><option value="observation">Observation</option><option value="rfi">RFI snapshot</option></select></label>
+              <label><input type="checkbox" data-workflow-create-external autocomplete="off"> Try configured external provider</label>
+              <span class="pdf-status" data-rfi-link-status>RFI/submittal/change-event links are draft-only until the backend snapshot contract confirms the markup.</span>
             </div>
             <div class="pdf-intake cad-markup-thread-controls" aria-label="CAST CAD threaded markup comments and audit history controls">
               <label>Thread <select data-markup-thread-target autocomplete="off"><option value="">Markup thread</option></select></label>

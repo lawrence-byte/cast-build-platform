@@ -72,6 +72,16 @@ assert.equal(pdfExport.exportJob.status, 'provider-required', 'annotated PDF exp
 const rfi = cad.createRfiFromMarkup(state, markup.markup.id, owner);
 assert.equal(rfi.ok, true, 'RFI link created from markup');
 assert.equal(rfi.rfiLink.snapshotPointer.sheetId, 'A-101', 'RFI snapshot captures sheet context');
+const workflowLink = cad.createWorkflowLinkFromMarkup(state, markup.markup.id, owner, { workflowType: 'submittal', title: 'Door hardware submittal note' });
+assert.equal(workflowLink.ok, true, 'provider-independent workflow link creates from markup');
+assert.equal(workflowLink.workflowLink.workflowType, 'submittal', 'workflow link stores submittal type');
+assert.equal(workflowLink.workflowLink.status, 'draft-snapshot', 'workflow link remains a backend draft snapshot without external provider');
+assert.equal(workflowLink.workflowLink.requiredEnvVars.includes('CAST_CAD_WORKFLOW_PROVIDER'), true, 'workflow link names external provider env requirement');
+const blockedExternalWorkflow = cad.createWorkflowLinkFromMarkup(state, markup.markup.id, owner, { workflowType: 'change-event', createExternal: true });
+assert.equal(blockedExternalWorkflow.ok, false, 'external workflow creation fails closed without provider credentials');
+assert.equal(blockedExternalWorkflow.code, 'provider-required', 'external workflow exposes provider-required blocker');
+assert.equal(cad.listWorkflowLinks(state, { projectId: 'alum', workflowType: 'submittal' }).length, 1, 'workflow links list by project and type');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_WORKFLOW_LINK'), 'workflow links are audited');
 
 const ocr = cad.indexOcrPage(state, { projectId: 'alum', sheetId: 'A-101', text: 'Door tag D101 requires fire rating review', symbols: ['D101','FIRE'], confidence: 88 }, owner);
 assert.equal(ocr.ok, true, 'OCR page indexed');
@@ -275,9 +285,14 @@ assert.ok(castCadHtml.includes('data-markup-thread-target'), 'CAST CAD workbench
 assert.ok(castCadHtml.includes('data-add-markup-thread-comment'), 'CAST CAD workbench exposes audited comment creation control');
 assert.ok(castCadHtml.includes('data-markup-audit-list'), 'CAST CAD workbench exposes markup audit history list');
 assert.ok(castCadJs.includes('function convertMarkupToRfiDraft'), 'CAST CAD workbench creates audited draft RFI snapshots from markups');
-assert.ok(castCadJs.includes("fetch('/api/cast-cad-rfi-link'"), 'CAST CAD workbench calls the RFI snapshot API instead of fabricating local RFIs');
+assert.ok(castCadJs.includes('function createMarkupWorkflowLink'), 'CAST CAD workbench creates audited submittal/change-event workflow snapshots from markups');
+assert.ok(castCadJs.includes('data-workflow-link'), 'CAST CAD workbench exposes per-markup workflow link action');
+assert.ok(castCadJs.includes('No local-only submittal/change-event/external provider record was fabricated'), 'CAST CAD workflow links fail closed without fabricating external provider records');
+assert.ok(castCadJs.includes("fetch('/api/cast-cad-rfi-link'"), 'CAST CAD workbench calls the RFI/workflow snapshot API instead of fabricating local RFIs');
 assert.ok(castCadJs.includes('No local-only or external RFI was fabricated'), 'CAST CAD RFI conversion fails closed when backend workflow is unavailable');
 assert.ok(castCadHtml.includes('data-rfi-link-status'), 'CAST CAD workbench exposes RFI workflow status');
+assert.ok(castCadHtml.includes('data-workflow-link-type'), 'CAST CAD workbench exposes submittal/change-event workflow type selection');
+assert.ok(castCadHtml.includes('data-workflow-create-external'), 'CAST CAD workbench makes external workflow provider attempts explicit and opt-in');
 assert.ok(castCadJs.includes('registerCastCadFieldServiceWorker'), 'CAST CAD workbench registers the field-mode service worker');
 assert.ok(castCadHtml.includes('data-field-service-worker-status'), 'CAST CAD workbench exposes field service worker status');
 assert.ok(fieldSw.includes("url.pathname.startsWith('/api/')"), 'field service worker never caches API responses');
