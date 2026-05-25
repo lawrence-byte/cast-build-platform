@@ -103,6 +103,17 @@ assert.deepEqual(workbook.exportJob.requiredEnvVars, ['CAST_CAD_TAKEOFF_WORKBOOK
 const pdfExport = cad.createAnnotatedPdfExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(pdfExport.ok, true, 'annotated PDF export contract created');
 assert.equal(pdfExport.exportJob.status, 'provider-required', 'annotated PDF export fails open as worker-required job, not fake success');
+assert.deepEqual(pdfExport.exportJob.requiredEnvVars, ['CAST_CAD_PDF_EXPORT_WORKER'], 'annotated PDF export names exact worker env var');
+assert.equal(pdfExport.exportJob.privateArtifacts, true, 'annotated PDF export contract keeps artifacts private/no-store');
+const publicAnnotationImport = cad.createPdfAnnotationImportJob(state, { projectId: 'alum', sheetId: 'A-101', sourcePointer: 'https://example.com/public.pdf' }, owner);
+assert.equal(publicAnnotationImport.ok, false, 'PDF annotation import rejects public source URLs');
+assert.equal(publicAnnotationImport.code, 'public-url-forbidden', 'PDF annotation import exposes public URL blocker');
+const annotationImport = cad.createPdfAnnotationImportJob(state, { projectId: 'alum', sheetId: 'A-101', sourcePointer: 'lease:cad_pdf_stream_123', mode: 'import-unflattened' }, owner);
+assert.equal(annotationImport.ok, true, 'PDF annotation import/unflatten job contract creates');
+assert.equal(annotationImport.exportJob.status, 'provider-required', 'PDF annotation import fails closed until import worker is configured');
+assert.equal(annotationImport.exportJob.publicExposure, false, 'PDF annotation import forbids public exposure');
+assert.deepEqual(annotationImport.exportJob.requiredEnvVars, ['CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER'], 'PDF annotation import names exact worker env choices');
+assert.equal(annotationImport.exportJob.contract.humanReviewRequiredBeforeAuthoritativeMarkups, true, 'PDF annotation import keeps imported markups review-gated');
 
 const rfi = cad.createRfiFromMarkup(state, markup.markup.id, owner);
 assert.equal(rfi.ok, true, 'RFI link created from markup');
@@ -361,10 +372,15 @@ assert.ok(castCadHtml.includes('data-import-document-metadata'), 'CAST CAD workb
 assert.ok(castCadHtml.includes('data-document-metadata-summary'), 'CAST CAD workbench exposes document metadata registry status');
 assert.ok(castCadJs.includes('function createBackendExportJob'), 'CAST CAD workbench creates audited backend export jobs');
 assert.ok(castCadJs.includes("createBackendExportJob('annotated-pdf')"), 'CAST CAD workbench calls annotated PDF export job contract');
+assert.ok(castCadJs.includes("createBackendExportJob('pdf-annotation-import')"), 'CAST CAD workbench calls PDF annotation import/unflatten job contract');
 assert.ok(castCadJs.includes('CAST_CAD_TAKEOFF_WORKBOOK_WORKER'), 'CAST CAD workbench names takeoff workbook worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_EXPORT_WORKER'), 'CAST CAD workbench names annotated PDF export worker requirement');
+assert.ok(castCadJs.includes('CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER'), 'CAST CAD workbench names PDF annotation import worker requirement');
+assert.ok(castCadJs.includes('PDF annotation import refuses public URLs'), 'CAST CAD annotation import fails closed instead of accepting public source URLs');
 assert.ok(castCadHtml.includes('data-create-workbook-export'), 'CAST CAD workbench exposes takeoff workbook export job control');
 assert.ok(castCadHtml.includes('data-create-annotated-pdf-export'), 'CAST CAD workbench exposes annotated PDF export job control');
+assert.ok(castCadHtml.includes('data-create-annotation-import'), 'CAST CAD workbench exposes PDF annotation import job control');
+assert.ok(castCadHtml.includes('data-annotation-import-source'), 'CAST CAD workbench requires a private annotation import source pointer');
 assert.ok(castCadHtml.includes('data-export-job-status'), 'CAST CAD workbench exposes backend export status');
 assert.ok(castCadJs.includes('function loadToolLibraryItems'), 'CAST CAD workbench loads Tool Library items from backend contract');
 assert.ok(castCadJs.includes("action=tool-library"), 'CAST CAD workbench calls Tool Library action on /api/cast-cad-markups');

@@ -639,8 +639,9 @@ function renderExportCenter() {
   if (status) status.textContent = exportCenterState.message;
   if (jobs) {
     jobs.innerHTML = exportCenterState.jobs.length ? exportCenterState.jobs.slice(-4).reverse().map((job) => {
-      const label = job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook';
-      const details = job.providerRequired ? `Worker required: ${(job.requiredEnvVars || []).join(', ') || (job.type === 'takeoff-workbook' ? 'CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER' : 'CAST_CAD_PDF_EXPORT_WORKER')}. No private export artifact is fabricated.` : `${job.rowCount ?? job.markupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
+      const label = job.type === 'annotated-pdf' ? 'Annotated PDF' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : 'Takeoff workbook';
+      const fallbackWorker = job.type === 'takeoff-workbook' ? 'CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER' : job.type === 'pdf-annotation-import' ? 'CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER' : 'CAST_CAD_PDF_EXPORT_WORKER';
+      const details = job.providerRequired ? `Worker required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}. No private export/import artifact is fabricated.` : `${job.rowCount ?? job.markupCount ?? job.importedMarkupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
       return `<div class="tool-card"><em>${esc(job.status || 'queued')}</em><strong>${esc(label)} · ${esc(job.sheetId || 'all sheets')}</strong><span>${esc(details)}</span></div>`;
     }).join('') : '<p class="cad-muted">No backend export jobs requested in this session.</p>';
   }
@@ -1825,12 +1826,15 @@ async function syncFieldModeDelta({ verify = false } = {}) {
 }
 function exportJobPayload(type) {
   const drawing = selectedDrawing();
+  const annotationImportSource = document.querySelector('[data-annotation-import-source]')?.value?.trim() || '';
   return {
     type,
     projectId: drawing?.project_id || 'alum',
     sheetId: selectedDrawingId,
     format: type === 'takeoff-workbook' ? 'xlsx' : 'pdf',
     flatten: type === 'annotated-pdf' ? Boolean(document.querySelector('[data-export-flatten]')?.checked ?? true) : undefined,
+    sourcePointer: type === 'pdf-annotation-import' ? annotationImportSource : undefined,
+    mode: type === 'pdf-annotation-import' ? 'import-unflattened' : undefined,
   };
 }
 async function createBackendExportJob(type = 'takeoff-workbook') {
@@ -1841,13 +1845,25 @@ async function createBackendExportJob(type = 'takeoff-workbook') {
     window.CASTShell?.toast?.('Select a sheet before requesting a CAST CAD export job.', { kind: 'error' });
     return;
   }
+  if (type === 'pdf-annotation-import' && !payload.sourcePointer) {
+    exportCenterState = { ...exportCenterState, status: 'blocked', message: 'Enter a private PDF pointer or stream lease id before requesting annotation import. Public URLs are refused.' };
+    renderExportCenter();
+    window.CASTShell?.toast?.('Enter a private PDF pointer or stream lease id before annotation import.', { kind: 'error' });
+    return;
+  }
+  if (type === 'pdf-annotation-import' && /^https?:\/\//i.test(payload.sourcePointer)) {
+    exportCenterState = { ...exportCenterState, status: 'blocked', message: 'PDF annotation import refuses public URLs; no public/private URL workaround was fabricated.' };
+    renderExportCenter();
+    window.CASTShell?.toast?.('PDF annotation import requires a private provider pointer, not a public URL.', { kind: 'error' });
+    return;
+  }
   try {
     const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
     const result = await response.json().catch(() => null);
     if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
     const job = result.exportJob || result.job || {};
     const providerRequired = Boolean(job.providerRequired);
-    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: providerRequired ? `${job.type === 'takeoff-workbook' ? 'Takeoff workbook' : 'Annotated PDF'} export job recorded; ${(job.requiredEnvVars || []).join(', ') || 'the private export worker'} is required before private export artifacts can be generated.` : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook'} export job queued by the audited backend contract.` };
+    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: providerRequired ? `${job.type === 'takeoff-workbook' ? 'Takeoff workbook' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : 'Annotated PDF'} job recorded; ${(job.requiredEnvVars || []).join(', ') || 'the private export/import worker'} is required before private artifacts or imported markups can be generated.` : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : 'Takeoff workbook'} job queued by the audited backend contract.` };
     window.CASTShell?.toast?.(exportCenterState.message, { kind: providerRequired ? 'info' : 'success' });
   } catch (error) {
     console.warn('CAST CAD export API unavailable', error);
@@ -1928,6 +1944,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-sync-field-verify]')) { syncFieldModeDelta({ verify: true }); return; }
   if (event.target.closest('[data-create-workbook-export]')) { createBackendExportJob('takeoff-workbook'); return; }
   if (event.target.closest('[data-create-annotated-pdf-export]')) { createBackendExportJob('annotated-pdf'); return; }
+  if (event.target.closest('[data-create-annotation-import]')) { createBackendExportJob('pdf-annotation-import'); return; }
   if (event.target.closest('[data-import-document-metadata]')) { importCurrentSetDocumentMetadata({ toast: true }); return; }
   if (event.target.closest('[data-refresh-document-metadata]')) { loadDocumentMetadataRegistry(); return; }
   if (event.target.closest('[data-publish-drawing-set-version]')) { publishCurrentDrawingSetVersion({ toast: true }); return; }

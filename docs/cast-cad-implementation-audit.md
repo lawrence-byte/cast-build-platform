@@ -49,6 +49,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent fail-closed takeoff workbook/XLSX export job contract that captures audited measurement rows but refuses to fabricate private workbook artifacts or output pointers until `CAST_CAD_TAKEOFF_WORKBOOK_WORKER` or `CAST_CAD_XLSX_EXPORT_WORKER` is configured, with frontend status messaging for the exact worker requirement.
 - Provider-independent Review Room invite delivery contract and frontend bridge that creates audited private invite-delivery events, updates room participant delivery status, forbids public join links, and fails closed with `CAST_CAD_REVIEW_ROOM_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` until email/realtime transport is configured: `/api/cast-cad-review-room?action=invite-events` plus POST `action=invite-delivery`.
 - Provider-independent markup comment @mention notification delivery contract that records audited private delivery events, forbids public links/exposure, includes events in per-markup audit history, and fails closed with `CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` until email/realtime transport is configured: `/api/cast-cad-markups?action=mention-events` plus POST `action=mention-delivery`.
+- Provider-independent PDF annotation import/unflatten job contract and frontend bridge that accepts only private source pointers/stream lease IDs, rejects public URLs, audits import attempts, keeps imported markups human-review gated, and fails closed with `CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER` or `CAST_CAD_PDF_EXPORT_WORKER` until a private PDF annotation worker is configured: `/api/cast-cad-exports` with `type=pdf-annotation-import`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -80,7 +81,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Status/comment/quantity verification flows exist in the shared data layer.
 - Remaining production work:
   - Frontend vector editing UI now posts created workbench markups to the implemented server markup contract, reloads server markups for the selected sheet, displays backend/local-only persistence status, and bridges threaded mention-aware comments plus per-markup audit history through the backend contract. Remaining provider-dependent durability work is connecting the production database adapter. Layer/group/style controls are implemented provider-independently in the static workbench and service contract.
-  - Connect PDF annotation import/export/flatten/unflatten workers to the implemented annotated-PDF export job contract. Frontend export controls now create audited backend export jobs and fail closed with `CAST_CAD_PDF_EXPORT_WORKER` when the private write-back worker is not configured.
+  - Connect PDF annotation export/flatten workers to the implemented annotated-PDF export job contract. Frontend export controls now create audited backend export jobs and fail closed with `CAST_CAD_PDF_EXPORT_WORKER` when the private write-back worker is not configured. PDF annotation import/unflatten has a provider-independent audited job contract and frontend bridge that rejects public URLs; production import parsing still needs `CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER` or `CAST_CAD_PDF_EXPORT_WORKER`.
 
 ## Phase 3: Measurements
 
@@ -125,6 +126,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Submittal/change-event/issue/observation links from markup: provider-independent workflow snapshots now create audited draft records through `/api/cast-cad-rfi-link`; external Procore/CAST workflow write-back fails closed until `CAST_CAD_WORKFLOW_PROVIDER`, `PROCORE_CLIENT_ID`, or `CAST_SERVER_WORKFLOW_API_URL` is configured.
 - Review session invite: review-room invite contract implemented; frontend bridge creates/lists audited room participant records and audited invite-delivery events. Real-time transport/email invite provider remains blocked until `CAST_CAD_REVIEW_ROOM_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` is configured.
 - Annotated PDF export: export job contract implemented; PDF write-back/flatten worker remains.
+- PDF annotation import/unflatten: audited job contract and frontend bridge implemented; private annotation parsing worker remains blocked on `CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER` or `CAST_CAD_PDF_EXPORT_WORKER`.
 - Markups List report: implemented at CSV/export scaffold level.
 - Permissioned/audit logged actions: provider-independent role matrix, project member role assignment, effective permission lookup, strict-auth fail-closed mode, and audit-log read contract are implemented; production auth/session integration and database persistence remain.
 - AI findings labeled AI detected and human verified: provider-independent source-cited AI Review finding contract implemented with fail-closed human verification and optional human-approved markup conversion; frontend workbench controls now load/create/review cited findings through the audited backend contract without fabricating uncited findings or human-verified markups. Production AI review workers remain disabled until provider/worker configuration is supplied.
@@ -143,8 +145,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-25T06:38:00Z` for the CAST CAD audited PDF stream lease/auth gate slice.
-- Branch audited: `cast-cad-pdf-stream-leases`.
+- Audited at: `2026-05-25T16:34:42Z` for the CAST CAD PDF annotation import/unflatten contract slice.
+- Branch audited: `cast-cad-annotation-import-contract`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
