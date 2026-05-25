@@ -22,7 +22,7 @@ let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
 let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. Takeoff workbook can run from stored measurements; annotated PDF requires CAST_CAD_PDF_EXPORT_WORKER.', jobs: [] };
-let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
+let rfiLinkState = { status: 'idle', message: 'RFI/submittal/change-event workflow links are draft-only until the backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
@@ -585,6 +585,7 @@ function renderMarkups() {
       <div class="actions">
         <button class="cb-btn small cb-btn--ghost" data-resolve="${esc(m.id)}">Resolve</button>
         <button class="cb-btn small cb-btn--ghost" data-rfi="${esc(m.id)}">Convert to RFI</button>
+        <button class="cb-btn small cb-btn--ghost" data-workflow-link="${esc(m.id)}">Workflow link</button>
         <button class="cb-btn small cb-btn--ghost" data-delete-markup="${esc(m.id)}">Delete</button>
       </div>
     </article>`;
@@ -1510,6 +1511,33 @@ async function convertMarkupToRfiDraft(id) {
   }
   render();
 }
+async function createMarkupWorkflowLink(id) {
+  const markup = state.drawingMarkups.find((row) => row.id === id);
+  const workflowType = document.querySelector('[data-workflow-link-type]')?.value || 'submittal';
+  const createExternal = Boolean(document.querySelector('[data-workflow-create-external]')?.checked);
+  if (!markup) { window.CASTShell?.toast?.('Markup not found for workflow link.', { kind: 'error' }); return; }
+  rfiLinkState = { status: 'pending', message: `Creating audited ${workflowType} workflow snapshot for ${markup.subject || markup.tool}…` };
+  renderMarkupPersistenceStatus();
+  try {
+    const serverMarkupId = await ensureMarkupSyncedForWorkflow(markup);
+    const response = await fetch('/api/cast-cad-rfi-link', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ markupId: serverMarkupId, localMarkupId: markup.id, workflowType, title: markup.subject || markup.tool, description: markup.body || '', createExternal }),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    markup.source_snapshot = { ...(markup.source_snapshot || {}), workflowLinkId: result.workflowLink?.id || '', workflowType, workflowLinkStatus: result.workflowLink?.linkStatus || 'draft-snapshot', workflowLinkedAt: new Date().toISOString() };
+    save();
+    rfiLinkState = { status: 'workflow-linked', message: `${workflowType} workflow snapshot ${result.workflowLink?.id || ''} created from ${markup.subject || markup.tool}; ${createExternal ? 'external provider queued only if configured' : 'no external provider write-back was attempted'}.` };
+    window.CASTShell?.toast?.('Workflow snapshot created through the audited backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD workflow link API unavailable or provider blocked', error);
+    rfiLinkState = { status: 'blocked', message: `Workflow link blocked: ${error.message}. No local-only submittal/change-event/external provider record was fabricated.` };
+    window.CASTShell?.toast?.('Workflow link blocked until backend/provider contract requirements are met.', { kind: 'error' });
+  }
+  render();
+}
 function visibleMarkups() {
   const drawing = selectedDrawing();
   return state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id && m.status !== 'Deleted' && !m.deleted_at && !m.deletedAt);
@@ -1842,6 +1870,7 @@ document.addEventListener('click', (event) => {
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const deleteMarkup = event.target.closest('[data-delete-markup]'); if (deleteMarkup) { deleteMarkupWithBackend(deleteMarkup.dataset.deleteMarkup); return; }
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
+  const workflowLink = event.target.closest('[data-workflow-link]'); if (workflowLink) { createMarkupWorkflowLink(workflowLink.dataset.workflowLink); return; }
   if (event.target.closest('[data-export]')) exportCsv();
   if (event.target.closest('[data-reset]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: '', status: 'idle', message: '' }; calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
 });
