@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -258,6 +258,63 @@ function createMarkupComment(state, markupId, input = {}, actor) {
   audit(state, actor, 'Added CAST CAD markup thread comment', 'CAST_CAD_MARKUP_COMMENT', comment.id, null, comment, comment.mentions.length ? `Mentions: ${comment.mentions.join(', ')}` : '');
   return { ok: true, comment };
 }
+function commentMentionTransportConfigured() { return Boolean(process.env.CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT || process.env.CAST_CAD_EMAIL_PROVIDER || process.env.CAST_CAD_REALTIME_PROVIDER); }
+function createCommentMentionDelivery(state, input = {}, actor) {
+  state.commentMentionEvents ||= [];
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const commentId = input.commentId || input.comment_id;
+  const comment = state.comments.find((row) => row.id === commentId);
+  if (!comment) return { ok: false, status: 404, error: 'CAST CAD markup comment not found.' };
+  const markup = state.markups.find((row) => row.id === comment.markupId);
+  if (!markup) return { ok: false, status: 404, error: 'CAST CAD markup for comment not found.' };
+  const mentions = (Array.isArray(input.mentions) && input.mentions.length ? input.mentions : comment.mentions || [])
+    .map((mention) => String(mention || '').replace(/^@/, '').trim().toLowerCase())
+    .filter(Boolean);
+  const recipients = [...new Set(mentions)].map((mention) => ({
+    mention,
+    email: mention.includes('@') ? mention : '',
+    userHandle: mention.includes('@') ? '' : mention,
+    status: commentMentionTransportConfigured() ? 'queued' : 'provider-required',
+  }));
+  if (!recipients.length) return { ok: false, status: 422, errors: ['At least one @mention recipient is required before delivery can be requested.'] };
+  const providerReady = commentMentionTransportConfigured();
+  const event = {
+    id: id('cad_mention_event'),
+    projectId: markup.projectId,
+    sheetId: markup.sheetId,
+    markupId: markup.id,
+    commentId: comment.id,
+    deliveryType: input.deliveryType || input.delivery_type || 'markup-comment-mention',
+    status: providerReady ? 'queued' : 'provider-required',
+    providerRequired: !providerReady,
+    requiredEnvVars: providerReady ? [] : ['CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_CAD_REALTIME_PROVIDER'],
+    provider: process.env.CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT || (process.env.CAST_CAD_EMAIL_PROVIDER ? 'email-provider' : process.env.CAST_CAD_REALTIME_PROVIDER ? 'realtime-provider' : 'unconfigured'),
+    recipientCount: recipients.length,
+    recipients,
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    message: String(input.message || comment.body || '').slice(0, 2000),
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.commentMentionEvents.push(event);
+  audit(state, actor, 'Created CAST CAD markup mention notification event', 'CAST_CAD_COMMENT_MENTION', event.id, null, event, event.providerRequired ? 'Mention notification transport is not configured; no external email/realtime message or public link was fabricated.' : 'Mention notification queued for configured private transport.');
+  if (!providerReady) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD comment mention delivery requires CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_CAD_REALTIME_PROVIDER; refusing to fabricate delivered notifications.', requiredEnvVars: event.requiredEnvVars, mentionEvent: event };
+  return { ok: true, mentionEvent: event };
+}
+function listCommentMentionEvents(state, filters = {}) {
+  state.commentMentionEvents ||= [];
+  let rows = state.commentMentionEvents.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.markupId) rows = rows.filter((row) => row.markupId === filters.markupId);
+  if (filters.commentId) rows = rows.filter((row) => row.commentId === filters.commentId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function listMarkupComments(state, markupId) {
   return state.comments.filter((row) => !markupId || row.markupId === markupId);
 }
@@ -265,7 +322,8 @@ function listMarkupAudit(state, markupId) {
   if (!markupId) return state.auditLog.slice();
   const commentIds = new Set(state.comments.filter((row) => row.markupId === markupId).map((row) => row.id));
   const attachmentIds = new Set((state.attachments || []).filter((row) => row.markupId === markupId || commentIds.has(row.commentId)).map((row) => row.id));
-  return state.auditLog.filter((row) => row.entityId === markupId || commentIds.has(row.entityId) || attachmentIds.has(row.entityId));
+  const mentionEventIds = new Set((state.commentMentionEvents || []).filter((row) => row.markupId === markupId || commentIds.has(row.commentId)).map((row) => row.id));
+  return state.auditLog.filter((row) => row.entityId === markupId || commentIds.has(row.entityId) || attachmentIds.has(row.entityId) || mentionEventIds.has(row.entityId));
 }
 function attachmentStorageConfigured() { return Boolean(process.env.CAST_CAD_ATTACHMENT_STORAGE_ADAPTER || process.env.CAST_CAD_ATTACHMENT_STORAGE_URL); }
 function normalizeAttachment(input = {}, actor) {
@@ -1287,7 +1345,7 @@ function markupsCsv(markups) {
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
-  createMarkupComment, listMarkupComments, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
+  createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
