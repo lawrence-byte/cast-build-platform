@@ -541,10 +541,35 @@ function createAnnotatedPdfExport(state, { projectId, sheetId, flatten = true },
   const permission = requireCastCad(actor.role, 'export');
   if (!permission.ok) return permission;
   const markups = listMarkups(state, { projectId, sheetId });
-  const exportJob = { id: id('cad_export'), projectId, sheetId: sheetId || '', type: 'annotated-pdf', format: 'pdf', status: process.env.CAST_CAD_PDF_EXPORT_WORKER ? 'queued' : 'provider-required', flatten: Boolean(flatten), markupCount: markups.length, providerRequired: !process.env.CAST_CAD_PDF_EXPORT_WORKER, outputPointer: process.env.CAST_CAD_PDF_EXPORT_WORKER ? `/api/cast-cad/export/${projectId || 'project'}-${Date.now()}.pdf` : '', createdByUserId: actor.id, createdAt: now() };
+  const exportJob = { id: id('cad_export'), projectId, sheetId: sheetId || '', type: 'annotated-pdf', format: 'pdf', status: process.env.CAST_CAD_PDF_EXPORT_WORKER ? 'queued' : 'provider-required', flatten: Boolean(flatten), markupCount: markups.length, providerRequired: !process.env.CAST_CAD_PDF_EXPORT_WORKER, requiredEnvVars: process.env.CAST_CAD_PDF_EXPORT_WORKER ? [] : ['CAST_CAD_PDF_EXPORT_WORKER'], privateArtifacts: true, cacheControl: 'private, max-age=0, no-store', outputPointer: process.env.CAST_CAD_PDF_EXPORT_WORKER ? `/api/cast-cad/export/${projectId || 'project'}-${Date.now()}.pdf` : '', contract: { endpoint: '/api/cast-cad-exports', type: 'annotated-pdf', inputs: ['projectId','sheetId','flatten'], outputs: ['privatePdfPointer','auditLog'], workerRequired: 'CAST_CAD_PDF_EXPORT_WORKER', privateArtifacts: true, cacheControl: 'private, max-age=0, no-store' }, createdByUserId: actor.id, createdAt: now() };
   state.exportJobs.push(exportJob);
   audit(state, actor, 'Created annotated PDF export job', 'CAST_CAD_EXPORT', exportJob.id, null, exportJob, exportJob.providerRequired ? 'PDF export worker not configured yet.' : 'Queued for PDF export worker.');
   return { ok: true, exportJob };
+}
+function createPdfAnnotationImportJob(state, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || 'default';
+  const sheetId = input.sheetId || input.sheet_id || '';
+  const sourcePointer = input.sourcePointer || input.source_pointer || input.pdfPointer || input.pdf_pointer || '';
+  const mode = String(input.mode || input.importMode || input.import_mode || 'import-unflattened').toLowerCase();
+  if (!sheetId) return { ok: false, status: 422, errors: ['sheetId is required for PDF annotation import/unflatten jobs.'] };
+  if (!sourcePointer) return { ok: false, status: 422, errors: ['sourcePointer is required and must reference a private PDF/annotation source; public URLs are forbidden.'] };
+  if (/^https?:\/\//i.test(sourcePointer)) return { ok: false, status: 422, code: 'public-url-forbidden', errors: ['PDF annotation import refuses public URLs; pass a private provider pointer or stream lease id.'] };
+  const allowedModes = ['import-unflattened', 'import-flattened', 'xfdf-import', 'fdf-import', 'sync-existing'];
+  if (!allowedModes.includes(mode)) return { ok: false, status: 422, errors: [`mode must be one of: ${allowedModes.join(', ')}.`] };
+  const workerConfigured = Boolean(process.env.CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER || process.env.CAST_CAD_PDF_EXPORT_WORKER);
+  const job = {
+    id: id('cad_pdf_annotation_import'), projectId, sheetId, type: 'pdf-annotation-import', mode,
+    sourcePointer, status: workerConfigured ? 'queued' : 'provider-required', providerRequired: !workerConfigured,
+    requiredEnvVars: workerConfigured ? [] : ['CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER'],
+    privateArtifacts: true, publicExposure: false, requiresAuth: true, cacheControl: 'private, max-age=0, no-store', outputPointer: '', importedMarkupCount: 0,
+    contract: { endpoint: '/api/cast-cad-exports', type: 'pdf-annotation-import', inputs: ['projectId','sheetId','sourcePointer','mode'], outputs: ['importedMarkupDrafts','auditLog'], workerRequired: 'CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER', noPublicUrls: true, privateArtifacts: true, cacheControl: 'private, max-age=0, no-store', humanReviewRequiredBeforeAuthoritativeMarkups: true },
+    createdByUserId: actor.id, createdAt: now()
+  };
+  state.exportJobs.push(job);
+  audit(state, actor, 'Created PDF annotation import/unflatten job', 'CAST_CAD_EXPORT', job.id, null, job, job.providerRequired ? 'PDF annotation import worker not configured; refused to fabricate imported markups or public PDF artifacts.' : 'Queued for configured PDF annotation import worker.');
+  return { ok: true, exportJob: job };
 }
 function createRfiFromMarkup(state, markupId, actor, overrides = {}) {
   const permission = requireCastCad(actor.role, 'create_rfi');
@@ -1344,7 +1369,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
-  buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
+  buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
