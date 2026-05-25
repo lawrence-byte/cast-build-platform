@@ -240,6 +240,20 @@ assert.equal(modelImport.job.privateArtifacts, true, 'model/CAD ingestion keeps 
 assert.deepEqual(modelImport.job.requiredEnvVars, ['CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER'], 'model/CAD ingestion names exact worker env choices');
 assert.equal(modelImport.job.contract.humanReviewRequiredBeforeLinkedQuantities, true, 'model/CAD quantities remain human-review gated');
 assert.equal(cad.listModelIngestionJobs(state, { projectId: 'alum', extension: 'ifc' }).length, 1, 'model/CAD ingestion jobs list by project and extension');
+const publicModelQuantity = cad.createModelQuantityLink(state, { projectId: 'alum', sheetId: 'A-101', sourcePointer: 'https://example.com/model-index.json', elementId: 'IfcWall-1', quantity: 12, unit: 'LF' }, owner);
+assert.equal(publicModelQuantity.ok, false, 'model quantity links reject public source URLs');
+assert.equal(publicModelQuantity.code, 'public-url-forbidden', 'model quantity link exposes public URL blocker');
+const blockedVerifiedModelQuantity = cad.createModelQuantityLink(state, { projectId: 'alum', sheetId: 'A-101', modelIngestionJobId: modelImport.job.id, elementId: 'IfcWall-2', quantity: 22.5, unit: 'LF', status: 'Verified' }, owner);
+assert.equal(blockedVerifiedModelQuantity.ok, false, 'model-derived verified quantities fail closed without human review');
+assert.equal(blockedVerifiedModelQuantity.code, 'human-review-required', 'model quantity verification exposes review blocker');
+const modelQuantity = cad.createModelQuantityLink(state, { projectId: 'alum', sheetId: 'A-101', modelIngestionJobId: modelImport.job.id, elementId: 'IfcWall-2', elementName: 'Rated corridor wall', quantity: 22.5, unit: 'LF', costCode: '09-2116', createMarkup: true, humanReviewApproved: true }, owner);
+assert.equal(modelQuantity.ok, true, 'model-derived quantity link creates through audited contract');
+assert.equal(modelQuantity.quantityLink.publicExposure, false, 'model quantity link forbids public exposure');
+assert.equal(modelQuantity.quantityLink.budgetAuthoritative, false, 'model quantity link is not budget-authoritative');
+assert.equal(modelQuantity.markup.measurement.source, 'model-quantity-link', 'model quantity can create a linked takeoff markup');
+assert.equal(modelQuantity.contract.humanReviewRequiredBeforeVerifiedQuantities, true, 'model quantity contract gates verified quantities with human review');
+assert.equal(cad.listModelQuantityLinks(state, { projectId: 'alum', elementId: 'IfcWall-2' }).length, 1, 'model quantity links list by project/element');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_MODEL_QUANTITY_LINK'), 'model quantity link is audited');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_MODEL_INGESTION_JOB'), 'model/CAD ingestion job is audited');
 
 const batchFlag = cad.createBatchOperation(state, { type: 'batch-operation', operation: 'flag-for-review', projectId: 'alum', sheetId: 'A-101', patch: { priority: 'Urgent' } }, owner);

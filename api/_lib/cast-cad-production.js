@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1170,6 +1170,81 @@ function listModelIngestionJobs(state, filters = {}) {
   if (filters.extension) rows = rows.filter((row) => row.extension === String(filters.extension).toLowerCase());
   return rows;
 }
+function modelQuantityLinkContract() {
+  return {
+    endpoint: '/api/cast-cad-exports',
+    type: 'model-quantity-link',
+    privateArtifacts: true,
+    publicExposure: false,
+    cacheControl: 'private, max-age=0, no-store',
+    inputs: ['projectId','sheetId','modelIngestionJobId','elementId','quantity','unit'],
+    outputs: ['reviewGatedTakeoffRow','optionalMarkupId','auditLog'],
+    humanReviewRequiredBeforeVerifiedQuantities: true,
+    budgetAuthoritative: false,
+    workerStillRequiredForExtraction: 'CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER',
+  };
+}
+function createModelQuantityLink(state, input = {}, actor) {
+  state.modelIngestionJobs ||= [];
+  state.modelQuantityLinks ||= [];
+  const permission = requireCastCad(actor.role, 'export');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || '';
+  const sheetId = input.sheetId || input.sheet_id || '';
+  const modelIngestionJobId = input.modelIngestionJobId || input.model_ingestion_job_id || input.jobId || input.job_id || '';
+  const sourcePointer = String(input.sourcePointer || input.source_pointer || '').trim();
+  const elementId = String(input.elementId || input.element_id || input.modelElementId || input.model_element_id || '').trim();
+  const quantity = Number(input.quantity ?? input.measurementValue ?? input.measurement_value);
+  const unit = String(input.unit || input.measurementUnit || input.measurement_unit || '').trim().toUpperCase();
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!sheetId) errors.push('sheetId is required.');
+  if (!modelIngestionJobId && !sourcePointer) errors.push('modelIngestionJobId or private sourcePointer is required.');
+  if (sourcePointer && /^https?:\/\//i.test(sourcePointer)) errors.push('Public model quantity source URLs are forbidden; pass a private provider pointer, upload lease id, or model ingestion job id.');
+  if (modelIngestionJobId && !state.modelIngestionJobs.some((row) => row.id === modelIngestionJobId)) errors.push('modelIngestionJobId must reference an audited CAST CAD model ingestion job.');
+  if (!elementId) errors.push('elementId is required so the linked quantity is source-cited to a model element.');
+  if (!Number.isFinite(quantity) || quantity <= 0) errors.push('quantity must be a positive number.');
+  if (!unit) errors.push('unit is required.');
+  if (errors.length) return { ok: false, status: 422, code: errors.some((msg) => msg.includes('Public')) ? 'public-url-forbidden' : 'validation-error', errors, contract: modelQuantityLinkContract() };
+  const requestedVerified = ['Verified','Resolved'].includes(input.status) || input.budgetAuthoritative || input.budget_authoritative;
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (requestedVerified && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Model-derived quantities cannot become verified/resolved or budget-authoritative without human review approval.', contract: modelQuantityLinkContract() };
+  const link = {
+    id: input.id || id('cad_model_qty'), projectId, sheetId, modelIngestionJobId, sourcePointer, elementId,
+    elementName: String(input.elementName || input.element_name || '').trim(), discipline: String(input.discipline || '').trim(),
+    quantity, unit, costCode: input.costCode || input.cost_code || '', assemblyCode: input.assemblyCode || input.assembly_code || '',
+    status: humanReviewApproved ? (input.status || 'Reviewed') : 'Needs Review', humanReviewApproved,
+    budgetAuthoritative: false, providerRequired: false, privateArtifacts: true, publicExposure: false,
+    cacheControl: 'private, max-age=0, no-store', sourceCitation: { kind: 'model-element', modelIngestionJobId, sourcePointer, elementId },
+    createdByUserId: actor.id, createdAt: now(),
+  };
+  let linkedMarkup = null;
+  if (input.createMarkup || input.create_markup) {
+    const created = createMarkup(state, {
+      projectId, sheetId, tool: input.tool || 'Model Quantity', subject: input.subject || `Model quantity ${elementId}`,
+      body: input.body || `Model-derived quantity from ${elementId}. Human review required before budget use.`,
+      status: link.status, trade: input.trade || link.discipline || 'Coordination', costCode: link.costCode,
+      measurement: { value: quantity, unit, source: 'model-quantity-link', humanReviewRequired: !humanReviewApproved, assemblyCode: link.assemblyCode },
+      geometry: input.geometry || { type: 'point', points: input.points || [{ x: Number(input.x ?? 50), y: Number(input.y ?? 50) }] },
+      sourceSnapshot: { label: 'Model quantity link', modelQuantityLinkId: link.id, elementId, humanReviewApproved, budgetAuthoritative: false },
+    }, actor);
+    if (!created.ok) return created;
+    linkedMarkup = created.markup;
+    link.markupId = linkedMarkup.id;
+  }
+  state.modelQuantityLinks.push(link);
+  audit(state, actor, 'Created CAST CAD model-derived quantity link', 'CAST_CAD_MODEL_QUANTITY_LINK', link.id, null, link, 'Provider-independent reviewed model quantity contract; no public model artifact or budget-authoritative quantity was fabricated.');
+  return { ok: true, quantityLink: link, markup: linkedMarkup, contract: modelQuantityLinkContract() };
+}
+function listModelQuantityLinks(state, filters = {}) {
+  state.modelQuantityLinks ||= [];
+  let rows = state.modelQuantityLinks.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.modelIngestionJobId) rows = rows.filter((row) => row.modelIngestionJobId === filters.modelIngestionJobId);
+  if (filters.elementId) rows = rows.filter((row) => row.elementId === filters.elementId);
+  return rows;
+}
 function normalizeBatchOperationInput(input = {}) {
   const operation = String(input.operation || input.batchOperation || input.batch_operation || 'update-markup-status').trim();
   const markupIds = [...new Set((input.markupIds || input.markup_ids || []).map(String).filter(Boolean))];
@@ -1493,7 +1568,7 @@ module.exports = {
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
-  buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
+  buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
