@@ -59,6 +59,19 @@ const badReply = cad.createMarkupComment(state, markup.markup.id, { parentId: 'o
 assert.equal(badReply.ok, false, 'threaded markup replies reject parents outside the same markup');
 assert.equal(cad.listMarkupComments(state, markup.markup.id).length, 2, 'markup comments list by markup');
 assert.ok(cad.listMarkupAudit(state, markup.markup.id).some((row) => row.entityType === 'CAST_CAD_MARKUP_COMMENT'), 'markup audit history includes thread comments');
+const badAttachment = cad.createMarkupAttachment(state, { projectId: 'alum', markupId: markup.markup.id, originalFileName: 'field-photo.exe', contentType: 'application/x-msdownload', byteSize: 100, contentHash: 'sha256-bad' }, owner);
+assert.equal(badAttachment.ok, false, 'markup attachments reject unsafe evidence file types');
+const attachment = cad.createMarkupAttachment(state, { projectId: 'alum', sheetId: 'A-101', markupId: markup.markup.id, commentId: comment.comment.id, originalFileName: 'field-photo.png', contentType: 'image/png', byteSize: 2048, contentHash: 'sha256-field-photo', caption: 'Field condition photo' }, owner);
+assert.equal(attachment.ok, true, 'private markup attachment manifest registers through production service');
+assert.equal(attachment.attachment.publicExposure, false, 'attachment manifest forbids public exposure');
+assert.equal(attachment.attachment.requiresAuth, true, 'attachment manifest requires auth-backed private access');
+assert.equal(attachment.attachment.providerRequired, true, 'attachment manifest names missing private storage adapter without faking durable bytes');
+assert.deepEqual(attachment.attachment.requiredEnvVars, ['CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'], 'attachment contract exposes required storage adapter env var');
+const blockedDurableAttachment = cad.createMarkupAttachment(state, { projectId: 'alum', sheetId: 'A-101', markupId: markup.markup.id, originalFileName: 'signed.pdf', contentType: 'application/pdf', byteSize: 4096, contentHash: 'sha256-signed', durable: true }, owner);
+assert.equal(blockedDurableAttachment.ok, false, 'durable attachment upload fails closed without storage adapter');
+assert.equal(blockedDurableAttachment.code, 'provider-required', 'durable attachment blocker is provider-required');
+assert.equal(cad.listMarkupAttachments(state, { markupId: markup.markup.id }).length, 1, 'attachment list filters by markup');
+assert.ok(cad.listMarkupAudit(state, markup.markup.id).some((row) => row.entityType === 'CAST_CAD_ATTACHMENT'), 'markup audit history includes attachment manifests');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(workbook.ok, true, 'takeoff workbook export job created');
@@ -284,6 +297,12 @@ assert.ok(castCadJs.includes('No local-only comment or audit history was fabrica
 assert.ok(castCadHtml.includes('data-markup-thread-target'), 'CAST CAD workbench exposes markup thread selector');
 assert.ok(castCadHtml.includes('data-add-markup-thread-comment'), 'CAST CAD workbench exposes audited comment creation control');
 assert.ok(castCadHtml.includes('data-markup-audit-list'), 'CAST CAD workbench exposes markup audit history list');
+assert.ok(castCadJs.includes('function addMarkupAttachmentManifest'), 'CAST CAD workbench registers private attachment manifests through backend contract');
+assert.ok(castCadJs.includes("action: 'attachment'"), 'CAST CAD workbench calls attachment action on /api/cast-cad-markups');
+assert.ok(castCadJs.includes('CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'), 'CAST CAD workbench names private attachment storage adapter requirement');
+assert.ok(castCadJs.includes('No local evidence file, durable byte claim, or public/private URL was fabricated'), 'CAST CAD attachment workflow fails closed without fabricating evidence files or URLs');
+assert.ok(castCadHtml.includes('data-add-markup-attachment'), 'CAST CAD workbench exposes attachment manifest registration controls');
+assert.ok(castCadHtml.includes('data-markup-attachment-list'), 'CAST CAD workbench exposes attachment manifest list');
 assert.ok(castCadJs.includes('function convertMarkupToRfiDraft'), 'CAST CAD workbench creates audited draft RFI snapshots from markups');
 assert.ok(castCadJs.includes('function createMarkupWorkflowLink'), 'CAST CAD workbench creates audited submittal/change-event workflow snapshots from markups');
 assert.ok(castCadJs.includes('data-workflow-link'), 'CAST CAD workbench exposes per-markup workflow link action');

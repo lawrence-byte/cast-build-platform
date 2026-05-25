@@ -43,6 +43,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent audited markup soft-delete contract on `/api/cast-cad-markups` using `DELETE`, default list/export filtering that excludes deleted markups, explicit `includeDeleted=true` audit discovery, hard-delete human-review gates, and frontend delete controls that fail closed rather than fabricating unaudited local deletion.
 - Provider-independent frontend drawing set version/slip-sheet bridge that publishes the current drawing index through `/api/cast-cad-exports` `type=drawing-set-version`, loads audited version/revision history, slip-sheets selected revisions only through the human-review-gated backend contract, and fails closed without fabricating local current/superseded authority.
 - Provider-independent frontend threaded markup comment/audit bridge that selects persisted markups, loads `/api/cast-cad-markups?action=comments|audit`, posts audited mention-aware comments, and fails closed without fabricating local-only comment history or audit authority.
+- Provider-independent private markup attachment/evidence manifest contract and frontend bridge on `/api/cast-cad-markups?action=attachments`, with audited metadata, no-store/no-public-URL guarantees, approved content-type validation, and fail-closed durable byte gates requiring `CAST_CAD_ATTACHMENT_STORAGE_ADAPTER`.
 - Provider-independent frontend audited markup-edit bridge that resolves/updates selected markups only through backend `PATCH /api/cast-cad-markups`, refreshes local state from the server response, and fails closed without fabricating unaudited local-only edit authority.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
@@ -108,6 +109,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 
 - 300-sheet upload/navigation: metadata-backed sheet navigation implemented; authenticated raw PDF stream contract implemented; provider credentials still required for private file bytes.
 - Create/edit/save/reload/filter/export/delete markups: server contract implemented with audit, CSV, audited soft-delete, default deleted-row filtering, and fail-closed hard-delete review gates; production database adapter remains to be connected.
+- Attach private field/photo/PDF evidence to markups/comments: audited provider-independent manifest contract and frontend bridge implemented; durable private byte storage remains blocked until `CAST_CAD_ATTACHMENT_STORAGE_ADAPTER` is configured.
 - Calibrated length/area/count: implemented and tested at helper/MVP level.
 - Excel takeoff report: workbook export job contract implemented; XLSX worker/provider remains to be connected for generated binary files.
 - CAST Tool Library: provider-independent API/service contract implemented; frontend workbench bridge now loads/admin-seeds reviewed tools and places selected tools as audited Needs Review markups/takeoff rows; production database/catalog adapter remains.
@@ -136,8 +138,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-24T12:45:40Z` plus this follow-up CAST CAD threaded markup/audit bridge slice.
-- Branch audited: `cast-cad-markup-thread-frontend-bridge`.
+- Audited at: `2026-05-25T05:49:15Z` for the CAST CAD private markup attachment/evidence manifest slice.
+- Branch audited: `cast-cad-attachment-manifest-bridge`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

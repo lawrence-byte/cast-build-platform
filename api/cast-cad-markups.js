@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -17,6 +17,10 @@ module.exports = async function handler(req, res) {
         const markupId = url.searchParams.get('markupId') || url.searchParams.get('id');
         const auditLog = listMarkupAudit(state, markupId);
         return json(res, 200, { ok: true, count: auditLog.length, auditLog });
+      }
+      if (action === 'attachments') {
+        const attachments = listMarkupAttachments(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), markupId: url.searchParams.get('markupId') || url.searchParams.get('id'), commentId: url.searchParams.get('commentId') });
+        return json(res, 200, { ok: true, attachmentCount: attachments.length, attachments, contract: attachmentContract() });
       }
       if (action === 'preferences') {
         const result = getViewerPreferences(state, actor, url.searchParams.get('projectId') || 'default');
@@ -80,6 +84,10 @@ module.exports = async function handler(req, res) {
       }
       if (body.action === 'comment' || body.comment || body.parentId || body.parent_id) {
         const result = createMarkupComment(state, body.markupId || body.id, body.comment || body, actor);
+        return json(res, result.ok ? 201 : (result.status || 422), result);
+      }
+      if (body.action === 'attachment' || body.action === 'attachments') {
+        const result = createMarkupAttachment(state, body, actor);
         return json(res, result.ok ? 201 : (result.status || 422), result);
       }
       const result = createMarkup(state, body, actor);
