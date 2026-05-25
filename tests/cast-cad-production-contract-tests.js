@@ -87,8 +87,10 @@ assert.ok(cad.listMarkupAudit(state, markup.markup.id).some((row) => row.entityT
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(workbook.ok, true, 'takeoff workbook export job created');
-assert.equal(workbook.exportJob.status, 'ready', 'takeoff workbook can be generated from stored measurements');
+assert.equal(workbook.exportJob.status, 'provider-required', 'takeoff workbook fails closed until the XLSX worker is configured');
 assert.equal(workbook.exportJob.rows.length, 1, 'takeoff workbook includes measured markup');
+assert.equal(workbook.exportJob.outputPointer, '', 'takeoff workbook contract does not fabricate a private XLSX artifact pointer without a worker');
+assert.deepEqual(workbook.exportJob.requiredEnvVars, ['CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER'], 'takeoff workbook names exact worker env requirements');
 
 const pdfExport = cad.createAnnotatedPdfExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(pdfExport.ok, true, 'annotated PDF export contract created');
@@ -344,6 +346,7 @@ assert.ok(castCadHtml.includes('data-import-document-metadata'), 'CAST CAD workb
 assert.ok(castCadHtml.includes('data-document-metadata-summary'), 'CAST CAD workbench exposes document metadata registry status');
 assert.ok(castCadJs.includes('function createBackendExportJob'), 'CAST CAD workbench creates audited backend export jobs');
 assert.ok(castCadJs.includes("createBackendExportJob('annotated-pdf')"), 'CAST CAD workbench calls annotated PDF export job contract');
+assert.ok(castCadJs.includes('CAST_CAD_TAKEOFF_WORKBOOK_WORKER'), 'CAST CAD workbench names takeoff workbook worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_EXPORT_WORKER'), 'CAST CAD workbench names annotated PDF export worker requirement');
 assert.ok(castCadHtml.includes('data-create-workbook-export'), 'CAST CAD workbench exposes takeoff workbook export job control');
 assert.ok(castCadHtml.includes('data-create-annotated-pdf-export'), 'CAST CAD workbench exposes annotated PDF export job control');

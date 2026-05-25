@@ -473,9 +473,10 @@ function createTakeoffWorkbookExport(state, { projectId, sheetId, format = 'xlsx
   if (!permission.ok) return permission;
   const markups = listMarkups(state, { projectId, sheetId }).filter((row) => row.measurement || /count|measure|area|length/i.test(row.tool));
   const rows = markups.map((m) => ({ sheetId: m.sheetId, subject: m.subject, trade: m.trade, costCode: m.costCode, quantity: m.measurement?.value || 1, unit: m.measurement?.unit || 'EA', status: m.status, sourceMarkupId: m.id }));
-  const exportJob = { id: id('cad_export'), projectId, sheetId: sheetId || '', type: 'takeoff-workbook', format, status: 'ready', rowCount: rows.length, rows, outputPointer: `/api/cast-cad/export/${projectId || 'project'}-${Date.now()}.${format}`, createdByUserId: actor.id, createdAt: now() };
+  const workerConfigured = Boolean(process.env.CAST_CAD_TAKEOFF_WORKBOOK_WORKER || process.env.CAST_CAD_XLSX_EXPORT_WORKER);
+  const exportJob = { id: id('cad_export'), projectId, sheetId: sheetId || '', type: 'takeoff-workbook', format, status: workerConfigured ? 'queued' : 'provider-required', rowCount: rows.length, rows, providerRequired: !workerConfigured, requiredEnvVars: workerConfigured ? [] : ['CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER'], privateArtifacts: true, cacheControl: 'private, max-age=0, no-store', outputPointer: workerConfigured ? `/api/cast-cad/export/${projectId || 'project'}-${Date.now()}.${format}` : '', contract: { endpoint: '/api/cast-cad-exports', type: 'takeoff-workbook', inputs: ['projectId','sheetId','format'], outputs: ['workbookPointer','measurementRows','auditLog'], workerRequired: 'CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER', privateArtifacts: true, cacheControl: 'private, max-age=0, no-store' }, createdByUserId: actor.id, createdAt: now() };
   state.exportJobs.push(exportJob);
-  audit(state, actor, 'Created takeoff workbook export job', 'CAST_CAD_EXPORT', exportJob.id, null, exportJob);
+  audit(state, actor, 'Created takeoff workbook export job', 'CAST_CAD_EXPORT', exportJob.id, null, exportJob, exportJob.providerRequired ? 'Takeoff workbook/XLSX worker not configured; captured audited rows only and did not fabricate a private workbook artifact.' : 'Queued for takeoff workbook/XLSX worker.');
   return { ok: true, exportJob };
 }
 function createAnnotatedPdfExport(state, { projectId, sheetId, flatten = true }, actor) {

@@ -46,6 +46,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent frontend threaded markup comment/audit bridge that selects persisted markups, loads `/api/cast-cad-markups?action=comments|audit`, posts audited mention-aware comments, and fails closed without fabricating local-only comment history or audit authority.
 - Provider-independent private markup attachment/evidence manifest contract and frontend bridge on `/api/cast-cad-markups?action=attachments`, with audited metadata, no-store/no-public-URL guarantees, approved content-type validation, and fail-closed durable byte gates requiring `CAST_CAD_ATTACHMENT_STORAGE_ADAPTER`.
 - Provider-independent frontend audited markup-edit bridge that resolves/updates selected markups only through backend `PATCH /api/cast-cad-markups`, refreshes local state from the server response, and fails closed without fabricating unaudited local-only edit authority.
+- Provider-independent fail-closed takeoff workbook/XLSX export job contract that captures audited measurement rows but refuses to fabricate private workbook artifacts or output pointers until `CAST_CAD_TAKEOFF_WORKBOOK_WORKER` or `CAST_CAD_XLSX_EXPORT_WORKER` is configured, with frontend status messaging for the exact worker requirement.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
