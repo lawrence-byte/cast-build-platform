@@ -21,7 +21,7 @@ let fieldPackageState = { packageId: '', deviceId: 'ipad-field-01', sheetIds: []
 let fieldServiceWorkerState = { status: 'pending', message: 'Offline shell cache not registered yet; private PDFs/API payloads are never cached.' };
 let markupPersistenceState = { status: 'idle', message: 'Server markup persistence not checked yet.', syncedAt: '' };
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
-let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. Takeoff workbook can run from stored measurements; annotated PDF requires CAST_CAD_PDF_EXPORT_WORKER.', jobs: [] };
+let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. Takeoff workbooks require CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER; annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER.', jobs: [] };
 let rfiLinkState = { status: 'idle', message: 'RFI/submittal/change-event workflow links are draft-only until the backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
@@ -640,7 +640,7 @@ function renderExportCenter() {
   if (jobs) {
     jobs.innerHTML = exportCenterState.jobs.length ? exportCenterState.jobs.slice(-4).reverse().map((job) => {
       const label = job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook';
-      const details = job.providerRequired ? 'Worker required: CAST_CAD_PDF_EXPORT_WORKER. No flattened/private PDF artifact is fabricated.' : `${job.rowCount ?? job.markupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
+      const details = job.providerRequired ? `Worker required: ${(job.requiredEnvVars || []).join(', ') || (job.type === 'takeoff-workbook' ? 'CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER' : 'CAST_CAD_PDF_EXPORT_WORKER')}. No private export artifact is fabricated.` : `${job.rowCount ?? job.markupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
       return `<div class="tool-card"><em>${esc(job.status || 'queued')}</em><strong>${esc(label)} · ${esc(job.sheetId || 'all sheets')}</strong><span>${esc(details)}</span></div>`;
     }).join('') : '<p class="cad-muted">No backend export jobs requested in this session.</p>';
   }
@@ -1834,7 +1834,7 @@ async function createBackendExportJob(type = 'takeoff-workbook') {
     if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
     const job = result.exportJob || result.job || {};
     const providerRequired = Boolean(job.providerRequired);
-    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: providerRequired ? 'Annotated PDF export job recorded; CAST_CAD_PDF_EXPORT_WORKER is required before private flattened/annotated PDF artifacts can be generated.' : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook'} export job recorded by the audited backend contract.` };
+    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: providerRequired ? `${job.type === 'takeoff-workbook' ? 'Takeoff workbook' : 'Annotated PDF'} export job recorded; ${(job.requiredEnvVars || []).join(', ') || 'the private export worker'} is required before private export artifacts can be generated.` : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : 'Takeoff workbook'} export job queued by the audited backend contract.` };
     window.CASTShell?.toast?.(exportCenterState.message, { kind: providerRequired ? 'info' : 'success' });
   } catch (error) {
     console.warn('CAST CAD export API unavailable', error);
