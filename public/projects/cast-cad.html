@@ -171,6 +171,18 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-add-markup-thread-comment>Add audited comment</button>
               <span class="pdf-status" data-markup-thread-status>Select or refresh a markup thread to load backend comments and audit history.</span>
             </div>
+            <div class="pdf-intake cad-markup-attachment-controls" aria-label="CAST CAD private attachment manifest controls">
+              <label>Evidence file <input type="text" value="field-photo.png" data-attachment-file-name autocomplete="off"></label>
+              <label>Type <select data-attachment-content-type><option value="image/png">image/png</option><option value="image/jpeg">image/jpeg</option><option value="image/webp">image/webp</option><option value="image/heic">image/heic</option><option value="application/pdf">application/pdf</option><option value="text/plain">text/plain</option></select></label>
+              <label>Bytes <input type="number" min="1" step="1" value="2048" data-attachment-byte-size autocomplete="off"></label>
+              <label>Hash <input type="text" value="sha256-manual-evidence" data-attachment-content-hash autocomplete="off"></label>
+              <label>Caption <input type="text" placeholder="Field photo / backup note" data-attachment-caption autocomplete="off"></label>
+              <label><input type="checkbox" data-attachment-durable autocomplete="off"> Claim durable/private bytes</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-add-markup-attachment>Register attachment manifest</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-markup-attachments>Refresh attachments</button>
+              <span class="pdf-status" data-markup-attachment-status>Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.</span>
+            </div>
+            <div class="tool-list" data-markup-attachment-list><p class="cad-muted">No private attachment manifests loaded yet.</p></div>
             <div class="tool-list" data-markup-thread-list><p class="cad-muted">No backend thread comments loaded yet.</p></div>
             <div class="tool-list" data-markup-audit-list><p class="cad-muted">No markup audit history loaded yet.</p></div>
             <div data-markup-list></div>

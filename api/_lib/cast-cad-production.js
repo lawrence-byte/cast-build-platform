@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
+  markups: [], comments: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -237,7 +237,73 @@ function listMarkupComments(state, markupId) {
 function listMarkupAudit(state, markupId) {
   if (!markupId) return state.auditLog.slice();
   const commentIds = new Set(state.comments.filter((row) => row.markupId === markupId).map((row) => row.id));
-  return state.auditLog.filter((row) => row.entityId === markupId || commentIds.has(row.entityId));
+  const attachmentIds = new Set((state.attachments || []).filter((row) => row.markupId === markupId || commentIds.has(row.commentId)).map((row) => row.id));
+  return state.auditLog.filter((row) => row.entityId === markupId || commentIds.has(row.entityId) || attachmentIds.has(row.entityId));
+}
+function attachmentStorageConfigured() { return Boolean(process.env.CAST_CAD_ATTACHMENT_STORAGE_ADAPTER || process.env.CAST_CAD_ATTACHMENT_STORAGE_URL); }
+function normalizeAttachment(input = {}, actor) {
+  const originalFileName = safeFileName(input.originalFileName || input.fileName || input.filename || input.name || 'cast-cad-attachment.bin');
+  return {
+    id: input.id || id('cad_attachment'),
+    projectId: input.projectId || input.project_id || 'default',
+    sheetId: input.sheetId || input.sheet_id || '',
+    markupId: input.markupId || input.markup_id || '',
+    commentId: input.commentId || input.comment_id || '',
+    originalFileName,
+    contentType: String(input.contentType || input.content_type || 'application/octet-stream').toLowerCase(),
+    byteSize: Number(input.byteSize || input.byte_size || input.size || 0),
+    contentHash: String(input.contentHash || input.content_hash || '').trim(),
+    caption: String(input.caption || '').trim(),
+    source: input.source || 'cast-cad-attachment-manifest',
+    storageStatus: attachmentStorageConfigured() ? 'pending-provider-write' : 'provider-required',
+    providerRequired: !attachmentStorageConfigured(),
+    requiredEnvVars: attachmentStorageConfigured() ? [] : ['CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'],
+    publicExposure: false,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    storedObjectKey: attachmentStorageConfigured() ? String(input.storedObjectKey || input.stored_object_key || '').trim() : '',
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+}
+function validateAttachment(state, attachment) {
+  const errors = [];
+  if (!attachment.projectId) errors.push('projectId is required.');
+  if (!attachment.markupId) errors.push('markupId is required.');
+  if (!state.markups.some((row) => row.id === attachment.markupId)) errors.push('markupId must reference an existing CAST CAD markup.');
+  if (attachment.commentId && !state.comments.some((row) => row.id === attachment.commentId && row.markupId === attachment.markupId)) errors.push('commentId must belong to the same markup thread.');
+  if (!attachment.originalFileName) errors.push('originalFileName is required.');
+  if (!attachment.byteSize || attachment.byteSize < 1) errors.push('byteSize must be greater than zero.');
+  if (attachment.byteSize > 50 * 1024 * 1024) errors.push('Attachment metadata is capped at 50 MB unless a private storage adapter signs the upload.');
+  if (!attachment.contentHash) errors.push('contentHash is required so private evidence files can be deduplicated and audited without exposing bytes.');
+  if (!/^image\/(jpeg|png|webp|heic)$|^application\/pdf$|^text\/plain$/.test(attachment.contentType)) errors.push('contentType must be an approved evidence type: image/jpeg, image/png, image/webp, image/heic, application/pdf, or text/plain.');
+  return errors;
+}
+function createMarkupAttachment(state, input = {}, actor) {
+  state.attachments ||= [];
+  const permission = requireCastCad(actor.role, 'create_markup');
+  if (!permission.ok) return permission;
+  const attachment = normalizeAttachment(input, actor);
+  const errors = validateAttachment(state, attachment);
+  if (errors.length) return { ok: false, status: 422, errors };
+  if ((input.authoritative || input.durable || input.uploadBytes || input.upload_bytes) && !attachmentStorageConfigured()) {
+    return { ok: false, status: 503, code: 'provider-required', error: 'Private attachment storage is not configured; refusing to claim durable evidence-file persistence.', requiredEnvVars: ['CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'], attachment };
+  }
+  state.attachments.push(attachment);
+  audit(state, actor, 'Registered CAST CAD private attachment manifest', 'CAST_CAD_ATTACHMENT', attachment.id, null, attachment, attachment.providerRequired ? 'Manifest/audit only; configure CAST_CAD_ATTACHMENT_STORAGE_ADAPTER for durable private bytes.' : 'Private storage adapter configured; upload/write must complete provider-side.');
+  return { ok: true, attachment, contract: attachmentContract() };
+}
+function listMarkupAttachments(state, filters = {}) {
+  state.attachments ||= [];
+  let rows = state.attachments.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.markupId) rows = rows.filter((row) => row.markupId === filters.markupId);
+  if (filters.commentId) rows = rows.filter((row) => row.commentId === filters.commentId);
+  return rows;
+}
+function attachmentContract() {
+  return { privateArtifacts: true, publicExposure: false, requiresAuth: true, cacheControl: 'private, max-age=0, no-store', durableAdapterRequired: 'CAST_CAD_ATTACHMENT_STORAGE_ADAPTER', acceptedContentTypes: ['image/jpeg','image/png','image/webp','image/heic','application/pdf','text/plain'] };
 }
 function listMarkups(state, filters = {}) {
   let rows = state.markups.slice();
@@ -1131,7 +1197,7 @@ function markupsCsv(markups) {
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
-  createMarkupComment, listMarkupComments, listMarkupAudit,
+  createMarkupComment, listMarkupComments, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,

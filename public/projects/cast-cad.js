@@ -32,6 +32,7 @@ let governanceState = { status: 'idle', roles: [], members: [], permissions: nul
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
 let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
 let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
+let markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -746,6 +747,7 @@ function render() {
   renderDrawingSetControls();
   renderViewportMappingStatus();
   renderMarkupThread();
+  renderMarkupAttachments();
 }
 function reviewRoomPayload() {
   const drawing = selectedDrawing();
@@ -1187,6 +1189,68 @@ async function addMarkupThreadComment() {
     markupThreadState = { ...markupThreadState, status: 'blocked', message: `Comment blocked: ${error.message}. No local-only comment or audit history was fabricated.` };
     window.CASTShell?.toast?.('Markup comment blocked; backend audit is required.', { kind: 'error' });
     renderMarkupThread();
+  }
+}
+function renderMarkupAttachments() {
+  const status = document.querySelector('[data-markup-attachment-status]');
+  const list = document.querySelector('[data-markup-attachment-list]');
+  if (status) status.textContent = markupAttachmentState.message;
+  if (list) {
+    list.innerHTML = markupAttachmentState.attachments.length ? markupAttachmentState.attachments.map((attachment) => `<div class="tool-card"><em>${esc(attachment.storageStatus || 'provider-required')} · ${esc(attachment.contentType || '')} · ${Number(attachment.byteSize || 0)} bytes</em><strong>${esc(attachment.originalFileName || 'Attachment')}</strong><span>${esc(attachment.caption || '')} ${attachment.providerRequired ? 'CAST_CAD_ATTACHMENT_STORAGE_ADAPTER required for durable private bytes. ' : ''}No public evidence URL is exposed.</span></div>`).join('') : '<p class="cad-muted">No private attachment manifests loaded yet. Register metadata only; raw evidence bytes require the private storage adapter.</p>';
+  }
+}
+function markupAttachmentPayload(markup, serverId) {
+  const drawing = selectedDrawing();
+  return {
+    action: 'attachment',
+    projectId: drawing?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    markupId: serverId,
+    originalFileName: document.querySelector('[data-attachment-file-name]')?.value.trim() || 'field-photo.png',
+    contentType: document.querySelector('[data-attachment-content-type]')?.value || 'image/png',
+    byteSize: Number(document.querySelector('[data-attachment-byte-size]')?.value || 0),
+    contentHash: document.querySelector('[data-attachment-content-hash]')?.value.trim() || '',
+    caption: document.querySelector('[data-attachment-caption]')?.value.trim() || `Evidence for ${markup.subject || markup.tool}`,
+    durable: Boolean(document.querySelector('[data-attachment-durable]')?.checked),
+  };
+}
+async function loadMarkupAttachmentsForSelected({ toast = false } = {}) {
+  const localMarkupId = document.querySelector('[data-markup-thread-target]')?.value || markupThreadState.markupId || visibleMarkups()[0]?.id || '';
+  const markup = localMarkupForThread(localMarkupId) || state.drawingMarkups.find((row) => row.id === localMarkupId);
+  if (!markup) { markupAttachmentState = { status: 'blocked', attachments: [], message: 'Select a persisted markup before loading private attachment manifests.' }; renderMarkupAttachments(); return; }
+  try {
+    const serverId = await ensureMarkupSyncedForWorkflow(markup);
+    const params = new URLSearchParams({ action: 'attachments', markupId: serverId });
+    const response = await fetch(`/api/cast-cad-markups?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    markupAttachmentState = { status: 'loaded', attachments: result.attachments || [], message: `${result.attachmentCount || 0} private attachment manifest(s) loaded. Durable evidence files require ${result.contract?.durableAdapterRequired || 'CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'}; no public URLs are exposed.` };
+    if (toast) window.CASTShell?.toast?.('Private attachment manifests loaded through backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD attachment manifest API unavailable', error);
+    markupAttachmentState = { status: 'blocked', attachments: [], message: `Attachment load blocked: ${error.message}. No local evidence file or public/private URL was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Attachment manifests unavailable; no evidence URL was fabricated.', { kind: 'error' });
+  }
+  renderMarkupAttachments();
+}
+async function addMarkupAttachmentManifest() {
+  const localMarkupId = document.querySelector('[data-markup-thread-target]')?.value || markupThreadState.markupId || visibleMarkups()[0]?.id || '';
+  const markup = localMarkupForThread(localMarkupId) || state.drawingMarkups.find((row) => row.id === localMarkupId);
+  if (!markup) { window.CASTShell?.toast?.('Select a markup before registering an attachment manifest.', { kind: 'error' }); return; }
+  try {
+    const serverId = await ensureMarkupSyncedForWorkflow(markup);
+    const payload = markupAttachmentPayload(markup, serverId);
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    markupAttachmentState = { status: 'registered', attachments: [...markupAttachmentState.attachments, result.attachment].filter(Boolean), message: `Attachment manifest ${result.attachment?.id || ''} registered through backend audit. ${result.attachment?.providerRequired ? 'CAST_CAD_ATTACHMENT_STORAGE_ADAPTER is still required for durable private bytes.' : 'Private storage adapter is configured for provider-side bytes.'}` };
+    window.CASTShell?.toast?.('Private attachment manifest registered through backend audit.', { kind: 'success' });
+    await loadMarkupAttachmentsForSelected();
+  } catch (error) {
+    console.warn('Could not register CAST CAD attachment manifest', error);
+    markupAttachmentState = { ...markupAttachmentState, status: 'blocked', message: `Attachment registration blocked: ${error.message}. No local evidence file, durable byte claim, or public/private URL was fabricated.` };
+    window.CASTShell?.toast?.('Attachment registration blocked; no evidence URL was fabricated.', { kind: 'error' });
+    renderMarkupAttachments();
   }
 }
 async function syncMarkupToServer(markup, { toast = false } = {}) {
@@ -1827,7 +1891,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -1840,6 +1904,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-save-viewport-mapping]')) { saveViewportMappingForSelectedSheet({ toast: true }); return; }
   if (event.target.closest('[data-refresh-markup-thread]')) { loadMarkupThreadForSelected({ toast: true }); return; }
   if (event.target.closest('[data-add-markup-thread-comment]')) { addMarkupThreadComment(); return; }
+  if (event.target.closest('[data-refresh-markup-attachments]')) { loadMarkupAttachmentsForSelected({ toast: true }); return; }
+  if (event.target.closest('[data-add-markup-attachment]')) { addMarkupAttachmentManifest(); return; }
   const batchMarkup = event.target.closest('[data-batch-markup]');
   if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
   if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
@@ -1884,7 +1950,7 @@ document.addEventListener('change', (event) => {
   const toolLibraryItem = event.target.closest('[data-tool-library-item]');
   if (toolLibraryItem) { toolLibraryState.selectedItemId = toolLibraryItem.dataset.toolLibraryItem; renderToolLibrary(); return; }
   const markupThreadTarget = event.target.closest('[data-markup-thread-target]');
-  if (markupThreadTarget) { markupThreadState = { ...markupThreadState, markupId: markupThreadTarget.value, comments: [], auditLog: [], message: 'Markup thread selected; refresh to load backend comments and audit history.' }; renderMarkupThread(); return; }
+  if (markupThreadTarget) { markupThreadState = { ...markupThreadState, markupId: markupThreadTarget.value, comments: [], auditLog: [], message: 'Markup thread selected; refresh to load backend comments and audit history.' }; markupAttachmentState = { ...markupAttachmentState, attachments: [], message: 'Markup thread selected; refresh attachment manifests to load backend private evidence metadata.' }; renderMarkupThread(); renderMarkupAttachments(); return; }
   const aiFinding = event.target.closest('[data-ai-finding]');
   if (aiFinding) { aiReviewState.selectedFindingId = aiFinding.dataset.aiFinding; renderAiReviewFindings(); return; }
   const slipSheetTarget = event.target.closest('[data-slip-sheet-target]');
