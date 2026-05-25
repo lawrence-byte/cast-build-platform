@@ -23,6 +23,7 @@ let markupPersistenceState = { status: 'idle', message: 'Server markup persisten
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
 let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. Takeoff workbook can run from stored measurements; annotated PDF requires CAST_CAD_PDF_EXPORT_WORKER.', jobs: [] };
 let rfiLinkState = { status: 'idle', message: 'RFI links are draft-only until the backend snapshot contract confirms the markup.' };
+let workflowLinkState = { status: 'idle', links: [], message: 'Submittal/change-event links are draft-only until backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
@@ -1109,6 +1110,10 @@ function renderMarkupPersistenceStatus() {
   if (status) status.textContent = markupPersistenceState.message;
   const rfiStatus = document.querySelector('[data-rfi-link-status]');
   if (rfiStatus) rfiStatus.textContent = rfiLinkState.message;
+  const workflowStatus = document.querySelector('[data-workflow-link-status]');
+  if (workflowStatus) workflowStatus.textContent = workflowLinkState.message;
+  const workflowList = document.querySelector('[data-workflow-links]');
+  if (workflowList) workflowList.innerHTML = workflowLinkState.links.length ? workflowLinkState.links.slice(-4).reverse().map((link) => `<div class="tool-card"><em>${esc(link.workflowType || 'workflow')} · ${esc(link.linkStatus || 'draft')}</em><strong>${esc(link.title || link.id || 'CAST CAD workflow link')}</strong><span>${link.providerRequired ? `Adapter required: ${esc((link.requiredEnvVars || []).join(', '))}. No external workflow record was fabricated.` : 'Ready for configured workflow adapter.'}</span></div>`).join('') : '<p class="cad-muted">No submittal/change-event workflow links created yet.</p>';
 }
 function localMarkupForThread(markupId = markupThreadState.markupId) {
   return state.drawingMarkups.find((row) => row.id === markupId || serverMarkupIdFor(row) === markupId) || null;
@@ -1510,6 +1515,31 @@ async function convertMarkupToRfiDraft(id) {
   }
   render();
 }
+async function convertMarkupToWorkflowDraft(id) {
+  const markup = state.drawingMarkups.find((row) => row.id === id) || visibleMarkups()[0];
+  const workflowType = document.querySelector('[data-workflow-link-type]')?.value || 'change-event';
+  if (!markup) { window.CASTShell?.toast?.('Select or create a markup before linking a workflow.', { kind: 'error' }); return; }
+  workflowLinkState = { ...workflowLinkState, status: 'pending', message: `Creating audited ${workflowType} snapshot for ${markup.subject || markup.tool}…` };
+  renderMarkupPersistenceStatus();
+  try {
+    const serverMarkupId = await ensureMarkupSyncedForWorkflow(markup);
+    const response = await fetch('/api/cast-cad-workflow-link', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ markupId: serverMarkupId, localMarkupId: markup.id, workflowType, title: markup.subject || `${workflowType} from CAST CAD markup`, description: markup.body || '' }),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const link = result.workflowLink;
+    workflowLinkState = { status: 'draft-linked', links: [...workflowLinkState.links, link].filter(Boolean), message: `Draft ${workflowType} snapshot ${link?.id || ''} created. ${link?.providerRequired ? `${(link.requiredEnvVars || []).join(', ')} required for external write-back; no external workflow was fabricated.` : 'Ready for configured workflow adapter.'}` };
+    window.CASTShell?.toast?.('Draft CAST CAD workflow snapshot created through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD workflow link API unavailable or markup not synced', error);
+    workflowLinkState = { ...workflowLinkState, status: 'blocked', message: `Workflow link blocked: ${error.message}. No local-only submittal/change event or external workflow was fabricated.` };
+    window.CASTShell?.toast?.('Workflow link blocked; no external workflow was fabricated.', { kind: 'error' });
+  }
+  render();
+}
 function visibleMarkups() {
   const drawing = selectedDrawing();
   return state.drawingMarkups.filter((m) => m.drawing_id === drawing?.id && m.status !== 'Deleted' && !m.deleted_at && !m.deletedAt);
@@ -1842,6 +1872,7 @@ document.addEventListener('click', (event) => {
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
   const deleteMarkup = event.target.closest('[data-delete-markup]'); if (deleteMarkup) { deleteMarkupWithBackend(deleteMarkup.dataset.deleteMarkup); return; }
   const rfi = event.target.closest('[data-rfi]'); if (rfi) { convertMarkupToRfiDraft(rfi.dataset.rfi); return; }
+  const workflow = event.target.closest('[data-workflow-link]'); if (workflow) { convertMarkupToWorkflowDraft(workflow.dataset.workflowLink || selectedMarkupIds.values().next().value || ''); return; }
   if (event.target.closest('[data-export]')) exportCsv();
   if (event.target.closest('[data-reset]')) { clearUploadedPdf(); clearStreamedPdf(); drawingStreamState = { drawingId: '', status: 'idle', message: '' }; calibration = null; state = CPC.ensureDrawingIntelligenceState(CPC.resetState()); selectedDrawingId = state.drawings[0]?.id || ''; loadCurrentDrawingSet({ force: true, toast: false }); }
 });

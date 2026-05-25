@@ -12,6 +12,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Persistent markup create/list/update/CSV contract: `/api/cast-cad-markups`.
 - Takeoff workbook, annotated PDF export, and comparison job contracts: `/api/cast-cad-exports`.
 - RFI-from-markup snapshot workflow: `/api/cast-cad-rfi-link`.
+- Submittal/change-event-from-markup snapshot workflow contract: `/api/cast-cad-workflow-link`.
 - OCR/symbol search index contract: `/api/cast-cad-search`.
 - Review-room/collaboration invite contract: `/api/cast-cad-review-room`.
 - Provider-independent takeoff refinement controls for editable measurement captions, precision, assembly mapping, formula columns, unit-cost mapping, and human-review-gated quantity rows.
@@ -30,6 +31,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent AI Review finding contract for source-cited `AI Detected` findings, fail-closed human-review verification, audit history, and optional human-verified conversion into markups: `/api/cast-cad-search?action=ai-findings` plus POST `type=ai-finding|review-ai-finding`.
 - Provider-independent frontend markup persistence bridge that posts newly created workbench markups to `/api/cast-cad-markups`, reloads server markups for the selected sheet, merges them into the overlay, and exposes local-only/server-synced status without claiming provider-backed database durability.
 - Provider-independent frontend RFI-from-markup workflow bridge that first confirms backend markup persistence, then creates an audited draft RFI snapshot through `/api/cast-cad-rfi-link`, exposes workflow status, and fails closed without fabricating local-only/external RFIs when backend contracts are unavailable.
+- Provider-independent frontend submittal/change-event workflow bridge that first confirms backend markup persistence, then creates audited private draft workflow snapshots through `/api/cast-cad-workflow-link`, surfaces `CAST_CAD_SUBMITTAL_ADAPTER` / `CAST_CAD_CHANGE_EVENT_ADAPTER`, and fails closed without fabricating local-only/external workflow records.
 - Provider-independent drawing document metadata registry contract for private PDF sheet metadata, drawing-index import, audited updates, no-store stream linkage, and fail-closed durable/authoritative persistence gates requiring `CAST_CAD_DOCUMENT_METADATA_ADAPTER`: `/api/cast-cad-markups?action=document-metadata`.
 - Provider-independent frontend drawing document metadata registry bridge that imports the current drawing index into `/api/cast-cad-markups?action=document-metadata`, refreshes registry counts, surfaces `CAST_CAD_DOCUMENT_METADATA_ADAPTER` as the durable/authoritative persistence blocker, and fails closed without fabricating durable registry state when the backend contract is unavailable.
 - Provider-independent comparison-center workbench controls that create audited `/api/cast-cad-exports` `type=comparison` jobs, validate baseline/revised sheet scope, and fail closed with the exact `CAST_CAD_COMPARISON_WORKER` requirement instead of fabricating private overlay/delta artifacts.
@@ -94,7 +96,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Drawing set versions and slip-sheeting (provider-independent API/service contract implemented; storage/provider adapter remains)
 - Comparison Center
 - OCR, visual search, symbol detection, and Auto Link
-- RFIs/submittals/change-event links
+- RFIs/submittals/change-event links (provider-independent draft workflow snapshot/link contracts implemented; production external workflow adapters remain)
 - Review Rooms and Project Rooms
 - CAST CAD AI Review agents
 - Batch tools (provider-independent batch operation API/service contract and static workbench bulk-selection workflow implemented for scoped status/assignee/layer/review/stamp updates; production storage adapter remains)
