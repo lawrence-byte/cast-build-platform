@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1134,6 +1134,42 @@ function buildComparisonJob(state, input, actor) {
   audit(state, actor, 'Created drawing comparison job', 'CAST_CAD_COMPARISON_JOB', job.id, null, job, job.providerRequired ? 'Comparison worker not configured; job is provider-required and no private artifact is fabricated.' : 'Queued for comparison worker.');
   return { ok: true, job };
 }
+function createModelIngestionJob(state, input = {}, actor) {
+  state.modelIngestionJobs ||= [];
+  const permission = requireCastCad(actor.role, 'export');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || '';
+  const sourcePointer = String(input.sourcePointer || input.source_pointer || '').trim();
+  const fileName = safeFileName(input.fileName || input.file_name || sourcePointer.split('/').pop() || 'cast-cad-model.ifc');
+  const extension = String(input.extension || fileName.split('.').pop() || '').toLowerCase();
+  const supported = new Set(['ifc','dwg','dxf','rvt','rfa','skp','obj','glb','gltf']);
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!sourcePointer) errors.push('sourcePointer is required and must reference a private CAD/model provider object or upload lease.');
+  if (/^https?:\/\//i.test(sourcePointer)) errors.push('Public model/CAD URLs are forbidden; pass a private provider pointer or upload lease id.');
+  if (!supported.has(extension)) errors.push('extension must be one of ifc, dwg, dxf, rvt, rfa, skp, obj, glb, or gltf.');
+  if (errors.length) return { ok: false, status: 422, code: errors.some((msg) => msg.includes('Public')) ? 'public-url-forbidden' : 'validation-error', errors };
+  const workerReady = Boolean(process.env.CAST_CAD_MODEL_INGESTION_WORKER || process.env.CAST_CAD_IFC_CONVERSION_WORKER || process.env.CAST_CAD_CAD_CONVERSION_WORKER);
+  const job = {
+    id: input.id || id('cad_model_ingest'), projectId, type: 'model-ingestion', sourcePointer, fileName, extension,
+    discipline: input.discipline || '', status: workerReady ? 'queued' : 'provider-required', providerRequired: !workerReady,
+    requiredEnvVars: workerReady ? [] : ['CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER'],
+    privateArtifacts: true, publicExposure: false, cacheControl: 'private, max-age=0, no-store',
+    outputPointers: { viewerManifest: '', geometryIndex: '', thumbnail: '' },
+    contract: { endpoint: '/api/cast-cad-exports', type: 'model-ingestion', inputs: ['projectId','sourcePointer','fileName'], outputs: ['viewerManifest','geometryIndex','thumbnail'], privateArtifacts: true, noPublicUrls: true, cacheControl: 'private, max-age=0, no-store', humanReviewRequiredBeforeLinkedQuantities: true },
+    createdByUserId: actor.id, createdAt: now(),
+  };
+  state.modelIngestionJobs.push(job);
+  audit(state, actor, 'Created CAST CAD model/CAD ingestion job', 'CAST_CAD_MODEL_INGESTION_JOB', job.id, null, job, job.providerRequired ? 'Model/CAD ingestion worker not configured; no viewer manifest, geometry index, or thumbnail artifact was fabricated.' : 'Queued for configured private model/CAD ingestion worker.');
+  return { ok: true, job };
+}
+function listModelIngestionJobs(state, filters = {}) {
+  state.modelIngestionJobs ||= [];
+  let rows = state.modelIngestionJobs.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.extension) rows = rows.filter((row) => row.extension === String(filters.extension).toLowerCase());
+  return rows;
+}
 function normalizeBatchOperationInput(input = {}) {
   const operation = String(input.operation || input.batchOperation || input.batch_operation || 'update-markup-status').trim();
   const markupIds = [...new Set((input.markupIds || input.markup_ids || []).map(String).filter(Boolean))];
@@ -1457,7 +1493,7 @@ module.exports = {
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
-  buildComparisonJob, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
+  buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,

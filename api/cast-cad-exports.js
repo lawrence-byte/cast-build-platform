@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob, buildComparisonJob, createBatchOperation, listBatchOperations, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createFieldPackage, syncFieldPackageDeltas, listFieldPackages } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob, buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createBatchOperation, listBatchOperations, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createFieldPackage, syncFieldPackageDeltas, listFieldPackages } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState(); const actor = getActor(req);
@@ -14,16 +14,20 @@ module.exports = async function handler(req, res) {
         const rows = listBatchOperations(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), operation: url.searchParams.get('operation') });
         return json(res, 200, { ok: true, batchCount: rows.length, batchOperations: rows });
       }
+      if (url.searchParams.get('type') === 'model-ingestion' || url.searchParams.get('type') === 'model-ingestions' || url.searchParams.get('type') === 'cad-model') {
+        const rows = listModelIngestionJobs(state, { projectId: url.searchParams.get('projectId'), extension: url.searchParams.get('extension') });
+        return json(res, 200, { ok: true, jobCount: rows.length, modelIngestionJobs: rows });
+      }
       if (url.searchParams.get('type') === 'field-package' || url.searchParams.get('type') === 'field-packages' || url.searchParams.get('type') === 'field-sync') {
         const rows = listFieldPackages(state, { projectId: url.searchParams.get('projectId'), deviceId: url.searchParams.get('deviceId'), packageId: url.searchParams.get('packageId') });
         return json(res, 200, { ok: true, packageCount: rows.packages.length, syncEventCount: rows.syncEvents.length, ...rows });
       }
-      return json(res, 200, { ok: true, exportJobs: state.exportJobs, comparisonJobs: state.comparisonJobs, batchOperations: state.batchOperations || [], fieldPackages: state.fieldPackages || [], fieldSyncEvents: state.fieldSyncEvents || [] });
+      return json(res, 200, { ok: true, exportJobs: state.exportJobs, comparisonJobs: state.comparisonJobs, modelIngestionJobs: state.modelIngestionJobs || [], batchOperations: state.batchOperations || [], fieldPackages: state.fieldPackages || [], fieldSyncEvents: state.fieldSyncEvents || [] });
     }
     if (req.method !== 'POST') return json(res, 405, { ok: false, error: 'Method not allowed.' }, { allow: 'GET, POST' });
     const body = await readBody(req);
     const type = body.type || 'takeoff-workbook';
-    const result = type === 'drawing-set-version' ? createDrawingSetVersion(state, body, actor) : type === 'slip-sheet' ? slipSheetRevision(state, body, actor) : type === 'batch-operation' ? createBatchOperation(state, body, actor) : type === 'field-package' ? createFieldPackage(state, body, actor) : type === 'field-sync' ? syncFieldPackageDeltas(state, body, actor) : (type === 'annotated-pdf' || type === 'pdf-export') ? createAnnotatedPdfExport(state, body, actor) : (type === 'pdf-annotation-import' || type === 'annotation-import' || type === 'pdf-import') ? createPdfAnnotationImportJob(state, body, actor) : type === 'comparison' ? buildComparisonJob(state, body, actor) : createTakeoffWorkbookExport(state, body, actor);
+    const result = type === 'drawing-set-version' ? createDrawingSetVersion(state, body, actor) : type === 'slip-sheet' ? slipSheetRevision(state, body, actor) : type === 'batch-operation' ? createBatchOperation(state, body, actor) : type === 'model-ingestion' || type === 'cad-model' ? createModelIngestionJob(state, body, actor) : type === 'field-package' ? createFieldPackage(state, body, actor) : type === 'field-sync' ? syncFieldPackageDeltas(state, body, actor) : (type === 'annotated-pdf' || type === 'pdf-export') ? createAnnotatedPdfExport(state, body, actor) : (type === 'pdf-annotation-import' || type === 'annotation-import' || type === 'pdf-import') ? createPdfAnnotationImportJob(state, body, actor) : type === 'comparison' ? buildComparisonJob(state, body, actor) : createTakeoffWorkbookExport(state, body, actor);
     return json(res, result.ok ? (result.status || 202) : (result.status || 422), result);
   } catch (error) { return json(res, 500, { ok: false, error: error.message }); }
 };

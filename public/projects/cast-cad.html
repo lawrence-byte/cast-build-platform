@@ -262,14 +262,17 @@
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Exports + write-back</h2><span class="badge">Audited jobs</span></div>
           <div class="cad-panel-body">
-            <p class="cad-muted">Production exports now call the backend job contract. Takeoff workbooks capture audited measurement rows but fail closed until CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER is configured; annotated PDF write-back remains fail-closed until CAST_CAD_PDF_EXPORT_WORKER is configured; PDF annotation import/unflatten jobs require CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER and refuse public URLs.</p>
+            <p class="cad-muted">Production exports now call the backend job contract. Takeoff workbooks capture audited measurement rows but fail closed until CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER is configured; annotated PDF write-back remains fail-closed until CAST_CAD_PDF_EXPORT_WORKER is configured; PDF annotation import/unflatten jobs require CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER and refuse public URLs. CAD/model ingestion accepts private pointers only and requires CAST_CAD_MODEL_INGESTION_WORKER, CAST_CAD_IFC_CONVERSION_WORKER, or CAST_CAD_CAD_CONVERSION_WORKER before viewer artifacts are generated.</p>
             <div class="pdf-intake cad-export-controls" aria-label="CAST CAD export job controls">
               <label><input type="checkbox" data-export-flatten checked autocomplete="off"> Flatten PDF markups</label>
               <input type="text" data-annotation-import-source placeholder="Private PDF pointer / stream lease id" autocomplete="off">
+              <input type="text" data-model-ingestion-source placeholder="Private IFC/DWG/DXF/RVT pointer / upload lease id" autocomplete="off">
+              <input type="text" data-model-ingestion-file placeholder="Model file name, e.g. Golden-Hill.ifc" autocomplete="off">
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-workbook-export>Create takeoff workbook job</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotated-pdf-export>Create annotated PDF job</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotation-import>Create annotation import job</button>
-              <span class="pdf-status" data-export-job-status>Backend export jobs not requested yet. Workbooks require CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER; annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER; annotation import requires CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER.</span>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-model-ingestion>Create CAD/model ingestion job</button>
+              <span class="pdf-status" data-export-job-status>Backend export jobs not requested yet. Workbooks require CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER; annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER; annotation import requires CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER; CAD/model ingestion requires CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER.</span>
             </div>
             <div class="tool-list" data-export-jobs><p class="cad-muted">No backend export jobs requested in this session.</p></div>
           </div>
