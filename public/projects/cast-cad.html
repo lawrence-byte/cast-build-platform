@@ -160,6 +160,9 @@
               <span class="pdf-status" data-batch-status>0 markups selected. Sensitive stamp/resolved/verified changes require human review approval.</span>
               <span class="pdf-status" data-markup-persistence-status>Server markup persistence not checked yet.</span>
               <span class="pdf-status" data-rfi-link-status>RFI links are draft-only until the backend snapshot contract confirms the markup.</span>
+              <label>Workflow <select data-workflow-link-type autocomplete="off"><option value="change-event">Change event</option><option value="submittal">Submittal</option></select></label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-workflow-link>Link selected workflow</button>
+              <span class="pdf-status" data-workflow-link-status>Submittal/change-event links are draft-only until backend snapshot contract confirms the markup.</span>
             </div>
             <div class="pdf-intake cad-markup-thread-controls" aria-label="CAST CAD threaded markup comments and audit history controls">
               <label>Thread <select data-markup-thread-target autocomplete="off"><option value="">Markup thread</option></select></label>
@@ -171,6 +174,7 @@
             </div>
             <div class="tool-list" data-markup-thread-list><p class="cad-muted">No backend thread comments loaded yet.</p></div>
             <div class="tool-list" data-markup-audit-list><p class="cad-muted">No markup audit history loaded yet.</p></div>
+            <div class="tool-list" data-workflow-links><p class="cad-muted">No submittal/change-event workflow links created yet.</p></div>
             <div data-markup-list></div>
           </div>
         </aside>
@@ -358,7 +362,7 @@
             <div class="tool-list">
               <div class="tool-card"><em>Authenticated PDF stream</em><strong>/api/cast-cad-pdf-stream</strong><span>Fail-closed private drawing stream contract with auth, no-store headers, expiring stream IDs, and provider-required status until Dropbox/CAST Server credentials are configured.</span></div>
               <div class="tool-card"><em>Persistent markups</em><strong>/api/cast-cad-markups</strong><span>Server-side create/list/update/export contract for vector markups, comments, layers, styles, measurements, status, assignees, and immutable audit entries.</span></div>
-              <div class="tool-card"><em>Exports + workflows</em><strong>/api/cast-cad-exports · /api/cast-cad-rfi-link</strong><span>Takeoff workbook jobs, annotated PDF export jobs, drawing comparison jobs, and RFI-from-markup snapshot links report real worker/provider requirements instead of pretending private infrastructure is configured.</span></div>
+              <div class="tool-card"><em>Exports + workflows</em><strong>/api/cast-cad-exports · /api/cast-cad-rfi-link · /api/cast-cad-workflow-link</strong><span>Takeoff workbook jobs, annotated PDF export jobs, drawing comparison jobs, RFI-from-markup snapshots, and submittal/change-event draft links report real adapter requirements instead of pretending private infrastructure is configured.</span></div>
               <div class="tool-card"><em>OCR + review rooms</em><strong>/api/cast-cad-search · /api/cast-cad-review-room</strong><span>Search index, symbol hits, review-room invitation contracts, participant state, and audit-backed collaboration workflow are ready for production providers.</span></div>
             </div>
           </div>
