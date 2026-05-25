@@ -275,6 +275,18 @@
           </div>
         </article>
         <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Cost catalog</h2><span class="badge">Fail-closed cost database</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Audited unit-cost and assembly rows load through `/api/cast-cad-markups?action=cost-catalog`. Rows remain review-gated and non-budget-authoritative; durable/private cost database persistence requires `CAST_CAD_COST_CATALOG_ADAPTER` or `CAST_CAD_COST_DATABASE_ADAPTER`.</p>
+            <div class="pdf-intake cad-cost-catalog-controls" aria-label="CAST CAD cost catalog controls">
+              <button class="cb-btn small cb-btn--ghost" type="button" data-import-cost-catalog>Import reviewed seed costs</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-cost-catalog>Refresh cost catalog</button>
+              <span class="pdf-status" data-cost-catalog-status>Cost catalog not loaded yet. Durable/private cost database persistence requires CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER.</span>
+            </div>
+            <div class="tool-list" data-cost-catalog-items><p class="cad-muted">No cost catalog rows loaded yet.</p></div>
+          </div>
+        </article>
+        <article class="cad-panel">
           <div class="cad-panel-head"><h2>Batch + comparison center</h2><span class="badge">Provider-gated</span></div>
           <div class="cad-panel-body">
             <p class="cad-muted">Batch updates run through the audited backend contract. Drawing comparison requests now create fail-closed jobs that require the private comparison worker before any overlay/delta artifact is generated.</p>

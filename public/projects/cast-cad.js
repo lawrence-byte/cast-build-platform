@@ -25,6 +25,7 @@ let exportCenterState = { status: 'idle', message: 'Backend export jobs not requ
 let rfiLinkState = { status: 'idle', message: 'RFI/submittal/change-event workflow links are draft-only until the backend snapshot contract confirms the markup.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
+let costCatalogState = { status: 'idle', items: [], message: 'Cost catalog not loaded yet. Durable/private cost database persistence requires CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
 let ocrSearchState = { status: 'idle', query: '', results: [], message: 'OCR/symbol search not checked yet. Production OCR extraction remains provider-gated by CAST_CAD_OCR_WORKER.' };
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
@@ -661,6 +662,20 @@ function renderToolLibrary() {
     return `<label class="tool-card" data-tool-library-card="${esc(item.id)}"><em>${esc(item.toolType || 'tool')} · ${esc(item.status || 'active')}</em><strong><input type="radio" name="cast-tool-library-item" data-tool-library-item="${esc(item.id)}" ${selected} autocomplete="off"> ${esc(item.name)}</strong><span>${esc(item.trade || 'Coordination')} · ${esc(item.category || 'General')} · ${esc(item.costCode || 'No cost code')} · ${esc(item.assemblyCode || 'No assembly')} · ${cost}. Human review required: ${item.requiresHumanReview === false ? 'no (blocked)' : 'yes'}.</span></label>`;
   }).join('');
 }
+function renderCostCatalog() {
+  const status = document.querySelector('[data-cost-catalog-status]');
+  const list = document.querySelector('[data-cost-catalog-items]');
+  if (status) status.textContent = costCatalogState.message;
+  if (!list) return;
+  if (!costCatalogState.items.length) {
+    list.innerHTML = '<p class="cad-muted">No cost catalog rows loaded yet. Import reviewed seed costs or refresh the audited backend contract.</p>';
+    return;
+  }
+  list.innerHTML = costCatalogState.items.slice(0, 8).map((item) => {
+    const blocker = item.providerRequired ? 'CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER required for durable/private cost database persistence. ' : '';
+    return `<div class="tool-card"><em>${esc(item.status || 'active')} · ${esc(item.quantityBasis || 'EA')} · ${esc(item.persistenceMode || 'memory-contract-only')}</em><strong>${esc(item.costCode || 'No cost code')} · ${esc(item.description || 'Cost catalog item')}</strong><span>${esc(item.trade || 'Coordination')} · ${esc(item.assemblyCode || 'No assembly')} · ${money(item.unitCost)} / ${esc(item.quantityBasis || 'EA')}. ${esc(blocker)}Human review is required before any cost row becomes budget-authoritative.</span></div>`;
+  }).join('');
+}
 function renderAiReviewFindings() {
   const status = document.querySelector('[data-ai-review-status]');
   const list = document.querySelector('[data-ai-review-findings]');
@@ -740,6 +755,7 @@ function render() {
   renderComparisonCenter();
   renderExportCenter();
   renderToolLibrary();
+  renderCostCatalog();
   renderAiReviewFindings();
   renderOcrSearchResults();
   renderReviewRooms();
@@ -1061,6 +1077,41 @@ async function placeSelectedToolLibraryItem() {
     toolLibraryState = { ...toolLibraryState, status: 'blocked', message: `Tool Library placement blocked: ${error.message}. No local markup or budget quantity was fabricated.` };
     window.CASTShell?.toast?.('Tool Library placement blocked; no local markup was fabricated.', { kind: 'error' });
     renderToolLibrary();
+  }
+}
+async function loadCostCatalogItems({ toast = false } = {}) {
+  try {
+    const response = await fetch('/api/cast-cad-markups?action=cost-catalog&projectId=alum&status=active', { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const items = result.items || [];
+    costCatalogState = { status: 'loaded', items, message: `${result.itemCount || items.length} cost catalog row(s) loaded from /api/cast-cad-markups?action=cost-catalog. Durable/private cost database persistence requires ${result.contract?.durableAdapterRequired || 'CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER'}; rows remain non-budget-authoritative until human review.` };
+    if (toast) window.CASTShell?.toast?.('CAST CAD cost catalog refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD cost catalog API unavailable', error);
+    costCatalogState = { ...costCatalogState, status: 'unavailable', message: `Cost catalog API unavailable: ${error.message}. No local authoritative cost database was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Cost catalog API unavailable; no authoritative cost database was fabricated.', { kind: 'error' });
+  }
+  renderCostCatalog();
+}
+async function importReviewedCostCatalogSeeds() {
+  const items = [
+    { costCode: '09-2116', assemblyCode: 'GWB-PARTITION', description: 'Drywall partition assembly', trade: 'Drywall', quantityBasis: 'LF', unitCost: 74 },
+    { costCode: '07-1300', assemblyCode: 'WP-AREA', description: 'Waterproofing area assembly', trade: 'Waterproofing', quantityBasis: 'SF', unitCost: 18 },
+    { costCode: '10-4400', assemblyCode: 'FEC-001', description: 'Fire extinguisher cabinet', trade: 'Fire Protection', quantityBasis: 'EA', unitCost: 850 },
+  ];
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'cost-catalog', operation: 'import', projectId: 'alum', items }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    costCatalogState = { status: 'imported', items: result.items || [], message: `Imported ${result.summary?.importedCount || 0} reviewed cost catalog contract row(s). ${result.summary?.providerRequired ? 'CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER is still required for durable/private cost database persistence.' : 'Cost catalog adapter is configured; human review still gates budget authority.'}` };
+    window.CASTShell?.toast?.('Reviewed cost catalog seeds imported through backend audit.', { kind: 'success' });
+    await loadCostCatalogItems();
+  } catch (error) {
+    console.warn('Could not import CAST CAD cost catalog seeds', error);
+    costCatalogState = { ...costCatalogState, status: 'blocked', message: `Cost catalog import blocked: ${error.message}. No local authoritative cost database was fabricated.` };
+    window.CASTShell?.toast?.('Cost catalog import blocked; no authoritative cost database was fabricated.', { kind: 'error' });
+    renderCostCatalog();
   }
 }
 function markupServerPayload(markup) {
@@ -1953,6 +2004,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-tool-library-item]')) { createToolLibrarySeedItem(); return; }
   if (event.target.closest('[data-place-tool-library-item]')) { placeSelectedToolLibraryItem(); return; }
   if (event.target.closest('[data-refresh-tool-library]')) { loadToolLibraryItems({ toast: true }); return; }
+  if (event.target.closest('[data-import-cost-catalog]')) { importReviewedCostCatalogSeeds(); return; }
+  if (event.target.closest('[data-refresh-cost-catalog]')) { loadCostCatalogItems({ toast: true }); return; }
   if (event.target.closest('[data-create-ai-finding]')) { createAiReviewFinding(); return; }
   if (event.target.closest('[data-review-ai-finding]')) { reviewSelectedAiFinding(); return; }
   if (event.target.closest('[data-refresh-ai-findings]')) { loadAiReviewFindings({ toast: true }); return; }
@@ -2000,6 +2053,7 @@ searchOcrSymbolIndex();
 loadDocumentMetadataRegistry();
 loadDrawingSetHistory();
 loadToolLibraryItems();
+loadCostCatalogItems();
 loadAiReviewFindings();
 loadReviewRooms();
 loadGovernanceStatus();

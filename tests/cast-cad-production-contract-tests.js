@@ -204,6 +204,23 @@ assert.equal(placedTool.markup.measurement.humanReviewRequired, true, 'Tool Libr
 assert.equal(placedTool.placement.budgetAuthoritative, false, 'Tool Library placement explicitly blocks budget authority');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_TOOL_LIBRARY_PLACEMENT'), 'Tool Library placement is audited');
 
+const costItem = cad.upsertCostCatalogItem(state, { projectId: 'alum', costCode: '09-2116', assemblyCode: 'GWB-PARTITION', description: 'Drywall partition assembly', trade: 'Drywall', quantityBasis: 'LF', unitCost: 74 }, owner);
+assert.equal(costItem.ok, true, 'cost catalog item creates through production service');
+assert.equal(costItem.item.providerRequired, true, 'cost catalog item does not claim provider-backed durability without adapter');
+assert.equal(costItem.item.budgetAuthoritative, false, 'cost catalog item is not budget-authoritative by default');
+assert.deepEqual(costItem.item.requiredEnvVars, ['CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER'], 'cost catalog exposes exact adapter requirement');
+assert.equal(cad.listCostCatalogItems(state, { projectId: 'alum', search: 'drywall' }).length, 1, 'cost catalog list filters by project/search');
+const blockedCostAuthority = cad.upsertCostCatalogItem(state, { projectId: 'alum', costCode: '09-2116', assemblyCode: 'GWB-PARTITION', description: 'Drywall partition assembly', quantityBasis: 'LF', unitCost: 78, authoritative: true }, owner);
+assert.equal(blockedCostAuthority.ok, false, 'cost catalog fails closed when budget authority is requested without adapter/review');
+assert.equal(blockedCostAuthority.code, 'provider-required', 'cost catalog names provider-required blocker for durable authoritative use');
+const importedCosts = cad.importCostCatalogItems(state, { projectId: 'alum', items: [{ costCode: '10-4400', description: 'Fire extinguisher cabinet', quantityBasis: 'EA', unitCost: 850 }, { costCode: '', description: 'bad row', unitCost: 1 }] }, owner);
+assert.equal(importedCosts.status, 207, 'cost catalog import reports partial validation failures');
+assert.equal(importedCosts.summary.importedCount, 1, 'cost catalog import accepts valid rows');
+assert.equal(importedCosts.summary.rejectedCount, 1, 'cost catalog import rejects invalid rows');
+assert.equal(importedCosts.contract.humanReviewRequiredBeforeBudgetUse, true, 'cost catalog contract is human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_COST_CATALOG_ITEM'), 'cost catalog item changes are audited');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_COST_CATALOG_IMPORT'), 'cost catalog imports are audited');
+
 const blockedComparison = cad.buildComparisonJob(state, { projectId: 'alum', baseSheetId: 'A-101-r1', revisedSheetId: 'A-101-r1' }, owner);
 assert.equal(blockedComparison.ok, false, 'comparison job rejects identical base/revised sheets');
 assert.equal(blockedComparison.status, 422, 'invalid comparison scope returns validation error');
@@ -388,6 +405,12 @@ assert.ok(castCadJs.includes('function placeSelectedToolLibraryItem'), 'CAST CAD
 assert.ok(castCadJs.includes('No local markup or budget quantity was fabricated'), 'CAST CAD Tool Library placement fails closed without fabricating local budget authority');
 assert.ok(castCadHtml.includes('data-tool-library-items'), 'CAST CAD workbench exposes Tool Library item list');
 assert.ok(castCadHtml.includes('data-place-tool-library-item'), 'CAST CAD workbench exposes review-gated Tool Library placement control');
+assert.ok(castCadJs.includes('function loadCostCatalogItems'), 'CAST CAD workbench loads cost catalog rows from backend contract');
+assert.ok(castCadJs.includes("action=cost-catalog"), 'CAST CAD workbench calls cost catalog action on /api/cast-cad-markups');
+assert.ok(castCadJs.includes('CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER'), 'CAST CAD workbench names exact cost database adapter requirement');
+assert.ok(castCadJs.includes('No local authoritative cost database was fabricated'), 'CAST CAD cost catalog fails closed without fabricating local budget authority');
+assert.ok(castCadHtml.includes('data-import-cost-catalog'), 'CAST CAD workbench exposes reviewed cost catalog import control');
+assert.ok(castCadHtml.includes('data-cost-catalog-items'), 'CAST CAD workbench exposes cost catalog row list');
 assert.ok(castCadJs.includes('function loadAiReviewFindings'), 'CAST CAD workbench loads AI Review findings from backend contract');
 assert.ok(castCadJs.includes("action: 'ai-findings'"), 'CAST CAD workbench calls AI findings contract on /api/cast-cad-search');
 assert.ok(castCadJs.includes('function searchOcrSymbolIndex'), 'CAST CAD workbench searches the OCR/symbol backend contract');
