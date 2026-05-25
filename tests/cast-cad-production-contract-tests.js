@@ -16,6 +16,18 @@ assert.equal(blockedPdf.ok, false, 'PDF stream fails closed without provider con
 assert.equal(blockedPdf.status, 503, 'PDF stream reports provider-required status');
 assert.equal(blockedPdf.contract.publicExposure, false, 'PDF stream contract forbids public exposure');
 assert.equal(blockedPdf.contract.requiresAuth, true, 'PDF stream contract requires auth');
+const pdfLease = cad.createPdfStreamLease(state, { projectId: 'alum', sheet: { path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', extension: 'pdf' } }, readOnly);
+assert.equal(pdfLease.ok, false, 'PDF stream lease fails closed without provider configuration');
+assert.equal(pdfLease.lease.publicExposure, false, 'PDF stream lease forbids public exposure');
+assert.equal(pdfLease.lease.requiresAuth, true, 'PDF stream lease requires authenticated access');
+assert.deepEqual(pdfLease.lease.requiredEnvVars, ['CAST_CAD_PDF_STREAM_BASE or DROPBOX_ACCESS_TOKEN or CAST_SERVER_DOCUMENT_API_URL'], 'PDF stream lease names required provider env choices');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_PDF_STREAM_LEASE'), 'PDF stream lease request is audited even when provider-blocked');
+const previousPdfRequireAuth = process.env.CAST_CAD_REQUIRE_AUTH;
+process.env.CAST_CAD_REQUIRE_AUTH = 'true';
+const unauthenticatedPdfLease = cad.createPdfStreamLease(state, { projectId: 'alum', sheet: { path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', extension: 'pdf' } }, { id: 'anon', role: 'Read Only Viewer', authenticated: false });
+assert.equal(unauthenticatedPdfLease.ok, false, 'PDF stream lease fails closed when strict auth is enabled without a session identity');
+assert.equal(unauthenticatedPdfLease.code, 'auth-required', 'PDF stream lease exposes strict auth blocker');
+if (previousPdfRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH; else process.env.CAST_CAD_REQUIRE_AUTH = previousPdfRequireAuth;
 
 const markup = cad.createMarkup(state, { projectId: 'alum', sheetId: 'A-101', tool: 'Area Measurement', subject: 'Test area', layer: 'ASI-002', group_id: 'grp-envelope', style: { stroke: '#2563eb', fill: 'rgba(37,99,235,.2)', opacity: 0.75, lineWidth: 4, fontSize: 14 }, measurement: { value: 245.5, unit: 'SF' }, geometry: { type: 'polygon', points: [{x:1,y:1},{x:5,y:1},{x:5,y:5}] } }, owner);
 assert.equal(markup.ok, true, 'markup creates through production service');
@@ -278,7 +290,10 @@ if (previousRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH;
 
 const castCadJs = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.js'), 'utf8');
 const castCadHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.html'), 'utf8');
+const pdfStreamApi = fs.readFileSync(path.join(__dirname, '..', 'api', 'cast-cad-pdf-stream.js'), 'utf8');
 const fieldSw = fs.readFileSync(path.join(__dirname, '..', 'public', 'cast-cad-field-sw.js'), 'utf8');
+assert.ok(pdfStreamApi.includes('createPdfStreamLease'), 'PDF stream API creates audited private stream leases');
+assert.ok(pdfStreamApi.includes('getState()'), 'PDF stream API persists stream lease audit state');
 assert.ok(castCadJs.includes('function syncMarkupToServer'), 'CAST CAD workbench syncs new markups to backend contract');
 assert.ok(castCadJs.includes("fetch('/api/cast-cad-markups'"), 'CAST CAD workbench posts markups to /api/cast-cad-markups');
 assert.ok(castCadJs.includes('function loadServerMarkupsForSelectedDrawing'), 'CAST CAD workbench reloads persisted server markups by sheet');

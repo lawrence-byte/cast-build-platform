@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [],
+  markups: [], comments: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], ocrPages: [], comparisonJobs: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -116,6 +116,33 @@ function buildPdfStreamContract({ sheet, actor, expiresInSeconds = 300 }) {
   };
   if (!providerConfigured) return { ok: false, status: 503, error: 'Authenticated PDF provider is not configured; refusing to expose private drawing files.', contract };
   return { ok: true, contract };
+}
+function createPdfStreamLease(state, { sheet, projectId = 'default', expiresInSeconds = 300 } = {}, actor) {
+  state.pdfStreamLeases ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const result = buildPdfStreamContract({ sheet, actor, expiresInSeconds });
+  if (!result.contract) return result;
+  const lease = {
+    id: result.contract.streamId,
+    projectId,
+    sheetName: result.contract.sheetName,
+    sourcePath: result.contract.sourcePath,
+    actorUserId: actor.id,
+    actorRole: actor.role,
+    expiresAt: result.contract.expiresAt,
+    status: result.ok ? 'ready' : 'provider-required',
+    providerRequired: !result.ok,
+    publicExposure: false,
+    requiresAuth: true,
+    cacheControl: result.contract.cacheControl,
+    provider: result.contract.provider,
+    requiredEnvVars: result.ok ? [] : ['CAST_CAD_PDF_STREAM_BASE or DROPBOX_ACCESS_TOKEN or CAST_SERVER_DOCUMENT_API_URL'],
+    createdAt: now(),
+  };
+  state.pdfStreamLeases.push(lease);
+  audit(state, actor, result.ok ? 'Created authenticated CAST CAD PDF stream lease' : 'Blocked CAST CAD PDF stream lease until provider configured', 'CAST_CAD_PDF_STREAM_LEASE', lease.id, null, lease, 'Private drawing stream request is audited; no public URL or cacheable PDF artifact is exposed.');
+  return { ...result, lease };
 }
 function validateMarkup(input = {}) {
   const errors = [];
@@ -1196,7 +1223,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
-  buildPdfStreamContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
+  buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport,
   createMarkupComment, listMarkupComments, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom,

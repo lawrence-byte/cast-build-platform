@@ -9,6 +9,7 @@ CAST CAD is implemented as a Phase 1–3 static-platform MVP plus production API
 Implemented backend contracts and tests for the remaining non-static elements that can be completed without external provider credentials:
 
 - Authenticated raw PDF stream/proxy / authenticated private PDF stream contract: `/api/cast-cad-pdf-stream`.
+- Provider-independent audited PDF stream lease contract for every private drawing stream request, including no-store/no-public-url guarantees, strict-auth fail-closed behavior when `CAST_CAD_REQUIRE_AUTH=true`, provider-required status, and exact private PDF provider env choices on `/api/cast-cad-pdf-stream`.
 - Persistent markup create/list/update/CSV contract: `/api/cast-cad-markups`.
 - Takeoff workbook, annotated PDF export, and comparison job contracts: `/api/cast-cad-exports`.
 - RFI-from-markup snapshot workflow: `/api/cast-cad-rfi-link`.
@@ -61,7 +62,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
   - Drawing set/sheet index metadata is available from the current drawing index.
   - Basic route/navigation discoverability is guarded by tests.
 - Remaining production work:
-  - Connect production provider credentials for the authenticated raw PDF stream/proxy (`CAST_CAD_PDF_STREAM_BASE`, Dropbox, or CAST Server API). The fail-closed API contract is implemented.
+  - Connect production provider credentials for the authenticated raw PDF stream/proxy (`CAST_CAD_PDF_STREAM_BASE`, `DROPBOX_ACCESS_TOKEN`, or `CAST_SERVER_DOCUMENT_API_URL`). The fail-closed API and audited stream lease contracts are implemented.
   - Connect true PDF.js/commercial SDK multi-page drawing renderer worker with lazy rendering, thumbnails, page labels, bookmarks, search, split view, side-by-side view, keyboard shortcuts, and persisted preferences. Provider-independent preference UI/API and PDF viewport coordinate mapping contracts are implemented; renderer engine/worker remains provider/integration-dependent.
   - Connect database adapter for document metadata persistence. The provider-independent drawing document metadata registry/import/audit contract and frontend import/status bridge are implemented and fail closed for durable or authoritative writes without `CAST_CAD_DOCUMENT_METADATA_ADAPTER`.
   - Wire backend auth/session identity into the CAST CAD permission layer. Permission decisions are implemented in the service contract.
@@ -138,8 +139,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-25T05:49:15Z` for the CAST CAD private markup attachment/evidence manifest slice.
-- Branch audited: `cast-cad-attachment-manifest-bridge`.
+- Audited at: `2026-05-25T06:38:00Z` for the CAST CAD audited PDF stream lease/auth gate slice.
+- Branch audited: `cast-cad-pdf-stream-leases`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
