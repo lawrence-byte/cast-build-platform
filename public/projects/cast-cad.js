@@ -703,7 +703,9 @@ function renderReviewRooms() {
     const participantCount = room.participants?.length || 0;
     const sheetCount = room.sheetIds?.length || 0;
     const markupCount = room.markupIds?.length || 0;
-    return `<div class="tool-card"><em>${esc(room.status || 'Active')} · ${participantCount} invited participant(s)</em><strong>${esc(room.name || 'CAST CAD Review Room')}</strong><span>${sheetCount} sheet(s) · ${markupCount} markup(s) scoped. Backend audit record ${esc(room.id || '')}; external email/realtime provider still required for delivered invites.</span></div>`;
+    const delivery = room.inviteDelivery || {};
+    const deliveryText = delivery.providerRequired ? `Invite delivery blocked: ${(delivery.requiredEnvVars || ['CAST_CAD_REVIEW_ROOM_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_CAD_REALTIME_PROVIDER']).join(', ')} required. No public join link or delivered invite was fabricated.` : `Invite delivery ${delivery.status || 'queued'} through configured private transport.`;
+    return `<div class="tool-card"><em>${esc(room.status || 'Active')} · ${participantCount} participant(s) · ${esc(delivery.status || 'not-requested')}</em><strong>${esc(room.name || 'CAST CAD Review Room')}</strong><span>${sheetCount} sheet(s) · ${markupCount} markup(s) scoped. Backend audit record ${esc(room.id || '')}; ${esc(deliveryText)}</span></div>`;
   }).join('');
 }
 function renderGovernance() {
@@ -771,7 +773,7 @@ async function loadReviewRooms({ toast = false } = {}) {
     if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
     const projectId = selectedDrawing()?.project_id || 'alum';
     const rooms = (result.reviewRooms || []).filter((room) => !room.projectId || room.projectId === projectId);
-    reviewRoomState = { status: 'loaded', rooms, message: `${rooms.length} Review Room(s) loaded from /api/cast-cad-review-room. Invites are audited participant records; external email/realtime delivery remains provider-dependent.` };
+    reviewRoomState = { status: 'loaded', rooms, message: `${rooms.length} Review Room(s) loaded from /api/cast-cad-review-room. Invites are audited delivery events; external email/realtime delivery requires CAST_CAD_REVIEW_ROOM_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_CAD_REALTIME_PROVIDER.` };
     if (toast) window.CASTShell?.toast?.('Review Rooms refreshed from backend contract.', { kind: 'success' });
   } catch (error) {
     console.warn('CAST CAD Review Room API unavailable', error);
@@ -788,8 +790,19 @@ async function createReviewRoomForSelectedScope() {
     const response = await fetch('/api/cast-cad-review-room', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
     const result = await response.json().catch(() => null);
     if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
-    const room = result.room || {};
-    reviewRoomState = { status: 'created', rooms: [...reviewRoomState.rooms, room], message: `Review Room ${room.id || ''} created as an audited backend record for ${payload.sheetIds.length} sheet(s) and ${payload.markupIds.length} markup(s). No external email/realtime invite was fabricated.` };
+    let room = result.room || {};
+    let deliveryMessage = 'Invite delivery was not requested.';
+    try {
+      const deliveryResponse = await fetch('/api/cast-cad-review-room', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'invite-delivery', roomId: room.id, message: `CAST CAD review requested for ${payload.name}.` }) });
+      const delivery = await deliveryResponse.json().catch(() => null);
+      room = delivery?.room || room;
+      deliveryMessage = deliveryResponse.ok && delivery?.ok !== false
+        ? `Invite delivery event ${delivery.inviteEvent?.id || ''} queued for the configured private transport.`
+        : `Invite delivery recorded but blocked: ${delivery?.error || `HTTP ${deliveryResponse.status}`}. Required: ${(delivery?.requiredEnvVars || ['CAST_CAD_REVIEW_ROOM_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_CAD_REALTIME_PROVIDER']).join(', ')}.`;
+    } catch (deliveryError) {
+      deliveryMessage = `Invite delivery check unavailable: ${deliveryError.message}. No external invite was fabricated.`;
+    }
+    reviewRoomState = { status: 'created', rooms: [...reviewRoomState.rooms.filter((row) => row.id !== room.id), room], message: `Review Room ${room.id || ''} created as an audited backend record for ${payload.sheetIds.length} sheet(s) and ${payload.markupIds.length} markup(s). ${deliveryMessage}` };
     window.CASTShell?.toast?.('Review Room created through audited backend contract.', { kind: 'success' });
   } catch (error) {
     console.warn('Could not create CAST CAD Review Room', error);
