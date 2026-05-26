@@ -32,6 +32,7 @@ let autoLinkState = { status: 'idle', runs: [], candidates: [], message: 'Auto L
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
+let scaleCalibrationState = { status: 'idle', calibration: null, message: 'Scale calibration not checked yet. Durable calibration persistence requires CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
 let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
 let markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' };
@@ -394,7 +395,7 @@ function renderScaleStatus() {
   if (calibration?.drawingId === selectedDrawingId) {
     el.textContent = calibration.first ? 'Click second calibration point on the drawing.' : 'Click first calibration point on the drawing.';
   } else if (scale) {
-    el.textContent = `Scale set: ${scale.knownLength} ${scale.unit} = ${scale.percentDistance.toFixed(2)}% screen distance.`;
+    el.textContent = `Scale set: ${scale.knownLength} ${scale.unit} = ${scale.percentDistance.toFixed(2)}% screen distance. ${scaleCalibrationState.message || 'Backend scale calibration audit not checked.'}`;
   } else {
     el.textContent = 'Scale not calibrated for this sheet.';
   }
@@ -462,6 +463,35 @@ async function saveViewportMappingForSelectedSheet({ toast = false, samplePoint 
   }
   renderViewportMappingStatus();
 }
+async function saveScaleCalibrationToBackend(scale, pointA, pointB, { toast = false } = {}) {
+  const drawing = selectedDrawing();
+  if (!scale || !selectedDrawingId) return;
+  const payload = {
+    action: 'scale-calibration',
+    projectId: drawing?.project_id || 'alum',
+    sheetId: selectedDrawingId,
+    pageNumber: 1,
+    knownLength: scale.knownLength,
+    unit: scale.unit,
+    percentDistance: scale.percentDistance,
+    pointA,
+    pointB,
+    status: 'Needs Review',
+    source: 'cast-cad-workbench-calibration-controls',
+  };
+  try {
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    scaleCalibrationState = { status: 'audited', calibration: result.calibration, message: `Backend scale calibration audited as ${result.calibration?.status || 'Needs Review'}; durable authority still requires CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.` };
+    if (toast) window.CASTShell?.toast?.('Scale calibration saved through backend audit contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not persist CAST CAD scale calibration', error);
+    scaleCalibrationState = { status: 'local-only', calibration: payload, message: `Local scale only; backend scale-calibration contract unavailable (${error.message}). No authoritative quantity scale was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Scale calibration backend unavailable; local draft scale only.', { kind: 'info' });
+  }
+  renderScaleStatus();
+}
 async function loadViewportMappingForSelectedSheet() {
   try {
     const params = new URLSearchParams({ action: 'viewport-mapping', projectId: selectedDrawing()?.project_id || 'alum', sheetId: selectedDrawingId, pageNumber: '1' });
@@ -475,6 +505,26 @@ async function loadViewportMappingForSelectedSheet() {
     viewportMappingState = { ...viewportMappingState, status: 'unavailable', message: 'Viewport mapping API unavailable; coordinate conversion remains local preview only.' };
   }
   renderViewportMappingStatus();
+}
+async function loadScaleCalibrationForSelectedSheet() {
+  try {
+    const params = new URLSearchParams({ action: 'scale-calibrations', projectId: selectedDrawing()?.project_id || 'alum', sheetId: selectedDrawingId, pageNumber: '1' });
+    const response = await fetch(`/api/cast-cad-markups?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const savedScale = result.calibrations?.[0] || null;
+    if (savedScale) {
+      drawingScales[selectedDrawingId] = { knownLength: savedScale.knownLength, unit: savedScale.unit, percentDistance: savedScale.percentDistance, calibratedAt: savedScale.updatedAt || savedScale.createdAt };
+      saveDrawingScales();
+      scaleCalibrationState = { status: 'loaded', calibration: savedScale, message: `Loaded audited backend scale calibration (${savedScale.status}); durable authority still requires CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.` };
+    } else {
+      scaleCalibrationState = { ...scaleCalibrationState, status: 'empty', message: 'No audited backend scale calibration for this sheet yet. Local calibration remains draft until saved through /api/cast-cad-markups?action=scale-calibration.' };
+    }
+  } catch (error) {
+    console.warn('Could not load CAST CAD scale calibration', error);
+    scaleCalibrationState = { ...scaleCalibrationState, status: 'unavailable', message: 'Scale calibration API unavailable; local draft scale only and no authoritative quantity scale was fabricated.' };
+  }
+  renderScaleStatus();
 }
 function viewerPreferencePayload() {
   return {
@@ -1573,10 +1623,12 @@ function handleCalibrationClick(point) {
   const knownLength = Number(document.querySelector('[data-scale-known]')?.value || 0);
   const unit = document.querySelector('[data-scale-unit]')?.value || 'FT';
   const percentDistance = Math.hypot(point.x - calibration.first.x, point.y - calibration.first.y);
+  const firstPoint = { ...calibration.first };
   if (knownLength > 0 && percentDistance > 0) {
     drawingScales[selectedDrawingId] = { knownLength, unit, percentDistance, calibratedAt: new Date().toISOString() };
     saveDrawingScales();
-    window.CASTShell?.toast?.('Sheet scale calibrated. Length, area, and count takeoffs are now enabled for this sheet.', { kind: 'success' });
+    saveScaleCalibrationToBackend(drawingScales[selectedDrawingId], firstPoint, point, { toast: false });
+    window.CASTShell?.toast?.('Sheet scale calibrated locally and submitted to the backend audit contract. Length, area, and count takeoffs remain Needs Review until verified.', { kind: 'success' });
   }
   calibration = null;
   render();
@@ -2147,7 +2199,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); loadScaleCalibrationForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -2235,6 +2287,7 @@ loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
 loadViewportMappingForSelectedSheet();
+loadScaleCalibrationForSelectedSheet();
 searchOcrSymbolIndex();
 loadAutoLinkRuns();
 loadDocumentMetadataRegistry();

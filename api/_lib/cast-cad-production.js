@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -636,12 +636,78 @@ function saveViewportMapping(state, input = {}, actor) {
   return { ok: true, mapping: current, samplePoint, contract: { normalizedOrigin: current.normalizedOrigin, coordinateSystem: current.coordinateSystem, durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER', rendererWorkerStillRequired: 'PDF.js/commercial renderer integration' } };
 }
 function listViewportMappings(state, filters = {}) {
-  state.viewportMappings ||= [];
-  let rows = state.viewportMappings.slice();
+  let rows = state.viewportMappings || [];
   if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
   if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
-  if (filters.pageNumber) rows = rows.filter((row) => row.pageNumber === Number(filters.pageNumber));
-  return rows;
+  if (filters.pageNumber) rows = rows.filter((row) => Number(row.pageNumber) === Number(filters.pageNumber));
+  return clone(rows);
+}
+
+function scaleCalibrationDurableAdapterConfigured() { return Boolean(process.env.CAST_CAD_SCALE_CALIBRATION_ADAPTER || process.env.CAST_CAD_MARKUP_DATABASE_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function scaleCalibrationContract() {
+  return { publicExposure: false, requiresAuth: true, durableAdapterRequired: 'CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL', humanReviewRequiredBeforeVerifiedScale: true, coordinateSystem: 'normalized-overlay-percent', noBudgetAuthorityWithoutHumanReview: true };
+}
+function normalizeScaleCalibration(input = {}, actor) {
+  const pointA = input.pointA || input.firstPoint || input.startPoint || {};
+  const pointB = input.pointB || input.secondPoint || input.endPoint || {};
+  const knownLength = Number(input.knownLength || input.known_length || 0);
+  const percentDistance = Number(input.percentDistance || input.percent_distance || Math.hypot(Number(pointB.x || 0) - Number(pointA.x || 0), Number(pointB.y || 0) - Number(pointA.y || 0)));
+  const unit = String(input.unit || 'FT').trim().toUpperCase();
+  const status = input.status || (input.humanReviewApproved ? 'Verified' : 'Needs Review');
+  return {
+    id: input.id || input.calibrationId || id('cad_scale'),
+    projectId: input.projectId || input.project_id || 'default',
+    sheetId: input.sheetId || input.sheet_id || '',
+    pageNumber: Number(input.pageNumber || input.page_number || 1),
+    knownLength,
+    unit,
+    percentDistance,
+    pointA: { x: Number(pointA.x || 0), y: Number(pointA.y || 0) },
+    pointB: { x: Number(pointB.x || 0), y: Number(pointB.y || 0) },
+    scaleLabel: input.scaleLabel || input.scale_label || `${knownLength} ${unit}`,
+    status,
+    humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    authoritative: Boolean(input.authoritative || input.budgetAuthoritative || input.budget_authoritative),
+    publicExposure: false,
+    requiresAuth: true,
+    providerRequired: !scaleCalibrationDurableAdapterConfigured(),
+    requiredEnvVars: ['CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL'],
+    createdByUserId: actor.id,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+}
+function validateScaleCalibration(calibration) {
+  if (!calibration.sheetId) return 'sheetId is required.';
+  if (!Number.isFinite(calibration.knownLength) || calibration.knownLength <= 0) return 'knownLength must be greater than zero.';
+  if (!['FT','IN','LF','SF','EA','M','CM','MM'].includes(calibration.unit)) return 'unit is not supported for CAST CAD scale calibration.';
+  if (!Number.isFinite(calibration.percentDistance) || calibration.percentDistance <= 0) return 'percentDistance must be greater than zero.';
+  if (![calibration.pointA.x, calibration.pointA.y, calibration.pointB.x, calibration.pointB.y].every(Number.isFinite)) return 'Calibration points must be numeric normalized-overlay coordinates.';
+  return '';
+}
+function upsertScaleCalibration(state, input = {}, actor) {
+  const auth = requireAuthenticatedActor(actor); if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'edit_markup'); if (!permission.ok) return permission;
+  const calibration = normalizeScaleCalibration(input, actor);
+  const validation = validateScaleCalibration(calibration); if (validation) return { ok: false, status: 422, error: validation };
+  const verifiedRequested = calibration.status === 'Verified' || calibration.authoritative;
+  if (verifiedRequested && !calibration.humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Human review approval is required before a CAST CAD scale calibration can become verified or budget-authoritative.', contract: scaleCalibrationContract() };
+  if ((input.durable || calibration.authoritative) && !scaleCalibrationDurableAdapterConfigured()) return { ok: false, status: 503, code: 'provider-required', error: 'Durable/authoritative scale calibration persistence requires a configured CAST CAD calibration/database adapter.', requiredEnvVars: calibration.requiredEnvVars, contract: scaleCalibrationContract(), calibration };
+  state.scaleCalibrations = state.scaleCalibrations || [];
+  const existingIndex = state.scaleCalibrations.findIndex((row) => row.id === calibration.id || (row.projectId === calibration.projectId && row.sheetId === calibration.sheetId && Number(row.pageNumber) === Number(calibration.pageNumber)));
+  const previous = existingIndex >= 0 ? clone(state.scaleCalibrations[existingIndex]) : null;
+  const next = { ...(previous || {}), ...calibration, id: previous?.id || calibration.id, createdAt: previous?.createdAt || calibration.createdAt, updatedAt: now() };
+  if (existingIndex >= 0) state.scaleCalibrations[existingIndex] = next; else state.scaleCalibrations.push(next);
+  audit(state, actor, previous ? 'Updated CAST CAD scale calibration' : 'Created CAST CAD scale calibration', 'CAST_CAD_SCALE_CALIBRATION', next.id, previous, next, 'Provider-independent normalized sheet scale calibration.');
+  return { ok: true, status: previous ? 200 : 201, calibration: next, contract: scaleCalibrationContract() };
+}
+function listScaleCalibrations(state, filters = {}) {
+  let rows = state.scaleCalibrations || [];
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.pageNumber) rows = rows.filter((row) => Number(row.pageNumber) === Number(filters.pageNumber));
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return clone(rows);
 }
 function createTakeoffWorkbookExport(state, { projectId, sheetId, format = 'xlsx' }, actor) {
   const permission = requireCastCad(actor.role, 'export');
@@ -1891,7 +1957,7 @@ module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
   buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
-  defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
+  defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
