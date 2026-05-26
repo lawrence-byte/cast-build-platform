@@ -57,6 +57,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent drawing transmittal/release contract and frontend bridge for audited selected-sheet release records, recipient manifests, private/no-public-link delivery guarantees, issue-for-construction human-review gates, and fail-closed delivery transport requirements via `CAST_CAD_TRANSMITTAL_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_SERVER_WORKFLOW_API_URL`: `/api/cast-cad-exports` with `type=drawing-transmittal`.
 - Provider-independent saved markup filter/report view contract and frontend bridge with status/priority/trade/layer/search/needs-review filters, private-report/no-public-exposure guarantees, audited saved view creation, rerunnable stored filters, and explicit durable storage blockers requiring `CAST_CAD_MARKUP_DATABASE_ADAPTER` or `CAST_CAD_DATABASE_URL`: `/api/cast-cad-markups?action=saved-markup-views` plus POST `action=saved-markup-view`.
 - Provider-independent drawing Auto Link candidate contract and frontend bridge that creates source-cited private sheet-link candidates from audited OCR/index text and drawing metadata, keeps candidates human-review gated, forbids public URLs, and fails closed for durable/published links until `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL` is configured: `/api/cast-cad-search?action=auto-links` plus POST `action=auto-links`.
+- Provider-independent drawing Auto Link candidate review contract and frontend bridge that records explicit human Approved/Rejected decisions against source-cited candidates, audits each decision, leaves approved candidates pending durable private publish, and fails closed without fabricating local sheet-link authority until `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL` is configured: `/api/cast-cad-search` POST `action=review-auto-link-candidate`.
 - Provider-independent PDF renderer session contract and frontend bridge for private stream-lease-backed multipage rendering, thumbnails, page labels, bookmarks, text search, and native viewport matrix extraction; public PDF URLs are rejected and renderer artifacts fail closed with `CAST_CAD_PDF_RENDERER_WORKER`, `CAST_CAD_PDFJS_WORKER_URL`, or `CAST_CAD_PDF_SDK_PROVIDER` until a private PDF renderer worker/SDK is configured: `/api/cast-cad-exports` with `type=pdf-renderer-session`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
@@ -155,8 +156,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-26T07:56:00Z` for the CAST CAD drawing Auto Link candidate contract slice.
-- Branch audited: `cast-cad-auto-link-candidates`.
+- Audited at: `2026-05-26T12:18:24Z` for the CAST CAD drawing Auto Link candidate review contract slice.
+- Branch audited: `cast-cad-auto-link-review`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

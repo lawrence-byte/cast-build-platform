@@ -221,8 +221,17 @@ const blockedAutoLinkDurablePublish = cad.createDrawingAutoLinks(state, { projec
 assert.equal(blockedAutoLinkDurablePublish.ok, false, 'Auto Link durable publishing fails closed without metadata/database adapter');
 assert.equal(blockedAutoLinkDurablePublish.code, 'provider-required', 'Auto Link durable publishing exposes provider-required blocker');
 assert.deepEqual(blockedAutoLinkDurablePublish.requiredEnvVars, ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], 'Auto Link durable publishing names exact adapter env choices');
+const blockedAutoLinkReview = cad.reviewDrawingAutoLinkCandidate(state, { runId: autoLink.autoLinkRun.id, candidateId: autoLink.candidates[0].id, decision: 'Approved' }, owner);
+assert.equal(blockedAutoLinkReview.ok, false, 'Auto Link candidate review fails closed without explicit human review');
+assert.equal(blockedAutoLinkReview.code, 'human-review-required', 'Auto Link candidate review exposes human-review gate');
+const reviewedAutoLink = cad.reviewDrawingAutoLinkCandidate(state, { runId: autoLink.autoLinkRun.id, candidateId: autoLink.candidates[0].id, decision: 'Approved', humanReviewApproved: true, reviewNotes: 'Reference checked against drawing index.' }, owner);
+assert.equal(reviewedAutoLink.ok, true, 'Auto Link candidate review records human approval');
+assert.equal(reviewedAutoLink.candidate.status, 'Approved - Pending Durable Publish', 'reviewed Auto Link remains pending durable provider publish');
+assert.equal(reviewedAutoLink.candidate.providerRequired, true, 'reviewed Auto Link names missing durable adapter without publishing');
+assert.deepEqual(reviewedAutoLink.requiredEnvVars, ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], 'reviewed Auto Link exposes exact durable adapter requirement');
 assert.equal(cad.listDrawingAutoLinks(state, { projectId: 'alum', sheetId: 'A-101' }).length, 1, 'Auto Link runs list by project/source sheet');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_AUTOLINK_RUN'), 'Auto Link candidate runs are audited');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_AUTOLINK_CANDIDATE'), 'Auto Link candidate reviews are audited');
 
 const badTool = cad.createToolLibraryItem(state, { projectId: 'alum', name: 'Unsafe auto-budget count', toolType: 'count', requiresHumanReview: false }, owner);
 assert.equal(badTool.ok, false, 'Tool Library items fail closed when human review is disabled');
@@ -567,5 +576,9 @@ assert.ok(castCadJs.includes('No local current/superseded authority was fabricat
 assert.ok(castCadHtml.includes('data-publish-drawing-set-version'), 'CAST CAD workbench exposes drawing set version publish control');
 assert.ok(castCadHtml.includes('data-slip-sheet-revision'), 'CAST CAD workbench exposes human-review-gated slip-sheet control');
 assert.ok(castCadHtml.includes('data-drawing-set-revisions'), 'CAST CAD workbench exposes drawing set revision history');
+assert.ok(castCadJs.includes('function reviewAutoLinkCandidate'), 'CAST CAD workbench reviews Auto Link candidates through backend audit');
+assert.ok(castCadJs.includes("action: 'review-auto-link-candidate'"), 'CAST CAD workbench calls Auto Link candidate review contract');
+assert.ok(castCadJs.includes('No local sheet hyperlink or durable publish authority was fabricated'), 'CAST CAD Auto Link review fails closed without fabricating link authority');
+assert.ok(castCadHtml.includes('data-review-auto-link-candidate'), 'CAST CAD workbench exposes human-review-gated Auto Link candidate review control');
 
 console.log('CAST CAD production contract tests passed.');

@@ -870,6 +870,40 @@ function listDrawingAutoLinks(state, filters = {}) {
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
   return rows;
 }
+function reviewDrawingAutoLinkCandidate(state, input = {}, actor) {
+  state.drawingAutoLinkRuns ||= [];
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  const runId = input.runId || input.run_id || '';
+  const candidateId = input.candidateId || input.candidate_id || input.id || '';
+  const run = state.drawingAutoLinkRuns.find((row) => row.id === runId) || [...state.drawingAutoLinkRuns].reverse().find((row) => (row.candidates || []).some((candidate) => candidate.id === candidateId));
+  if (!run) return { ok: false, status: 404, code: 'auto-link-run-not-found', error: 'CAST CAD Auto Link review requires an existing audited candidate run.' };
+  const candidate = (run.candidates || []).find((row) => row.id === candidateId) || (run.candidates || [])[0];
+  if (!candidate) return { ok: false, status: 404, code: 'auto-link-candidate-not-found', error: 'CAST CAD Auto Link review requires an existing source-cited candidate.' };
+  const decision = String(input.decision || input.status || 'Approved').trim().toLowerCase();
+  const approvedDecision = ['approved', 'approve', 'publish-ready', 'ready-to-publish'].includes(decision);
+  const rejectedDecision = ['rejected', 'reject', 'dismissed', 'dismiss'].includes(decision);
+  if (!approvedDecision && !rejectedDecision) return { ok: false, status: 422, code: 'invalid-auto-link-review-decision', error: 'Auto Link review decision must be Approved or Rejected.' };
+  if (!(input.humanReviewApproved || input.human_review_approved)) {
+    return { ok: false, status: 409, code: 'human-review-required', error: 'CAST CAD Auto Link candidate review requires explicit human review approval; no private sheet link authority was fabricated.', candidate, contract: drawingAutoLinkContract() };
+  }
+  const before = { ...candidate };
+  candidate.status = approvedDecision ? 'Approved - Pending Durable Publish' : 'Rejected';
+  candidate.humanReviewed = true;
+  candidate.humanReviewApproved = approvedDecision;
+  candidate.reviewedByUserId = actor.id;
+  candidate.reviewedAt = now();
+  candidate.reviewNotes = String(input.reviewNotes || input.review_notes || '').trim();
+  candidate.publishReady = approvedDecision;
+  candidate.durablePublished = false;
+  candidate.providerRequired = approvedDecision && !(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER || process.env.CAST_CAD_DATABASE_URL);
+  candidate.requiredEnvVars = candidate.providerRequired ? ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'] : [];
+  run.reviewedCandidateCount = (run.candidates || []).filter((row) => row.humanReviewed).length;
+  run.approvedCandidateCount = (run.candidates || []).filter((row) => row.publishReady).length;
+  run.status = run.approvedCandidateCount ? 'reviewed-pending-provider' : 'needs-review';
+  audit(state, actor, 'Reviewed CAST CAD drawing Auto Link candidate', 'CAST_CAD_DRAWING_AUTOLINK_CANDIDATE', candidate.id, before, candidate, 'Candidate review is human-gated and does not publish durable links until the private metadata/database adapter is configured.');
+  return { ok: true, status: 200, autoLinkRun: run, candidate, contract: drawingAutoLinkContract(), requiredEnvVars: candidate.requiredEnvVars };
+}
 function normalizeAiFinding(input = {}, actor) {
   const sourceCitations = Array.isArray(input.sourceCitations || input.source_citations) ? (input.sourceCitations || input.source_citations) : [];
   return {
@@ -1892,7 +1926,7 @@ module.exports = {
   buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
-  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
+  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, reviewDrawingAutoLinkCandidate, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,

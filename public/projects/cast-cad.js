@@ -1071,6 +1071,25 @@ async function createAutoLinkCandidates({ publish = false } = {}) {
   }
   renderAutoLinkCandidates();
 }
+async function reviewAutoLinkCandidate() {
+  const run = (autoLinkState.runs || []).slice(-1)[0];
+  const candidate = (autoLinkState.candidates || [])[0];
+  const humanReviewApproved = Boolean(document.querySelector('[data-auto-link-review]')?.checked);
+  if (!run || !candidate) { window.CASTShell?.toast?.('Generate or load an Auto Link candidate before review.', { kind: 'error' }); return; }
+  try {
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'review-auto-link-candidate', runId: run.id, candidateId: candidate.id, decision: 'Approved', humanReviewApproved, reviewNotes: 'Reviewed in CAST CAD workbench before durable publish attempt.' }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const reviewedRun = result.autoLinkRun || run;
+    autoLinkState = { status: reviewedRun.status || 'reviewed-pending-provider', runs: [...autoLinkState.runs.filter((row) => row.id !== reviewedRun.id), reviewedRun], candidates: reviewedRun.candidates || autoLinkState.candidates, message: `Auto Link candidate reviewed through backend audit. Durable publish still requires ${(result.requiredEnvVars || ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL']).join(', ')}; No local sheet hyperlink or durable publish authority was fabricated.` };
+    window.CASTShell?.toast?.('Auto Link candidate review recorded through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not review CAST CAD Auto Link candidate', error);
+    autoLinkState = { ...autoLinkState, status: 'blocked', message: `Auto Link review blocked: ${error.message}. No local sheet hyperlink or durable publish authority was fabricated.` };
+    window.CASTShell?.toast?.('Auto Link review blocked; no sheet link authority was fabricated.', { kind: 'error' });
+  }
+  renderAutoLinkCandidates();
+}
 function toolLibrarySeedPayload() {
   const seed = document.querySelector('[data-tool-library-seed]')?.value || 'fec';
   const seeds = {
@@ -2195,6 +2214,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-search-ocr-symbols]')) { searchOcrSymbolIndex({ toast: true }); return; }
   if (event.target.closest('[data-index-ocr-sample]')) { createReviewedOcrIndexSample(); return; }
   if (event.target.closest('[data-create-auto-links]')) { createAutoLinkCandidates({ publish: false }); return; }
+  if (event.target.closest('[data-review-auto-link-candidate]')) { reviewAutoLinkCandidate(); return; }
   if (event.target.closest('[data-publish-auto-links]')) { createAutoLinkCandidates({ publish: true }); return; }
   if (event.target.closest('[data-load-auto-links]')) { loadAutoLinkRuns({ toast: true }); return; }
   if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }
