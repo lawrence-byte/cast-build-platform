@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -706,6 +706,110 @@ function excerpt(text, q) {
   const lower = String(text || '').toLowerCase();
   const i = Math.max(0, lower.indexOf(q));
   return String(text || '').slice(Math.max(0, i - 60), i + q.length + 90);
+}
+function normalizedDrawingRef(value) {
+  return String(value || '').trim().toUpperCase().replace(/\s+/g, '').replace(/[–—]/g, '-');
+}
+function drawingAutoLinkContract() {
+  return {
+    privateLinksOnly: true,
+    publicExposure: false,
+    requiresAuth: true,
+    humanReviewRequiredBeforePublish: true,
+    noPublicUrls: true,
+    sourceCitationRequired: true,
+    durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER',
+    workerRequiredForProductionExtraction: 'CAST_CAD_OCR_WORKER or CAST_CAD_AUTOLINK_WORKER',
+  };
+}
+function detectDrawingReferences(text) {
+  const refs = new Set();
+  const source = String(text || '');
+  const patterns = [
+    /\b[A-Z]{1,3}[.-]?\d{1,3}(?:\.\d+)?\b/g,
+    /\b(?:SHEET|DWG|DRAWING|DETAIL)\s+([A-Z]{1,3}[.-]?\d{1,3}(?:\.\d+)?)\b/gi,
+  ];
+  patterns.forEach((pattern) => {
+    let match;
+    while ((match = pattern.exec(source)) !== null) refs.add(normalizedDrawingRef(match[1] || match[0]));
+  });
+  return [...refs];
+}
+function createDrawingAutoLinks(state, input = {}, actor) {
+  state.ocrPages ||= [];
+  state.drawingDocuments ||= [];
+  state.drawingAutoLinkRuns ||= [];
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id || 'default';
+  const sourceSheetId = input.sourceSheetId || input.source_sheet_id || input.sheetId || input.sheet_id || '';
+  const pages = state.ocrPages.filter((page) => page.projectId === projectId && (!sourceSheetId || page.sheetId === sourceSheetId));
+  if (!pages.length) return { ok: false, status: 422, code: 'source-index-required', error: 'CAST CAD Auto Link requires indexed OCR/search text for the source sheet before link candidates can be created.' };
+  const docs = state.drawingDocuments.filter((doc) => doc.projectId === projectId);
+  const docMap = new Map();
+  docs.forEach((doc) => {
+    [doc.sheetId, doc.drawingNumber, doc.fileName].filter(Boolean).forEach((key) => docMap.set(normalizedDrawingRef(String(key).replace(/\.pdf$/i, '')), doc));
+  });
+  const candidates = [];
+  pages.forEach((page) => {
+    detectDrawingReferences(`${page.text || ''} ${(page.symbols || []).join(' ')}`).forEach((ref) => {
+      const target = docMap.get(ref);
+      if (!target || target.sheetId === page.sheetId) return;
+      if (candidates.some((row) => row.sourceSheetId === page.sheetId && row.targetSheetId === target.sheetId && row.referenceText === ref)) return;
+      candidates.push({
+        id: id('cad_autolink_candidate'),
+        projectId,
+        sourceSheetId: page.sheetId,
+        sourcePageNumber: page.pageNumber,
+        targetSheetId: target.sheetId,
+        targetDrawingNumber: target.drawingNumber,
+        targetDocumentId: target.id,
+        referenceText: ref,
+        confidence: Math.min(99, Math.max(50, Number(page.confidence || 75))),
+        status: 'Needs Review',
+        humanReviewRequired: true,
+        sourceCitation: { kind: 'ocr', ocrPageId: page.id, sheetId: page.sheetId, pageNumber: page.pageNumber, excerpt: excerpt(page.text || (page.symbols || []).join(' '), ref.toLowerCase()) },
+        linkType: 'private-sheet-link',
+        publicExposure: false,
+        noPublicUrls: true,
+      });
+    });
+  });
+  const publishRequested = Boolean(input.publish || input.publishLinks || input.publish_links || input.authoritative);
+  if (publishRequested && !(input.humanReviewApproved || input.human_review_approved)) {
+    return { ok: false, status: 409, code: 'human-review-required', error: 'CAST CAD Auto Link candidates cannot be published as navigable sheet links without human review approval.', candidates, contract: drawingAutoLinkContract() };
+  }
+  const providerReady = Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER || process.env.CAST_CAD_DATABASE_URL);
+  if (publishRequested && !providerReady) {
+    return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD Auto Link publishing requires CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL; refusing to fabricate durable private sheet links.', requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], candidates, contract: drawingAutoLinkContract() };
+  }
+  const run = {
+    id: input.id || id('cad_autolink_run'),
+    projectId,
+    sourceSheetId,
+    status: publishRequested ? 'ready-to-publish' : 'needs-review',
+    candidateCount: candidates.length,
+    candidates,
+    providerRequired: !providerReady,
+    requiredEnvVars: providerReady ? [] : ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'],
+    contract: drawingAutoLinkContract(),
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.drawingAutoLinkRuns.push(run);
+  audit(state, actor, 'Created CAST CAD drawing Auto Link candidates', 'CAST_CAD_DRAWING_AUTOLINK_RUN', run.id, null, run, 'Provider-independent private sheet-link candidates require human review before publication; no public links were fabricated.');
+  return { ok: true, autoLinkRun: run, candidates, contract: drawingAutoLinkContract() };
+}
+function listDrawingAutoLinks(state, filters = {}) {
+  state.drawingAutoLinkRuns ||= [];
+  let rows = state.drawingAutoLinkRuns.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sourceSheetId || filters.sheetId) {
+    const sheetId = filters.sourceSheetId || filters.sheetId;
+    rows = rows.filter((row) => row.sourceSheetId === sheetId);
+  }
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
 }
 function normalizeAiFinding(input = {}, actor) {
   const sourceCitations = Array.isArray(input.sourceCitations || input.source_citations) ? (input.sourceCitations || input.source_citations) : [];
@@ -1729,7 +1833,7 @@ module.exports = {
   buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
-  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
+  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,

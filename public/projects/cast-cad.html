@@ -268,7 +268,21 @@
         </article>
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Search contract guardrails</h2><span class="badge">Fail closed</span></div>
-          <div class="cad-panel-body"><p class="cad-muted">Reviewed index samples are explicit audited contract records for workflow testing only. Worker-generated OCR, searchable private text storage, visual search, and Auto Link remain blocked until the private OCR/symbol provider and storage adapter are configured.</p></div>
+          <div class="cad-panel-body"><p class="cad-muted">Reviewed index samples are explicit audited contract records for workflow testing only. Worker-generated OCR, searchable private text storage, visual search, and Auto Link extraction remain blocked until the private OCR/symbol provider and storage adapter are configured.</p></div>
+        </article>
+        <article class="cad-panel">
+          <div class="cad-panel-head"><h2>Auto Link candidates</h2><span class="badge">Private links only</span></div>
+          <div class="cad-panel-body">
+            <p class="cad-muted">Creates source-cited private sheet-link candidates from audited OCR/index text and drawing metadata. Candidates stay Needs Review; publishing fails closed until human review plus CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL is configured.</p>
+            <div class="pdf-intake cad-auto-link-controls" aria-label="CAST CAD Auto Link controls">
+              <label><input type="checkbox" data-auto-link-review autocomplete="off"> Human reviewed for publish</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-auto-links>Generate Auto Link candidates</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-publish-auto-links>Try reviewed publish</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-load-auto-links>Refresh Auto Links</button>
+              <span class="pdf-status" data-auto-link-status>Auto Link candidates not checked yet. Private links require reviewed OCR/index sources and durable metadata adapters before publishing.</span>
+            </div>
+            <div class="tool-list" data-auto-link-candidates><p class="cad-muted">No Auto Link candidates loaded yet.</p></div>
+          </div>
         </article>
       </section>
 
