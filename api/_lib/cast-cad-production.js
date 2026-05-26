@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1875,9 +1875,17 @@ function drawingApprovalContract() {
     requiresAuth: true,
     cacheControl: 'private, max-age=0, no-store',
     humanReviewRequiredBeforeIssueForConstruction: true,
+    reviewerDecisionContract: 'Named reviewer approve/reject/revise decisions are audited per package; final approved-for-release status requires all reviewers approved plus explicit humanReviewApproved.',
     durableAdapterRequired: 'CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL',
     transmittalGate: 'Approved drawing packages can be cited before drawing transmittal delivery; external delivery still requires CAST_CAD_TRANSMITTAL_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_SERVER_WORKFLOW_API_URL.',
   };
+}
+function normalizeApprovalDecision(decision) {
+  const value = String(decision || '').trim().toLowerCase();
+  if (['approve','approved','accepted'].includes(value)) return 'Approved';
+  if (['reject','rejected','denied'].includes(value)) return 'Rejected';
+  if (['revise','revise-and-resubmit','revise_resubmit','revise and resubmit','changes-required'].includes(value)) return 'Revise and Resubmit';
+  return 'Pending';
 }
 function createDrawingApprovalPackage(state, input = {}, actor) {
   state.drawingApprovalPackages ||= [];
@@ -1906,7 +1914,7 @@ function createDrawingApprovalPackage(state, input = {}, actor) {
     sheetIds,
     reviewerCount: reviewers.length,
     reviewers: reviewers.map((reviewer) => ({ userId: reviewer.userId || reviewer.user_id || '', email: String(reviewer.email || '').toLowerCase(), name: reviewer.name || '', role: normalizeRole(reviewer.role || 'Consultant'), decision: reviewer.decision || 'Pending', decidedAt: reviewer.decidedAt || reviewer.decided_at || '' })),
-    status: wantsIfc ? 'approved-for-release' : input.status || 'pending-review',
+    status: wantsIfc && reviewers.every((reviewer) => normalizeApprovalDecision(reviewer.decision) === 'Approved') ? 'approved-for-release' : input.status || 'pending-review',
     issueFor: input.issueFor || input.issue_for || (wantsIfc ? 'issue-for-construction' : 'review'),
     humanReviewApproved,
     providerRequired: !durableReady,
@@ -1932,6 +1940,60 @@ function listDrawingApprovalPackages(state, filters = {}) {
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
   if (filters.sheetId) rows = rows.filter((row) => row.sheetIds.includes(filters.sheetId));
   return rows;
+}
+function reviewDrawingApprovalPackage(state, input = {}, actor) {
+  state.drawingApprovalPackages ||= [];
+  state.drawingApprovalDecisions ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const packageId = input.packageId || input.package_id || input.approvalPackageId || input.approval_package_id;
+  const packageRow = state.drawingApprovalPackages.find((row) => row.id === packageId);
+  if (!packageRow) return { ok: false, status: 404, error: 'CAST CAD drawing approval package not found.', contract: drawingApprovalContract() };
+  const decision = normalizeApprovalDecision(input.decision);
+  if (decision === 'Pending') return { ok: false, status: 422, errors: ['decision must be approve, reject, or revise-and-resubmit.'], contract: drawingApprovalContract() };
+  const reviewerEmail = String(input.reviewerEmail || input.reviewer_email || actor.email || '').trim().toLowerCase();
+  const reviewerUserId = String(input.reviewerUserId || input.reviewer_user_id || actor.id || '').trim();
+  const reviewer = packageRow.reviewers.find((row) => (reviewerEmail && row.email === reviewerEmail) || (reviewerUserId && row.userId === reviewerUserId));
+  if (!reviewer) return { ok: false, status: 403, code: 'reviewer-not-named', error: 'Only named reviewers on the private drawing approval package can record approval decisions.' };
+  const previous = clone(packageRow);
+  const decidedAt = now();
+  Object.assign(reviewer, { decision, decidedAt, reviewNotes: String(input.reviewNotes || input.review_notes || '').trim(), decidedByUserId: actor.id });
+  const event = {
+    id: id('cad_approval_decision'),
+    type: 'drawing-approval-decision',
+    packageId: packageRow.id,
+    projectId: packageRow.projectId,
+    setId: packageRow.setId,
+    sheetIds: packageRow.sheetIds.slice(),
+    reviewerEmail,
+    reviewerUserId,
+    decision,
+    reviewNotes: reviewer.reviewNotes,
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    createdByUserId: actor.id,
+    createdAt: decidedAt,
+  };
+  state.drawingApprovalDecisions.push(event);
+  const decisions = packageRow.reviewers.map((row) => row.decision || 'Pending');
+  const allApproved = decisions.length > 0 && decisions.every((row) => row === 'Approved');
+  const anyRejected = decisions.some((row) => row === 'Rejected');
+  const anyRevise = decisions.some((row) => row === 'Revise and Resubmit');
+  const wantsIfc = ['issue-for-construction','ifc','approved'].includes(String(packageRow.issueFor || '').toLowerCase());
+  if (wantsIfc && allApproved && !Boolean(input.humanReviewApproved || input.human_review_approved || packageRow.humanReviewApproved)) packageRow.status = 'approval-complete-human-review-required';
+  else if (wantsIfc && allApproved) { packageRow.status = 'approved-for-release'; packageRow.humanReviewApproved = true; }
+  else if (anyRejected) packageRow.status = 'rejected';
+  else if (anyRevise) packageRow.status = 'revise-and-resubmit';
+  else packageRow.status = allApproved ? 'approved' : 'pending-review';
+  packageRow.updatedByUserId = actor.id;
+  packageRow.updatedAt = decidedAt;
+  audit(state, actor, 'Recorded CAST CAD drawing approval reviewer decision', 'CAST_CAD_DRAWING_APPROVAL_DECISION', event.id, previous, packageRow, 'Named reviewer decision was audited with no public approval links or sheet exposure.');
+  if (wantsIfc && allApproved && packageRow.status === 'approval-complete-human-review-required') return { ok: false, status: 409, code: 'human-review-required', error: 'All named reviewers approved, but issue-for-construction release still requires explicit human review approval.', approvalPackage: packageRow, decisionEvent: event, contract: drawingApprovalContract() };
+  return { ok: true, status: 202, approvalPackage: packageRow, decisionEvent: event, contract: drawingApprovalContract() };
 }
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
@@ -2029,7 +2091,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
 };
