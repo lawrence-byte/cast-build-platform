@@ -40,6 +40,9 @@ process.env.CAST_CAD_REQUIRE_AUTH = 'true';
 const unauthenticatedPdfLease = cad.createPdfStreamLease(state, { projectId: 'alum', sheet: { path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', extension: 'pdf' } }, { id: 'anon', role: 'Read Only Viewer', authenticated: false });
 assert.equal(unauthenticatedPdfLease.ok, false, 'PDF stream lease fails closed when strict auth is enabled without a session identity');
 assert.equal(unauthenticatedPdfLease.code, 'auth-required', 'PDF stream lease exposes strict auth blocker');
+const unauthenticatedMarkupAuth = cad.requireAuthenticatedActor({ id: 'anon', role: 'Owner Admin', authenticated: false });
+assert.equal(unauthenticatedMarkupAuth.ok, false, 'strict auth guard blocks unauthenticated CAST CAD API access before role permissions are trusted');
+assert.equal(unauthenticatedMarkupAuth.status, 401, 'strict auth guard returns a 401 contract for unauthenticated sessions');
 if (previousPdfRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH; else process.env.CAST_CAD_REQUIRE_AUTH = previousPdfRequireAuth;
 
 const markup = cad.createMarkup(state, { projectId: 'alum', sheetId: 'A-101', tool: 'Area Measurement', subject: 'Test area', layer: 'ASI-002', group_id: 'grp-envelope', style: { stroke: '#2563eb', fill: 'rgba(37,99,235,.2)', opacity: 0.75, lineWidth: 4, fontSize: 14 }, measurement: { value: 245.5, unit: 'SF' }, geometry: { type: 'polygon', points: [{x:1,y:1},{x:5,y:1},{x:5,y:5}] } }, owner);
@@ -454,9 +457,15 @@ assert.equal(unauthenticatedRole.ok, false, 'admin governance fails closed when 
 assert.equal(unauthenticatedRole.code, 'auth-required', 'auth-required blocker is explicit');
 if (previousRequireAuth === undefined) delete process.env.CAST_CAD_REQUIRE_AUTH; else process.env.CAST_CAD_REQUIRE_AUTH = previousRequireAuth;
 
-const castCadJs = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.js'), 'utf8');
-const castCadHtml = fs.readFileSync(path.join(__dirname, '..', 'public', 'projects', 'cast-cad.html'), 'utf8');
-const pdfStreamApi = fs.readFileSync(path.join(__dirname, '..', 'api', 'cast-cad-pdf-stream.js'), 'utf8');
+const root = path.join(__dirname, '..');
+const castCadHtml = fs.readFileSync(path.join(root, 'public/projects/cast-cad.html'), 'utf8');
+const castCadJs = fs.readFileSync(path.join(root, 'public/projects/cast-cad.js'), 'utf8');
+const pdfStreamApi = fs.readFileSync(path.join(root, 'api/cast-cad-pdf-stream.js'), 'utf8');
+['api/cast-cad-markups.js','api/cast-cad-exports.js','api/cast-cad-rfi-link.js','api/cast-cad-search.js','api/cast-cad-review-room.js'].forEach((apiPath) => {
+  const apiSource = fs.readFileSync(path.join(root, apiPath), 'utf8');
+  assert.ok(apiSource.includes('requireAuthenticatedActor'), `${apiPath} must enforce CAST_CAD_REQUIRE_AUTH before exposing private CAST CAD contracts`);
+  assert.ok(apiSource.includes('if (!auth.ok) return json(res, auth.status, auth);'), `${apiPath} must fail closed with the shared strict-auth response`);
+});
 const fieldSw = fs.readFileSync(path.join(__dirname, '..', 'public', 'cast-cad-field-sw.js'), 'utf8');
 assert.ok(pdfStreamApi.includes('createPdfStreamLease'), 'PDF stream API creates audited private stream leases');
 assert.ok(pdfStreamApi.includes('getState()'), 'PDF stream API persists stream lease audit state');

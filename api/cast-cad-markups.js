@@ -1,9 +1,11 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, requireAuthenticatedActor, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
   const actor = getActor(req);
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return json(res, auth.status, auth);
   try {
     if (req.method === 'GET') {
       const url = new URL(req.url, 'http://localhost');
