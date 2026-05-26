@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -143,6 +143,65 @@ function createPdfStreamLease(state, { sheet, projectId = 'default', expiresInSe
   state.pdfStreamLeases.push(lease);
   audit(state, actor, result.ok ? 'Created authenticated CAST CAD PDF stream lease' : 'Blocked CAST CAD PDF stream lease until provider configured', 'CAST_CAD_PDF_STREAM_LEASE', lease.id, null, lease, 'Private drawing stream request is audited; no public URL or cacheable PDF artifact is exposed.');
   return { ...result, lease };
+}
+function pdfRendererWorkerConfigured() { return Boolean(process.env.CAST_CAD_PDF_RENDERER_WORKER || process.env.CAST_CAD_PDFJS_WORKER_URL || process.env.CAST_CAD_PDF_SDK_PROVIDER); }
+function pdfRendererContract() {
+  return {
+    rendererRequired: 'CAST_CAD_PDF_RENDERER_WORKER or CAST_CAD_PDFJS_WORKER_URL or CAST_CAD_PDF_SDK_PROVIDER',
+    privateArtifacts: true,
+    publicExposure: false,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    outputs: ['page-render-session','thumbnail-manifest','page-labels','bookmarks','text-search-index','viewport-matrices'],
+    workerResponsibilities: ['lazy page rendering','thumbnail rendering','page label extraction','bookmark/outline extraction','text search indexing','native viewport matrix capture'],
+  };
+}
+function createPdfRendererSession(state, input = {}, actor) {
+  state.pdfRendererSessions ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'stream_pdf');
+  if (!permission.ok) return permission;
+  const sourcePointer = String(input.streamLeaseId || input.stream_lease_id || input.sourcePointer || input.source_pointer || '').trim();
+  if (!sourcePointer) return { ok: false, status: 422, errors: ['A private streamLeaseId or sourcePointer is required before creating a PDF renderer session.'] };
+  if (/^https?:\/\//i.test(sourcePointer)) return { ok: false, status: 409, code: 'public-url-forbidden', error: 'CAST CAD PDF renderer sessions require private stream leases/provider pointers; public PDF URLs are refused.' };
+  const providerReady = pdfRendererWorkerConfigured();
+  const session = {
+    id: input.id || id('cad_pdf_render'),
+    type: 'pdf-renderer-session',
+    projectId: input.projectId || input.project_id || 'default',
+    sheetId: input.sheetId || input.sheet_id || '',
+    pageNumber: Number(input.pageNumber || input.page_number || 1),
+    sourcePointer,
+    status: providerReady ? 'queued' : 'provider-required',
+    providerRequired: !providerReady,
+    requiredEnvVars: providerReady ? [] : ['CAST_CAD_PDF_RENDERER_WORKER or CAST_CAD_PDFJS_WORKER_URL or CAST_CAD_PDF_SDK_PROVIDER'],
+    provider: process.env.CAST_CAD_PDF_RENDERER_WORKER ? 'cast-cad-renderer-worker' : process.env.CAST_CAD_PDFJS_WORKER_URL ? 'pdfjs-worker' : process.env.CAST_CAD_PDF_SDK_PROVIDER || 'unconfigured',
+    requestedOutputs: Array.isArray(input.outputs) && input.outputs.length ? input.outputs : pdfRendererContract().outputs,
+    thumbnailsReady: false,
+    bookmarksReady: false,
+    searchIndexReady: false,
+    viewportMatricesReady: false,
+    outputPointer: '',
+    publicExposure: false,
+    privateArtifacts: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.pdfRendererSessions.push(session);
+  audit(state, actor, providerReady ? 'Queued CAST CAD PDF renderer session' : 'Blocked CAST CAD PDF renderer session until worker configured', 'CAST_CAD_PDF_RENDERER_SESSION', session.id, null, session, providerReady ? 'Private renderer worker queued; artifacts remain no-store.' : 'No PDF.js/commercial renderer worker is configured; no thumbnails/search/page artifacts were fabricated.');
+  if (!providerReady) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD PDF renderer worker is not configured; refusing to fabricate multipage rendering, thumbnails, bookmarks, text search, or viewport matrices.', requiredEnvVars: session.requiredEnvVars, rendererSession: session, contract: pdfRendererContract() };
+  return { ok: true, status: 202, rendererSession: session, contract: pdfRendererContract() };
+}
+function listPdfRendererSessions(state, filters = {}) {
+  state.pdfRendererSessions ||= [];
+  let rows = state.pdfRendererSessions.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
 }
 function validateMarkup(input = {}) {
   const errors = [];
@@ -1830,7 +1889,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
-  buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
+  buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,

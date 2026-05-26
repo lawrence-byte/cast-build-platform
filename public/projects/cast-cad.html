@@ -305,13 +305,14 @@
               <select data-model-quantity-unit autocomplete="off" aria-label="Model quantity unit"><option>EA</option><option>LF</option><option>SF</option><option>CY</option></select>
               <label><input type="checkbox" data-model-quantity-review autocomplete="off"> Human reviewed model quantity</label>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-workbook-export>Create takeoff workbook job</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-pdf-renderer>Create PDF renderer session</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotated-pdf-export>Create annotated PDF job</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-drawing-upload>Create drawing upload package</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-drawing-transmittal>Create drawing transmittal</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotation-import>Create annotation import job</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-model-ingestion>Create CAD/model ingestion job</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-model-quantity-link>Link model quantity</button>
-              <span class="pdf-status" data-export-job-status>Backend export jobs not requested yet. Workbooks require CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER; annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER; drawing upload packages require CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or a private document provider; drawing transmittals require CAST_CAD_TRANSMITTAL_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_SERVER_WORKFLOW_API_URL; annotation import requires CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER; CAD/model ingestion requires CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER.</span>
+              <span class="pdf-status" data-export-job-status>Backend export jobs not requested yet. PDF renderer sessions require CAST_CAD_PDF_RENDERER_WORKER, CAST_CAD_PDFJS_WORKER_URL, or CAST_CAD_PDF_SDK_PROVIDER; workbooks require CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER; annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER; drawing upload packages require CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or a private document provider; drawing transmittals require CAST_CAD_TRANSMITTAL_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_SERVER_WORKFLOW_API_URL; annotation import requires CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER.</span>
             </div>
             <div class="tool-list" data-export-jobs><p class="cad-muted">No backend export jobs requested in this session.</p></div>
           </div>
