@@ -1,8 +1,10 @@
 'use strict';
-const { getActor, getState, json, readBody, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, requireCastCad } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, requireAuthenticatedActor, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, requireCastCad } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState(); const actor = getActor(req);
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return json(res, auth.status, auth);
   try {
     if (req.method === 'GET') {
       const permission = requireCastCad(actor.role, 'view');
