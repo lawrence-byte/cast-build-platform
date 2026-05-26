@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1388,6 +1388,65 @@ function listFieldPackages(state, filters = {}) {
   if (filters.packageId) syncEvents = syncEvents.filter((row) => row.packageId === filters.packageId);
   return { packages, syncEvents };
 }
+function drawingUploadStorageConfigured() {
+  return Boolean(process.env.CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER || process.env.CAST_CAD_DOCUMENT_STORAGE_ADAPTER || process.env.CAST_SERVER_DOCUMENT_API_URL || process.env.DROPBOX_ACCESS_TOKEN);
+}
+function normalizeDrawingUploadFile(file = {}, index) {
+  const fileName = safeFileName(file.fileName || file.file_name || file.name || `sheet-${index + 1}.pdf`);
+  const sourcePointer = String(file.sourcePointer || file.source_pointer || file.privatePointer || file.private_pointer || '').trim();
+  const drawingNumber = String(file.drawingNumber || file.drawing_number || file.sheetNumber || file.sheet_number || fileName.replace(/\.pdf$/i, '')).trim();
+  const extension = String(file.extension || fileName.split('.').pop() || '').toLowerCase();
+  return {
+    id: file.id || id('cad_upload_sheet'), sheetId: file.sheetId || file.sheet_id || safeSegment(drawingNumber || fileName), drawingNumber,
+    drawingTitle: file.drawingTitle || file.drawing_title || file.title || '', discipline: file.discipline || '', fileName, extension,
+    contentType: file.contentType || file.content_type || 'application/pdf', byteSize: Number(file.byteSize || file.byte_size || 0), contentHash: file.contentHash || file.content_hash || '', sourcePointer,
+    storageStatus: drawingUploadStorageConfigured() ? 'queued-for-private-storage' : 'provider-required', publicExposure: false, requiresAuth: true, cacheControl: 'private, max-age=0, no-store',
+  };
+}
+function createDrawingUploadPackage(state, input = {}, actor) {
+  state.drawingUploadPackages ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const files = Array.isArray(input.files) ? input.files : [];
+  const publishAsCurrent = Boolean(input.publishAsCurrent || input.publish_as_current || input.authoritative);
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'] };
+  if (!files.length) return { ok: false, status: 422, errors: ['At least one drawing PDF file manifest is required.'] };
+  if (files.length > 300) return { ok: false, status: 422, errors: ['A drawing upload package may include at most 300 sheets. Split larger sets into separate audited packages.'] };
+  const sheets = files.map(normalizeDrawingUploadFile);
+  const rejected = [];
+  sheets.forEach((sheet) => {
+    const source = sheet.sourcePointer.toLowerCase();
+    if (sheet.extension !== 'pdf' || sheet.contentType !== 'application/pdf') rejected.push({ sheetId: sheet.sheetId, fileName: sheet.fileName, error: 'Only PDF drawing sheets are accepted by this upload package contract.' });
+    if (source.startsWith('http://') || source.startsWith('https://')) rejected.push({ sheetId: sheet.sheetId, fileName: sheet.fileName, error: 'Public drawing upload URLs are forbidden; provide a private upload lease/source pointer.' });
+  });
+  if (rejected.length) return { ok: false, status: 422, code: rejected.some((row) => row.error.includes('Public')) ? 'public-url-forbidden' : 'invalid-upload-package', errors: rejected };
+  if (publishAsCurrent && !(input.humanReviewApproved || input.human_review_approved)) return { ok: false, status: 409, code: 'human-review-required', error: 'Publishing an uploaded drawing package as current requires human review approval before current sheet authority changes.', rejectedCount: 0 };
+  const storageConfigured = drawingUploadStorageConfigured();
+  const metadataConfigured = Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER);
+  const packageRow = {
+    id: input.id || id('cad_drawing_upload'), type: 'drawing-upload-package', projectId, setId: input.setId || input.set_id || 'current', name: input.name || 'CAST CAD Drawing Upload Package', revisionLabel: input.revisionLabel || input.revision_label || now().slice(0, 10),
+    status: storageConfigured && (!publishAsCurrent || metadataConfigured) ? 'queued' : 'provider-required', sheetCount: sheets.length, sheets, publishAsCurrent, humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    publicExposure: false, requiresAuth: true, cacheControl: 'private, max-age=0, no-store', noPublicUrls: true, durableStorage: storageConfigured, metadataAdapterConfigured: metadataConfigured, providerRequired: !(storageConfigured && (!publishAsCurrent || metadataConfigured)),
+    requiredEnvVars: storageConfigured && (!publishAsCurrent || metadataConfigured) ? [] : [storageConfigured ? null : 'CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_SERVER_DOCUMENT_API_URL or DROPBOX_ACCESS_TOKEN', publishAsCurrent && !metadataConfigured ? 'CAST_CAD_DOCUMENT_METADATA_ADAPTER' : null].filter(Boolean),
+    contract: { privateBytesOnly: true, noStore: true, publicUrlsForbidden: true, maxSheetCount: 300, currentSetPublishRequiresHumanReview: true, currentSetPublishRequiresMetadataAdapter: true, followOnEndpoint: '/api/cast-cad-exports', followOnType: 'drawing-set-version' },
+    createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingUploadPackages.push(packageRow);
+  audit(state, actor, packageRow.providerRequired ? 'Blocked CAST CAD drawing upload package until private storage/metadata provider configured' : 'Created CAST CAD drawing upload package', 'CAST_CAD_DRAWING_UPLOAD_PACKAGE', packageRow.id, null, { ...packageRow, sheets: sheets.map((sheet) => ({ sheetId: sheet.sheetId, fileName: sheet.fileName, sourcePointer: sheet.sourcePointer ? 'private-pointer-redacted' : '' })) }, 'No public drawing URL or durable byte claim is fabricated.');
+  if (publishAsCurrent && packageRow.providerRequired) return { ok: false, status: 503, code: 'provider-required', package: packageRow, requiredEnvVars: packageRow.requiredEnvVars, error: 'Private drawing upload storage and document metadata adapters are required before this package can become the authoritative current set.' };
+  return { ok: true, status: packageRow.providerRequired ? 202 : 201, package: packageRow };
+}
+function listDrawingUploadPackages(state, filters = {}) {
+  state.drawingUploadPackages ||= [];
+  let rows = state.drawingUploadPackages.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function normalizeSheetRevision(input = {}, setVersion, actor, status = 'current') {
   const drawingNumber = input.drawingNumber || input.drawing_number || String(input.name || input.path || input.sheetId || '').replace(/\.pdf$/i, '');
   const sourcePath = input.sourcePath || input.source_path || input.path || '';
@@ -1570,7 +1629,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
 };
