@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, requireCastCad } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, reviewDrawingAutoLinkCandidate, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, requireCastCad } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState(); const actor = getActor(req);
@@ -27,6 +27,8 @@ module.exports = async function handler(req, res) {
         ? createAiFinding(state, body, actor)
         : action === 'review-ai-finding'
           ? reviewAiFinding(state, body.findingId || body.finding_id || body.id, body, actor)
+          : action === 'auto-link-review' || action === 'review-auto-link' || action === 'review-auto-link-candidate'
+            ? reviewDrawingAutoLinkCandidate(state, body, actor)
           : action === 'auto-links' || action === 'drawing-auto-links' || action === 'autolink'
             ? createDrawingAutoLinks(state, body, actor)
           : indexOcrPage(state, body, actor);
