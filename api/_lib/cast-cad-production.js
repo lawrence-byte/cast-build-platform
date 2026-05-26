@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1447,6 +1447,53 @@ function listDrawingUploadPackages(state, filters = {}) {
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
   return rows;
 }
+function transmittalTransportConfigured() {
+  return Boolean(process.env.CAST_CAD_TRANSMITTAL_TRANSPORT || process.env.CAST_CAD_EMAIL_PROVIDER || process.env.CAST_SERVER_WORKFLOW_API_URL);
+}
+function normalizeTransmittalRecipient(recipient = {}) {
+  return {
+    userId: String(recipient.userId || recipient.user_id || '').trim(),
+    name: String(recipient.name || recipient.company || '').trim(),
+    email: String(recipient.email || '').trim().toLowerCase(),
+    role: String(recipient.role || '').trim(),
+    deliveryStatus: 'Pending Delivery',
+  };
+}
+function createDrawingTransmittal(state, input = {}, actor) {
+  state.drawingTransmittals ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const sheetIds = Array.isArray(input.sheetIds || input.sheet_ids) ? (input.sheetIds || input.sheet_ids).map(String).filter(Boolean) : [];
+  const recipients = (Array.isArray(input.recipients) ? input.recipients : []).map(normalizeTransmittalRecipient).filter((row) => row.email || row.userId);
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'] };
+  if (!sheetIds.length) return { ok: false, status: 422, errors: ['At least one sheetId is required for a drawing transmittal.'] };
+  if (!recipients.length) return { ok: false, status: 422, errors: ['At least one recipient email or userId is required.'] };
+  if ((input.issueFor || input.issue_for || '').toLowerCase() === 'construction' && !(input.humanReviewApproved || input.human_review_approved)) return { ok: false, status: 409, code: 'human-review-required', error: 'Issue-for-construction drawing transmittals require human review approval before release.' };
+  const providerReady = transmittalTransportConfigured();
+  const transmittal = {
+    id: input.id || id('cad_transmittal'), type: 'drawing-transmittal', projectId, setId: input.setId || input.set_id || 'current', revisionLabel: input.revisionLabel || input.revision_label || '',
+    subject: input.subject || 'CAST CAD drawing transmittal', message: input.message || '', issueFor: input.issueFor || input.issue_for || 'review', sheetIds, recipients,
+    status: providerReady ? 'queued' : 'provider-required', providerRequired: !providerReady, requiredEnvVars: providerReady ? [] : ['CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'],
+    publicExposure: false, noPublicLinks: true, requiresAuth: true, cacheControl: 'private, max-age=0, no-store', humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    contract: { endpoint: '/api/cast-cad-exports', type: 'drawing-transmittal', noPublicLinks: true, privateSheetAccessOnly: true, deliveryRequiresTransport: 'CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL', issueForConstructionRequiresHumanReview: true },
+    createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingTransmittals.push(transmittal);
+  audit(state, actor, 'Created CAST CAD drawing transmittal release record', 'CAST_CAD_DRAWING_TRANSMITTAL', transmittal.id, null, transmittal, transmittal.providerRequired ? 'Transmittal is audit-only until private delivery/workflow transport is configured; no public sheet links or delivered notices were fabricated.' : 'Queued for configured private transmittal transport.');
+  if (!providerReady) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD drawing transmittal delivery requires CAST_CAD_TRANSMITTAL_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_SERVER_WORKFLOW_API_URL; refusing to fabricate delivered notices or public sheet links.', transmittal, requiredEnvVars: transmittal.requiredEnvVars };
+  return { ok: true, status: 202, transmittal, requiredEnvVars: [] };
+}
+function listDrawingTransmittals(state, filters = {}) {
+  state.drawingTransmittals ||= [];
+  let rows = state.drawingTransmittals.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function normalizeSheetRevision(input = {}, setVersion, actor, status = 'current') {
   const drawingNumber = input.drawingNumber || input.drawing_number || String(input.name || input.path || input.sheetId || '').replace(/\.pdf$/i, '');
   const sourcePath = input.sourcePath || input.source_path || input.path || '';
@@ -1629,7 +1676,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
 };
