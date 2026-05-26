@@ -23,13 +23,14 @@ let markupPersistenceState = { status: 'idle', message: 'Server markup persisten
 let comparisonCenterState = { status: 'idle', message: 'Select a baseline/revised sheet and create a provider-gated delta job.', jobs: [] };
 let exportCenterState = { status: 'idle', message: 'Backend export jobs not requested yet. PDF renderer sessions require CAST_CAD_PDF_RENDERER_WORKER, CAST_CAD_PDFJS_WORKER_URL, or CAST_CAD_PDF_SDK_PROVIDER; takeoff workbooks require CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER; annotated PDFs require CAST_CAD_PDF_EXPORT_WORKER; drawing upload packages require CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or a private document provider; drawing transmittals require CAST_CAD_TRANSMITTAL_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_SERVER_WORKFLOW_API_URL; CAD/model ingestion requires CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER. Model quantity links are review-gated and non-budget-authoritative.', jobs: [] };
 let rfiLinkState = { status: 'idle', message: 'RFI/submittal/change-event workflow links are draft-only until the backend snapshot contract confirms the markup.' };
+let workflowLinkListState = { status: 'idle', links: [], rfiLinks: [], message: 'Workflow links not loaded yet. Refresh to list audited RFI/submittal/change-event/issue/observation snapshots from the backend contract.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
+let reviewRoomState = { status: 'idle', rooms: [], inviteEvents: [], message: 'Review Rooms not loaded yet. Invite delivery requires CAST_CAD_REVIEW_ROOM_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_CAD_REALTIME_PROVIDER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let costCatalogState = { status: 'idle', items: [], message: 'Cost catalog not loaded yet. Durable/private cost database persistence requires CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
 let ocrSearchState = { status: 'idle', query: '', results: [], message: 'OCR/symbol search not checked yet. Production OCR extraction remains provider-gated by CAST_CAD_OCR_WORKER.' };
 let autoLinkState = { status: 'idle', runs: [], candidates: [], message: 'Auto Link candidates not checked yet. Private sheet links require OCR/index sources, human review, and durable metadata/database adapters before publishing.' };
-let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
 let scaleCalibrationState = { status: 'idle', calibration: null, message: 'Scale calibration not checked yet. Durable calibration persistence requires CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
@@ -827,6 +828,7 @@ function render() {
   renderGovernance();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
+  renderWorkflowLinks();
   renderDocumentMetadataStatus();
   renderDrawingSetControls();
   renderViewportMappingStatus();
@@ -1279,6 +1281,41 @@ function renderMarkupPersistenceStatus() {
   if (status) status.textContent = markupPersistenceState.message;
   const rfiStatus = document.querySelector('[data-rfi-link-status]');
   if (rfiStatus) rfiStatus.textContent = rfiLinkState.message;
+}
+function renderWorkflowLinks() {
+  const list = document.querySelector('[data-workflow-link-list]');
+  const rows = [...(workflowLinkListState.rfiLinks || []), ...(workflowLinkListState.links || [])];
+  if (!list) return;
+  if (!rows.length) {
+    list.innerHTML = `<p class="cad-muted">${esc(workflowLinkListState.message || 'No backend workflow links loaded yet.')}</p>`;
+    return;
+  }
+  list.innerHTML = rows.slice(-8).reverse().map((link) => {
+    const type = link.workflowType || 'rfi';
+    const statusText = link.linkStatus || link.status || 'draft-snapshot';
+    const blocker = (link.requiredEnvVars || []).join(', ');
+    return `<div class="tool-card"><em>${esc(type)} · ${esc(statusText)} · ${esc(link.createdAt || '')}</em><strong>${esc(link.title || link.subject || 'CAST CAD workflow snapshot')}</strong><span>Markup ${esc(link.markupId || '')}; external provider ${link.externalProviderAttempted ? 'attempted' : 'not attempted'}${blocker ? ` · Required for write-back: ${esc(blocker)}` : ''}. No local-only or public workflow record is fabricated.</span></div>`;
+  }).join('');
+}
+async function loadWorkflowLinks({ toast = false } = {}) {
+  const drawing = selectedDrawing();
+  const params = new URLSearchParams({ projectId: drawing?.project_id || 'alum' });
+  workflowLinkListState = { ...workflowLinkListState, status: 'loading', message: 'Loading audited backend workflow links…' };
+  renderWorkflowLinks();
+  try {
+    const response = await fetch(`/api/cast-cad-rfi-link?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const links = result.workflowLinks || [];
+    const rfiLinks = result.rfiLinks || [];
+    workflowLinkListState = { status: 'loaded', links, rfiLinks, message: `${links.length + rfiLinks.length} audited backend workflow link(s) loaded. External provider write-back remains fail-closed until CAST_CAD_WORKFLOW_PROVIDER, PROCORE_CLIENT_ID, or CAST_SERVER_WORKFLOW_API_URL is configured.` };
+    if (toast) window.CASTShell?.toast?.('CAST CAD workflow links loaded from backend audit contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD workflow link list unavailable', error);
+    workflowLinkListState = { ...workflowLinkListState, status: 'blocked', links: [], rfiLinks: [], message: `Workflow link list blocked: ${error.message}. No local workflow authority was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Workflow link list unavailable; no local workflow authority was fabricated.', { kind: 'error' });
+  }
+  renderWorkflowLinks();
 }
 function localMarkupForThread(markupId = markupThreadState.markupId) {
   return state.drawingMarkups.find((row) => row.id === markupId || serverMarkupIdFor(row) === markupId) || null;
@@ -1796,6 +1833,7 @@ async function convertMarkupToRfiDraft(id) {
     markup.source_snapshot = { ...(markup.source_snapshot || {}), rfiLinkId: result.rfiLink?.id || '', rfiLinkStatus: result.rfiLink?.linkStatus || 'draft', rfiLinkedAt: new Date().toISOString(), draftOnly: true };
     save();
     rfiLinkState = { status: 'draft-linked', message: `Draft RFI snapshot ${result.rfiLink?.id || ''} created from ${markup.subject || markup.tool}; no external RFI write-back was attempted.` };
+    await loadWorkflowLinks();
     window.CASTShell?.toast?.('Draft RFI snapshot created through the audited backend contract.', { kind: 'success' });
   } catch (error) {
     console.warn('CAST CAD RFI link API unavailable or markup not synced', error);
@@ -1823,6 +1861,7 @@ async function createMarkupWorkflowLink(id) {
     markup.source_snapshot = { ...(markup.source_snapshot || {}), workflowLinkId: result.workflowLink?.id || '', workflowType, workflowLinkStatus: result.workflowLink?.linkStatus || 'draft-snapshot', workflowLinkedAt: new Date().toISOString() };
     save();
     rfiLinkState = { status: 'workflow-linked', message: `${workflowType} workflow snapshot ${result.workflowLink?.id || ''} created from ${markup.subject || markup.tool}; ${createExternal ? 'external provider queued only if configured' : 'no external provider write-back was attempted'}.` };
+    await loadWorkflowLinks();
     window.CASTShell?.toast?.('Workflow snapshot created through the audited backend contract.', { kind: 'success' });
   } catch (error) {
     console.warn('CAST CAD workflow link API unavailable or provider blocked', error);
@@ -2199,7 +2238,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); loadScaleCalibrationForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; workflowLinkListState = { ...workflowLinkListState, message: 'Selected sheet changed; refresh workflow links to load audited snapshots.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadWorkflowLinks(); loadViewportMappingForSelectedSheet(); loadScaleCalibrationForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -2210,6 +2249,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-open-edit-link]')) { openSelectedEditLink(); return; }
   if (event.target.closest('[data-save-viewer-preferences]')) { persistViewerPreferences({ toast: true }); return; }
   if (event.target.closest('[data-save-viewport-mapping]')) { saveViewportMappingForSelectedSheet({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-workflow-links]')) { loadWorkflowLinks({ toast: true }); return; }
   if (event.target.closest('[data-refresh-markup-thread]')) { loadMarkupThreadForSelected({ toast: true }); return; }
   if (event.target.closest('[data-add-markup-thread-comment]')) { addMarkupThreadComment(); return; }
   if (event.target.closest('[data-refresh-markup-attachments]')) { loadMarkupAttachmentsForSelected({ toast: true }); return; }
@@ -2286,6 +2326,7 @@ registerCastCadFieldServiceWorker();
 loadServerViewerPreferences();
 loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
+loadWorkflowLinks();
 loadViewportMappingForSelectedSheet();
 loadScaleCalibrationForSelectedSheet();
 searchOcrSymbolIndex();

@@ -161,6 +161,7 @@
               <span class="pdf-status" data-markup-persistence-status>Server markup persistence not checked yet.</span>
               <label>Workflow <select data-workflow-link-type autocomplete="off"><option value="submittal">Submittal</option><option value="change-event">Change event</option><option value="issue">Issue</option><option value="observation">Observation</option><option value="rfi">RFI snapshot</option></select></label>
               <label><input type="checkbox" data-workflow-create-external autocomplete="off"> Try configured external provider</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-workflow-links>Refresh workflow links</button>
               <span class="pdf-status" data-rfi-link-status>RFI/submittal/change-event links are draft-only until the backend snapshot contract confirms the markup.</span>
             </div>
             <div class="pdf-intake cad-markup-thread-controls" aria-label="CAST CAD threaded markup comments and audit history controls">
@@ -196,6 +197,7 @@
               <span class="pdf-status" data-markup-saved-view-status>Saved markup filter/report views not checked yet.</span>
             </div>
             <div class="tool-list" data-markup-saved-views><p class="cad-muted">No saved markup views loaded yet.</p></div>
+            <div class="tool-list" data-workflow-link-list><p class="cad-muted">No backend workflow links loaded yet.</p></div>
             <div class="tool-list" data-markup-attachment-list><p class="cad-muted">No private attachment manifests loaded yet.</p></div>
             <div class="tool-list" data-markup-thread-list><p class="cad-muted">No backend thread comments loaded yet.</p></div>
             <div class="tool-list" data-markup-audit-list><p class="cad-muted">No markup audit history loaded yet.</p></div>
