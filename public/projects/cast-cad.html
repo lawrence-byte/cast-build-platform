@@ -182,6 +182,20 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-markup-attachments>Refresh attachments</button>
               <span class="pdf-status" data-markup-attachment-status>Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.</span>
             </div>
+            <div class="pdf-intake cad-markup-saved-view-controls" aria-label="CAST CAD saved markup filter report controls">
+              <label>View name <input type="text" value="Open sheet issues" data-markup-view-name autocomplete="off"></label>
+              <label>Status <select data-markup-view-status><option value="">Any status</option><option value="Open">Open</option><option value="Needs Review">Needs Review</option><option value="Resolved">Resolved</option><option value="Verified">Verified</option></select></label>
+              <label>Priority <select data-markup-view-priority><option value="">Any priority</option><option value="Normal">Normal</option><option value="High">High</option><option value="Urgent">Urgent</option></select></label>
+              <label>Trade <input type="text" data-markup-view-trade placeholder="Trade filter" autocomplete="off"></label>
+              <label>Layer <input type="text" data-markup-view-layer placeholder="Layer filter" autocomplete="off"></label>
+              <label>Search <input type="text" data-markup-view-search placeholder="Subject/body/cost code" autocomplete="off"></label>
+              <label><input type="checkbox" data-markup-view-current-sheet checked autocomplete="off"> Current sheet only</label>
+              <label><input type="checkbox" data-markup-view-needs-review autocomplete="off"> Needs-review rows</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-save-markup-view>Save private view</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-markup-views>Refresh views</button>
+              <span class="pdf-status" data-markup-saved-view-status>Saved markup filter/report views not checked yet.</span>
+            </div>
+            <div class="tool-list" data-markup-saved-views><p class="cad-muted">No saved markup views loaded yet.</p></div>
             <div class="tool-list" data-markup-attachment-list><p class="cad-muted">No private attachment manifests loaded yet.</p></div>
             <div class="tool-list" data-markup-thread-list><p class="cad-muted">No backend thread comments loaded yet.</p></div>
             <div class="tool-list" data-markup-audit-list><p class="cad-muted">No markup audit history loaded yet.</p></div>

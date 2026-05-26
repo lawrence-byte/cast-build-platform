@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -396,8 +396,66 @@ function listMarkups(state, filters = {}) {
   if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
   if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.priority) rows = rows.filter((row) => row.priority === filters.priority);
+  if (filters.tool) rows = rows.filter((row) => row.tool === filters.tool);
+  if (filters.trade) rows = rows.filter((row) => row.trade === filters.trade);
+  if (filters.costCode || filters.cost_code) rows = rows.filter((row) => row.costCode === (filters.costCode || filters.cost_code));
+  if (filters.layer) rows = rows.filter((row) => row.layer === filters.layer);
+  if (filters.groupId || filters.group_id) rows = rows.filter((row) => row.groupId === (filters.groupId || filters.group_id));
+  if (filters.assigneeUserId || filters.assignee_user_id) rows = rows.filter((row) => row.assigneeUserId === (filters.assigneeUserId || filters.assignee_user_id));
+  if (filters.reviewState === 'needs-review' || filters.review_state === 'needs-review') rows = rows.filter((row) => row.status === 'Needs Review' || row.measurement?.humanReviewRequired || row.sourceSnapshot?.humanReviewRequired);
   if (filters.search) { const q = String(filters.search).toLowerCase(); rows = rows.filter((row) => `${row.subject} ${row.body} ${row.trade} ${row.costCode}`.toLowerCase().includes(q)); }
   return rows;
+}
+function normalizeMarkupViewFilters(input = {}) {
+  const source = input.filters || input;
+  return ['projectId','sheetId','status','priority','tool','trade','costCode','layer','groupId','assigneeUserId','reviewState','search','includeDeleted'].reduce((filters, key) => {
+    const snake = key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
+    const value = source[key] !== undefined ? source[key] : source[snake];
+    if (value !== undefined && value !== null && value !== '') filters[key] = key === 'includeDeleted' ? Boolean(value) : String(value);
+    return filters;
+  }, {});
+}
+function createSavedMarkupView(state, input = {}, actor) {
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const name = String(input.name || input.viewName || input.view_name || '').trim();
+  if (!name) return { ok: false, status: 422, errors: ['Saved markup view name is required.'] };
+  const filters = normalizeMarkupViewFilters(input);
+  if (!filters.projectId) filters.projectId = input.projectId || input.project_id || 'default';
+  const previewRows = listMarkups(state, filters);
+  state.savedMarkupViews ||= [];
+  const view = {
+    id: input.id || id('cad_markup_view'),
+    projectId: filters.projectId,
+    name,
+    description: String(input.description || '').trim(),
+    filters,
+    rowCountAtSave: previewRows.length,
+    privateReport: true,
+    publicExposure: false,
+    requiresAuth: true,
+    durableAdapterRequired: 'CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL',
+    createdByUserId: actor.id,
+    createdAt: now(),
+    updatedAt: now(),
+  };
+  state.savedMarkupViews.push(view);
+  audit(state, actor, 'Saved CAST CAD markup filter/report view', 'CAST_CAD_MARKUP_VIEW', view.id, null, view, 'Saved view stores filters only; no private markup data is exposed publicly.');
+  return { ok: true, view, previewCount: previewRows.length, markups: previewRows };
+}
+function listSavedMarkupViews(state, filters = {}) {
+  let rows = (state.savedMarkupViews || []).slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.createdByUserId) rows = rows.filter((row) => row.createdByUserId === filters.createdByUserId);
+  return rows;
+}
+function runSavedMarkupView(state, viewId, extraFilters = {}) {
+  const view = (state.savedMarkupViews || []).find((row) => row.id === viewId);
+  if (!view) return { ok: false, status: 404, error: 'Saved markup view not found.' };
+  const filters = { ...view.filters, ...normalizeMarkupViewFilters(extraFilters) };
+  const markups = listMarkups(state, filters);
+  return { ok: true, view, filters, count: markups.length, markups };
 }
 function defaultViewerPreferences() {
   return {
@@ -1668,7 +1726,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
-  buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
+  buildPdfStreamContract, createPdfStreamLease, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,

@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -61,8 +61,17 @@ module.exports = async function handler(req, res) {
         const result = readCastCadAuditLog(state, { entityType: url.searchParams.get('entityType'), entityId: url.searchParams.get('entityId'), actorUserId: url.searchParams.get('actorUserId') }, actor);
         return json(res, result.ok ? 200 : (result.status || 403), result);
       }
+      if (action === 'saved-markup-views' || action === 'markup-saved-views') {
+        const viewId = url.searchParams.get('viewId') || url.searchParams.get('id');
+        if (viewId) {
+          const result = runSavedMarkupView(state, viewId, Object.fromEntries(url.searchParams.entries()));
+          return json(res, result.ok ? 200 : (result.status || 404), result);
+        }
+        const views = listSavedMarkupViews(state, { projectId: url.searchParams.get('projectId'), createdByUserId: url.searchParams.get('createdByUserId') });
+        return json(res, 200, { ok: true, viewCount: views.length, views, contract: { privateReport: true, publicExposure: false, durableAdapterRequired: 'CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL' } });
+      }
       const includeDeleted = url.searchParams.get('includeDeleted') === 'true' || url.searchParams.get('include_deleted') === 'true';
-      const rows = listMarkups(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search'), includeDeleted });
+      const rows = listMarkups(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), priority: url.searchParams.get('priority'), tool: url.searchParams.get('tool'), trade: url.searchParams.get('trade'), costCode: url.searchParams.get('costCode') || url.searchParams.get('cost_code'), layer: url.searchParams.get('layer'), groupId: url.searchParams.get('groupId') || url.searchParams.get('group_id'), assigneeUserId: url.searchParams.get('assigneeUserId') || url.searchParams.get('assignee_user_id'), reviewState: url.searchParams.get('reviewState') || url.searchParams.get('review_state'), search: url.searchParams.get('search'), includeDeleted });
       if (url.searchParams.get('format') === 'csv') {
         res.statusCode = 200; res.setHeader('content-type', 'text/csv; charset=utf-8'); res.end(markupsCsv(rows)); return;
       }
@@ -93,6 +102,10 @@ module.exports = async function handler(req, res) {
       if (body.action === 'admin' || body.action === 'upsert-member-role') {
         const result = upsertProjectMemberRole(state, body, actor);
         return json(res, result.ok ? 200 : (result.status || 422), result);
+      }
+      if (body.action === 'saved-markup-view' || body.action === 'saved-markup-views' || body.action === 'markup-saved-view') {
+        const result = createSavedMarkupView(state, body, actor);
+        return json(res, result.ok ? 201 : (result.status || 422), result);
       }
       if (body.action === 'comment' || body.comment || body.parentId || body.parent_id) {
         const result = createMarkupComment(state, body.markupId || body.id, body.comment || body, actor);

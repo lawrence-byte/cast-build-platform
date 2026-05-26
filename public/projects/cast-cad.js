@@ -34,6 +34,7 @@ let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordi
 let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
 let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
 let markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' };
+let markupSavedViewState = { status: 'idle', views: [], message: 'Saved markup filter/report views not checked yet. Durable view storage requires CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -767,6 +768,7 @@ function render() {
   renderViewportMappingStatus();
   renderMarkupThread();
   renderMarkupAttachments();
+  renderMarkupSavedViews();
 }
 function reviewRoomPayload() {
   const drawing = selectedDrawing();
@@ -1263,6 +1265,66 @@ function renderMarkupAttachments() {
   if (list) {
     list.innerHTML = markupAttachmentState.attachments.length ? markupAttachmentState.attachments.map((attachment) => `<div class="tool-card"><em>${esc(attachment.storageStatus || 'provider-required')} · ${esc(attachment.contentType || '')} · ${Number(attachment.byteSize || 0)} bytes</em><strong>${esc(attachment.originalFileName || 'Attachment')}</strong><span>${esc(attachment.caption || '')} ${attachment.providerRequired ? 'CAST_CAD_ATTACHMENT_STORAGE_ADAPTER required for durable private bytes. ' : ''}No public evidence URL is exposed.</span></div>`).join('') : '<p class="cad-muted">No private attachment manifests loaded yet. Register metadata only; raw evidence bytes require the private storage adapter.</p>';
   }
+}
+function markupFilterViewPayload() {
+  const drawing = selectedDrawing();
+  return {
+    action: 'saved-markup-view',
+    projectId: drawing?.project_id || 'alum',
+    name: document.querySelector('[data-markup-view-name]')?.value.trim() || `${drawing?.drawing_number || 'Sheet'} open items`,
+    description: 'Saved from CAST CAD workbench markup filters; stores filters only, not public drawing data.',
+    filters: {
+      projectId: drawing?.project_id || 'alum',
+      sheetId: document.querySelector('[data-markup-view-current-sheet]')?.checked ? selectedDrawingId : '',
+      status: document.querySelector('[data-markup-view-status]')?.value || '',
+      priority: document.querySelector('[data-markup-view-priority]')?.value || '',
+      trade: document.querySelector('[data-markup-view-trade]')?.value.trim() || '',
+      layer: document.querySelector('[data-markup-view-layer]')?.value.trim() || '',
+      reviewState: document.querySelector('[data-markup-view-needs-review]')?.checked ? 'needs-review' : '',
+      search: document.querySelector('[data-markup-view-search]')?.value.trim() || '',
+    },
+  };
+}
+function renderMarkupSavedViews() {
+  const status = document.querySelector('[data-markup-saved-view-status]');
+  const list = document.querySelector('[data-markup-saved-views]');
+  if (status) status.textContent = markupSavedViewState.message;
+  if (list) {
+    list.innerHTML = markupSavedViewState.views.length ? markupSavedViewState.views.map((view) => {
+      const filters = Object.entries(view.filters || {}).filter(([, value]) => value !== '' && value !== false).map(([key, value]) => `${key}=${value}`).join(' · ');
+      return `<div class="tool-card"><em>Private saved view · ${Number(view.rowCountAtSave || 0)} row(s) at save</em><strong>${esc(view.name || 'Markup report view')}</strong><span>${esc(filters || 'No filters')} · Public exposure ${view.publicExposure === false ? 'forbidden' : 'unknown'}; durable storage requires ${esc(view.durableAdapterRequired || 'CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL')}.</span></div>`;
+    }).join('') : '<p class="cad-muted">No saved markup views loaded yet. Saved views are backend-audited private report filters.</p>';
+  }
+}
+async function loadMarkupSavedViews({ toast = false } = {}) {
+  try {
+    const projectId = selectedDrawing()?.project_id || 'alum';
+    const response = await fetch(`/api/cast-cad-markups?action=saved-markup-views&projectId=${encodeURIComponent(projectId)}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    markupSavedViewState = { status: 'loaded', views: result.views || [], message: `${result.viewCount || 0} private saved markup view(s) loaded. Durable storage requires ${result.contract?.durableAdapterRequired || 'CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL'}.` };
+    if (toast) window.CASTShell?.toast?.('Saved markup views refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD saved markup views unavailable', error);
+    markupSavedViewState = { ...markupSavedViewState, status: 'blocked', message: `Saved markup views blocked: ${error.message}. No local saved report authority was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Saved markup views blocked; no local report was fabricated.', { kind: 'error' });
+  }
+  renderMarkupSavedViews();
+}
+async function saveMarkupFilterView() {
+  try {
+    const payload = markupFilterViewPayload();
+    const response = await fetch('/api/cast-cad-markups', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    markupSavedViewState = { status: 'saved', views: [...markupSavedViewState.views.filter((row) => row.id !== result.view?.id), result.view].filter(Boolean), message: `Saved private markup view ${result.view?.name || ''} with ${result.previewCount || 0} matching markup(s). No public report URL was created.` };
+    window.CASTShell?.toast?.('Private markup report view saved through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not save CAST CAD markup filter view', error);
+    markupSavedViewState = { ...markupSavedViewState, status: 'blocked', message: `Saved markup view blocked: ${error.message}. No local saved report authority was fabricated.` };
+    window.CASTShell?.toast?.('Saved markup view blocked; no report authority was fabricated.', { kind: 'error' });
+  }
+  renderMarkupSavedViews();
 }
 function markupAttachmentPayload(markup, serverId) {
   const drawing = selectedDrawing();
@@ -2044,6 +2106,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-add-markup-thread-comment]')) { addMarkupThreadComment(); return; }
   if (event.target.closest('[data-refresh-markup-attachments]')) { loadMarkupAttachmentsForSelected({ toast: true }); return; }
   if (event.target.closest('[data-add-markup-attachment]')) { addMarkupAttachmentManifest(); return; }
+  if (event.target.closest('[data-save-markup-view]')) { saveMarkupFilterView(); return; }
+  if (event.target.closest('[data-refresh-markup-views]')) { loadMarkupSavedViews({ toast: true }); return; }
   const batchMarkup = event.target.closest('[data-batch-markup]');
   if (batchMarkup) { if (batchMarkup.checked) selectedMarkupIds.add(batchMarkup.dataset.batchMarkup); else selectedMarkupIds.delete(batchMarkup.dataset.batchMarkup); renderBatchStatus(); return; }
   if (event.target.closest('[data-apply-batch]')) { applyBatchOperation(); return; }
@@ -2119,3 +2183,4 @@ loadCostCatalogItems();
 loadAiReviewFindings();
 loadReviewRooms();
 loadGovernanceStatus();
+loadMarkupSavedViews();
