@@ -417,7 +417,10 @@
               <label>Reviewer <input type="email" value="architect@example.com" data-drawing-approval-reviewer autocomplete="off"></label>
               <label><input type="checkbox" data-drawing-approval-ifc autocomplete="off"> Issue for construction</label>
               <label><input type="checkbox" data-drawing-approval-human-review autocomplete="off"> Human review approved</label>
+              <label>Decision <select data-drawing-approval-decision autocomplete="off"><option value="approve">Approve</option><option value="revise-and-resubmit">Revise and resubmit</option><option value="reject">Reject</option></select></label>
+              <input type="text" data-drawing-approval-notes placeholder="Reviewer decision notes" autocomplete="off">
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-drawing-approval>Create approval package</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-review-drawing-approval>Record reviewer decision</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-drawing-approvals>Refresh approvals</button>
               <span class="pdf-status" data-drawing-approval-status>Drawing approval packages not checked yet. IFC release is human-review gated; durable approval storage requires CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL.</span>
             </div>

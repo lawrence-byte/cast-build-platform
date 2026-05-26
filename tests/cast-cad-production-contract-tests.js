@@ -308,6 +308,18 @@ assert.equal(approvalPackage.approvalPackage.noPublicLinks, true, 'drawing appro
 assert.deepEqual(approvalPackage.approvalPackage.requiredEnvVars, ['CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL'], 'drawing approval package names exact durable adapter choices');
 assert.equal(cad.listDrawingApprovalPackages(state, { projectId: 'alum', sheetId: 'A-901' }).length, 1, 'drawing approval packages list by project/sheet');
 assert.equal(cad.drawingApprovalContract().humanReviewRequiredBeforeIssueForConstruction, true, 'drawing approval contract keeps IFC release human-review gated');
+const namedReviewerOnlyApproval = cad.createDrawingApprovalPackage(state, { projectId: 'alum', setId: 'permit', name: 'Reviewer decision package', sheetIds: ['A-902'], reviewers: [{ email: 'architect@example.com', role: 'Architect' }], issueFor: 'issue-for-construction', humanReviewApproved: true }, owner);
+assert.equal(namedReviewerOnlyApproval.ok, true, 'drawing approval package can require later named reviewer decisions');
+const outsiderDecision = cad.reviewDrawingApprovalPackage(state, { packageId: namedReviewerOnlyApproval.approvalPackage.id, reviewerEmail: 'other@example.com', decision: 'approve' }, owner);
+assert.equal(outsiderDecision.ok, false, 'drawing approval decisions fail closed for reviewers not named on the package');
+assert.equal(outsiderDecision.code, 'reviewer-not-named', 'drawing approval decision exposes named-reviewer gate');
+const reviewerDecision = cad.reviewDrawingApprovalPackage(state, { packageId: namedReviewerOnlyApproval.approvalPackage.id, reviewerEmail: 'architect@example.com', decision: 'approve', humanReviewApproved: true, reviewNotes: 'Reviewed against permit set.' }, owner);
+assert.equal(reviewerDecision.ok, true, 'named reviewer decision records through backend audit');
+assert.equal(reviewerDecision.approvalPackage.status, 'approved-for-release', 'all named reviewer approvals plus human review can release IFC package');
+assert.equal(reviewerDecision.decisionEvent.publicExposure, false, 'drawing approval decision forbids public exposure');
+assert.equal(reviewerDecision.decisionEvent.noPublicLinks, true, 'drawing approval decision forbids public links');
+assert.ok(cad.drawingApprovalContract().reviewerDecisionContract.includes('Named reviewer'), 'drawing approval contract documents named-reviewer decision gate');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_APPROVAL_DECISION'), 'drawing approval reviewer decisions are audited');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_APPROVAL_PACKAGE'), 'drawing approval packages are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
@@ -611,10 +623,13 @@ assert.ok(castCadHtml.includes('data-publish-drawing-set-version'), 'CAST CAD wo
 assert.ok(castCadHtml.includes('data-slip-sheet-revision'), 'CAST CAD workbench exposes human-review-gated slip-sheet control');
 assert.ok(castCadHtml.includes('data-drawing-set-revisions'), 'CAST CAD workbench exposes drawing set revision history');
 assert.ok(castCadJs.includes('function createDrawingApprovalPackage'), 'CAST CAD workbench creates drawing approval packages through backend audit');
+assert.ok(castCadJs.includes('function reviewDrawingApprovalPackage'), 'CAST CAD workbench records named reviewer approval decisions through backend audit');
 assert.ok(castCadJs.includes("type: 'drawing-approval-package'"), 'CAST CAD workbench calls drawing approval package export contract');
+assert.ok(castCadJs.includes("type: 'drawing-approval-review'"), 'CAST CAD workbench calls drawing approval review decision contract');
 assert.ok(castCadJs.includes('No local approval/release authority was fabricated'), 'CAST CAD drawing approval fails closed without fabricating IFC release authority');
 assert.ok(castCadJs.includes('CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL'), 'CAST CAD workbench names drawing approval durable adapter blocker');
 assert.ok(castCadHtml.includes('data-create-drawing-approval'), 'CAST CAD workbench exposes drawing approval package controls');
+assert.ok(castCadHtml.includes('data-review-drawing-approval'), 'CAST CAD workbench exposes drawing approval reviewer decision controls');
 assert.ok(castCadHtml.includes('data-drawing-approval-packages'), 'CAST CAD workbench exposes drawing approval package audit list');
 
 console.log('CAST CAD production contract tests passed.');

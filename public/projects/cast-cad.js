@@ -239,7 +239,7 @@ function renderDrawingApprovalPackages() {
   if (status) status.textContent = drawingApprovalState.message;
   if (summary) summary.textContent = drawingApprovalState.packages.length ? `${drawingApprovalState.packages.length} private approval package(s) audited. IFC release remains human-review gated; durable approval storage requires CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL.` : 'Private approval packages require named reviewers, no public links, and fail closed for issue-for-construction without human review.';
   if (list) {
-    list.innerHTML = drawingApprovalState.packages.length ? drawingApprovalState.packages.slice(-6).reverse().map((row) => `<div class="tool-card"><em>${esc(row.status || 'pending-review')} · ${esc(row.issueFor || 'review')}</em><strong>${esc(row.name || row.id)}</strong><span>${esc((row.sheetIds || []).join(', '))} · reviewers: ${esc(row.reviewerCount || (row.reviewers || []).length)} · provider: ${row.providerRequired ? esc((row.requiredEnvVars || []).join(', ')) : 'durable adapter configured'}. No public approval or sheet links were fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing approval packages loaded yet.</p>';
+    list.innerHTML = drawingApprovalState.packages.length ? drawingApprovalState.packages.slice(-6).reverse().map((row) => `<div class="tool-card"><em>${esc(row.status || 'pending-review')} · ${esc(row.issueFor || 'review')}</em><strong>${esc(row.name || row.id)}</strong><span>${esc((row.sheetIds || []).join(', '))} · reviewers: ${esc(row.reviewerCount || (row.reviewers || []).length)} · decisions: ${esc((row.reviewers || []).map((reviewer) => `${reviewer.email || reviewer.name || 'reviewer'}=${reviewer.decision || 'Pending'}`).join('; ') || 'Pending')} · provider: ${row.providerRequired ? esc((row.requiredEnvVars || []).join(', ')) : 'durable adapter configured'}. No public approval or sheet links were fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing approval packages loaded yet.</p>';
   }
 }
 function documentMetadataImportPayload(index) {
@@ -390,6 +390,28 @@ async function createDrawingApprovalPackage() {
     console.warn('CAST CAD drawing approval package API blocked', error);
     drawingApprovalState = { ...drawingApprovalState, status: 'blocked', message: `Drawing approval package blocked: ${error.message}. No local approval authority was fabricated.` };
     window.CASTShell?.toast?.('Drawing approval package blocked; no local approval was fabricated.', { kind: 'error' });
+  }
+  renderDrawingApprovalPackages();
+}
+
+async function reviewDrawingApprovalPackage() {
+  const approvalPackage = drawingApprovalState.packages.slice().reverse().find((row) => row && row.id);
+  if (!approvalPackage) { window.CASTShell?.toast?.('Create or refresh an approval package before recording a reviewer decision.', { kind: 'error' }); return; }
+  const reviewerEmail = document.querySelector('[data-drawing-approval-reviewer]')?.value?.trim() || approvalPackage.reviewers?.[0]?.email || '';
+  const decision = document.querySelector('[data-drawing-approval-decision]')?.value || 'approve';
+  const humanReviewApproved = Boolean(document.querySelector('[data-drawing-approval-human-review]')?.checked);
+  try {
+    const payload = { type: 'drawing-approval-review', packageId: approvalPackage.id, reviewerEmail, decision, reviewNotes: document.querySelector('[data-drawing-approval-notes]')?.value.trim() || '', humanReviewApproved };
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || result?.code || `HTTP ${response.status}`);
+    const updated = result.approvalPackage || approvalPackage;
+    drawingApprovalState = { status: updated.status || 'reviewed', packages: drawingApprovalState.packages.map((row) => row.id === updated.id ? updated : row), message: `Reviewer decision ${result.decisionEvent?.decision || decision} audited for ${updated.id}. IFC release still requires all named approvals plus explicit human review; no public approval link was fabricated.` };
+    window.CASTShell?.toast?.('Drawing approval reviewer decision recorded through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing approval review API blocked', error);
+    drawingApprovalState = { ...drawingApprovalState, status: 'blocked', message: `Drawing approval decision blocked: ${error.message}. Named reviewer and human-review gates remain fail-closed; no local approval was fabricated.` };
+    window.CASTShell?.toast?.('Drawing approval decision blocked; no local approval was fabricated.', { kind: 'error' });
   }
   renderDrawingApprovalPackages();
 }
@@ -2330,6 +2352,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-refresh-drawing-set-history]')) { loadDrawingSetHistory({ toast: true }); return; }
   if (event.target.closest('[data-slip-sheet-revision]')) { slipSheetSelectedRevision(); return; }
   if (event.target.closest('[data-create-drawing-approval]')) { createDrawingApprovalPackage(); return; }
+  if (event.target.closest('[data-review-drawing-approval]')) { reviewDrawingApprovalPackage(); return; }
   if (event.target.closest('[data-refresh-drawing-approvals]')) { loadDrawingApprovalPackages({ toast: true }); return; }
   if (event.target.closest('[data-create-tool-library-item]')) { createToolLibrarySeedItem(); return; }
   if (event.target.closest('[data-place-tool-library-item]')) { placeSelectedToolLibraryItem(); return; }
