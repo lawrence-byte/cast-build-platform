@@ -56,6 +56,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent 300-sheet drawing upload package manifest contract and frontend bridge for private PDF upload leases/source pointers, no-store/no-public-URL guarantees, audited package records, and fail-closed current-set publishing gates requiring human review plus `CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER`, `CAST_CAD_DOCUMENT_STORAGE_ADAPTER`, `CAST_SERVER_DOCUMENT_API_URL`, or `DROPBOX_ACCESS_TOKEN` and `CAST_CAD_DOCUMENT_METADATA_ADAPTER`: `/api/cast-cad-exports` with `type=drawing-upload-package`.
 - Provider-independent drawing transmittal/release contract and frontend bridge for audited selected-sheet release records, recipient manifests, private/no-public-link delivery guarantees, issue-for-construction human-review gates, and fail-closed delivery transport requirements via `CAST_CAD_TRANSMITTAL_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_SERVER_WORKFLOW_API_URL`: `/api/cast-cad-exports` with `type=drawing-transmittal`.
 - Provider-independent saved markup filter/report view contract and frontend bridge with status/priority/trade/layer/search/needs-review filters, private-report/no-public-exposure guarantees, audited saved view creation, rerunnable stored filters, and explicit durable storage blockers requiring `CAST_CAD_MARKUP_DATABASE_ADAPTER` or `CAST_CAD_DATABASE_URL`: `/api/cast-cad-markups?action=saved-markup-views` plus POST `action=saved-markup-view`.
+- Provider-independent drawing Auto Link candidate contract and frontend bridge that creates source-cited private sheet-link candidates from audited OCR/index text and drawing metadata, keeps candidates human-review gated, forbids public URLs, and fails closed for durable/published links until `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL` is configured: `/api/cast-cad-search?action=auto-links` plus POST `action=auto-links`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -128,7 +129,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - CAST Tool Library: provider-independent API/service contract implemented; frontend workbench bridge now loads/admin-seeds reviewed tools and places selected tools as audited Needs Review markups/takeoff rows; production database/catalog adapter remains.
 - Drawing set versions and slip-sheeting: API/service contract and frontend bridge implemented with human-review-gated supersedence/audit history; production database adapter remains to be connected.
 - Drawing comparison report: provider-independent API/service contract and static comparison-center job controls are implemented with explicit `CAST_CAD_COMPARISON_WORKER` fail-closed status; comparison worker remains to be connected.
-- OCR/search: search/index contract implemented; frontend OCR/symbol bridge now queries the audited backend index, can create explicitly reviewed source-index samples for workflow testing, and surfaces `CAST_CAD_OCR_WORKER` as the production extraction blocker. OCR worker remains to be connected.
+- OCR/search/Auto Link: search/index contract implemented; frontend OCR/symbol bridge now queries the audited backend index, can create explicitly reviewed source-index samples for workflow testing, and surfaces `CAST_CAD_OCR_WORKER` as the production extraction blocker. Auto Link candidate generation is implemented as a private, source-cited, human-review-gated contract from OCR/index text and drawing metadata; durable/published navigable links remain blocked until `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL` is configured. OCR/Auto Link extraction workers remain to be connected.
 - RFI from markup with snapshot: server workflow implemented as draft RFI link + geometry snapshot; frontend now calls the audited workflow contract and fails closed when backend markup/RFI contracts are unavailable.
 - Submittal/change-event/issue/observation links from markup: provider-independent workflow snapshots now create audited draft records through `/api/cast-cad-rfi-link`; external Procore/CAST workflow write-back fails closed until `CAST_CAD_WORKFLOW_PROVIDER`, `PROCORE_CLIENT_ID`, or `CAST_SERVER_WORKFLOW_API_URL` is configured.
 - Review session invite: review-room invite contract implemented; frontend bridge creates/lists audited room participant records and audited invite-delivery events. Real-time transport/email invite provider remains blocked until `CAST_CAD_REVIEW_ROOM_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` is configured.
@@ -153,8 +154,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-26T01:12:45Z` for the CAST CAD drawing upload package manifest contract slice.
-- Branch audited: `cast-cad-drawing-upload-package`.
+- Audited at: `2026-05-26T07:56:00Z` for the CAST CAD drawing Auto Link candidate contract slice.
+- Branch audited: `cast-cad-auto-link-candidates`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

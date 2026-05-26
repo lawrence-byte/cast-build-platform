@@ -28,6 +28,7 @@ let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItem
 let costCatalogState = { status: 'idle', items: [], message: 'Cost catalog not loaded yet. Durable/private cost database persistence requires CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER.' };
 let aiReviewState = { status: 'idle', findings: [], selectedFindingId: '', message: 'AI Review findings not loaded yet. AI Detected findings require cited sources and human verification before conversion.' };
 let ocrSearchState = { status: 'idle', query: '', results: [], message: 'OCR/symbol search not checked yet. Production OCR extraction remains provider-gated by CAST_CAD_OCR_WORKER.' };
+let autoLinkState = { status: 'idle', runs: [], candidates: [], message: 'Auto Link candidates not checked yet. Private sheet links require OCR/index sources, human review, and durable metadata/database adapters before publishing.' };
 let reviewRoomState = { status: 'idle', rooms: [], message: 'Review Rooms not loaded yet. Invites are audited backend records; no external email/realtime invite is fabricated.' };
 let governanceState = { status: 'idle', roles: [], members: [], permissions: null, auditLog: [], message: 'Governance not loaded yet. Production auth/session identity is required when CAST_CAD_REQUIRE_AUTH=true.' };
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
@@ -707,6 +708,18 @@ function renderOcrSearchResults() {
     return `<div class="tool-card"><em>${esc(result.sheetId || selectedDrawingId)} · page ${esc(result.pageNumber || 1)} · confidence ${esc(result.confidence ?? 'n/a')}</em><strong>${esc(ocrSearchState.query || 'OCR/symbol hit')}</strong><span>${esc(result.excerpt || 'No excerpt returned')}${esc(symbols)}</span></div>`;
   }).join('');
 }
+function renderAutoLinkCandidates() {
+  const status = document.querySelector('[data-auto-link-status]');
+  const list = document.querySelector('[data-auto-link-candidates]');
+  if (status) status.textContent = autoLinkState.message;
+  if (!list) return;
+  const candidates = autoLinkState.candidates || [];
+  if (!candidates.length) {
+    list.innerHTML = '<p class="cad-muted">No Auto Link candidates loaded yet. Create reviewed OCR/index source text, then generate private sheet-link candidates.</p>';
+    return;
+  }
+  list.innerHTML = candidates.slice(0, 8).map((candidate) => `<div class="tool-card"><em>${esc(candidate.status || 'Needs Review')} · confidence ${esc(candidate.confidence ?? 'n/a')}</em><strong>${esc(candidate.sourceSheetId || selectedDrawingId)} → ${esc(candidate.targetDrawingNumber || candidate.targetSheetId || 'target sheet')}</strong><span>Reference ${esc(candidate.referenceText || '')}; source citation ${esc(candidate.sourceCitation?.ocrPageId || '')}. Private link only; human review and durable metadata/database adapter required before publishing.</span></div>`).join('');
+}
 function renderReviewRooms() {
   const status = document.querySelector('[data-review-room-status]');
   const list = document.querySelector('[data-review-rooms]');
@@ -759,6 +772,7 @@ function render() {
   renderCostCatalog();
   renderAiReviewFindings();
   renderOcrSearchResults();
+  renderAutoLinkCandidates();
   renderReviewRooms();
   renderGovernance();
   renderFieldModeStatus();
@@ -1020,6 +1034,42 @@ async function createReviewedOcrIndexSample() {
     window.CASTShell?.toast?.('OCR/symbol index sample blocked; no OCR artifact was fabricated.', { kind: 'error' });
     renderOcrSearchResults();
   }
+}
+async function loadAutoLinkRuns({ toast = false } = {}) {
+  try {
+    const drawing = selectedDrawing();
+    const params = new URLSearchParams({ action: 'auto-links', projectId: drawing?.project_id || 'alum', sourceSheetId: selectedDrawingId });
+    const response = await fetch(`/api/cast-cad-search?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    const runs = result.autoLinkRuns || [];
+    const latest = runs.slice(-1)[0] || {};
+    autoLinkState = { status: 'loaded', runs, candidates: latest.candidates || [], message: `${result.runCount || runs.length} Auto Link run(s) loaded. Candidates are private, source-cited, and human-review-gated; publishing requires ${result.contract?.durableAdapterRequired || 'CAST_CAD_DOCUMENT_METADATA_ADAPTER'}.` };
+    if (toast) window.CASTShell?.toast?.('Auto Link candidates refreshed from backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD Auto Link API unavailable', error);
+    autoLinkState = { ...autoLinkState, status: 'unavailable', message: `Auto Link unavailable: ${error.message}. No local sheet hyperlinks or public links were fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Auto Link unavailable; no sheet links were fabricated.', { kind: 'error' });
+  }
+  renderAutoLinkCandidates();
+}
+async function createAutoLinkCandidates({ publish = false } = {}) {
+  const drawing = selectedDrawing();
+  if (!selectedDrawingId) { window.CASTShell?.toast?.('Select a sheet before generating Auto Link candidates.', { kind: 'error' }); return; }
+  const humanReviewApproved = Boolean(document.querySelector('[data-auto-link-review]')?.checked);
+  try {
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'auto-links', projectId: drawing?.project_id || 'alum', sourceSheetId: selectedDrawingId, publishLinks: publish, humanReviewApproved }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const run = result.autoLinkRun || {};
+    autoLinkState = { status: run.status || 'needs-review', runs: [...autoLinkState.runs.filter((row) => row.id !== run.id), run].filter(Boolean), candidates: result.candidates || run.candidates || [], message: `${result.candidates?.length || run.candidateCount || 0} private Auto Link candidate(s) generated. Human review is required before publishing; no public sheet links were fabricated.` };
+    window.CASTShell?.toast?.('Auto Link candidates generated through audited backend contract.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not create CAST CAD Auto Link candidates', error);
+    autoLinkState = { ...autoLinkState, status: 'blocked', message: `Auto Link blocked: ${error.message}. Create reviewed OCR/index source text and document metadata first; no local hyperlink authority was fabricated.` };
+    window.CASTShell?.toast?.('Auto Link blocked; no local sheet links were fabricated.', { kind: 'error' });
+  }
+  renderAutoLinkCandidates();
 }
 function toolLibrarySeedPayload() {
   const seed = document.querySelector('[data-tool-library-seed]')?.value || 'fec';
@@ -2091,7 +2141,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadViewportMappingForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -2137,6 +2187,9 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-refresh-ai-findings]')) { loadAiReviewFindings({ toast: true }); return; }
   if (event.target.closest('[data-search-ocr-symbols]')) { searchOcrSymbolIndex({ toast: true }); return; }
   if (event.target.closest('[data-index-ocr-sample]')) { createReviewedOcrIndexSample(); return; }
+  if (event.target.closest('[data-create-auto-links]')) { createAutoLinkCandidates({ publish: false }); return; }
+  if (event.target.closest('[data-publish-auto-links]')) { createAutoLinkCandidates({ publish: true }); return; }
+  if (event.target.closest('[data-load-auto-links]')) { loadAutoLinkRuns({ toast: true }); return; }
   if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }
   if (event.target.closest('[data-refresh-review-rooms]')) { loadReviewRooms({ toast: true }); return; }
   if (event.target.closest('[data-refresh-governance]')) { loadGovernanceStatus({ toast: true }); return; }
@@ -2176,6 +2229,7 @@ loadCurrentDrawingSet({ force: false, toast: false });
 loadServerMarkupsForSelectedDrawing();
 loadViewportMappingForSelectedSheet();
 searchOcrSymbolIndex();
+loadAutoLinkRuns();
 loadDocumentMetadataRegistry();
 loadDrawingSetHistory();
 loadToolLibraryItems();

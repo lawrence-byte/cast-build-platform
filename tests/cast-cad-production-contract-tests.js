@@ -140,7 +140,7 @@ assert.equal(blockedExternalWorkflow.code, 'provider-required', 'external workfl
 assert.equal(cad.listWorkflowLinks(state, { projectId: 'alum', workflowType: 'submittal' }).length, 1, 'workflow links list by project and type');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_WORKFLOW_LINK'), 'workflow links are audited');
 
-const ocr = cad.indexOcrPage(state, { projectId: 'alum', sheetId: 'A-101', text: 'Door tag D101 requires fire rating review', symbols: ['D101','FIRE'], confidence: 88 }, owner);
+const ocr = cad.indexOcrPage(state, { projectId: 'alum', sheetId: 'A-101', text: 'Door tag D101 requires fire rating review. See elevation A-201 for exterior details.', symbols: ['D101','FIRE','A-201'], confidence: 88 }, owner);
 assert.equal(ocr.ok, true, 'OCR page indexed');
 assert.equal(cad.searchOcr(state, { projectId: 'alum', query: 'fire rating' }).length, 1, 'OCR search finds indexed text');
 
@@ -195,6 +195,21 @@ assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_DOCU
 const deniedDocMetadata = cad.upsertDrawingDocumentMetadata(state, { projectId: 'alum', sheetId: 'A-104', drawingNumber: 'A-104', sourcePath: 'Current Drawings/A/A-104.pdf' }, readOnly);
 assert.equal(deniedDocMetadata.ok, false, 'read-only users cannot mutate drawing metadata');
 assert.equal(deniedDocMetadata.status, 403, 'drawing metadata mutation denial is a 403');
+
+const autoLink = cad.createDrawingAutoLinks(state, { projectId: 'alum', sourceSheetId: 'A-101' }, owner);
+assert.equal(autoLink.ok, true, 'drawing Auto Link candidate run creates from OCR text and document metadata');
+assert.equal(autoLink.autoLinkRun.status, 'needs-review', 'Auto Link candidates remain review-gated by default');
+assert.equal(autoLink.candidates.some((row) => row.targetDrawingNumber === 'A-201.pdf' && row.referenceText === 'A-201' && row.publicExposure === false && row.noPublicUrls === true), true, 'Auto Link creates private sheet-link candidates without public URLs');
+assert.equal(autoLink.contract.humanReviewRequiredBeforePublish, true, 'Auto Link contract requires human review before publishing links');
+const blockedAutoLinkPublish = cad.createDrawingAutoLinks(state, { projectId: 'alum', sourceSheetId: 'A-101', publishLinks: true }, owner);
+assert.equal(blockedAutoLinkPublish.ok, false, 'Auto Link publishing fails closed without human review');
+assert.equal(blockedAutoLinkPublish.code, 'human-review-required', 'Auto Link publishing exposes human review blocker');
+const blockedAutoLinkDurablePublish = cad.createDrawingAutoLinks(state, { projectId: 'alum', sourceSheetId: 'A-101', publishLinks: true, humanReviewApproved: true }, owner);
+assert.equal(blockedAutoLinkDurablePublish.ok, false, 'Auto Link durable publishing fails closed without metadata/database adapter');
+assert.equal(blockedAutoLinkDurablePublish.code, 'provider-required', 'Auto Link durable publishing exposes provider-required blocker');
+assert.deepEqual(blockedAutoLinkDurablePublish.requiredEnvVars, ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], 'Auto Link durable publishing names exact adapter env choices');
+assert.equal(cad.listDrawingAutoLinks(state, { projectId: 'alum', sheetId: 'A-101' }).length, 1, 'Auto Link runs list by project/source sheet');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_AUTOLINK_RUN'), 'Auto Link candidate runs are audited');
 
 const badTool = cad.createToolLibraryItem(state, { projectId: 'alum', name: 'Unsafe auto-budget count', toolType: 'count', requiresHumanReview: false }, owner);
 assert.equal(badTool.ok, false, 'Tool Library items fail closed when human review is disabled');
