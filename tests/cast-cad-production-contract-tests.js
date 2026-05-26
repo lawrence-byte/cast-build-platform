@@ -397,6 +397,23 @@ const rotatedPdfPoint = cad.normalizedPointToPdfPoint({ pageWidth: 612, pageHeig
 assert.deepEqual(rotatedPdfPoint, { x: 198, y: 459 }, 'viewport mapping supports rotated PDF pages');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_VIEWPORT_MAPPING'), 'viewport mapping saves are audited');
 
+const invalidScaleCalibration = cad.upsertScaleCalibration(state, { projectId: 'alum', sheetId: 'A-101', knownLength: 0, percentDistance: 10 }, owner);
+assert.equal(invalidScaleCalibration.ok, false, 'scale calibration validates positive known lengths');
+const scaleCalibration = cad.upsertScaleCalibration(state, { projectId: 'alum', sheetId: 'A-101', knownLength: 20, unit: 'FT', pointA: { x: 10, y: 10 }, pointB: { x: 40, y: 10 } }, owner);
+assert.equal(scaleCalibration.ok, true, 'scale calibration saves through backend audit contract');
+assert.equal(scaleCalibration.calibration.status, 'Needs Review', 'scale calibration remains review-gated by default');
+assert.equal(scaleCalibration.calibration.publicExposure, false, 'scale calibration forbids public exposure');
+assert.equal(scaleCalibration.calibration.providerRequired, true, 'scale calibration names missing durable adapter without faking persistence');
+assert.deepEqual(scaleCalibration.calibration.requiredEnvVars, ['CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL'], 'scale calibration exposes exact durable adapter requirements');
+const blockedVerifiedScale = cad.upsertScaleCalibration(state, { projectId: 'alum', sheetId: 'A-101', knownLength: 20, unit: 'FT', pointA: { x: 10, y: 10 }, pointB: { x: 40, y: 10 }, status: 'Verified' }, owner);
+assert.equal(blockedVerifiedScale.ok, false, 'verified scale calibration fails closed without human review');
+assert.equal(blockedVerifiedScale.code, 'human-review-required', 'verified scale calibration exposes human review blocker');
+const blockedAuthoritativeScale = cad.upsertScaleCalibration(state, { projectId: 'alum', sheetId: 'A-101', knownLength: 20, unit: 'FT', pointA: { x: 10, y: 10 }, pointB: { x: 40, y: 10 }, authoritative: true, humanReviewApproved: true }, owner);
+assert.equal(blockedAuthoritativeScale.ok, false, 'authoritative durable scale calibration fails closed without adapter');
+assert.equal(blockedAuthoritativeScale.code, 'provider-required', 'authoritative scale calibration exposes provider-required blocker');
+assert.equal(cad.listScaleCalibrations(state, { projectId: 'alum', sheetId: 'A-101' }).length, 1, 'scale calibrations list by project/sheet');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_SCALE_CALIBRATION'), 'scale calibration saves are audited');
+
 const permissionMatrix = cad.buildPermissionMatrix();
 assert.equal(permissionMatrix.some((row) => row.role === 'Project Manager' && row.permissions.includes('audit')), true, 'permission matrix exposes role capabilities');
 const memberRole = cad.upsertProjectMemberRole(state, { projectId: 'alum', userId: 'pe-01', email: 'pe@example.com', name: 'Project Engineer', role: 'Project Engineer' }, owner);
@@ -554,6 +571,10 @@ assert.ok(castCadJs.includes('No local role, permission, or audit authority was 
 assert.ok(castCadHtml.includes('data-assign-governance-role'), 'CAST CAD workbench exposes audited role assignment controls');
 assert.ok(castCadHtml.includes('data-governance-permissions'), 'CAST CAD workbench exposes effective permission status');
 assert.ok(castCadHtml.includes('data-governance-audit'), 'CAST CAD workbench exposes governance audit status');
+assert.ok(castCadJs.includes('function saveScaleCalibrationToBackend'), 'CAST CAD workbench saves scale calibrations through backend audit contract');
+assert.ok(castCadJs.includes("action: 'scale-calibration'"), 'CAST CAD workbench calls scale calibration backend contract');
+assert.ok(castCadJs.includes('No authoritative quantity scale was fabricated'), 'CAST CAD scale calibration fails closed without fabricating authoritative quantities');
+assert.ok(castCadJs.includes('CAST_CAD_SCALE_CALIBRATION_ADAPTER'), 'CAST CAD workbench names scale calibration durable adapter requirement');
 assert.ok(castCadJs.includes('function saveViewportMappingForSelectedSheet'), 'CAST CAD workbench saves PDF viewport coordinate mappings');
 assert.ok(castCadJs.includes("action: 'viewport-mapping'"), 'CAST CAD workbench calls viewport mapping backend contract');
 assert.ok(castCadJs.includes('no renderer integration was fabricated'), 'CAST CAD viewport mapping fails closed without fabricating renderer integration');

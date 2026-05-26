@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -33,6 +33,10 @@ module.exports = async function handler(req, res) {
       if (action === 'viewport-mapping' || action === 'coordinate-mapping') {
         const mappings = listViewportMappings(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), pageNumber: url.searchParams.get('pageNumber') });
         return json(res, 200, { ok: true, mappingCount: mappings.length, mappings, contract: { normalizedOrigin: 'top-left-percent', coordinateSystem: 'pdf-points-bottom-left', durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER', rendererWorkerStillRequired: 'PDF.js/commercial renderer integration' } });
+      }
+      if (action === 'scale-calibration' || action === 'scale-calibrations') {
+        const calibrations = listScaleCalibrations(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), pageNumber: url.searchParams.get('pageNumber'), status: url.searchParams.get('status') });
+        return json(res, 200, { ok: true, calibrationCount: calibrations.length, calibrations, contract: scaleCalibrationContract() });
       }
       if (action === 'document-metadata' || action === 'drawing-documents') {
         const documents = listDrawingDocumentMetadata(state, { projectId: url.searchParams.get('projectId'), setId: url.searchParams.get('setId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status'), search: url.searchParams.get('search') });
@@ -86,6 +90,10 @@ module.exports = async function handler(req, res) {
       if (body.action === 'viewport-mapping' || body.action === 'coordinate-mapping') {
         const result = saveViewportMapping(state, body, actor);
         return json(res, result.ok ? 200 : (result.status || 422), result);
+      }
+      if (body.action === 'scale-calibration' || body.action === 'scale-calibrations') {
+        const result = upsertScaleCalibration(state, body, actor);
+        return json(res, result.ok ? (result.status || 200) : (result.status || 422), result);
       }
       if (body.action === 'document-metadata' || body.action === 'drawing-documents') {
         const result = body.operation === 'import-index' || body.importIndex ? importDrawingDocumentMetadataFromIndex(state, body, actor) : upsertDrawingDocumentMetadata(state, body, actor);
