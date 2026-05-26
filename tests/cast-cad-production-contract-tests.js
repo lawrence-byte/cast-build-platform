@@ -293,6 +293,19 @@ assert.equal(transmittal.transmittal.noPublicLinks, true, 'drawing transmittal r
 assert.deepEqual(transmittal.requiredEnvVars, ['CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'drawing transmittal names exact transport env choices');
 assert.equal(cad.listDrawingTransmittals(state, { projectId: 'alum', setId: 'permit' }).length, 1, 'drawing transmittals list by project/set');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_TRANSMITTAL'), 'drawing transmittal attempts are audited');
+const blockedIfcApproval = cad.createDrawingApprovalPackage(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], issueFor: 'issue-for-construction', reviewers: [{ email: 'architect@example.com', role: 'Architect' }] }, owner);
+assert.equal(blockedIfcApproval.ok, false, 'IFC drawing approval packages fail closed without human review');
+assert.equal(blockedIfcApproval.code, 'human-review-required', 'drawing approval IFC release exposes review blocker');
+const approvalPackage = cad.createDrawingApprovalPackage(state, { projectId: 'alum', setId: 'permit', name: 'Permit drawing approval', sheetIds: ['A-901'], reviewers: [{ email: 'architect@example.com', role: 'Architect', decision: 'Approved' }], humanReviewApproved: true, issueFor: 'issue-for-construction' }, owner);
+assert.equal(approvalPackage.ok, true, 'drawing approval package records provider-independent private approval manifest');
+assert.equal(approvalPackage.approvalPackage.status, 'approved-for-release', 'human-approved IFC package can be marked approved for release');
+assert.equal(approvalPackage.approvalPackage.providerRequired, true, 'drawing approval package does not claim durable adapter persistence');
+assert.equal(approvalPackage.approvalPackage.publicExposure, false, 'drawing approval package forbids public exposure');
+assert.equal(approvalPackage.approvalPackage.noPublicLinks, true, 'drawing approval package refuses public sheet links');
+assert.deepEqual(approvalPackage.approvalPackage.requiredEnvVars, ['CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL'], 'drawing approval package names exact durable adapter choices');
+assert.equal(cad.listDrawingApprovalPackages(state, { projectId: 'alum', sheetId: 'A-901' }).length, 1, 'drawing approval packages list by project/sheet');
+assert.equal(cad.drawingApprovalContract().humanReviewRequiredBeforeIssueForConstruction, true, 'drawing approval contract keeps IFC release human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_APPROVAL_PACKAGE'), 'drawing approval packages are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
 assert.equal(publicModelImport.code, 'public-url-forbidden', 'model/CAD ingestion exposes public URL blocker');
@@ -588,5 +601,11 @@ assert.ok(castCadJs.includes('No local current/superseded authority was fabricat
 assert.ok(castCadHtml.includes('data-publish-drawing-set-version'), 'CAST CAD workbench exposes drawing set version publish control');
 assert.ok(castCadHtml.includes('data-slip-sheet-revision'), 'CAST CAD workbench exposes human-review-gated slip-sheet control');
 assert.ok(castCadHtml.includes('data-drawing-set-revisions'), 'CAST CAD workbench exposes drawing set revision history');
+assert.ok(castCadJs.includes('function createDrawingApprovalPackage'), 'CAST CAD workbench creates drawing approval packages through backend audit');
+assert.ok(castCadJs.includes("type: 'drawing-approval-package'"), 'CAST CAD workbench calls drawing approval package export contract');
+assert.ok(castCadJs.includes('No local approval/release authority was fabricated'), 'CAST CAD drawing approval fails closed without fabricating IFC release authority');
+assert.ok(castCadJs.includes('CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL'), 'CAST CAD workbench names drawing approval durable adapter blocker');
+assert.ok(castCadHtml.includes('data-create-drawing-approval'), 'CAST CAD workbench exposes drawing approval package controls');
+assert.ok(castCadHtml.includes('data-drawing-approval-packages'), 'CAST CAD workbench exposes drawing approval package audit list');
 
 console.log('CAST CAD production contract tests passed.');

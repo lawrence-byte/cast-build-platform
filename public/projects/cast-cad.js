@@ -35,6 +35,7 @@ let governanceState = { status: 'idle', roles: [], members: [], permissions: nul
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
 let scaleCalibrationState = { status: 'idle', calibration: null, message: 'Scale calibration not checked yet. Durable calibration persistence requires CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
+let drawingApprovalState = { status: 'idle', packages: [], message: 'Drawing approval packages not checked yet. IFC release is human-review gated; durable storage requires CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
 let markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' };
 let markupSavedViewState = { status: 'idle', views: [], message: 'Saved markup filter/report views not checked yet. Durable view storage requires CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
@@ -231,6 +232,16 @@ function renderDrawingSetControls() {
     revisions.innerHTML = drawingSetControlState.revisions.length ? drawingSetControlState.revisions.slice(-6).reverse().map((row) => `<div class="tool-card"><em>${esc(row.status || 'current')} · ${esc(row.revisionLabel || 'revision')}</em><strong>${esc(row.drawingNumber || row.sheetId)} · ${esc(row.drawingTitle || row.fileName || '')}</strong><span>${esc(row.fileName || row.sourcePath || '')}. Supersedes: ${esc(row.supersedesRevisionId || 'none')}; superseded by: ${esc(row.supersededByRevisionId || 'none')}. Backend audit controls current/superseded chains; no local slip-sheet authority is fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing set versions loaded yet. Publish the current set or refresh backend drawing-set history.</p>';
   }
 }
+function renderDrawingApprovalPackages() {
+  const status = document.querySelector('[data-drawing-approval-status]');
+  const summary = document.querySelector('[data-drawing-approval-summary]');
+  const list = document.querySelector('[data-drawing-approval-packages]');
+  if (status) status.textContent = drawingApprovalState.message;
+  if (summary) summary.textContent = drawingApprovalState.packages.length ? `${drawingApprovalState.packages.length} private approval package(s) audited. IFC release remains human-review gated; durable approval storage requires CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL.` : 'Private approval packages require named reviewers, no public links, and fail closed for issue-for-construction without human review.';
+  if (list) {
+    list.innerHTML = drawingApprovalState.packages.length ? drawingApprovalState.packages.slice(-6).reverse().map((row) => `<div class="tool-card"><em>${esc(row.status || 'pending-review')} · ${esc(row.issueFor || 'review')}</em><strong>${esc(row.name || row.id)}</strong><span>${esc((row.sheetIds || []).join(', '))} · reviewers: ${esc(row.reviewerCount || (row.reviewers || []).length)} · provider: ${row.providerRequired ? esc((row.requiredEnvVars || []).join(', ')) : 'durable adapter configured'}. No public approval or sheet links were fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing approval packages loaded yet.</p>';
+  }
+}
 function documentMetadataImportPayload(index) {
   const files = currentDrawingFiles(index).map((file) => ({
     name: file.name,
@@ -340,6 +351,47 @@ async function slipSheetSelectedRevision() {
     window.CASTShell?.toast?.('Slip-sheet blocked; human review/backend audit required.', { kind: 'error' });
   }
   renderDrawingSetControls();
+}
+async function loadDrawingApprovalPackages({ toast = false } = {}) {
+  try {
+    const params = new URLSearchParams({ type: 'drawing-approval-packages', projectId: 'alum', sheetId: selectedDrawingId });
+    const response = await fetch(`/api/cast-cad-exports?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    drawingApprovalState = { status: 'loaded', packages: result.drawingApprovalPackages || [], message: `${result.approvalPackageCount || 0} drawing approval package(s) loaded from backend audit. Durable approval storage requires CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL.` };
+    if (toast) window.CASTShell?.toast?.('Drawing approval packages refreshed from backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing approval package history unavailable', error);
+    drawingApprovalState = { ...drawingApprovalState, status: 'unavailable', message: `Drawing approval package history unavailable: ${error.message}. No local approval authority was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Drawing approvals unavailable; no local authority was fabricated.', { kind: 'error' });
+  }
+  renderDrawingApprovalPackages();
+}
+async function createDrawingApprovalPackage() {
+  const reviewer = document.querySelector('[data-drawing-approval-reviewer]')?.value?.trim() || '';
+  const issueForConstruction = Boolean(document.querySelector('[data-drawing-approval-ifc]')?.checked);
+  const humanReviewApproved = Boolean(document.querySelector('[data-drawing-approval-human-review]')?.checked);
+  if (issueForConstruction && !humanReviewApproved) {
+    drawingApprovalState = { ...drawingApprovalState, status: 'blocked', message: 'Issue-for-construction drawing approval package blocked: human review approval is required. No local approval/release authority was fabricated.' };
+    renderDrawingApprovalPackages();
+    window.CASTShell?.toast?.('Human review approval is required before IFC drawing approval release.', { kind: 'error' });
+    return;
+  }
+  try {
+    const drawing = selectedDrawing();
+    const payload = { type: 'drawing-approval-package', projectId: drawing?.project_id || 'alum', setId: 'alum-current-drawings', name: `Approval · ${drawing?.drawing_number || selectedDrawingId}`, sheetIds: [selectedDrawingId], reviewers: [{ email: reviewer || 'reviewer@cast-dev.example', role: 'Architect' }], issueFor: issueForConstruction ? 'issue-for-construction' : 'review', humanReviewApproved };
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    const approvalPackage = result.approvalPackage || {};
+    drawingApprovalState = { status: approvalPackage.status || 'recorded', packages: [...drawingApprovalState.packages, approvalPackage], message: `Drawing approval package ${approvalPackage.id || ''} audited for ${approvalPackage.sheetIds?.length || 1} sheet(s). ${(approvalPackage.requiredEnvVars || []).join(', ') || 'Durable approval adapter'} is required before provider-backed permanence. No public approval or sheet link was fabricated.` };
+    window.CASTShell?.toast?.('Drawing approval package recorded through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing approval package API blocked', error);
+    drawingApprovalState = { ...drawingApprovalState, status: 'blocked', message: `Drawing approval package blocked: ${error.message}. No local approval authority was fabricated.` };
+    window.CASTShell?.toast?.('Drawing approval package blocked; no local approval was fabricated.', { kind: 'error' });
+  }
+  renderDrawingApprovalPackages();
 }
 
 const MARKUP_TOOLS = [
@@ -831,6 +883,7 @@ function render() {
   renderWorkflowLinks();
   renderDocumentMetadataStatus();
   renderDrawingSetControls();
+  renderDrawingApprovalPackages();
   renderViewportMappingStatus();
   renderMarkupThread();
   renderMarkupAttachments();
@@ -2238,7 +2291,7 @@ function exportCsv() {
 
 document.addEventListener('click', (event) => {
   const sheet = event.target.closest('[data-sheet]');
-  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; workflowLinkListState = { ...workflowLinkListState, message: 'Selected sheet changed; refresh workflow links to load audited snapshots.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadWorkflowLinks(); loadViewportMappingForSelectedSheet(); loadScaleCalibrationForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); return; }
+  if (sheet) { selectedDrawingId = sheet.dataset.sheet; calibration = null; clearStreamedPdf(); drawingStreamState = { drawingId: selectedDrawingId, status: 'idle', message: '' }; markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' }; markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' }; workflowLinkListState = { ...workflowLinkListState, message: 'Selected sheet changed; refresh workflow links to load audited snapshots.' }; autoLinkState = { ...autoLinkState, candidates: [], message: 'Selected sheet changed; refresh Auto Link candidates for this source sheet.' }; render(); loadSelectedDrawingPdf({ toast: true }); loadServerMarkupsForSelectedDrawing(); loadWorkflowLinks(); loadViewportMappingForSelectedSheet(); loadScaleCalibrationForSelectedSheet(); searchOcrSymbolIndex(); loadAutoLinkRuns(); loadDrawingApprovalPackages(); return; }
   const tool = event.target.closest('[data-tool]');
   if (tool) { activeTool = tool.dataset.tool; document.querySelectorAll('[data-tool]').forEach((el) => el.classList.toggle('active', el === tool)); return; }
   if (event.target.closest('[data-add-markup]')) addMarkup();
@@ -2276,6 +2329,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-publish-drawing-set-version]')) { publishCurrentDrawingSetVersion({ toast: true }); return; }
   if (event.target.closest('[data-refresh-drawing-set-history]')) { loadDrawingSetHistory({ toast: true }); return; }
   if (event.target.closest('[data-slip-sheet-revision]')) { slipSheetSelectedRevision(); return; }
+  if (event.target.closest('[data-create-drawing-approval]')) { createDrawingApprovalPackage(); return; }
+  if (event.target.closest('[data-refresh-drawing-approvals]')) { loadDrawingApprovalPackages({ toast: true }); return; }
   if (event.target.closest('[data-create-tool-library-item]')) { createToolLibrarySeedItem(); return; }
   if (event.target.closest('[data-place-tool-library-item]')) { placeSelectedToolLibraryItem(); return; }
   if (event.target.closest('[data-refresh-tool-library]')) { loadToolLibraryItems({ toast: true }); return; }
@@ -2333,6 +2388,7 @@ searchOcrSymbolIndex();
 loadAutoLinkRuns();
 loadDocumentMetadataRegistry();
 loadDrawingSetHistory();
+loadDrawingApprovalPackages();
 loadToolLibraryItems();
 loadCostCatalogItems();
 loadAiReviewFindings();

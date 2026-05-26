@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -1867,6 +1867,72 @@ function listDrawingSetVersions(state, filters = {}) {
   const revisions = state.drawingSheetRevisions.filter((row) => versionIds.has(row.setVersionId) || (!filters.projectId || row.projectId === filters.projectId));
   return { versions, revisions };
 }
+function drawingApprovalContract() {
+  return {
+    type: 'drawing-approval-package',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    humanReviewRequiredBeforeIssueForConstruction: true,
+    durableAdapterRequired: 'CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL',
+    transmittalGate: 'Approved drawing packages can be cited before drawing transmittal delivery; external delivery still requires CAST_CAD_TRANSMITTAL_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_SERVER_WORKFLOW_API_URL.',
+  };
+}
+function createDrawingApprovalPackage(state, input = {}, actor) {
+  state.drawingApprovalPackages ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const sheetIds = Array.isArray(input.sheetIds || input.sheet_ids) ? (input.sheetIds || input.sheet_ids).filter(Boolean) : [];
+  const reviewers = Array.isArray(input.reviewers) ? input.reviewers.filter((row) => row && (row.email || row.userId || row.user_id || row.name)) : [];
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!sheetIds.length) errors.push('At least one sheetId is required for a drawing approval package.');
+  if (!reviewers.length) errors.push('At least one reviewer is required for a drawing approval package.');
+  if (errors.length) return { ok: false, status: 422, errors, contract: drawingApprovalContract() };
+  const durableReady = Boolean(process.env.CAST_CAD_DRAWING_APPROVAL_ADAPTER || process.env.CAST_CAD_DATABASE_URL);
+  const wantsIfc = ['issue-for-construction','ifc','approved'].includes(String(input.issueFor || input.issue_for || input.status || '').toLowerCase());
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (wantsIfc && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Issue-for-construction drawing approval packages require human review approval before release.', contract: drawingApprovalContract() };
+  const packageRow = {
+    id: input.id || id('cad_drawing_approval'),
+    type: 'drawing-approval-package',
+    projectId,
+    setId: input.setId || input.set_id || 'current',
+    name: input.name || 'CAST CAD Drawing Approval Package',
+    sheetIds,
+    reviewerCount: reviewers.length,
+    reviewers: reviewers.map((reviewer) => ({ userId: reviewer.userId || reviewer.user_id || '', email: String(reviewer.email || '').toLowerCase(), name: reviewer.name || '', role: normalizeRole(reviewer.role || 'Consultant'), decision: reviewer.decision || 'Pending', decidedAt: reviewer.decidedAt || reviewer.decided_at || '' })),
+    status: wantsIfc ? 'approved-for-release' : input.status || 'pending-review',
+    issueFor: input.issueFor || input.issue_for || (wantsIfc ? 'issue-for-construction' : 'review'),
+    humanReviewApproved,
+    providerRequired: !durableReady,
+    requiredEnvVars: durableReady ? [] : ['CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL'],
+    durablePersistence: durableReady,
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    sourceRevisionIds: Array.isArray(input.sourceRevisionIds || input.source_revision_ids) ? (input.sourceRevisionIds || input.source_revision_ids) : [],
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.drawingApprovalPackages.push(packageRow);
+  audit(state, actor, packageRow.providerRequired ? 'Created audit-only CAST CAD drawing approval package pending durable adapter' : 'Created durable CAST CAD drawing approval package', 'CAST_CAD_DRAWING_APPROVAL_PACKAGE', packageRow.id, null, packageRow, 'Private approval package has no public links; IFC release is human-review gated.');
+  return { ok: true, status: packageRow.providerRequired ? 202 : 201, approvalPackage: packageRow, contract: drawingApprovalContract() };
+}
+function listDrawingApprovalPackages(state, filters = {}) {
+  state.drawingApprovalPackages ||= [];
+  let rows = state.drawingApprovalPackages.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetIds.includes(filters.sheetId));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -1963,7 +2029,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
 };
