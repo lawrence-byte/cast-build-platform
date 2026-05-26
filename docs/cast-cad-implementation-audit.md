@@ -59,6 +59,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent drawing Auto Link candidate contract and frontend bridge that creates source-cited private sheet-link candidates from audited OCR/index text and drawing metadata, keeps candidates human-review gated, forbids public URLs, and fails closed for durable/published links until `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL` is configured: `/api/cast-cad-search?action=auto-links` plus POST `action=auto-links`.
 - Provider-independent PDF renderer session contract and frontend bridge for private stream-lease-backed multipage rendering, thumbnails, page labels, bookmarks, text search, and native viewport matrix extraction; public PDF URLs are rejected and renderer artifacts fail closed with `CAST_CAD_PDF_RENDERER_WORKER`, `CAST_CAD_PDFJS_WORKER_URL`, or `CAST_CAD_PDF_SDK_PROVIDER` until a private PDF renderer worker/SDK is configured: `/api/cast-cad-exports` with `type=pdf-renderer-session`.
 - Provider-independent audited scale-calibration persistence contract and frontend bridge for normalized overlay calibration points, known-length units, review-gated verified scales, and fail-closed durable/authoritative quantity gates requiring `CAST_CAD_SCALE_CALIBRATION_ADAPTER`, `CAST_CAD_MARKUP_DATABASE_ADAPTER`, or `CAST_CAD_DATABASE_URL`: `/api/cast-cad-markups?action=scale-calibration`.
+- Provider-independent frontend workflow-link dashboard bridge that loads audited RFI/submittal/change-event/issue/observation snapshots from `/api/cast-cad-rfi-link`, refreshes after new snapshot creation, and fails closed without fabricating local-only workflow authority or external provider write-back.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -156,8 +157,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-26T14:32:36Z` for the CAST CAD scale calibration backend/frontend bridge slice.
-- Branch audited: `cast-cad-scale-calibration-contract`.
+- Audited at: `2026-05-26T16:51:07Z` for the CAST CAD workflow-link dashboard frontend bridge slice.
+- Branch audited: `cast-cad-workflow-link-dashboard`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
