@@ -53,6 +53,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent cost catalog/cost database contract and frontend bridge for reviewed unit-cost and assembly rows, audited imports/updates, no budget-authoritative claims, and fail-closed durable/private cost database gates requiring `CAST_CAD_COST_CATALOG_ADAPTER` or `CAST_CAD_COST_DATABASE_ADAPTER`: `/api/cast-cad-markups?action=cost-catalog`.
 - Provider-independent CAD/model ingestion job contract and frontend bridge for private IFC/DWG/DXF/RVT/etc. source pointers, no public URLs, private no-store viewer artifacts, and human-review-gated linked quantities; fails closed with `CAST_CAD_MODEL_INGESTION_WORKER`, `CAST_CAD_IFC_CONVERSION_WORKER`, or `CAST_CAD_CAD_CONVERSION_WORKER` until a private model conversion worker is configured: `/api/cast-cad-exports` with `type=model-ingestion`.
 - Provider-independent model-derived quantity link contract and frontend bridge for source-cited model element quantities, optional review-gated takeoff markup creation, private/no-public-artifact guarantees, and fail-closed human-review gates before verified/resolved/budget-authoritative use: `/api/cast-cad-exports` with `type=model-quantity-link`.
+- Provider-independent 300-sheet drawing upload package manifest contract and frontend bridge for private PDF upload leases/source pointers, no-store/no-public-URL guarantees, audited package records, and fail-closed current-set publishing gates requiring human review plus `CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER`, `CAST_CAD_DOCUMENT_STORAGE_ADAPTER`, `CAST_SERVER_DOCUMENT_API_URL`, or `DROPBOX_ACCESS_TOKEN` and `CAST_CAD_DOCUMENT_METADATA_ADAPTER`: `/api/cast-cad-exports` with `type=drawing-upload-package`.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -115,7 +116,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 
 ## Acceptance criteria status
 
-- 300-sheet upload/navigation: metadata-backed sheet navigation implemented; authenticated raw PDF stream contract implemented; provider credentials still required for private file bytes.
+- 300-sheet upload/navigation: metadata-backed sheet navigation implemented; authenticated raw PDF stream contract implemented; provider-independent audited drawing upload package manifests are implemented and fail closed for durable private bytes/current-set authority until private storage/document metadata providers are configured.
 - Create/edit/save/reload/filter/export/delete markups: server contract implemented with audit, CSV, audited soft-delete, default deleted-row filtering, and fail-closed hard-delete review gates; production database adapter remains to be connected.
 - Attach private field/photo/PDF evidence to markups/comments: audited provider-independent manifest contract and frontend bridge implemented; durable private byte storage remains blocked until `CAST_CAD_ATTACHMENT_STORAGE_ADAPTER` is configured.
 - Comment @mention notification delivery: audited provider-independent delivery event contract implemented; email/realtime dispatch remains blocked until `CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` is configured.
@@ -149,8 +150,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-25T23:01:26Z` for the CAST CAD model-derived quantity link contract slice.
-- Branch audited: `cast-cad-model-quantity-link`.
+- Audited at: `2026-05-26T01:12:45Z` for the CAST CAD drawing upload package manifest contract slice.
+- Branch audited: `cast-cad-drawing-upload-package`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
