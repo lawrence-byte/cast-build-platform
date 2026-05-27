@@ -413,6 +413,13 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-slip-sheet-revision>Slip-sheet revision</button>
               <span class="pdf-status" data-drawing-set-status>Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.</span>
             </div>
+            <div class="pdf-intake cad-drawing-index-qa-controls" aria-label="CAST CAD drawing index QA controls">
+              <label><input type="checkbox" data-drawing-index-qa-publish autocomplete="off"> Gate as current-set publish QA</label>
+              <label><input type="checkbox" data-drawing-index-qa-review autocomplete="off"> Human review approved</label>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-run-drawing-index-qa>Run drawing index QA</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-refresh-drawing-index-qa>Refresh QA reports</button>
+              <span class="pdf-status" data-drawing-index-qa-status>Drawing index QA not run yet. Private reports require backend audit and durable storage requires CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL.</span>
+            </div>
             <div class="pdf-intake cad-drawing-approval-controls" aria-label="CAST CAD drawing approval package controls">
               <label>Reviewer <input type="email" value="architect@example.com" data-drawing-approval-reviewer autocomplete="off"></label>
               <label><input type="checkbox" data-drawing-approval-ifc autocomplete="off"> Issue for construction</label>
@@ -427,10 +434,12 @@
             <div class="tool-list">
               <div class="tool-card"><em>Source index</em><strong>Alüm Current Drawings</strong><span data-current-set-summary>Loading current drawing set metadata…</span></div>
               <div class="tool-card"><em>Metadata registry</em><strong>/api/cast-cad-markups?action=document-metadata</strong><span data-document-metadata-summary>Not checked yet. Imports are audited contract records and fail closed for authoritative durable persistence without CAST_CAD_DOCUMENT_METADATA_ADAPTER.</span></div>
+              <div class="tool-card"><em>Drawing index QA</em><strong>/api/cast-cad-exports?type=drawing-index-qa</strong><span data-drawing-index-qa-summary>Private QA reports check missing drawing numbers/titles/disciplines, duplicate sheet numbers, public URL exposure, and human-review gates before current-set publishing.</span></div>
               <div class="tool-card"><em>Drawing set versions</em><strong>/api/cast-cad-exports?type=drawing-sets</strong><span>Audited current/superseded sheet-revision chains and slip-sheet controls are backend-only. Human review is required before a current sheet can be superseded.</span></div>
               <div class="tool-card"><em>Drawing approvals</em><strong>/api/cast-cad-exports?type=drawing-approval-packages</strong><span data-drawing-approval-summary>Private approval packages require named reviewers, no public links, and fail closed for issue-for-construction without human review.</span></div>
               <div class="tool-card"><em>Next backend gate</em><strong>Authenticated PDF stream</strong><span>Connect approved Dropbox/CAST Server file streaming after auth so selected sheets render directly without exposing public PDF URLs.</span></div>
             </div>
+            <div class="tool-list" data-drawing-index-qa-reports><p class="cad-muted">No drawing index QA reports loaded yet.</p></div>
             <div class="tool-list" data-drawing-set-revisions><p class="cad-muted">No drawing set versions loaded yet.</p></div>
             <div class="tool-list" data-drawing-approval-packages><p class="cad-muted">No drawing approval packages loaded yet.</p></div>
           </div>

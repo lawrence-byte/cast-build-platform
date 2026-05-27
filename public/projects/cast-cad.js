@@ -25,6 +25,7 @@ let exportCenterState = { status: 'idle', message: 'Backend export jobs not requ
 let rfiLinkState = { status: 'idle', message: 'RFI/submittal/change-event workflow links are draft-only until the backend snapshot contract confirms the markup.' };
 let workflowLinkListState = { status: 'idle', links: [], rfiLinks: [], message: 'Workflow links not loaded yet. Refresh to list audited RFI/submittal/change-event/issue/observation snapshots from the backend contract.' };
 let documentMetadataState = { status: 'idle', documentCount: 0, importedCount: 0, providerRequired: true, message: 'Document metadata registry not checked yet. Durable writes require CAST_CAD_DOCUMENT_METADATA_ADAPTER.' };
+let drawingIndexQaState = { status: 'idle', reports: [], message: 'Drawing index QA not run yet. Reports are private/audited and durable storage requires CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let reviewRoomState = { status: 'idle', rooms: [], inviteEvents: [], message: 'Review Rooms not loaded yet. Invite delivery requires CAST_CAD_REVIEW_ROOM_TRANSPORT, CAST_CAD_EMAIL_PROVIDER, or CAST_CAD_REALTIME_PROVIDER.' };
 let toolLibraryState = { status: 'idle', items: [], placements: [], selectedItemId: '', message: 'Tool Library not loaded yet. Items require human review before budget/export authority.' };
 let costCatalogState = { status: 'idle', items: [], message: 'Cost catalog not loaded yet. Durable/private cost database persistence requires CAST_CAD_COST_CATALOG_ADAPTER or CAST_CAD_COST_DATABASE_ADAPTER.' };
@@ -215,6 +216,18 @@ function renderDocumentMetadataStatus() {
     ? `${documentMetadataState.documentCount.toLocaleString()} document record(s) in the audited registry; imported ${documentMetadataState.importedCount.toLocaleString()} this session. ${adapter}.`
     : message;
 }
+function renderDrawingIndexQaReports() {
+  const status = document.querySelector('[data-drawing-index-qa-status]');
+  const summary = document.querySelector('[data-drawing-index-qa-summary]');
+  const list = document.querySelector('[data-drawing-index-qa-reports]');
+  if (status) status.textContent = drawingIndexQaState.message;
+  if (summary) summary.textContent = drawingIndexQaState.reports.length
+    ? `${drawingIndexQaState.reports.length} private drawing index QA report(s) audited. Durable report storage requires CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL.`
+    : drawingIndexQaState.message;
+  if (list) {
+    list.innerHTML = drawingIndexQaState.reports.length ? drawingIndexQaState.reports.slice(-5).reverse().map((report) => `<div class="tool-card"><em>${esc(report.status || 'review-ready')} · ${esc(report.findingCount || 0)} finding(s)</em><strong>${esc(report.setId || report.id)} · ${esc(report.sheetCount || 0)} sheets</strong><span>Critical: ${esc(report.criticalCount || 0)}. ${esc((report.findings || []).slice(0, 4).map((finding) => `${finding.code}: ${finding.drawingNumber || finding.fileName || 'set'}`).join('; ') || 'No issues found')}. No local current-set authority or public report link was fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing index QA reports loaded yet.</p>';
+  }
+}
 function renderDrawingSetControls() {
   const status = document.querySelector('[data-drawing-set-status]');
   const revisions = document.querySelector('[data-drawing-set-revisions]');
@@ -294,6 +307,40 @@ async function loadDocumentMetadataRegistry() {
     documentMetadataState = { ...documentMetadataState, status: 'unavailable', message: 'Document metadata registry API unavailable; source index remains local read-only metadata only.' };
   }
   renderDocumentMetadataStatus();
+}
+async function runCurrentDrawingIndexQa({ toast = false } = {}) {
+  drawingIndexQaState = { ...drawingIndexQaState, status: 'running', message: 'Running private drawing index QA through the audited backend contract…' };
+  renderDrawingIndexQaReports();
+  try {
+    const indexResponse = await fetch(CURRENT_DRAWING_INDEX_URL, { cache: 'no-store' });
+    if (!indexResponse.ok) throw new Error(`index HTTP ${indexResponse.status}`);
+    const payload = documentMetadataImportPayload(await indexResponse.json());
+    if (!payload.files.length) throw new Error('No current PDF drawing files found for drawing index QA.');
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ type: 'drawing-index-qa', projectId: 'alum', setId: 'alum-current-drawings', sheets: payload.files, publishAsCurrent: Boolean(document.querySelector('[data-drawing-index-qa-publish]')?.checked), humanReviewApproved: Boolean(document.querySelector('[data-drawing-index-qa-review]')?.checked) }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    drawingIndexQaState = { status: 'loaded', reports: [...drawingIndexQaState.reports, result.report].filter(Boolean), message: `Drawing index QA completed: ${result.report?.findingCount || 0} finding(s), ${result.report?.criticalCount || 0} critical. Durable storage requires CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL.` };
+    if (toast) window.CASTShell?.toast?.('Drawing index QA report created through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing index QA unavailable', error);
+    drawingIndexQaState = { ...drawingIndexQaState, status: 'blocked', message: `Drawing index QA blocked: ${error.message}. No local current-set authority or public report was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Drawing index QA blocked; no local authority was fabricated.', { kind: 'error' });
+  }
+  renderDrawingIndexQaReports();
+}
+async function loadDrawingIndexQaReports({ toast = false } = {}) {
+  try {
+    const params = new URLSearchParams({ type: 'drawing-index-qa', projectId: 'alum', setId: 'alum-current-drawings' });
+    const response = await fetch(`/api/cast-cad-exports?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    drawingIndexQaState = { status: 'loaded', reports: result.drawingIndexQaReports || [], message: `${result.reportCount || 0} drawing index QA report(s) loaded from backend audit. Durable storage requires CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL.` };
+    if (toast) window.CASTShell?.toast?.('Drawing index QA reports refreshed.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not load CAST CAD drawing index QA reports', error);
+    drawingIndexQaState = { ...drawingIndexQaState, status: 'unavailable', message: `Drawing index QA history unavailable: ${error.message}. No local report authority was fabricated.` };
+  }
+  renderDrawingIndexQaReports();
 }
 function drawingSetVersionPayload(index) {
   const sheets = documentMetadataImportPayload(index).files.map((file) => ({ ...file, sheetId: slugId(file.path, file.drawingNumber) }));
@@ -2348,6 +2395,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-model-quantity-link]')) { createBackendExportJob('model-quantity-link'); return; }
   if (event.target.closest('[data-import-document-metadata]')) { importCurrentSetDocumentMetadata({ toast: true }); return; }
   if (event.target.closest('[data-refresh-document-metadata]')) { loadDocumentMetadataRegistry(); return; }
+  if (event.target.closest('[data-run-drawing-index-qa]')) { runCurrentDrawingIndexQa({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-drawing-index-qa]')) { loadDrawingIndexQaReports({ toast: true }); return; }
   if (event.target.closest('[data-publish-drawing-set-version]')) { publishCurrentDrawingSetVersion({ toast: true }); return; }
   if (event.target.closest('[data-refresh-drawing-set-history]')) { loadDrawingSetHistory({ toast: true }); return; }
   if (event.target.closest('[data-slip-sheet-revision]')) { slipSheetSelectedRevision(); return; }
@@ -2410,6 +2459,7 @@ loadScaleCalibrationForSelectedSheet();
 searchOcrSymbolIndex();
 loadAutoLinkRuns();
 loadDocumentMetadataRegistry();
+loadDrawingIndexQaReports();
 loadDrawingSetHistory();
 loadDrawingApprovalPackages();
 loadToolLibraryItems();
