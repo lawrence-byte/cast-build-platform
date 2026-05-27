@@ -58,7 +58,14 @@ function getState() { return memoryState; }
 function resetState(seed) { memoryState = seed ? clone(seed) : DEFAULT_STATE(); return memoryState; }
 function json(res, status, body, headers = {}) {
   res.statusCode = status;
-  Object.entries({ 'content-type': 'application/json; charset=utf-8', ...headers }).forEach(([k, v]) => res.setHeader(k, v));
+  Object.entries({
+    'content-type': 'application/json; charset=utf-8',
+    'cache-control': 'private, max-age=0, no-store',
+    pragma: 'no-cache',
+    expires: '0',
+    'x-cast-cad-private-contract': 'requires-auth; no-public-cache; no-public-links',
+    ...headers,
+  }).forEach(([k, v]) => res.setHeader(k, v));
   res.end(JSON.stringify(body, null, 2));
 }
 function readBody(req) {
