@@ -35,6 +35,12 @@ assert.deepEqual(rendererSession.requiredEnvVars, ['CAST_CAD_PDF_RENDERER_WORKER
 assert.equal(cad.listPdfRendererSessions(state, { projectId: 'alum', sheetId: 'A-101' }).length, 1, 'PDF renderer sessions list by project/sheet');
 assert.ok(cad.pdfRendererContract().outputs.includes('viewport-matrices'), 'PDF renderer contract includes viewport matrices needed by coordinate mapping');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_PDF_RENDERER_SESSION'), 'PDF renderer session attempts are audited');
+const jsonHeaders = {};
+cad.json({ setHeader: (key, value) => { jsonHeaders[key.toLowerCase()] = value; }, end: (body) => { jsonHeaders.body = body; } }, 200, { ok: true });
+assert.equal(jsonHeaders['cache-control'], 'private, max-age=0, no-store', 'CAST CAD API JSON defaults to private no-store responses');
+assert.equal(jsonHeaders.pragma, 'no-cache', 'CAST CAD API JSON emits legacy no-cache guard');
+assert.equal(jsonHeaders.expires, '0', 'CAST CAD API JSON emits immediate expiry guard');
+assert.equal(jsonHeaders['x-cast-cad-private-contract'], 'requires-auth; no-public-cache; no-public-links', 'CAST CAD API JSON exposes private/no-public contract header');
 const previousPdfRequireAuth = process.env.CAST_CAD_REQUIRE_AUTH;
 process.env.CAST_CAD_REQUIRE_AUTH = 'true';
 const unauthenticatedPdfLease = cad.createPdfStreamLease(state, { projectId: 'alum', sheet: { path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', extension: 'pdf' } }, { id: 'anon', role: 'Read Only Viewer', authenticated: false });
