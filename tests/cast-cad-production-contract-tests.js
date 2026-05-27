@@ -126,6 +126,14 @@ assert.equal(blockedDurableAttachment.code, 'provider-required', 'durable attach
 assert.equal(cad.listMarkupAttachments(state, { markupId: markup.markup.id }).length, 1, 'attachment list filters by markup');
 assert.ok(cad.listMarkupAudit(state, markup.markup.id).some((row) => row.entityType === 'CAST_CAD_ATTACHMENT'), 'markup audit history includes attachment manifests');
 
+const readiness = cad.castCadProductionReadiness();
+assert.equal(readiness.ok, true, 'CAST CAD production readiness contract is available');
+assert.equal(readiness.contract.secretValuesExposed, false, 'production readiness never exposes secret values');
+assert.equal(readiness.contract.failClosedUntilProvidersConfigured, true, 'production readiness documents fail-closed provider gates');
+assert.ok(readiness.gates.some((gate) => gate.id === 'private-pdf-stream' && gate.requiredEnvVars.includes('CAST_CAD_PDF_STREAM_BASE|DROPBOX_ACCESS_TOKEN|CAST_SERVER_DOCUMENT_API_URL')), 'production readiness names exact PDF stream provider choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'markup-database' && gate.requiredEnvVars.includes('CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact markup database choices');
+assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
+
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
 assert.equal(workbook.ok, true, 'takeoff workbook export job created');
 assert.equal(workbook.exportJob.status, 'provider-required', 'takeoff workbook fails closed until the XLSX worker is configured');
@@ -628,6 +636,14 @@ assert.ok(castCadJs.includes('No local role, permission, or audit authority was 
 assert.ok(castCadHtml.includes('data-assign-governance-role'), 'CAST CAD workbench exposes audited role assignment controls');
 assert.ok(castCadHtml.includes('data-governance-permissions'), 'CAST CAD workbench exposes effective permission status');
 assert.ok(castCadHtml.includes('data-governance-audit'), 'CAST CAD workbench exposes governance audit status');
+assert.ok(castCadJs.includes('function loadProductionReadiness'), 'CAST CAD workbench loads production provider readiness');
+assert.ok(castCadJs.includes("action=production-readiness"), 'CAST CAD workbench calls production readiness backend contract');
+assert.ok(castCadJs.includes('No provider success state was fabricated'), 'CAST CAD production readiness fails closed without fabricating provider state');
+assert.ok(castCadHtml.includes('data-production-readiness-list'), 'CAST CAD workbench exposes provider readiness gates');
+assert.ok(castCadHtml.includes('data-refresh-production-readiness'), 'CAST CAD workbench exposes provider readiness refresh control');
+assert.ok(castCadJs.includes('Secret values are never exposed'), 'CAST CAD readiness UI does not expose provider secrets');
+assert.ok(castCadJs.includes('CAST_CAD_MARKUP_DATABASE_ADAPTER'), 'CAST CAD readiness UI names markup database blocker');
+assert.ok(castCadJs.includes('CAST_CAD_DATABASE_URL'), 'CAST CAD readiness UI names database URL blocker');
 assert.ok(castCadJs.includes('function saveScaleCalibrationToBackend'), 'CAST CAD workbench saves scale calibrations through backend audit contract');
 assert.ok(castCadJs.includes("action: 'scale-calibration'"), 'CAST CAD workbench calls scale calibration backend contract');
 assert.ok(castCadJs.includes('No authoritative quantity scale was fabricated'), 'CAST CAD scale calibration fails closed without fabricating authoritative quantities');

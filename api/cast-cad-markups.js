@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, requireAuthenticatedActor, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, requireAuthenticatedActor, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, markupsCsv, createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract, upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata, createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup, upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract, buildPermissionMatrix, upsertProjectMemberRole, listProjectMembers, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState();
@@ -10,6 +10,9 @@ module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
       const url = new URL(req.url, 'http://localhost');
       const action = url.searchParams.get('action');
+      if (action === 'production-readiness' || action === 'provider-readiness') {
+        return json(res, 200, castCadProductionReadiness());
+      }
       if (action === 'comments') {
         const markupId = url.searchParams.get('markupId') || url.searchParams.get('id');
         const comments = listMarkupComments(state, markupId);
