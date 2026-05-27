@@ -165,6 +165,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'workflow-provider' && gate
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-approval-store' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_APPROVAL_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing approval durable store choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-index-qa-store' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing QA durable store choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing issue package storage and delivery choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing bulletin storage and delivery choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
@@ -403,6 +404,25 @@ assert.deepEqual(issuePackage.requiredEnvVars, ['CAST_CAD_DRAWING_ISSUE_PACKAGE_
 assert.equal(cad.listDrawingIssuePackages(state, { projectId: 'alum', setId: 'permit' }).length, 1, 'drawing issue packages list by project/set');
 assert.equal(cad.drawingIssuePackageContract().issueForConstructionRequiresHumanReview, true, 'drawing issue package contract keeps IFC releases human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_ISSUE_PACKAGE'), 'drawing issue packages are audited');
+const uncitedBulletin = cad.createDrawingBulletin(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], changeItems: [{ sheetId: 'A-901', title: 'Clouded door revision' }] }, owner);
+assert.equal(uncitedBulletin.ok, false, 'drawing bulletins fail closed when change items lack source citations');
+assert.ok(uncitedBulletin.errors.some((error) => error.includes('sourceMarkupIds or sourceRevisionIds')), 'drawing bulletin citation blocker is explicit');
+const draftBulletin = cad.createDrawingBulletin(state, { projectId: 'alum', setId: 'permit', bulletinNumber: 'ASI-001', title: 'Door hardware clarification', sheetIds: ['A-901'], changeItems: [{ sheetId: 'A-901', title: 'Hardware note revised', summary: 'Coordinate with spec 08 7100.', sourceMarkupIds: [markup.markup.id], costImpact: 'possible' }] }, owner);
+assert.equal(draftBulletin.ok, true, 'drawing bulletin draft change manifest records provider-independently');
+assert.equal(draftBulletin.bulletin.publicExposure, false, 'drawing bulletin draft forbids public exposure');
+assert.equal(draftBulletin.bulletin.noPublicLinks, true, 'drawing bulletin draft refuses public links');
+assert.equal(draftBulletin.bulletin.status, 'draft-review-recorded', 'drawing bulletin draft does not claim delivery');
+const blockedBulletinReview = cad.createDrawingBulletin(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], publishRequested: true, changeItems: [{ sheetId: 'A-901', title: 'Publish hardware clarification', sourceMarkupIds: [markup.markup.id] }] }, owner);
+assert.equal(blockedBulletinReview.ok, false, 'published drawing bulletins fail closed without human review');
+assert.equal(blockedBulletinReview.code, 'human-review-required', 'drawing bulletin publish exposes human-review gate');
+const blockedBulletinProviders = cad.createDrawingBulletin(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], publishRequested: true, humanReviewApproved: true, recipients: [{ email: 'gc@example.com', role: 'General Contractor' }], changeItems: [{ sheetId: 'A-901', title: 'Publish hardware clarification', sourceMarkupIds: [markup.markup.id] }] }, owner);
+assert.equal(blockedBulletinProviders.ok, false, 'published drawing bulletins fail closed without storage/transport providers');
+assert.equal(blockedBulletinProviders.code, 'provider-required', 'drawing bulletin publish exposes provider-required blocker');
+assert.deepEqual(blockedBulletinProviders.requiredEnvVars, ['CAST_CAD_DRAWING_BULLETIN_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'drawing bulletin names exact storage and delivery env choices');
+assert.equal(blockedBulletinProviders.bulletin.outputPointer, '', 'drawing bulletin does not fabricate private output pointers');
+assert.equal(cad.listDrawingBulletins(state, { projectId: 'alum', setId: 'permit', sheetId: 'A-901' }).length, 2, 'drawing bulletins list by project/set/sheet');
+assert.equal(cad.drawingBulletinContract().publishRequiresHumanReview, true, 'drawing bulletin contract keeps publishing human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_BULLETIN'), 'drawing bulletins are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
 assert.equal(publicModelImport.code, 'public-url-forbidden', 'model/CAD ingestion exposes public URL blocker');

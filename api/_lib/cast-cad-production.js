@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2304,6 +2304,102 @@ function listDrawingIssuePackages(state, filters = {}) {
   if (filters.issueFor) rows = rows.filter((row) => row.issueFor === filters.issueFor);
   return rows;
 }
+function drawingBulletinContract() {
+  return {
+    type: 'drawing-bulletin',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    sourceCitationsRequired: ['sheetIds', 'changeItems.sourceMarkupIds or changeItems.sourceRevisionIds'],
+    publishRequiresHumanReview: true,
+    durableAdapterRequired: 'CAST_CAD_DRAWING_BULLETIN_ADAPTER or CAST_CAD_DATABASE_URL',
+    deliveryTransportRequired: 'CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL',
+    failClosedBehavior: 'Records private addendum/bulletin change manifests but refuses to publish, deliver, expose public links, or claim durable release authority without human approval and configured private providers.',
+  };
+}
+function drawingBulletinStoreConfigured() { return Boolean(process.env.CAST_CAD_DRAWING_BULLETIN_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function normalizeBulletinChangeItems(input = {}) {
+  const items = Array.isArray(input.changeItems || input.change_items) ? (input.changeItems || input.change_items) : [];
+  return items.map((item, index) => ({
+    id: item.id || id('cad_bulletin_item'),
+    sequence: Number(item.sequence || index + 1),
+    sheetId: String(item.sheetId || item.sheet_id || '').trim(),
+    title: String(item.title || item.subject || `Change item ${index + 1}`).trim(),
+    summary: String(item.summary || item.body || '').trim(),
+    sourceMarkupIds: Array.isArray(item.sourceMarkupIds || item.source_markup_ids) ? (item.sourceMarkupIds || item.source_markup_ids).map(String).filter(Boolean) : [],
+    sourceRevisionIds: Array.isArray(item.sourceRevisionIds || item.source_revision_ids) ? (item.sourceRevisionIds || item.source_revision_ids).map(String).filter(Boolean) : [],
+    costImpact: item.costImpact || item.cost_impact || 'unknown',
+    scheduleImpact: item.scheduleImpact || item.schedule_impact || 'unknown',
+    humanReviewStatus: item.humanReviewStatus || item.human_review_status || 'Needs Review',
+  })).filter((item) => item.sheetId && item.title);
+}
+function createDrawingBulletin(state, input = {}, actor) {
+  state.drawingBulletins ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const sheetIds = Array.isArray(input.sheetIds || input.sheet_ids) ? (input.sheetIds || input.sheet_ids).map(String).filter(Boolean) : [];
+  const changeItems = normalizeBulletinChangeItems(input);
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!sheetIds.length) errors.push('At least one sheetId is required for a drawing bulletin.');
+  if (!changeItems.length) errors.push('At least one cited change item is required for a drawing bulletin.');
+  const uncited = changeItems.filter((item) => !item.sourceMarkupIds.length && !item.sourceRevisionIds.length);
+  if (uncited.length) errors.push('Each drawing bulletin change item requires sourceMarkupIds or sourceRevisionIds citations.');
+  if (errors.length) return { ok: false, status: 422, errors, contract: drawingBulletinContract() };
+  const publishRequested = Boolean(input.publishRequested || input.publish_requested || input.deliverNow || input.deliver_now || input.issueForConstruction || input.issue_for_construction);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (publishRequested && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Published/delivered drawing bulletins require explicit human review approval before release.', contract: drawingBulletinContract() };
+  const durableReady = drawingBulletinStoreConfigured();
+  const transportReady = transmittalTransportConfigured();
+  const providerRequired = publishRequested && !(durableReady && transportReady);
+  const bulletin = {
+    id: input.id || id('cad_drawing_bulletin'),
+    type: 'drawing-bulletin',
+    projectId,
+    setId: input.setId || input.set_id || 'current',
+    bulletinNumber: input.bulletinNumber || input.bulletin_number || input.number || '',
+    title: input.title || input.name || 'CAST CAD Drawing Bulletin',
+    status: publishRequested ? (providerRequired ? 'provider-required' : 'queued-for-private-delivery') : 'draft-review-recorded',
+    publishRequested,
+    providerRequired,
+    durablePersistence: durableReady,
+    deliveryTransportReady: transportReady,
+    requiredEnvVars: publishRequested ? [
+      ...(!durableReady ? ['CAST_CAD_DRAWING_BULLETIN_ADAPTER or CAST_CAD_DATABASE_URL'] : []),
+      ...(!transportReady ? ['CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'] : []),
+    ] : [],
+    sheetIds,
+    changeItems,
+    sourceMarkupIds: [...new Set(changeItems.flatMap((item) => item.sourceMarkupIds))],
+    sourceRevisionIds: [...new Set(changeItems.flatMap((item) => item.sourceRevisionIds))],
+    recipientManifest: Array.isArray(input.recipients) ? input.recipients.map((row) => ({ email: String(row.email || '').trim().toLowerCase(), role: row.role || 'Recipient' })).filter((row) => row.email) : [],
+    publicExposure: false,
+    noPublicLinks: true,
+    outputPointer: '',
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    humanReviewApproved,
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.drawingBulletins.push(bulletin);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD drawing bulletin pending private providers' : 'Created CAST CAD drawing bulletin change manifest', 'CAST_CAD_DRAWING_BULLETIN', bulletin.id, null, bulletin, providerRequired ? 'No public bulletin link, deliverable, or durable release authority was fabricated.' : 'Provider-independent bulletin manifest recorded; published delivery remains private and audited.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD drawing bulletin publishing requires durable bulletin storage plus private transmittal transport; refusing to fabricate public links or delivered addenda.', requiredEnvVars: bulletin.requiredEnvVars, bulletin, contract: drawingBulletinContract() };
+  return { ok: true, status: publishRequested ? 202 : 201, bulletin, contract: drawingBulletinContract() };
+}
+function listDrawingBulletins(state, filters = {}) {
+  state.drawingBulletins ||= [];
+  let rows = state.drawingBulletins.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetIds.includes(filters.sheetId));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2412,6 +2508,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-approval-store', label: 'Durable drawing approval package store', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_APPROVAL_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the private approval/database adapter before drawing approval packages are durable or cited for issue-for-construction release.', ready: envChoiceReady(['CAST_CAD_DRAWING_APPROVAL_ADAPTER|CAST_CAD_DATABASE_URL']) },
     { id: 'drawing-index-qa-store', label: 'Durable drawing index QA report store', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the QA/document metadata/database adapter before drawing index QA reports are durable current-set quality records.', ready: envChoiceReady(['CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL']) },
     { id: 'drawing-issue-package-release', label: 'Private drawing issue package/release manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private release-manifest storage plus transmittal/email/workflow transport before issue packages are published or delivered.', ready: drawingIssuePackageStoreConfigured() && transmittalTransportConfigured() },
+    { id: 'drawing-bulletin-release', label: 'Private addendum/bulletin change manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private bulletin storage plus transmittal/email/workflow transport before addenda/bulletins are published or delivered.', ready: drawingBulletinStoreConfigured() && transmittalTransportConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
   const readyCount = gates.filter((gate) => gate.ready).length;
   const blocked = gates.filter((gate) => !gate.ready);
@@ -2441,7 +2538,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };
