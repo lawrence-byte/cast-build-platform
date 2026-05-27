@@ -71,6 +71,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent production readiness blocker coverage expanded to include attachment evidence storage, durable scale calibration storage, PDF annotation import workers, external workflow provider write-back, drawing approval storage, and drawing-index QA storage so the workbench and API enumerate every remaining provider decision without exposing secret values or fabricating readiness.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
+- Provider-independent tablet/offline field package storage hardening: field package creation now records an audited no-store contract but marks package artifacts `provider-required`, refuses to fabricate offline package download pointers/public links until `CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER`, `CAST_CAD_DOCUMENT_STORAGE_ADAPTER`, or `CAST_CAD_DATABASE_URL` is configured, exposes the blocker in production readiness, and the frontend fails closed instead of creating local-only package/sync artifacts when backend audit is unavailable.
 
 Provider-dependent jobs now fail closed with explicit `provider-required` / `503` states instead of pretending private infrastructure is configured. To make the provider-dependent pieces fully operational, production still needs the private runtime credentials/workers listed below.
 
@@ -124,7 +125,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Review Rooms and Project Rooms
 - CAST CAD AI Review agents
 - Batch tools (provider-independent batch operation API/service contract and static workbench bulk-selection workflow implemented for scoped status/assignee/layer/review/stamp updates; production storage adapter remains)
-- Mobile/tablet field mode (provider-independent offline package/sync API/service contract, static workbench controls, and public-shell-only service worker implemented; production storage adapter and private provider-backed package storage remain)
+- Mobile/tablet field mode (provider-independent offline package/sync API/service contract, static workbench controls, public-shell-only service worker, and fail-closed private package storage contract implemented; production storage adapter/private package artifact generation remains blocked until `CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER`, `CAST_CAD_DOCUMENT_STORAGE_ADAPTER`, or `CAST_CAD_DATABASE_URL` is configured)
 - Admin, roles, permissions, governance, and audit logs (provider-independent API/service contract implemented; production auth/session provider and database adapter remain)
 - Integrations: Dropbox, Google Drive, SharePoint, Procore-style workflows, Yardi, and future Autodesk/Revit/AutoCAD/IFC/DWG/Speckle connectors
 - 3D model ingestion and preview strategy via IFC/xeokit/IFC.js/Three.js in later phases (provider-independent private ingestion job contract and workbench bridge now implemented; conversion/viewer workers remain provider/integration-dependent).
@@ -168,8 +169,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-27T11:57:56Z` for the CAST CAD private CSV/report response envelope slice.
-- Branch audited: `cast-cad-private-csv-envelope`.
+- Audited at: `2026-05-27T18:30:11Z` for the CAST CAD tablet/offline field package storage hardening slice.
+- Branch audited: `cast-cad-field-package-storage-contract`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

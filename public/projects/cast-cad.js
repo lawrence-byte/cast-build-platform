@@ -2170,12 +2170,14 @@ async function createFieldPackageForSelectedSheet() {
     const result = await response.json().catch(() => null);
     if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
     const fieldPackage = result.fieldPackage || result.package || {};
-    fieldPackageState = { packageId: fieldPackage.id || '', deviceId: payload.deviceId, sheetIds: payload.sheetIds, status: 'ready', message: `Private no-store package ready with ${fieldPackage.markupCount ?? visibleMarkups().length} markup(s); sync endpoint remains /api/cast-cad-exports type=field-sync.` };
-    window.CASTShell?.toast?.('CAST CAD field package created for tablet/offline review.', { kind: 'success' });
+    const required = (fieldPackage.requiredEnvVars || result.requiredEnvVars || ['CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_CAD_DATABASE_URL']).join(', ');
+    const providerRequired = Boolean(fieldPackage.providerRequired);
+    fieldPackageState = { packageId: fieldPackage.id || '', deviceId: payload.deviceId, sheetIds: payload.sheetIds, status: fieldPackage.status || (providerRequired ? 'provider-required' : 'queued'), message: providerRequired ? `Field package audit recorded, but private offline package bytes are blocked until ${required} is configured. No public package link was fabricated; sync endpoint remains /api/cast-cad-exports type=field-sync.` : `Private no-store package queued with ${fieldPackage.markupCount ?? visibleMarkups().length} markup(s); sync endpoint remains /api/cast-cad-exports type=field-sync.` };
+    window.CASTShell?.toast?.(fieldPackageState.message, { kind: providerRequired ? 'info' : 'success' });
   } catch (error) {
-    console.warn('CAST CAD field package API unavailable; using local package preview only.', error);
-    fieldPackageState = { packageId: `local-field-package-${Date.now()}`, deviceId: payload.deviceId, sheetIds: payload.sheetIds, status: 'local-only', message: 'Local field package preview only; backend package/audit API is unavailable.' };
-    window.CASTShell?.toast?.('Field package preview saved locally; backend package API is unavailable.', { kind: 'info' });
+    console.warn('CAST CAD field package API unavailable; failing closed without a local package artifact.', error);
+    fieldPackageState = { packageId: '', deviceId: payload.deviceId, sheetIds: payload.sheetIds, status: 'blocked', message: 'Backend field package/audit API is unavailable; no local offline package artifact or public package link was fabricated.' };
+    window.CASTShell?.toast?.('Field package API unavailable; no local offline package was fabricated.', { kind: 'error' });
   }
   renderFieldModeStatus();
 }
@@ -2222,13 +2224,10 @@ async function syncFieldModeDelta({ verify = false } = {}) {
     window.CASTShell?.toast?.('Field sync applied through the audited backend contract.', { kind: 'success' });
     render();
   } catch (error) {
-    console.warn('CAST CAD field sync API unavailable; fail closed for sensitive deltas.', error);
-    if (sensitive) { fieldPackageState.message = 'Backend field-sync audit unavailable; sensitive verification/resolution was not applied.'; window.CASTShell?.toast?.('Backend field-sync audit is unavailable; verification was not applied.', { kind: 'error' }); renderFieldModeStatus(); return; }
-    applyLocalFieldSync(payload);
-    save();
-    fieldPackageState.message = 'Field note saved locally; backend field-sync audit API is unavailable.';
-    window.CASTShell?.toast?.('Field note saved locally; backend field-sync audit API is unavailable.', { kind: 'info' });
-    render();
+    console.warn('CAST CAD field sync API unavailable; failing closed without local field mutations.', error);
+    fieldPackageState.message = sensitive ? 'Backend field-sync audit unavailable; sensitive verification/resolution was not applied.' : 'Backend field-sync audit unavailable; no local-only field note was fabricated.';
+    window.CASTShell?.toast?.(fieldPackageState.message, { kind: 'error' });
+    renderFieldModeStatus();
   }
 }
 function exportJobPayload(type) {

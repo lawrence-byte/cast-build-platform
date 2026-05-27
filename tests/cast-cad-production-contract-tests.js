@@ -157,6 +157,7 @@ assert.equal(readiness.contract.failClosedUntilProvidersConfigured, true, 'produ
 assert.ok(readiness.gates.some((gate) => gate.id === 'private-pdf-stream' && gate.requiredEnvVars.includes('CAST_CAD_PDF_STREAM_BASE|DROPBOX_ACCESS_TOKEN|CAST_SERVER_DOCUMENT_API_URL')), 'production readiness names exact PDF stream provider choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'markup-database' && gate.requiredEnvVars.includes('CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact markup database choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'private-upload-leases' && gate.requiredEnvVars.includes('CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_ATTACHMENT_STORAGE_ADAPTER|CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER')), 'production readiness names exact private upload lease provider choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'field-package-storage' && gate.requiredEnvVars.includes('CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact field package storage blocker');
 assert.ok(readiness.gates.some((gate) => gate.id === 'attachment-storage' && gate.requiredEnvVars.includes('CAST_CAD_ATTACHMENT_STORAGE_ADAPTER')), 'production readiness names exact private attachment storage blocker');
 assert.ok(readiness.gates.some((gate) => gate.id === 'scale-calibration-store' && gate.requiredEnvVars.includes('CAST_CAD_SCALE_CALIBRATION_ADAPTER|CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact scale calibration storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'pdf-annotation-import-worker' && gate.requiredEnvVars.includes('CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER|CAST_CAD_PDF_EXPORT_WORKER')), 'production readiness names exact PDF annotation import worker choices');
@@ -432,6 +433,11 @@ const fieldPackage = cad.createFieldPackage(state, { projectId: 'alum', sheetIds
 assert.equal(fieldPackage.ok, true, 'read-only field users can receive an offline field package');
 assert.equal(fieldPackage.fieldPackage.publicExposure, false, 'field package contract forbids public exposure');
 assert.equal(fieldPackage.fieldPackage.requiresAuth, true, 'field package remains authenticated/private');
+assert.equal(fieldPackage.fieldPackage.status, 'provider-required', 'field package artifact generation fails closed until private package storage is configured');
+assert.equal(fieldPackage.fieldPackage.providerRequired, true, 'field package names the missing private storage provider without faking package bytes');
+assert.equal(fieldPackage.fieldPackage.outputPointer, '', 'field package does not fabricate an offline package download pointer');
+assert.deepEqual(fieldPackage.fieldPackage.requiredEnvVars, ['CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_CAD_DATABASE_URL'], 'field package names exact private package storage choices');
+assert.equal(cad.fieldPackageContract().sheetStreamsRemainNetworkOnly, true, 'field package contract keeps private sheets network-only/no-store');
 assert.equal(fieldPackage.fieldPackage.package.markups.length >= 2, true, 'field package includes scoped markups for selected sheets');
 assert.equal(fieldPackage.fieldPackage.syncContract.type, 'field-sync', 'field package advertises sync contract');
 const blockedFieldSync = cad.syncFieldPackageDeltas(state, { projectId: 'alum', packageId: fieldPackage.fieldPackage.id, deltas: [{ operation: 'update-markup', markupId: markup.markup.id, patch: { status: 'Verified' } }] }, owner);
