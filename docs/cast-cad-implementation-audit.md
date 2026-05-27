@@ -72,6 +72,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 - Provider-independent tablet/offline field package storage hardening: field package creation now records an audited no-store contract but marks package artifacts `provider-required`, refuses to fabricate offline package download pointers/public links until `CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER`, `CAST_CAD_DOCUMENT_STORAGE_ADAPTER`, or `CAST_CAD_DATABASE_URL` is configured, exposes the blocker in production readiness, and the frontend fails closed instead of creating local-only package/sync artifacts when backend audit is unavailable.
+- Provider-independent drawing issue package/release manifest contract for IFC/review releases that cites approval packages and drawing-index QA preflight, keeps issue-for-construction human-review gated, forbids public release links/output pointers, audits release attempts, exposes exact durable storage plus private delivery transport blockers, and fails closed until `CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER` or `CAST_CAD_DATABASE_URL` plus `CAST_CAD_TRANSMITTAL_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_SERVER_WORKFLOW_API_URL` are configured: `/api/cast-cad-exports` with `type=drawing-issue-package`.
 
 Provider-dependent jobs now fail closed with explicit `provider-required` / `503` states instead of pretending private infrastructure is configured. To make the provider-dependent pieces fully operational, production still needs the private runtime credentials/workers listed below.
 
@@ -136,6 +137,7 @@ Provider-dependent jobs now fail closed with explicit `provider-required` / `503
 - Drawing transmittal/release: provider-independent audited transmittal records and frontend controls are implemented with no public sheet links; delivery remains blocked until a private transmittal/email/workflow transport is configured.
 - Drawing approval package/release gate: provider-independent named-reviewer approval packages and reviewer approve/reject/revise decision events are implemented with private/no-public-link records; issue-for-construction release is gated on all named reviewer approvals plus explicit human review, and durable approval storage remains blocked until `CAST_CAD_DRAWING_APPROVAL_ADAPTER` or `CAST_CAD_DATABASE_URL` is configured.
 - Drawing index QA/current-set quality gates: provider-independent audited private QA reports now check missing drawing numbers/titles/disciplines, duplicate drawing numbers, public URL exposure, non-PDF entries, and unreviewed current-set publish attempts; durable QA report storage remains blocked until `CAST_CAD_DRAWING_QA_ADAPTER`, `CAST_CAD_DOCUMENT_METADATA_ADAPTER`, or `CAST_CAD_DATABASE_URL` is configured.
+- Drawing issue package/release manifest: provider-independent audited private release manifest now cites approval/QA preflight records, requires human review for issue-for-construction, forbids public links/output pointers, and fails closed until durable release storage plus private delivery transport are configured.
 - Create/edit/save/reload/filter/export/delete markups: server contract implemented with audit, CSV, advanced filter dimensions, private saved markup filter/report views, audited soft-delete, default deleted-row filtering, and fail-closed hard-delete review gates; production database adapter remains to be connected.
 - Attach private field/photo/PDF evidence to markups/comments: audited provider-independent manifest contract and frontend bridge implemented; durable private byte storage remains blocked until `CAST_CAD_ATTACHMENT_STORAGE_ADAPTER` is configured.
 - Comment @mention notification delivery: audited provider-independent delivery event contract implemented; email/realtime dispatch remains blocked until `CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT`, `CAST_CAD_EMAIL_PROVIDER`, or `CAST_CAD_REALTIME_PROVIDER` is configured.
@@ -169,8 +171,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-27T18:30:11Z` for the CAST CAD tablet/offline field package storage hardening slice.
-- Branch audited: `cast-cad-field-package-storage-contract`.
+- Audited at: `2026-05-27T20:36:46Z` for the CAST CAD drawing issue package/release manifest slice.
+- Branch audited: `cast-cad-drawing-issue-package-contract`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
