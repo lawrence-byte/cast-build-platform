@@ -164,6 +164,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'pdf-annotation-import-work
 assert.ok(readiness.gates.some((gate) => gate.id === 'workflow-provider' && gate.requiredEnvVars.includes('CAST_CAD_WORKFLOW_PROVIDER|PROCORE_CLIENT_ID|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact workflow provider choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-approval-store' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_APPROVAL_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing approval durable store choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-index-qa-store' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing QA durable store choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing issue package storage and delivery choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
@@ -384,6 +385,24 @@ assert.ok(drawingIndexQa.report.findings.some((row) => row.code === 'unreviewed-
 assert.equal(cad.listDrawingIndexQaReports(state, { projectId: 'alum', setId: 'permit' }).length, 1, 'drawing index QA reports list by project/set');
 assert.ok(cad.drawingIndexQaContract().checks.includes('duplicate-drawing-number'), 'drawing index QA contract documents duplicate sheet-number checks');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_INDEX_QA'), 'drawing index QA reports are audited');
+const cleanDrawingIndexQa = cad.runDrawingIndexQa(state, { projectId: 'alum', setId: 'permit', publishAsCurrent: true, humanReviewApproved: true, sheets: [
+  { sheetId: 'A-901', drawingNumber: 'A-901', drawingTitle: 'Permit Plan', discipline: 'A', sourcePath: 'Current Drawings/A/A-901.pdf', fileName: 'A-901.pdf', extension: 'pdf' },
+] }, owner);
+assert.equal(cleanDrawingIndexQa.ok, true, 'clean drawing index QA report records provider-independent release preflight');
+assert.equal(cleanDrawingIndexQa.report.criticalCount, 0, 'clean drawing index QA has no critical blockers');
+const blockedIfcIssuePackage = cad.createDrawingIssuePackage(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], issueFor: 'issue-for-construction', approvalPackageId: approvalPackage.approvalPackage.id, qaReportId: cleanDrawingIndexQa.report.id }, owner);
+assert.equal(blockedIfcIssuePackage.ok, false, 'IFC drawing issue packages fail closed without explicit human review');
+assert.equal(blockedIfcIssuePackage.code, 'human-review-required', 'drawing issue package exposes human-review release gate');
+const issuePackage = cad.createDrawingIssuePackage(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], issueFor: 'issue-for-construction', approvalPackageId: approvalPackage.approvalPackage.id, qaReportId: cleanDrawingIndexQa.report.id, revisionLabel: 'Permit Release 01', humanReviewApproved: true }, owner);
+assert.equal(issuePackage.ok, false, 'drawing issue package release fails closed without storage/transport providers');
+assert.equal(issuePackage.code, 'provider-required', 'drawing issue package exposes provider-required blocker');
+assert.equal(issuePackage.issuePackage.publicExposure, false, 'drawing issue package forbids public exposure');
+assert.equal(issuePackage.issuePackage.noPublicLinks, true, 'drawing issue package refuses public release links');
+assert.equal(issuePackage.issuePackage.outputPointer, '', 'drawing issue package does not fabricate private package output pointers');
+assert.deepEqual(issuePackage.requiredEnvVars, ['CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'drawing issue package names exact storage and delivery env choices');
+assert.equal(cad.listDrawingIssuePackages(state, { projectId: 'alum', setId: 'permit' }).length, 1, 'drawing issue packages list by project/set');
+assert.equal(cad.drawingIssuePackageContract().issueForConstructionRequiresHumanReview, true, 'drawing issue package contract keeps IFC releases human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_ISSUE_PACKAGE'), 'drawing issue packages are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
 assert.equal(publicModelImport.code, 'public-url-forbidden', 'model/CAD ingestion exposes public URL blocker');
