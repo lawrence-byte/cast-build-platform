@@ -41,6 +41,13 @@ assert.equal(jsonHeaders['cache-control'], 'private, max-age=0, no-store', 'CAST
 assert.equal(jsonHeaders.pragma, 'no-cache', 'CAST CAD API JSON emits legacy no-cache guard');
 assert.equal(jsonHeaders.expires, '0', 'CAST CAD API JSON emits immediate expiry guard');
 assert.equal(jsonHeaders['x-cast-cad-private-contract'], 'requires-auth; no-public-cache; no-public-links', 'CAST CAD API JSON exposes private/no-public contract header');
+const csvHeaders = {};
+cad.privateCsv({ setHeader: (key, value) => { csvHeaders[key.toLowerCase()] = value; }, end: (body) => { csvHeaders.body = body; } }, 200, 'id\nprivate-markup');
+assert.equal(csvHeaders['content-type'], 'text/csv; charset=utf-8', 'CAST CAD private CSV emits CSV content type');
+assert.equal(csvHeaders['cache-control'], 'private, max-age=0, no-store', 'CAST CAD private CSV/report exports are no-store');
+assert.equal(csvHeaders.pragma, 'no-cache', 'CAST CAD private CSV emits no-cache pragma');
+assert.equal(csvHeaders['x-cast-cad-private-contract'], 'requires-auth; no-public-cache; no-public-links', 'CAST CAD private CSV exposes private/no-public contract header');
+assert.ok(csvHeaders['content-disposition'].includes('cast-cad-private-report.csv'), 'CAST CAD private CSV defaults to attachment disposition');
 const previousPdfRequireAuth = process.env.CAST_CAD_REQUIRE_AUTH;
 process.env.CAST_CAD_REQUIRE_AUTH = 'true';
 const unauthenticatedPdfLease = cad.createPdfStreamLease(state, { projectId: 'alum', sheet: { path: 'Current Drawings/A/A-101.pdf', name: 'A-101.pdf', extension: 'pdf' } }, { id: 'anon', role: 'Read Only Viewer', authenticated: false });
