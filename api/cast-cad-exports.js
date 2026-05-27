@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, requireAuthenticatedActor, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, createPrivateUploadLease, listPrivateUploadLeases, privateUploadLeaseContract, buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, createBatchOperation, listBatchOperations, createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createFieldPackage, syncFieldPackageDeltas, listFieldPackages } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, requireAuthenticatedActor, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, createPrivateUploadLease, listPrivateUploadLeases, privateUploadLeaseContract, buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, createBatchOperation, listBatchOperations, createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createFieldPackage, syncFieldPackageDeltas, listFieldPackages, fieldPackageContract } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState(); const actor = getActor(req);
@@ -42,7 +42,7 @@ module.exports = async function handler(req, res) {
       }
       if (url.searchParams.get('type') === 'field-package' || url.searchParams.get('type') === 'field-packages' || url.searchParams.get('type') === 'field-sync') {
         const rows = listFieldPackages(state, { projectId: url.searchParams.get('projectId'), deviceId: url.searchParams.get('deviceId'), packageId: url.searchParams.get('packageId') });
-        return json(res, 200, { ok: true, packageCount: rows.packages.length, syncEventCount: rows.syncEvents.length, ...rows });
+        return json(res, 200, { ok: true, packageCount: rows.packages.length, syncEventCount: rows.syncEvents.length, contract: fieldPackageContract(), ...rows });
       }
       if (url.searchParams.get('type') === 'pdf-renderer-session' || url.searchParams.get('type') === 'pdf-renderer-sessions' || url.searchParams.get('type') === 'pdf-renderer') {
         const rows = listPdfRendererSessions(state, { projectId: url.searchParams.get('projectId'), sheetId: url.searchParams.get('sheetId'), status: url.searchParams.get('status') });

@@ -1707,8 +1707,28 @@ function listBatchOperations(state, filters = {}) {
   if (filters.operation) rows = rows.filter((row) => row.operation === filters.operation);
   return rows;
 }
+function fieldPackageStorageConfigured() {
+  return Boolean(process.env.CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER || process.env.CAST_CAD_DOCUMENT_STORAGE_ADAPTER || process.env.CAST_CAD_DATABASE_URL);
+}
+function fieldPackageContract() {
+  return {
+    endpoint: '/api/cast-cad-exports',
+    type: 'field-package',
+    privateArtifacts: true,
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    packageStorageRequired: 'CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_CAD_DATABASE_URL',
+    noPrivateBytesInPublicCache: true,
+    sheetStreamsRemainNetworkOnly: true,
+    syncContract: { endpoint: '/api/cast-cad-exports', type: 'field-sync', conflictPolicy: 'server-audited-human-review' },
+  };
+}
 function createFieldPackage(state, input = {}, actor) {
   state.fieldPackages ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
   const permission = requireCastCad(actor.role, 'view');
   if (!permission.ok) return permission;
   const projectId = input.projectId || input.project_id;
@@ -1716,6 +1736,7 @@ function createFieldPackage(state, input = {}, actor) {
   if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'] };
   if (!sheetIds.length) return { ok: false, status: 422, errors: ['At least one sheetId is required for a field package.'] };
   const expiresInHours = Math.max(1, Math.min(168, Number(input.expiresInHours || input.expires_in_hours || 24)));
+  const storageReady = fieldPackageStorageConfigured();
   const packageMarkups = state.markups
     .filter((row) => row.projectId === projectId && sheetIds.includes(row.sheetId))
     .map((row) => ({ id: row.id, sheetId: row.sheetId, pageNumber: row.pageNumber, tool: row.tool, subject: row.subject, body: row.body, status: row.status, priority: row.priority, trade: row.trade, costCode: row.costCode, assigneeUserId: row.assigneeUserId, geometry: row.geometry, measurement: row.measurement, layer: row.layer, groupId: row.groupId, style: row.style, updatedAt: row.updatedAt }));
@@ -1725,23 +1746,31 @@ function createFieldPackage(state, input = {}, actor) {
     sheetIds,
     deviceId: String(input.deviceId || input.device_id || 'unassigned-device'),
     mode: 'offline-field-review',
-    status: 'ready',
+    status: storageReady ? 'queued' : 'provider-required',
+    providerRequired: !storageReady,
+    requiredEnvVars: storageReady ? [] : ['CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_CAD_DATABASE_URL'],
     markupCount: packageMarkups.length,
     cacheControl: 'private, max-age=0, no-store',
     publicExposure: false,
+    noPublicLinks: true,
     requiresAuth: true,
-    syncContract: { endpoint: '/api/cast-cad-exports', type: 'field-sync', conflictPolicy: 'server-audited-human-review' },
+    outputPointer: '',
+    packageStorage: storageReady ? 'provider-queued' : 'audit-only-no-private-package-bytes',
+    syncContract: fieldPackageContract().syncContract,
+    contract: fieldPackageContract(),
     package: { projectId, sheetIds, markups: packageMarkups, generatedAt: now() },
     expiresAt: new Date(Date.now() + expiresInHours * 60 * 60 * 1000).toISOString(),
     createdByUserId: actor.id,
     createdAt: now(),
   };
   state.fieldPackages.push(fieldPackage);
-  audit(state, actor, 'Created CAST CAD offline field package', 'CAST_CAD_FIELD_PACKAGE', fieldPackage.id, null, { ...fieldPackage, package: { ...fieldPackage.package, markups: packageMarkups.map((row) => row.id) } });
-  return { ok: true, fieldPackage };
+  audit(state, actor, fieldPackage.providerRequired ? 'Blocked CAST CAD offline field package artifact until private package storage configured' : 'Queued CAST CAD offline field package', 'CAST_CAD_FIELD_PACKAGE', fieldPackage.id, null, { ...fieldPackage, package: { ...fieldPackage.package, markups: packageMarkups.map((row) => row.id) } }, fieldPackage.providerRequired ? 'No offline private package bytes or public download link were fabricated; sync remains backend-audited.' : 'Private package storage is configured; provider must generate no-store package artifacts.');
+  return { ok: true, status: fieldPackage.providerRequired ? 202 : 201, fieldPackage, contract: fieldPackageContract() };
 }
 function syncFieldPackageDeltas(state, input = {}, actor) {
   state.fieldSyncEvents ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
   const permission = requireCastCad(actor.role, 'edit_markup');
   if (!permission.ok) return permission;
   const projectId = input.projectId || input.project_id;
@@ -2287,6 +2316,7 @@ function castCadProductionReadiness() {
     { id: 'document-metadata', label: 'Durable drawing metadata registry', category: 'database', requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'], providerDecision: 'Choose the database/document metadata adapter used for current-set authority.', ready: Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER) },
     { id: 'markup-database', label: 'Durable markup/comment/audit database', category: 'database', requiredEnvVars: ['CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the CAST CAD database adapter/URL for markups, comments, saved views, roles, and audit history.', ready: envChoiceReady(['CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL']) },
     { id: 'drawing-upload-storage', label: 'Private drawing upload/package storage', category: 'documents', requiredEnvVars: ['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_SERVER_DOCUMENT_API_URL|DROPBOX_ACCESS_TOKEN'], providerDecision: 'Choose the private document storage provider for 300-sheet upload packages.', ready: envChoiceReady(['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_SERVER_DOCUMENT_API_URL|DROPBOX_ACCESS_TOKEN']) },
+    { id: 'field-package-storage', label: 'Private tablet/offline field package storage', category: 'field', requiredEnvVars: ['CAST_CAD_FIELD_PACKAGE_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the private no-store field package storage/database adapter before offline tablet package bytes are generated or exposed for device sync.', ready: fieldPackageStorageConfigured() },
     { id: 'private-upload-leases', label: 'Private upload lease signer for drawings, evidence, annotations, and models', category: 'documents', requiredEnvVars: ['CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_ATTACHMENT_STORAGE_ADAPTER|CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER'], providerDecision: 'Choose the private signed-upload/storage adapter that issues no-public-URL source pointers before users upload drawing PDFs, evidence, annotation PDFs, or CAD/model sources.', ready: envChoiceReady(['CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_ATTACHMENT_STORAGE_ADAPTER|CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER']) },
     { id: 'attachment-storage', label: 'Private markup attachment/evidence storage', category: 'documents', requiredEnvVars: ['CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'], providerDecision: 'Choose the private storage adapter for markup photos, PDFs, field evidence, and comment attachments before durable byte persistence is claimed.', ready: Boolean(process.env.CAST_CAD_ATTACHMENT_STORAGE_ADAPTER) },
     { id: 'scale-calibration-store', label: 'Durable scale calibration store', category: 'measurements', requiredEnvVars: ['CAST_CAD_SCALE_CALIBRATION_ADAPTER|CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the calibration/database adapter before verified scales are treated as durable or quantity-authoritative.', ready: envChoiceReady(['CAST_CAD_SCALE_CALIBRATION_ADAPTER|CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL']) },
@@ -2330,7 +2360,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };
