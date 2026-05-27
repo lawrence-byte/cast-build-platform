@@ -296,6 +296,8 @@
             <div class="pdf-intake cad-export-controls" aria-label="CAST CAD export job controls">
               <label><input type="checkbox" data-export-flatten checked autocomplete="off"> Flatten PDF markups</label>
               <input type="text" data-drawing-upload-pointer placeholder="Private drawing upload lease / storage batch id" autocomplete="off">
+              <input type="number" data-private-upload-bytes min="1" step="1" placeholder="Private upload byte size" autocomplete="off">
+              <input type="text" data-private-upload-hash placeholder="Content hash, e.g. sha256-..." autocomplete="off">
               <input type="email" data-drawing-transmittal-recipient placeholder="Transmittal recipient email" autocomplete="off">
               <label><input type="checkbox" data-drawing-upload-current autocomplete="off"> Publish upload as current set</label>
               <label><input type="checkbox" data-drawing-upload-review autocomplete="off"> Upload reviewed</label>
@@ -309,6 +311,7 @@
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-workbook-export>Create takeoff workbook job</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-pdf-renderer>Create PDF renderer session</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotated-pdf-export>Create annotated PDF job</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-create-private-upload-lease>Request private upload lease</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-drawing-upload>Create drawing upload package</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-drawing-transmittal>Create drawing transmittal</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-annotation-import>Create annotation import job</button>

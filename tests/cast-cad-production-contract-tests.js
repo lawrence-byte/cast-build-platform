@@ -132,6 +132,23 @@ assert.equal(blockedDurableAttachment.ok, false, 'durable attachment upload fail
 assert.equal(blockedDurableAttachment.code, 'provider-required', 'durable attachment blocker is provider-required');
 assert.equal(cad.listMarkupAttachments(state, { markupId: markup.markup.id }).length, 1, 'attachment list filters by markup');
 assert.ok(cad.listMarkupAudit(state, markup.markup.id).some((row) => row.entityType === 'CAST_CAD_ATTACHMENT'), 'markup audit history includes attachment manifests');
+const badUploadLease = cad.createPrivateUploadLease(state, { projectId: 'alum', purpose: 'drawing-pdf', fileName: 'A-500.txt', contentType: 'text/plain', byteSize: 1000, contentHash: 'sha256-bad' }, owner);
+assert.equal(badUploadLease.ok, false, 'private drawing upload leases validate PDF content before provider handoff');
+assert.equal(badUploadLease.status, 422, 'invalid private upload lease returns validation error');
+const drawingUploadLease = cad.createPrivateUploadLease(state, { projectId: 'alum', sheetId: 'A-500', purpose: 'drawing-pdf', fileName: 'A-500.pdf', contentType: 'application/pdf', byteSize: 204800, contentHash: 'sha256-a500' }, owner);
+assert.equal(drawingUploadLease.ok, false, 'private drawing upload lease fails closed without storage provider');
+assert.equal(drawingUploadLease.code, 'provider-required', 'private upload lease exposes provider-required blocker');
+assert.equal(drawingUploadLease.lease.publicExposure, false, 'private upload lease forbids public exposure');
+assert.equal(drawingUploadLease.lease.noPublicUrls, true, 'private upload lease refuses public URLs');
+assert.equal(drawingUploadLease.lease.uploadUrl, '', 'private upload lease does not fabricate upload URLs');
+assert.equal(drawingUploadLease.lease.sourcePointer, '', 'private upload lease does not fabricate source pointers');
+assert.deepEqual(drawingUploadLease.requiredEnvVars, ['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_SERVER_DOCUMENT_API_URL or DROPBOX_ACCESS_TOKEN'], 'drawing upload lease names exact private storage provider choices');
+const modelUploadLease = cad.createPrivateUploadLease(state, { projectId: 'alum', purpose: 'model-source', fileName: 'Golden-Hill.ifc', contentType: 'application/octet-stream', byteSize: 4096, contentHash: 'sha256-model' }, owner);
+assert.equal(modelUploadLease.ok, false, 'private model upload lease fails closed without model/document storage provider');
+assert.deepEqual(modelUploadLease.requiredEnvVars, ['CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_CAD_MODEL_INGESTION_WORKER'], 'model upload lease names exact model storage provider choices');
+assert.equal(cad.listPrivateUploadLeases(state, { projectId: 'alum' }).length, 2, 'private upload leases list by project');
+assert.ok(cad.privateUploadLeaseContract().acceptedPurposes.includes('attachment-evidence'), 'private upload lease contract supports evidence uploads before attachment byte storage');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_PRIVATE_UPLOAD_LEASE'), 'private upload lease attempts are audited');
 
 const readiness = cad.castCadProductionReadiness();
 assert.equal(readiness.ok, true, 'CAST CAD production readiness contract is available');
@@ -139,6 +156,7 @@ assert.equal(readiness.contract.secretValuesExposed, false, 'production readines
 assert.equal(readiness.contract.failClosedUntilProvidersConfigured, true, 'production readiness documents fail-closed provider gates');
 assert.ok(readiness.gates.some((gate) => gate.id === 'private-pdf-stream' && gate.requiredEnvVars.includes('CAST_CAD_PDF_STREAM_BASE|DROPBOX_ACCESS_TOKEN|CAST_SERVER_DOCUMENT_API_URL')), 'production readiness names exact PDF stream provider choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'markup-database' && gate.requiredEnvVars.includes('CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact markup database choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'private-upload-leases' && gate.requiredEnvVars.includes('CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_ATTACHMENT_STORAGE_ADAPTER|CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER')), 'production readiness names exact private upload lease provider choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
@@ -579,6 +597,9 @@ assert.ok(castCadJs.includes("createBackendExportJob('drawing-upload-package')")
 assert.ok(castCadJs.includes("createBackendExportJob('drawing-transmittal')"), 'CAST CAD workbench calls drawing transmittal contract');
 assert.ok(castCadJs.includes("createBackendExportJob('pdf-annotation-import')"), 'CAST CAD workbench calls PDF annotation import/unflatten job contract');
 assert.ok(castCadJs.includes("createBackendExportJob('model-ingestion')"), 'CAST CAD workbench calls CAD/model ingestion job contract');
+assert.ok(castCadJs.includes("createBackendExportJob('model-quantity-link')"), 'CAST CAD workbench calls model quantity link job contract');
+assert.ok(castCadJs.includes("createBackendExportJob('private-upload-lease')"), 'CAST CAD workbench calls private upload lease contract');
+assert.ok(castCadJs.includes('No public upload URL was fabricated'), 'CAST CAD private upload lease workflow fails closed without fabricating upload URLs');
 assert.ok(castCadJs.includes('CAST_CAD_TAKEOFF_WORKBOOK_WORKER'), 'CAST CAD workbench names takeoff workbook worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_RENDERER_WORKER'), 'CAST CAD workbench names PDF renderer worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_EXPORT_WORKER'), 'CAST CAD workbench names annotated PDF export worker requirement');
@@ -593,12 +614,15 @@ assert.ok(castCadJs.includes('No public model viewer artifact was fabricated'), 
 assert.ok(castCadHtml.includes('data-create-workbook-export'), 'CAST CAD workbench exposes takeoff workbook export job control');
 assert.ok(castCadHtml.includes('data-create-pdf-renderer'), 'CAST CAD workbench exposes PDF renderer session control');
 assert.ok(castCadHtml.includes('data-create-annotated-pdf-export'), 'CAST CAD workbench exposes annotated PDF export job control');
+assert.ok(castCadHtml.includes('data-create-private-upload-lease'), 'CAST CAD workbench exposes private upload lease controls');
+assert.ok(castCadHtml.includes('data-private-upload-hash'), 'CAST CAD workbench requires a content hash before requesting private upload leases');
 assert.ok(castCadHtml.includes('data-create-drawing-upload'), 'CAST CAD workbench exposes drawing upload package control');
 assert.ok(castCadHtml.includes('data-create-drawing-transmittal'), 'CAST CAD workbench exposes drawing transmittal control');
 assert.ok(castCadHtml.includes('data-drawing-transmittal-recipient'), 'CAST CAD workbench requires a drawing transmittal recipient');
 assert.ok(castCadHtml.includes('data-create-annotation-import'), 'CAST CAD workbench exposes PDF annotation import job control');
 assert.ok(castCadHtml.includes('data-drawing-upload-pointer'), 'CAST CAD workbench requires a private drawing upload pointer');
 assert.ok(castCadHtml.includes('data-create-model-ingestion'), 'CAST CAD workbench exposes CAD/model ingestion job control');
+assert.ok(castCadHtml.includes('data-create-model-quantity-link'), 'CAST CAD workbench exposes model quantity link control');
 assert.ok(castCadHtml.includes('data-model-ingestion-source'), 'CAST CAD workbench requires a private CAD/model source pointer');
 assert.ok(castCadHtml.includes('data-annotation-import-source'), 'CAST CAD workbench requires a private annotation import source pointer');
 assert.ok(castCadHtml.includes('data-export-job-status'), 'CAST CAD workbench exposes backend export status');

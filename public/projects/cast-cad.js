@@ -815,9 +815,9 @@ function renderExportCenter() {
   if (status) status.textContent = exportCenterState.message;
   if (jobs) {
     jobs.innerHTML = exportCenterState.jobs.length ? exportCenterState.jobs.slice(-4).reverse().map((job) => {
-      const label = job.type === 'pdf-renderer-session' ? 'PDF renderer session' : job.type === 'annotated-pdf' ? 'Annotated PDF' : job.type === 'drawing-upload-package' ? 'Drawing upload package' : job.type === 'drawing-transmittal' ? 'Drawing transmittal' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : job.type === 'model-ingestion' ? 'CAD/model ingestion' : job.type === 'model-quantity-link' ? 'Model quantity link' : 'Takeoff workbook';
-      const fallbackWorker = job.type === 'pdf-renderer-session' ? 'CAST_CAD_PDF_RENDERER_WORKER or CAST_CAD_PDFJS_WORKER_URL or CAST_CAD_PDF_SDK_PROVIDER' : job.type === 'takeoff-workbook' ? 'CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER' : job.type === 'drawing-upload-package' ? 'CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_SERVER_DOCUMENT_API_URL or DROPBOX_ACCESS_TOKEN' : job.type === 'drawing-transmittal' ? 'CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL' : job.type === 'pdf-annotation-import' ? 'CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER' : job.type === 'model-ingestion' ? 'CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER' : 'CAST_CAD_PDF_EXPORT_WORKER';
-      const details = job.type === 'pdf-renderer-session' ? `Private stream pointer ${job.sourcePointer || 'required'}; no thumbnails/search/bookmarks/viewport matrices are fabricated. Required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}.` : job.type === 'model-quantity-link' ? `${job.quantity ?? ''} ${job.unit || ''} linked to ${job.elementId || 'model element'}; human review gates verified/budget use.` : job.type === 'drawing-upload-package' ? `${job.sheetCount || 0} PDF sheet manifest(s); no public drawing URL/local byte/current-set authority is fabricated. Required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}.` : job.type === 'drawing-transmittal' ? `${(job.sheetIds || []).length} sheet(s) to ${(job.recipients || []).length} recipient(s); no public sheet links or delivered notices were fabricated. Required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}.` : job.providerRequired ? `Worker required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}. No private export/import artifact is fabricated.` : `${job.rowCount ?? job.markupCount ?? job.importedMarkupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
+      const label = job.type === 'private-upload-lease' ? 'Private upload lease' : job.type === 'pdf-renderer-session' ? 'PDF renderer session' : job.type === 'annotated-pdf' ? 'Annotated PDF' : job.type === 'drawing-upload-package' ? 'Drawing upload package' : job.type === 'drawing-transmittal' ? 'Drawing transmittal' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : job.type === 'model-ingestion' ? 'CAD/model ingestion' : job.type === 'model-quantity-link' ? 'Model quantity link' : 'Takeoff workbook';
+      const fallbackWorker = job.type === 'private-upload-lease' ? 'CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER or private drawing/evidence/model storage adapter' : job.type === 'pdf-renderer-session' ? 'CAST_CAD_PDF_RENDERER_WORKER or CAST_CAD_PDFJS_WORKER_URL or CAST_CAD_PDF_SDK_PROVIDER' : job.type === 'takeoff-workbook' ? 'CAST_CAD_TAKEOFF_WORKBOOK_WORKER or CAST_CAD_XLSX_EXPORT_WORKER' : job.type === 'drawing-upload-package' ? 'CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_SERVER_DOCUMENT_API_URL or DROPBOX_ACCESS_TOKEN' : job.type === 'drawing-transmittal' ? 'CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL' : job.type === 'pdf-annotation-import' ? 'CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER or CAST_CAD_PDF_EXPORT_WORKER' : job.type === 'model-ingestion' ? 'CAST_CAD_MODEL_INGESTION_WORKER or CAST_CAD_IFC_CONVERSION_WORKER or CAST_CAD_CAD_CONVERSION_WORKER' : 'CAST_CAD_PDF_EXPORT_WORKER';
+      const details = job.type === 'private-upload-lease' ? `${job.purpose || 'private upload'} for ${job.fileName || job.sheetId || 'selected sheet'}; no upload URL/source pointer is fabricated until ${(job.requiredEnvVars || []).join(', ') || fallbackWorker} is configured.` : job.type === 'pdf-renderer-session' ? `Private stream pointer ${job.sourcePointer || 'required'}; no thumbnails/search/bookmarks/viewport matrices are fabricated. Required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}.` : job.type === 'model-quantity-link' ? `${job.quantity ?? ''} ${job.unit || ''} linked to ${job.elementId || 'model element'}; human review gates verified/budget use.` : job.type === 'drawing-upload-package' ? `${job.sheetCount || 0} PDF sheet manifest(s); no public drawing URL/local byte/current-set authority is fabricated. Required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}.` : job.type === 'drawing-transmittal' ? `${(job.sheetIds || []).length} sheet(s) to ${(job.recipients || []).length} recipient(s); no public sheet links or delivered notices were fabricated. Required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}.` : job.providerRequired ? `Worker required: ${(job.requiredEnvVars || []).join(', ') || fallbackWorker}. No private export/import artifact is fabricated.` : `${job.rowCount ?? job.markupCount ?? job.importedMarkupCount ?? 0} row/markup record(s) captured by the audited export contract.`;
       return `<div class="tool-card"><em>${esc(job.status || 'queued')}</em><strong>${esc(label)} · ${esc(job.sheetId || 'all sheets')}</strong><span>${esc(details)}</span></div>`;
     }).join('') : '<p class="cad-muted">No backend export jobs requested in this session.</p>';
   }
@@ -2238,10 +2238,16 @@ function exportJobPayload(type) {
   const modelSource = document.querySelector('[data-model-ingestion-source]')?.value?.trim() || '';
   const modelFileName = document.querySelector('[data-model-ingestion-file]')?.value?.trim() || modelSource.split('/').pop() || 'cast-cad-model.ifc';
   const lastModelJob = exportCenterState.jobs.filter((job) => job.type === 'model-ingestion').slice(-1)[0];
+  const privateUploadBytes = Number(document.querySelector('[data-private-upload-bytes]')?.value || 0);
+  const privateUploadHash = document.querySelector('[data-private-upload-hash]')?.value?.trim() || '';
   return {
     type,
     projectId: drawing?.project_id || 'alum',
     sheetId: selectedDrawingId,
+    purpose: type === 'private-upload-lease' ? 'drawing-pdf' : undefined,
+    byteSize: type === 'private-upload-lease' ? privateUploadBytes : undefined,
+    contentHash: type === 'private-upload-lease' ? privateUploadHash : undefined,
+    contentType: type === 'private-upload-lease' ? 'application/pdf' : undefined,
     format: type === 'takeoff-workbook' ? 'xlsx' : 'pdf',
     setId: type === 'drawing-upload-package' ? 'current' : undefined,
     name: type === 'drawing-upload-package' ? 'Selected CAST CAD drawing upload package' : undefined,
@@ -2255,7 +2261,7 @@ function exportJobPayload(type) {
     files: type === 'drawing-upload-package' ? [{ sheetId: selectedDrawingId, drawingNumber: drawing?.drawing_number || selectedDrawingId, drawingTitle: drawing?.drawing_title || drawing?.source_name || '', fileName: (drawing?.source_name || drawing?.path || `${selectedDrawingId}.pdf`).split('/').pop(), sourcePointer: uploadPointer || `lease:${selectedDrawingId}`, contentType: 'application/pdf', extension: 'pdf' }] : undefined,
     flatten: type === 'annotated-pdf' ? Boolean(document.querySelector('[data-export-flatten]')?.checked ?? true) : undefined,
     sourcePointer: type === 'pdf-renderer-session' ? `lease:${selectedDrawingId || 'selected-sheet'}` : type === 'pdf-annotation-import' ? annotationImportSource : type === 'model-ingestion' ? modelSource : type === 'model-quantity-link' ? modelSource : undefined,
-    fileName: type === 'model-ingestion' ? modelFileName : undefined,
+    fileName: type === 'private-upload-lease' ? (drawing?.source_name || drawing?.path || `${selectedDrawingId}.pdf`).split('/').pop() : type === 'model-ingestion' ? modelFileName : undefined,
     mode: type === 'pdf-annotation-import' ? 'import-unflattened' : undefined,
     modelIngestionJobId: type === 'model-quantity-link' ? (lastModelJob?.id || '') : undefined,
     elementId: type === 'model-quantity-link' ? (document.querySelector('[data-model-quantity-element]')?.value?.trim() || '') : undefined,
@@ -2270,6 +2276,12 @@ async function createBackendExportJob(type = 'takeoff-workbook') {
     exportCenterState = { ...exportCenterState, status: 'blocked', message: 'Select a drawing sheet before requesting a backend export job.' };
     renderExportCenter();
     window.CASTShell?.toast?.('Select a sheet before requesting a CAST CAD export job.', { kind: 'error' });
+    return;
+  }
+  if (type === 'private-upload-lease' && (!payload.byteSize || !payload.contentHash)) {
+    exportCenterState = { ...exportCenterState, status: 'blocked', message: 'Enter private upload byte size and content hash before requesting an upload lease. No upload URL/source pointer was fabricated.' };
+    renderExportCenter();
+    window.CASTShell?.toast?.('Private upload leases require byte size and content hash.', { kind: 'error' });
     return;
   }
   if (type === 'pdf-renderer-session' && /^https?:\/\//i.test(payload.sourcePointer || '')) {
@@ -2324,6 +2336,12 @@ async function createBackendExportJob(type = 'takeoff-workbook') {
     const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
     const result = await response.json().catch(() => null);
     if (!response.ok || result?.ok === false) {
+      if (type === 'private-upload-lease' && result?.lease) {
+        exportCenterState = { status: 'provider-required', jobs: [...exportCenterState.jobs, result.lease], message: `Private upload lease ${result.lease.id || ''} was audited but blocked: ${(result.requiredEnvVars || result.lease.requiredEnvVars || []).join(', ')} required. No public upload URL or source pointer was fabricated.` };
+        window.CASTShell?.toast?.('Private upload lease audited; storage provider is required.', { kind: 'info' });
+        renderExportCenter();
+        return;
+      }
       if (type === 'drawing-transmittal' && result?.transmittal) {
         exportCenterState = { status: 'provider-required', jobs: [...exportCenterState.jobs, result.transmittal], message: `Drawing transmittal ${result.transmittal.id || ''} was audited but delivery is blocked: ${(result.requiredEnvVars || result.transmittal.requiredEnvVars || []).join(', ')} required. No public sheet links or delivered notices were fabricated.` };
         window.CASTShell?.toast?.('Drawing transmittal audited; delivery transport is required.', { kind: 'info' });
@@ -2332,9 +2350,9 @@ async function createBackendExportJob(type = 'takeoff-workbook') {
       }
       throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
     }
-    const job = result.rendererSession || result.exportJob || result.job || result.quantityLink || result.package || result.transmittal || {};
+    const job = result.lease || result.rendererSession || result.exportJob || result.job || result.quantityLink || result.package || result.transmittal || {};
     const providerRequired = Boolean(job.providerRequired);
-    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: job.type === 'pdf-renderer-session' ? `PDF renderer session ${job.id || ''} recorded; ${(job.requiredEnvVars || []).join(', ') || 'private renderer worker'} is required before multipage rendering, thumbnails, bookmarks, text search, or viewport matrices can be generated. No renderer artifacts were fabricated.` : job.type === 'model-quantity-link' ? `Model quantity link ${job.id || ''} recorded as review-gated/non-budget-authoritative; no public model artifact was fabricated.` : job.type === 'drawing-upload-package' ? `Drawing upload package ${job.id || ''} recorded for ${job.sheetCount || 0} sheet(s); ${(job.requiredEnvVars || []).join(', ') || 'private drawing storage'} is required before durable bytes/current-set authority. No public drawing URL or local byte claim was fabricated.` : job.type === 'drawing-transmittal' ? `Drawing transmittal ${job.id || ''} queued for ${(job.recipients || []).length} recipient(s) through private transport; no public sheet links were fabricated.` : providerRequired ? `${job.type === 'takeoff-workbook' ? 'Takeoff workbook' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : job.type === 'model-ingestion' ? 'CAD/model ingestion' : 'Annotated PDF'} job recorded; ${(job.requiredEnvVars || []).join(', ') || 'the private export/import worker'} is required before private artifacts or imported markups can be generated. ${job.type === 'model-ingestion' ? 'No public model viewer artifact was fabricated.' : ''}` : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : job.type === 'model-ingestion' ? 'CAD/model ingestion' : 'Takeoff workbook'} job queued by the audited backend contract.` };
+    exportCenterState = { status: job.status || 'recorded', jobs: [...exportCenterState.jobs, job], message: job.type === 'private-upload-lease' ? `Private upload lease ${job.id || ''} recorded; ${(job.requiredEnvVars || []).join(', ') || 'private storage provider'} is required before upload URLs/source pointers are issued. No public upload URL was fabricated.` : job.type === 'pdf-renderer-session' ? `PDF renderer session ${job.id || ''} recorded; ${(job.requiredEnvVars || []).join(', ') || 'private renderer worker'} is required before multipage rendering, thumbnails, bookmarks, text search, or viewport matrices can be generated. No renderer artifacts were fabricated.` : job.type === 'model-quantity-link' ? `Model quantity link ${job.id || ''} recorded as review-gated/non-budget-authoritative; no public model artifact was fabricated.` : job.type === 'drawing-upload-package' ? `Drawing upload package ${job.id || ''} recorded for ${job.sheetCount || 0} sheet(s); ${(job.requiredEnvVars || []).join(', ') || 'private drawing storage'} is required before durable bytes/current-set authority. No public drawing URL or local byte claim was fabricated.` : job.type === 'drawing-transmittal' ? `Drawing transmittal ${job.id || ''} queued for ${(job.recipients || []).length} recipient(s) through private transport; no public sheet links were fabricated.` : providerRequired ? `${job.type === 'takeoff-workbook' ? 'Takeoff workbook' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : job.type === 'model-ingestion' ? 'CAD/model ingestion' : 'Annotated PDF'} job recorded; ${(job.requiredEnvVars || []).join(', ') || 'the private export/import worker'} is required before private artifacts or imported markups can be generated. ${job.type === 'model-ingestion' ? 'No public model viewer artifact was fabricated.' : ''}` : `${job.type === 'annotated-pdf' ? 'Annotated PDF' : job.type === 'pdf-annotation-import' ? 'PDF annotation import' : job.type === 'model-ingestion' ? 'CAD/model ingestion' : 'Takeoff workbook'} job queued by the audited backend contract.` };
     window.CASTShell?.toast?.(exportCenterState.message, { kind: providerRequired ? 'info' : 'success' });
   } catch (error) {
     console.warn('CAST CAD export API unavailable', error);
@@ -2419,6 +2437,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-workbook-export]')) { createBackendExportJob('takeoff-workbook'); return; }
   if (event.target.closest('[data-create-pdf-renderer]')) { createBackendExportJob('pdf-renderer-session'); return; }
   if (event.target.closest('[data-create-annotated-pdf-export]')) { createBackendExportJob('annotated-pdf'); return; }
+  if (event.target.closest('[data-create-private-upload-lease]')) { createBackendExportJob('private-upload-lease'); return; }
   if (event.target.closest('[data-create-drawing-upload]')) { createBackendExportJob('drawing-upload-package'); return; }
   if (event.target.closest('[data-create-drawing-transmittal]')) { createBackendExportJob('drawing-transmittal'); return; }
   if (event.target.closest('[data-create-annotation-import]')) { createBackendExportJob('pdf-annotation-import'); return; }
