@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -472,6 +472,95 @@ function listMarkupAttachments(state, filters = {}) {
 }
 function attachmentContract() {
   return { privateArtifacts: true, publicExposure: false, requiresAuth: true, cacheControl: 'private, max-age=0, no-store', durableAdapterRequired: 'CAST_CAD_ATTACHMENT_STORAGE_ADAPTER', acceptedContentTypes: ['image/jpeg','image/png','image/webp','image/heic','application/pdf','text/plain'] };
+}
+function privateUploadStorageConfigured(purpose = '') {
+  if (process.env.CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER) return true;
+  if (/drawing|pdf|annotation/i.test(purpose)) return Boolean(process.env.CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER || process.env.CAST_CAD_DOCUMENT_STORAGE_ADAPTER || process.env.CAST_SERVER_DOCUMENT_API_URL || process.env.DROPBOX_ACCESS_TOKEN);
+  if (/attachment|evidence|photo/i.test(purpose)) return Boolean(process.env.CAST_CAD_ATTACHMENT_STORAGE_ADAPTER || process.env.CAST_CAD_ATTACHMENT_STORAGE_URL);
+  if (/model|cad|ifc|dwg|dxf|rvt/i.test(purpose)) return Boolean(process.env.CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER || process.env.CAST_CAD_MODEL_INGESTION_WORKER || process.env.CAST_CAD_DOCUMENT_STORAGE_ADAPTER);
+  return false;
+}
+function privateUploadRequiredEnvVars(purpose = '') {
+  if (/attachment|evidence|photo/i.test(purpose)) return ['CAST_CAD_ATTACHMENT_STORAGE_ADAPTER'];
+  if (/model|cad|ifc|dwg|dxf|rvt/i.test(purpose)) return ['CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_CAD_MODEL_INGESTION_WORKER'];
+  return ['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER or CAST_CAD_DOCUMENT_STORAGE_ADAPTER or CAST_SERVER_DOCUMENT_API_URL or DROPBOX_ACCESS_TOKEN'];
+}
+function privateUploadLeaseContract() {
+  return {
+    endpoint: '/api/cast-cad-exports',
+    type: 'private-upload-lease',
+    publicExposure: false,
+    noPublicUrls: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    acceptedPurposes: ['drawing-pdf','annotation-pdf','attachment-evidence','model-source'],
+    requiredBefore: ['drawing-upload-package sourcePointer','pdf-annotation-import sourcePointer','model-ingestion sourcePointer','markup attachment byte upload'],
+  };
+}
+function normalizePrivateUploadLease(input = {}, actor) {
+  const purpose = String(input.purpose || input.uploadPurpose || input.upload_purpose || 'drawing-pdf').trim().toLowerCase();
+  return {
+    id: input.id || id('cad_upload_lease'),
+    type: 'private-upload-lease',
+    projectId: input.projectId || input.project_id || 'default',
+    sheetId: input.sheetId || input.sheet_id || '',
+    purpose,
+    fileName: safeFileName(input.fileName || input.file_name || input.name || 'cast-cad-upload.bin'),
+    contentType: String(input.contentType || input.content_type || 'application/pdf').toLowerCase(),
+    byteSize: Number(input.byteSize || input.byte_size || input.size || 0),
+    contentHash: String(input.contentHash || input.content_hash || '').trim(),
+    expiresAt: new Date(Date.now() + Number(input.expiresInSeconds || input.expires_in_seconds || 900) * 1000).toISOString(),
+    status: privateUploadStorageConfigured(purpose) ? 'ready' : 'provider-required',
+    providerRequired: !privateUploadStorageConfigured(purpose),
+    requiredEnvVars: privateUploadStorageConfigured(purpose) ? [] : privateUploadRequiredEnvVars(purpose),
+    provider: process.env.CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER || process.env.CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER || process.env.CAST_CAD_ATTACHMENT_STORAGE_ADAPTER || process.env.CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER || process.env.CAST_CAD_DOCUMENT_STORAGE_ADAPTER || (process.env.CAST_SERVER_DOCUMENT_API_URL ? 'cast-server-document-api' : process.env.DROPBOX_ACCESS_TOKEN ? 'dropbox' : 'unconfigured'),
+    uploadUrl: '',
+    sourcePointer: '',
+    publicExposure: false,
+    noPublicUrls: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+}
+function validatePrivateUploadLease(lease) {
+  const errors = [];
+  if (!lease.projectId) errors.push('projectId is required.');
+  if (!['drawing-pdf','annotation-pdf','attachment-evidence','model-source'].includes(lease.purpose)) errors.push('purpose must be one of: drawing-pdf, annotation-pdf, attachment-evidence, model-source.');
+  if (!lease.fileName) errors.push('fileName is required.');
+  if (!lease.byteSize || lease.byteSize < 1) errors.push('byteSize must be greater than zero.');
+  if (lease.byteSize > 1024 * 1024 * 1024) errors.push('CAST CAD private upload leases are capped at 1 GB before a provider-specific multipart adapter is configured.');
+  if (!lease.contentHash) errors.push('contentHash is required before a private upload lease can be audited.');
+  if ((lease.purpose === 'drawing-pdf' || lease.purpose === 'annotation-pdf') && lease.contentType !== 'application/pdf') errors.push('drawing-pdf and annotation-pdf uploads must use contentType application/pdf.');
+  if (lease.purpose === 'attachment-evidence' && !/^image\/(jpeg|png|webp|heic)$|^application\/pdf$|^text\/plain$/.test(lease.contentType)) errors.push('attachment-evidence contentType must be an approved evidence type.');
+  if (lease.purpose === 'model-source' && !/\.(ifc|dwg|dxf|rvt|rfa|skp|obj|glb|gltf)$/i.test(lease.fileName)) errors.push('model-source upload fileName must be an approved CAD/model extension.');
+  return errors;
+}
+function createPrivateUploadLease(state, input = {}, actor) {
+  state.privateUploadLeases ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const purpose = String(input.purpose || input.uploadPurpose || input.upload_purpose || 'drawing-pdf').toLowerCase();
+  const permissionName = /attachment|evidence|photo/i.test(purpose) ? 'create_markup' : /model|cad/i.test(purpose) ? 'export' : 'manage_drawing_sets';
+  const permission = requireCastCad(actor.role, permissionName);
+  if (!permission.ok) return permission;
+  const lease = normalizePrivateUploadLease(input, actor);
+  const errors = validatePrivateUploadLease(lease);
+  if (errors.length) return { ok: false, status: 422, errors, contract: privateUploadLeaseContract() };
+  state.privateUploadLeases.push(lease);
+  audit(state, actor, lease.providerRequired ? 'Blocked CAST CAD private upload lease until storage provider configured' : 'Created CAST CAD private upload lease', 'CAST_CAD_PRIVATE_UPLOAD_LEASE', lease.id, null, lease, lease.providerRequired ? 'No public upload URL or source pointer was fabricated; configure the named private storage adapter/provider.' : 'Private provider must issue the upload URL/source pointer without public exposure.');
+  if (lease.providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD private upload leases require a configured private storage provider; refusing to fabricate public upload URLs or source pointers.', requiredEnvVars: lease.requiredEnvVars, lease, contract: privateUploadLeaseContract() };
+  return { ok: true, status: 201, lease, contract: privateUploadLeaseContract() };
+}
+function listPrivateUploadLeases(state, filters = {}) {
+  state.privateUploadLeases ||= [];
+  let rows = state.privateUploadLeases.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetId === filters.sheetId);
+  if (filters.purpose) rows = rows.filter((row) => row.purpose === filters.purpose);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
 }
 function listMarkups(state, filters = {}) {
   let rows = state.markups.slice();
@@ -2198,6 +2287,7 @@ function castCadProductionReadiness() {
     { id: 'document-metadata', label: 'Durable drawing metadata registry', category: 'database', requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'], providerDecision: 'Choose the database/document metadata adapter used for current-set authority.', ready: Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER) },
     { id: 'markup-database', label: 'Durable markup/comment/audit database', category: 'database', requiredEnvVars: ['CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the CAST CAD database adapter/URL for markups, comments, saved views, roles, and audit history.', ready: envChoiceReady(['CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL']) },
     { id: 'drawing-upload-storage', label: 'Private drawing upload/package storage', category: 'documents', requiredEnvVars: ['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_SERVER_DOCUMENT_API_URL|DROPBOX_ACCESS_TOKEN'], providerDecision: 'Choose the private document storage provider for 300-sheet upload packages.', ready: envChoiceReady(['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_SERVER_DOCUMENT_API_URL|DROPBOX_ACCESS_TOKEN']) },
+    { id: 'private-upload-leases', label: 'Private upload lease signer for drawings, evidence, annotations, and models', category: 'documents', requiredEnvVars: ['CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_ATTACHMENT_STORAGE_ADAPTER|CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER'], providerDecision: 'Choose the private signed-upload/storage adapter that issues no-public-URL source pointers before users upload drawing PDFs, evidence, annotation PDFs, or CAD/model sources.', ready: envChoiceReady(['CAST_CAD_PRIVATE_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_ATTACHMENT_STORAGE_ADAPTER|CAST_CAD_MODEL_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER']) },
     { id: 'pdf-export-worker', label: 'Annotated PDF export/write-back worker', category: 'exports', requiredEnvVars: ['CAST_CAD_PDF_EXPORT_WORKER'], providerDecision: 'Choose the private PDF flatten/write-back worker.', ready: Boolean(process.env.CAST_CAD_PDF_EXPORT_WORKER) },
     { id: 'takeoff-workbook-worker', label: 'Private takeoff workbook/XLSX worker', category: 'exports', requiredEnvVars: ['CAST_CAD_TAKEOFF_WORKBOOK_WORKER|CAST_CAD_XLSX_EXPORT_WORKER'], providerDecision: 'Choose the workbook/XLSX generation worker.', ready: envChoiceReady(['CAST_CAD_TAKEOFF_WORKBOOK_WORKER|CAST_CAD_XLSX_EXPORT_WORKER']) },
     { id: 'ocr-ai-workers', label: 'OCR/search and AI review workers', category: 'ai-search', requiredEnvVars: ['CAST_CAD_OCR_WORKER', 'CAST_CAD_AI_REVIEW_WORKER'], providerDecision: 'Choose private OCR/symbol extraction and AI review workers with source-citation output.', ready: Boolean(process.env.CAST_CAD_OCR_WORKER && process.env.CAST_CAD_AI_REVIEW_WORKER) },
@@ -2226,7 +2316,7 @@ function markupsCsv(markups) {
 
 module.exports = {
   CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, privateResponseHeaders, applyPrivateResponseHeaders, json, privateCsv, readBody, audit,
-  buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
+  buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createPrivateUploadLease, listPrivateUploadLeases, privateUploadLeaseContract, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract,
   createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
