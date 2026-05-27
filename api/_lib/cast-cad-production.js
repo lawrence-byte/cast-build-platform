@@ -2170,6 +2170,38 @@ function readCastCadAuditLog(state, filters = {}, actor = { role: 'Read Only Vie
   if (filters.actorUserId) rows = rows.filter((row) => row.actorUserId === filters.actorUserId);
   return { ok: true, auditLog: rows, auditCount: rows.length };
 }
+function envChoiceReady(choices) {
+  return choices.some((choice) => String(choice || '').split('|').some((name) => Boolean(process.env[String(name || '').trim()])));
+}
+function castCadProductionReadiness() {
+  const gates = [
+    { id: 'auth-session', label: 'Verified production identity/session', category: 'auth', requiredEnvVars: ['CAST_CAD_REQUIRE_AUTH'], providerDecision: 'Select the production identity provider that verifies x-cast-user-* headers before CAST_CAD_REQUIRE_AUTH=true is enabled.', ready: process.env.CAST_CAD_REQUIRE_AUTH === 'true' },
+    { id: 'private-pdf-stream', label: 'Authenticated raw PDF stream/proxy', category: 'documents', requiredEnvVars: ['CAST_CAD_PDF_STREAM_BASE|DROPBOX_ACCESS_TOKEN|CAST_SERVER_DOCUMENT_API_URL'], providerDecision: 'Choose CAST Server document API, Dropbox, or an approved private PDF stream base.', ready: envChoiceReady(['CAST_CAD_PDF_STREAM_BASE|DROPBOX_ACCESS_TOKEN|CAST_SERVER_DOCUMENT_API_URL']) },
+    { id: 'pdf-renderer', label: 'Private PDF renderer/thumbnails/search', category: 'renderer', requiredEnvVars: ['CAST_CAD_PDF_RENDERER_WORKER|CAST_CAD_PDFJS_WORKER_URL|CAST_CAD_PDF_SDK_PROVIDER'], providerDecision: 'Choose private PDF.js worker URL, commercial PDF SDK, or CAST CAD renderer worker.', ready: pdfRendererWorkerConfigured() },
+    { id: 'document-metadata', label: 'Durable drawing metadata registry', category: 'database', requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER'], providerDecision: 'Choose the database/document metadata adapter used for current-set authority.', ready: Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER) },
+    { id: 'markup-database', label: 'Durable markup/comment/audit database', category: 'database', requiredEnvVars: ['CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the CAST CAD database adapter/URL for markups, comments, saved views, roles, and audit history.', ready: envChoiceReady(['CAST_CAD_MARKUP_DATABASE_ADAPTER|CAST_CAD_DATABASE_URL']) },
+    { id: 'drawing-upload-storage', label: 'Private drawing upload/package storage', category: 'documents', requiredEnvVars: ['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_SERVER_DOCUMENT_API_URL|DROPBOX_ACCESS_TOKEN'], providerDecision: 'Choose the private document storage provider for 300-sheet upload packages.', ready: envChoiceReady(['CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER|CAST_CAD_DOCUMENT_STORAGE_ADAPTER|CAST_SERVER_DOCUMENT_API_URL|DROPBOX_ACCESS_TOKEN']) },
+    { id: 'pdf-export-worker', label: 'Annotated PDF export/write-back worker', category: 'exports', requiredEnvVars: ['CAST_CAD_PDF_EXPORT_WORKER'], providerDecision: 'Choose the private PDF flatten/write-back worker.', ready: Boolean(process.env.CAST_CAD_PDF_EXPORT_WORKER) },
+    { id: 'takeoff-workbook-worker', label: 'Private takeoff workbook/XLSX worker', category: 'exports', requiredEnvVars: ['CAST_CAD_TAKEOFF_WORKBOOK_WORKER|CAST_CAD_XLSX_EXPORT_WORKER'], providerDecision: 'Choose the workbook/XLSX generation worker.', ready: envChoiceReady(['CAST_CAD_TAKEOFF_WORKBOOK_WORKER|CAST_CAD_XLSX_EXPORT_WORKER']) },
+    { id: 'ocr-ai-workers', label: 'OCR/search and AI review workers', category: 'ai-search', requiredEnvVars: ['CAST_CAD_OCR_WORKER', 'CAST_CAD_AI_REVIEW_WORKER'], providerDecision: 'Choose private OCR/symbol extraction and AI review workers with source-citation output.', ready: Boolean(process.env.CAST_CAD_OCR_WORKER && process.env.CAST_CAD_AI_REVIEW_WORKER) },
+    { id: 'comparison-worker', label: 'Private drawing comparison worker', category: 'comparison', requiredEnvVars: ['CAST_CAD_COMPARISON_WORKER'], providerDecision: 'Choose the private PDF comparison/delta renderer.', ready: Boolean(process.env.CAST_CAD_COMPARISON_WORKER) },
+    { id: 'collaboration-transport', label: 'Review-room/comment/transmittal delivery transport', category: 'collaboration', requiredEnvVars: ['CAST_CAD_REVIEW_ROOM_TRANSPORT|CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT|CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_CAD_REALTIME_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose email/realtime/workflow transport for private invites, mentions, and drawing transmittals.', ready: envChoiceReady(['CAST_CAD_REVIEW_ROOM_TRANSPORT|CAST_CAD_COMMENT_NOTIFICATION_TRANSPORT|CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_CAD_REALTIME_PROVIDER|CAST_SERVER_WORKFLOW_API_URL']) },
+    { id: 'model-cad-worker', label: 'Private CAD/model ingestion and viewer artifacts', category: 'cad-model', requiredEnvVars: ['CAST_CAD_MODEL_INGESTION_WORKER|CAST_CAD_IFC_CONVERSION_WORKER|CAST_CAD_CAD_CONVERSION_WORKER'], providerDecision: 'Choose IFC/CAD/Revit/DWG conversion worker and private model artifact storage.', ready: envChoiceReady(['CAST_CAD_MODEL_INGESTION_WORKER|CAST_CAD_IFC_CONVERSION_WORKER|CAST_CAD_CAD_CONVERSION_WORKER']) },
+    { id: 'cost-catalog', label: 'Private cost catalog/database adapter', category: 'cost', requiredEnvVars: ['CAST_CAD_COST_CATALOG_ADAPTER|CAST_CAD_COST_DATABASE_ADAPTER'], providerDecision: 'Choose the cost catalog/database adapter before costs are durable or budget-authoritative.', ready: envChoiceReady(['CAST_CAD_COST_CATALOG_ADAPTER|CAST_CAD_COST_DATABASE_ADAPTER']) },
+  ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
+  const readyCount = gates.filter((gate) => gate.ready).length;
+  const blocked = gates.filter((gate) => !gate.ready);
+  return {
+    ok: true,
+    status: blocked.length ? 'provider-required' : 'ready',
+    readyCount,
+    blockedCount: blocked.length,
+    gateCount: gates.length,
+    gates,
+    missingRequiredEnvChoices: blocked.map((gate) => ({ id: gate.id, label: gate.label, requiredEnvVars: gate.requiredEnvVars, providerDecision: gate.providerDecision })),
+    contract: { publicExposure: false, noPublicLinks: true, noStore: true, secretValuesExposed: false, failClosedUntilProvidersConfigured: true },
+  };
+}
 function markupsCsv(markups) {
   const cols = ['id','projectId','sheetId','pageNumber','tool','subject','status','priority','trade','costCode','quantity','unit','createdByUserId','createdAt'];
   return [cols.join(','), ...markups.map((m) => cols.map((c) => csvEscape(c === 'quantity' ? (m.measurement?.value || '') : c === 'unit' ? (m.measurement?.unit || '') : m[c])).join(','))].join('\n');
@@ -2186,6 +2218,6 @@ module.exports = {
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
   createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract,
-  upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
+  upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };

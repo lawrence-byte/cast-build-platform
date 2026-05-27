@@ -64,6 +64,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent drawing approval reviewer decision contract and frontend bridge for named-reviewer approve/reject/revise decisions, private/no-public-link audit events, all-reviewer approval rollups, and fail-closed issue-for-construction release until explicit human review: `/api/cast-cad-exports` with `type=drawing-approval-review`.
 - Provider-independent drawing index QA contract and frontend bridge for private current-set quality reports that catch missing sheet numbers/titles/disciplines, duplicate drawing numbers, public URL exposure, non-PDF entries, and unreviewed current-set publish attempts; audited reports fail closed for durable storage until `CAST_CAD_DRAWING_QA_ADAPTER`, `CAST_CAD_DOCUMENT_METADATA_ADAPTER`, or `CAST_CAD_DATABASE_URL` is configured: `/api/cast-cad-exports` with `type=drawing-index-qa`.
 - Provider-independent strict authenticated API boundary across CAST CAD markups, exports/jobs, RFI/workflow links, OCR/AI search, and review rooms: when `CAST_CAD_REQUIRE_AUTH=true`, these endpoints now fail closed with the shared `auth-required`/`401` contract before trusting header-provided roles or exposing private project records.
+- Provider-independent production provider readiness contract and frontend bridge on `/api/cast-cad-markups?action=production-readiness`, aggregating exact remaining env choices/provider decisions for auth, private PDF streaming, renderer, durable databases, exports, OCR/AI, comparison, collaboration transport, model ingestion, and cost catalog without exposing secret values or fabricating provider-ready status.
 - Provider-independent API response privacy envelope across CAST CAD JSON endpoints: shared responses now default to `Cache-Control: private, max-age=0, no-store`, `Pragma: no-cache`, `Expires: 0`, and an explicit `x-cast-cad-private-contract` signal so private markup/job/search/review-room metadata is not publicly cacheable even when provider credentials are still unconfigured.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
@@ -164,8 +165,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-26T16:51:07Z` for the CAST CAD workflow-link dashboard frontend bridge slice.
-- Branch audited: `cast-cad-workflow-link-dashboard`.
+- Audited at: `2026-05-27T09:52:25Z` for the CAST CAD production provider readiness contract/frontend bridge slice.
+- Branch audited: `cast-cad-production-readiness-contract`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.

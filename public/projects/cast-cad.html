@@ -450,7 +450,9 @@
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Production backend gates</h2><span class="badge">API contracts live</span></div>
           <div class="cad-panel-body">
-            <div class="tool-list">
+            <p class="cad-muted" data-production-readiness-summary>Production provider readiness not checked yet. Refresh to list exact env choices without exposing secret values.</p>
+            <div class="button-row"><button class="btn secondary" type="button" data-refresh-production-readiness>Refresh provider readiness</button></div>
+            <div class="tool-list" data-production-readiness-list>
               <div class="tool-card"><em>Authenticated PDF stream</em><strong>/api/cast-cad-pdf-stream</strong><span>Fail-closed private drawing stream contract with auth, no-store headers, expiring stream IDs, and provider-required status until Dropbox/CAST Server credentials are configured.</span></div>
               <div class="tool-card"><em>Persistent markups</em><strong>/api/cast-cad-markups</strong><span>Server-side create/list/update/export contract for vector markups, comments, layers, styles, measurements, status, assignees, and immutable audit entries.</span></div>
               <div class="tool-card"><em>Exports + workflows</em><strong>/api/cast-cad-exports · /api/cast-cad-rfi-link</strong><span>Takeoff workbook jobs, annotated PDF export jobs, drawing comparison jobs, and RFI-from-markup snapshot links report real worker/provider requirements instead of pretending private infrastructure is configured.</span></div>

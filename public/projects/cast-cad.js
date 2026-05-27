@@ -40,6 +40,7 @@ let drawingApprovalState = { status: 'idle', packages: [], message: 'Drawing app
 let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
 let markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' };
 let markupSavedViewState = { status: 'idle', views: [], message: 'Saved markup filter/report views not checked yet. Durable view storage requires CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
+let productionReadinessState = { status: 'idle', readyCount: 0, blockedCount: 0, gateCount: 0, gates: [], message: 'Production provider readiness not checked yet.' };
 
 const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(n || 0));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -928,6 +929,14 @@ function renderGovernance() {
     audit.innerHTML = governanceState.auditLog.length ? governanceState.auditLog.slice(-5).reverse().map((entry) => `<div class="tool-card"><em>${esc(entry.entityType || 'audit')} · ${esc(entry.actorRole || '')}</em><strong>${esc(entry.action || 'CAST CAD audit event')}</strong><span>${esc(entry.entityId || '')} · ${esc(entry.createdAt || '')}</span></div>`).join('') : '<p class="cad-muted">No governance audit entries loaded yet.</p>';
   }
 }
+function renderProductionReadiness() {
+  const summary = document.querySelector('[data-production-readiness-summary]');
+  const list = document.querySelector('[data-production-readiness-list]');
+  if (summary) summary.textContent = productionReadinessState.message;
+  if (!list) return;
+  const gates = productionReadinessState.gates || [];
+  list.innerHTML = gates.length ? gates.slice(0, 8).map((gate) => `<div class="tool-card"><em>${esc(gate.status || 'provider-required')} · ${esc(gate.category || 'provider')}</em><strong>${esc(gate.label || gate.id)}</strong><span>Requires ${esc((gate.requiredEnvVars || []).join(' or '))}. ${esc(gate.providerDecision || '')} Secret values are never exposed by this readiness contract.</span></div>`).join('') : '<p class="cad-muted">Provider readiness not loaded yet. The readiness contract lists exact env choices without exposing secret values.</p>';
+}
 function render() {
   CPC.ensureDrawingIntelligenceState(state);
   renderMetrics();
@@ -947,6 +956,7 @@ function render() {
   renderAutoLinkCandidates();
   renderReviewRooms();
   renderGovernance();
+  renderProductionReadiness();
   renderFieldModeStatus();
   renderMarkupPersistenceStatus();
   renderWorkflowLinks();
@@ -1058,6 +1068,27 @@ async function loadGovernanceStatus({ toast = false } = {}) {
     if (toast) window.CASTShell?.toast?.('Governance unavailable; no local role authority was fabricated.', { kind: 'error' });
   }
   renderGovernance();
+}
+async function loadProductionReadiness({ toast = false } = {}) {
+  try {
+    const response = await fetch('/api/cast-cad-markups?action=production-readiness', { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    productionReadinessState = {
+      status: result.status || 'provider-required',
+      readyCount: result.readyCount || 0,
+      blockedCount: result.blockedCount || 0,
+      gateCount: result.gateCount || 0,
+      gates: result.gates || [],
+      message: `${result.readyCount || 0}/${result.gateCount || 0} production provider gate(s) configured; ${result.blockedCount || 0} still fail closed. Exact env choices are listed without exposing secret values.`,
+    };
+    if (toast) window.CASTShell?.toast?.('CAST CAD production readiness refreshed.', { kind: result.blockedCount ? 'info' : 'success' });
+  } catch (error) {
+    console.warn('CAST CAD production readiness unavailable', error);
+    productionReadinessState = { ...productionReadinessState, status: 'blocked', message: `Production readiness blocked: ${error.message}. No provider success state was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Production readiness unavailable; no provider state was fabricated.', { kind: 'error' });
+  }
+  renderProductionReadiness();
 }
 async function assignGovernanceMemberRole() {
   const payload = governanceMemberPayload();
@@ -2419,6 +2450,7 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }
   if (event.target.closest('[data-refresh-review-rooms]')) { loadReviewRooms({ toast: true }); return; }
   if (event.target.closest('[data-refresh-governance]')) { loadGovernanceStatus({ toast: true }); return; }
+  if (event.target.closest('[data-refresh-production-readiness]')) { loadProductionReadiness({ toast: true }); return; }
   if (event.target.closest('[data-assign-governance-role]')) { assignGovernanceMemberRole(); return; }
   const verify = event.target.closest('[data-verify-qty]'); if (verify) verifyQuantity(verify.dataset.verifyQty);
   const resolve = event.target.closest('[data-resolve]'); if (resolve) resolveMarkup(resolve.dataset.resolve);
@@ -2467,4 +2499,5 @@ loadCostCatalogItems();
 loadAiReviewFindings();
 loadReviewRooms();
 loadGovernanceStatus();
+loadProductionReadiness();
 loadMarkupSavedViews();
