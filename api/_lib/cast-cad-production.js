@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2002,6 +2002,93 @@ function reviewDrawingApprovalPackage(state, input = {}, actor) {
   if (wantsIfc && allApproved && packageRow.status === 'approval-complete-human-review-required') return { ok: false, status: 409, code: 'human-review-required', error: 'All named reviewers approved, but issue-for-construction release still requires explicit human review approval.', approvalPackage: packageRow, decisionEvent: event, contract: drawingApprovalContract() };
   return { ok: true, status: 202, approvalPackage: packageRow, decisionEvent: event, contract: drawingApprovalContract() };
 }
+function drawingIndexQaContract() {
+  return {
+    durableAdapterRequired: !Boolean(process.env.CAST_CAD_DRAWING_QA_ADAPTER || process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER || process.env.CAST_CAD_DATABASE_URL),
+    requiredEnvVars: ['CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'],
+    checks: ['missing-drawing-number','missing-title','missing-discipline','duplicate-drawing-number','non-pdf-entry','missing-private-source-path','unreviewed-current-set-publish'],
+    privateArtifacts: true,
+    publicExposure: false,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+  };
+}
+function normalizeQaSheet(input = {}) {
+  const fileName = String(input.fileName || input.file_name || input.name || '').trim();
+  const sourcePath = String(input.sourcePath || input.source_path || input.path || '').trim();
+  const drawingNumber = String(input.drawingNumber || input.drawing_number || '').trim();
+  const drawingTitle = String(input.drawingTitle || input.drawing_title || '').trim();
+  return {
+    sheetId: String(input.sheetId || input.sheet_id || input.id || drawingNumber || sourcePath || fileName).trim(),
+    fileName,
+    sourcePath,
+    extension: String(input.extension || (fileName.split('.').pop() || '')).toLowerCase(),
+    drawingNumber,
+    drawingTitle,
+    discipline: String(input.discipline || '').trim(),
+    revisionLabel: String(input.revisionLabel || input.revision_label || '').trim(),
+  };
+}
+function runDrawingIndexQa(state, input = {}, actor) {
+  state.drawingIndexQaReports ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const setId = input.setId || input.set_id || 'current';
+  const sheets = Array.isArray(input.sheets || input.files) ? (input.sheets || input.files).map(normalizeQaSheet) : [];
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!sheets.length) errors.push('At least one sheet/file is required for drawing index QA.');
+  if (errors.length) return { ok: false, status: 422, errors, contract: drawingIndexQaContract() };
+  const numberCounts = new Map();
+  sheets.forEach((sheet) => { if (sheet.drawingNumber) numberCounts.set(sheet.drawingNumber.toLowerCase(), (numberCounts.get(sheet.drawingNumber.toLowerCase()) || 0) + 1); });
+  const findings = [];
+  sheets.forEach((sheet) => {
+    const base = { sheetId: sheet.sheetId, drawingNumber: sheet.drawingNumber, fileName: sheet.fileName, sourcePath: sheet.sourcePath, publicExposure: false };
+    if (!sheet.drawingNumber) findings.push({ ...base, code: 'missing-drawing-number', severity: 'critical', message: 'Drawing number is required before current-set publication.' });
+    if (!sheet.drawingTitle) findings.push({ ...base, code: 'missing-title', severity: 'warning', message: 'Drawing title is missing from the index metadata.' });
+    if (!sheet.discipline) findings.push({ ...base, code: 'missing-discipline', severity: 'warning', message: 'Drawing discipline is missing from the index metadata.' });
+    if (sheet.drawingNumber && numberCounts.get(sheet.drawingNumber.toLowerCase()) > 1) findings.push({ ...base, code: 'duplicate-drawing-number', severity: 'critical', message: 'Duplicate drawing number found in the selected set.' });
+    if (sheet.extension && sheet.extension !== 'pdf') findings.push({ ...base, code: 'non-pdf-entry', severity: 'warning', message: 'Current CAST CAD drawing packages expect private PDF sheet entries.' });
+    if (!sheet.sourcePath || /^https?:\/\//i.test(sheet.sourcePath)) findings.push({ ...base, code: 'missing-private-source-path', severity: 'critical', message: 'Sheet requires a private provider/source path; public URLs are forbidden.' });
+  });
+  if (Boolean(input.publishAsCurrent || input.publish_as_current) && !Boolean(input.humanReviewApproved || input.human_review_approved)) findings.push({ sheetId: '', drawingNumber: '', fileName: '', sourcePath: '', publicExposure: false, code: 'unreviewed-current-set-publish', severity: 'critical', message: 'Publishing a QA report/current drawing set requires explicit human review approval.' });
+  const criticalCount = findings.filter((finding) => finding.severity === 'critical').length;
+  const durableReady = !drawingIndexQaContract().durableAdapterRequired;
+  const report = {
+    id: input.id || id('cad_drawing_qa'),
+    type: 'drawing-index-qa',
+    projectId,
+    setId,
+    sheetCount: sheets.length,
+    findingCount: findings.length,
+    criticalCount,
+    status: criticalCount ? 'blocked' : 'review-ready',
+    providerRequired: !durableReady,
+    requiredEnvVars: durableReady ? [] : drawingIndexQaContract().requiredEnvVars,
+    durablePersistence: durableReady,
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    findings,
+    createdByUserId: actor.id,
+    createdAt: now(),
+  };
+  state.drawingIndexQaReports.push(report);
+  audit(state, actor, report.providerRequired ? 'Created audit-only CAST CAD drawing index QA report pending durable adapter' : 'Created durable CAST CAD drawing index QA report', 'CAST_CAD_DRAWING_INDEX_QA', report.id, null, report, 'Private drawing index QA found missing/duplicate/publish-gate issues without public links or fabricated current-set authority.');
+  return { ok: true, status: report.providerRequired ? 202 : 201, report, contract: drawingIndexQaContract() };
+}
+function listDrawingIndexQaReports(state, filters = {}) {
+  state.drawingIndexQaReports ||= [];
+  let rows = state.drawingIndexQaReports.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2098,7 +2185,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog,
   markupsCsv,
 };

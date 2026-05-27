@@ -327,6 +327,23 @@ assert.equal(reviewerDecision.decisionEvent.noPublicLinks, true, 'drawing approv
 assert.ok(cad.drawingApprovalContract().reviewerDecisionContract.includes('Named reviewer'), 'drawing approval contract documents named-reviewer decision gate');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_APPROVAL_DECISION'), 'drawing approval reviewer decisions are audited');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_APPROVAL_PACKAGE'), 'drawing approval packages are audited');
+const drawingIndexQa = cad.runDrawingIndexQa(state, { projectId: 'alum', setId: 'permit', publishAsCurrent: true, sheets: [
+  { sheetId: 'A-101', drawingNumber: 'A-101', drawingTitle: 'Floor Plan', discipline: 'A', sourcePath: 'Current Drawings/A/A-101.pdf', fileName: 'A-101.pdf', extension: 'pdf' },
+  { sheetId: 'A-101-dup', drawingNumber: 'A-101', drawingTitle: '', discipline: '', sourcePath: 'https://example.com/A-101.pdf', fileName: 'A-101 duplicate.pdf', extension: 'pdf' },
+  { sheetId: 'spec-1', drawingTitle: 'Spec Section', discipline: 'Specs', sourcePath: 'Current Drawings/specs/spec-1.docx', fileName: 'spec-1.docx', extension: 'docx' },
+] }, owner);
+assert.equal(drawingIndexQa.ok, true, 'drawing index QA creates an audited private report');
+assert.equal(drawingIndexQa.report.status, 'blocked', 'drawing index QA blocks publish readiness when critical findings exist');
+assert.equal(drawingIndexQa.report.publicExposure, false, 'drawing index QA report forbids public exposure');
+assert.equal(drawingIndexQa.report.noPublicLinks, true, 'drawing index QA report refuses public report links');
+assert.equal(drawingIndexQa.report.providerRequired, true, 'drawing index QA does not claim durable report persistence without an adapter');
+assert.deepEqual(drawingIndexQa.report.requiredEnvVars, ['CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], 'drawing index QA names exact durable adapter choices');
+assert.ok(drawingIndexQa.report.findings.some((row) => row.code === 'duplicate-drawing-number'), 'drawing index QA detects duplicate drawing numbers');
+assert.ok(drawingIndexQa.report.findings.some((row) => row.code === 'missing-private-source-path'), 'drawing index QA rejects public sheet URLs');
+assert.ok(drawingIndexQa.report.findings.some((row) => row.code === 'unreviewed-current-set-publish'), 'drawing index QA gates current-set publish on human review');
+assert.equal(cad.listDrawingIndexQaReports(state, { projectId: 'alum', setId: 'permit' }).length, 1, 'drawing index QA reports list by project/set');
+assert.ok(cad.drawingIndexQaContract().checks.includes('duplicate-drawing-number'), 'drawing index QA contract documents duplicate sheet-number checks');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_INDEX_QA'), 'drawing index QA reports are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
 assert.equal(publicModelImport.code, 'public-url-forbidden', 'model/CAD ingestion exposes public URL blocker');
@@ -628,6 +645,13 @@ assert.ok(castCadJs.includes('No local current/superseded authority was fabricat
 assert.ok(castCadHtml.includes('data-publish-drawing-set-version'), 'CAST CAD workbench exposes drawing set version publish control');
 assert.ok(castCadHtml.includes('data-slip-sheet-revision'), 'CAST CAD workbench exposes human-review-gated slip-sheet control');
 assert.ok(castCadHtml.includes('data-drawing-set-revisions'), 'CAST CAD workbench exposes drawing set revision history');
+assert.ok(castCadJs.includes('function runCurrentDrawingIndexQa'), 'CAST CAD workbench runs drawing index QA through backend audit');
+assert.ok(castCadJs.includes("type: 'drawing-index-qa'"), 'CAST CAD workbench calls drawing-index-qa export contract');
+assert.ok(castCadJs.includes('No local current-set authority or public report was fabricated'), 'CAST CAD drawing index QA fails closed without fabricating local publish/report authority');
+assert.ok(castCadJs.includes('CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'), 'CAST CAD workbench names drawing index QA durable adapter blocker');
+assert.ok(castCadHtml.includes('data-run-drawing-index-qa'), 'CAST CAD workbench exposes drawing index QA run control');
+assert.ok(castCadHtml.includes('data-drawing-index-qa-reports'), 'CAST CAD workbench exposes drawing index QA report history');
+assert.ok(castCadHtml.includes('data-drawing-index-qa-review'), 'CAST CAD workbench exposes drawing index QA human-review gate');
 assert.ok(castCadJs.includes('function createDrawingApprovalPackage'), 'CAST CAD workbench creates drawing approval packages through backend audit');
 assert.ok(castCadJs.includes('function reviewDrawingApprovalPackage'), 'CAST CAD workbench records named reviewer approval decisions through backend audit');
 assert.ok(castCadJs.includes("type: 'drawing-approval-package'"), 'CAST CAD workbench calls drawing approval package export contract');
