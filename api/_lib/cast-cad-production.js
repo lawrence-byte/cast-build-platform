@@ -56,17 +56,34 @@ function audit(state, actor, action, entityType, entityId, previousValue, newVal
 }
 function getState() { return memoryState; }
 function resetState(seed) { memoryState = seed ? clone(seed) : DEFAULT_STATE(); return memoryState; }
-function json(res, status, body, headers = {}) {
-  res.statusCode = status;
-  Object.entries({
-    'content-type': 'application/json; charset=utf-8',
+function privateResponseHeaders(headers = {}) {
+  return {
     'cache-control': 'private, max-age=0, no-store',
     pragma: 'no-cache',
     expires: '0',
     'x-cast-cad-private-contract': 'requires-auth; no-public-cache; no-public-links',
     ...headers,
-  }).forEach(([k, v]) => res.setHeader(k, v));
+  };
+}
+function applyPrivateResponseHeaders(res, headers = {}) {
+  Object.entries(privateResponseHeaders(headers)).forEach(([k, v]) => res.setHeader(k, v));
+}
+function json(res, status, body, headers = {}) {
+  res.statusCode = status;
+  applyPrivateResponseHeaders(res, {
+    'content-type': 'application/json; charset=utf-8',
+    ...headers,
+  });
   res.end(JSON.stringify(body, null, 2));
+}
+function privateCsv(res, status, body, headers = {}) {
+  res.statusCode = status;
+  applyPrivateResponseHeaders(res, {
+    'content-type': 'text/csv; charset=utf-8',
+    'content-disposition': headers['content-disposition'] || headers['Content-Disposition'] || 'attachment; filename="cast-cad-private-report.csv"',
+    ...headers,
+  });
+  res.end(body);
 }
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -2208,7 +2225,7 @@ function markupsCsv(markups) {
 }
 
 module.exports = {
-  CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, json, readBody, audit,
+  CAST_CAD_ROLES, CAST_CAD_PERMISSIONS, canCastCad, requireCastCad, requireAuthenticatedActor, getActor, getState, resetState, privateResponseHeaders, applyPrivateResponseHeaders, json, privateCsv, readBody, audit,
   buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract,

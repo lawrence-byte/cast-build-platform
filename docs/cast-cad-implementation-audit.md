@@ -66,6 +66,7 @@ Implemented backend contracts and tests for the remaining non-static elements th
 - Provider-independent strict authenticated API boundary across CAST CAD markups, exports/jobs, RFI/workflow links, OCR/AI search, and review rooms: when `CAST_CAD_REQUIRE_AUTH=true`, these endpoints now fail closed with the shared `auth-required`/`401` contract before trusting header-provided roles or exposing private project records.
 - Provider-independent production provider readiness contract and frontend bridge on `/api/cast-cad-markups?action=production-readiness`, aggregating exact remaining env choices/provider decisions for auth, private PDF streaming, renderer, durable databases, exports, OCR/AI, comparison, collaboration transport, model ingestion, and cost catalog without exposing secret values or fabricating provider-ready status.
 - Provider-independent API response privacy envelope across CAST CAD JSON endpoints: shared responses now default to `Cache-Control: private, max-age=0, no-store`, `Pragma: no-cache`, `Expires: 0`, and an explicit `x-cast-cad-private-contract` signal so private markup/job/search/review-room metadata is not publicly cacheable even when provider credentials are still unconfigured.
+- Provider-independent API response privacy envelope for CSV/report downloads: CAST CAD markup CSV exports now use the shared private response helper, set attachment disposition, and emit no-store/no-public-cache headers instead of exposing private markup reports as cacheable public artifacts.
 - Shared production service layer: `api/_lib/cast-cad-production.js`.
 - Regression coverage: `tests/cast-cad-production-contract-tests.js`.
 
@@ -165,8 +166,8 @@ node --check api/*.js api/_lib/*.js
 
 ## Latest audit run
 
-- Audited at: `2026-05-27T09:52:25Z` for the CAST CAD production provider readiness contract/frontend bridge slice.
-- Branch audited: `cast-cad-production-readiness-contract`.
+- Audited at: `2026-05-27T11:57:56Z` for the CAST CAD private CSV/report response envelope slice.
+- Branch audited: `cast-cad-private-csv-envelope`.
 - Local validation result: passing.
 - Live CAST CAD route: `https://app.cast-bld.com/projects/cast-cad.html` returned `200` and includes CAST CAD, Production backend gates, and `/api/cast-cad-markups` signals.
 - Live CAST CAD script: `https://app.cast-bld.com/projects/cast-cad.js` returned `200`.
