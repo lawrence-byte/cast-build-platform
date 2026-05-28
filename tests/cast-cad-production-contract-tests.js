@@ -167,6 +167,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-index-qa-store' &&
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing issue package storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing bulletin storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-as-built-closeout' && gate.requiredEnvVars.includes('CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER')), 'production readiness names exact as-built storage and PDF worker choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-closeout-punch-list' && gate.requiredEnvVars.includes('CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact closeout punch-list storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
@@ -563,6 +564,22 @@ assert.equal(blockedRevisionMigrationProvider.reconciliationReport.outputPointer
 assert.equal(cad.listDrawingRevisionReconciliationReports(state, { projectId: 'alum', setId: 'current' }).length, 2, 'revision reconciliation reports list by project/set');
 assert.equal(cad.drawingRevisionReconciliationContract().migrationRequiresHumanReview, true, 'revision reconciliation contract keeps migrations human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_REVISION_RECONCILIATION'), 'revision reconciliation reports are audited');
+const closeoutPunchList = cad.createDrawingCloseoutPunchList(state, { projectId: 'alum', setId: 'current', sheetIds: ['A-101'] }, owner);
+assert.equal(closeoutPunchList.ok, true, 'drawing closeout punch list records provider-independently');
+assert.equal(closeoutPunchList.punchList.publicExposure, false, 'closeout punch list forbids public exposure');
+assert.equal(closeoutPunchList.punchList.noPublicLinks, true, 'closeout punch list refuses public links');
+assert.equal(closeoutPunchList.punchList.openItemCount >= 1, true, 'closeout punch list captures open markup/takeoff items');
+assert.equal(closeoutPunchList.punchList.outputPointer, '', 'closeout punch list does not fabricate public report pointers');
+const blockedCloseoutReview = cad.createDrawingCloseoutPunchList(state, { projectId: 'alum', setId: 'current', finalAcceptanceRequested: true }, owner);
+assert.equal(blockedCloseoutReview.ok, false, 'closeout final acceptance fails closed without human review');
+assert.equal(blockedCloseoutReview.code, 'human-review-required', 'closeout punch list exposes human review blocker');
+const blockedCloseoutProvider = cad.createDrawingCloseoutPunchList(state, { projectId: 'alum', setId: 'current', finalAcceptanceRequested: true, humanReviewApproved: true }, owner);
+assert.equal(blockedCloseoutProvider.ok, false, 'closeout final acceptance fails closed without durable storage');
+assert.equal(blockedCloseoutProvider.code, 'provider-required', 'closeout punch list exposes provider-required blocker');
+assert.deepEqual(blockedCloseoutProvider.requiredEnvVars, ['CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER or CAST_CAD_DATABASE_URL'], 'closeout punch list names exact durable storage choices');
+assert.equal(cad.listDrawingCloseoutPunchLists(state, { projectId: 'alum', setId: 'current', sheetId: 'A-101' }).length, 2, 'closeout punch lists list by project/set/sheet');
+assert.equal(cad.drawingCloseoutPunchListContract().humanReviewRequiredBeforeFinalAcceptance, true, 'closeout punch-list contract keeps final acceptance human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_CLOSEOUT_PUNCH_LIST'), 'closeout punch lists are audited');
 
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
