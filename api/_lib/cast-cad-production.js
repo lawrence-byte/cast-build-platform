@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2577,6 +2577,78 @@ function listDrawingReleaseAcknowledgements(state, filters = {}) {
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
   return rows;
 }
+function drawingRevisionReconciliationContract() {
+  return {
+    type: 'drawing-revision-reconciliation',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    checks: ['open-markups-on-superseded-revisions','missing-current-replacement','pending-review-before-migration','unverified-takeoff-quantities-on-superseded-sheets'],
+    durableAdapterRequired: 'CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL',
+    migrationRequiresHumanReview: true,
+    failClosedBehavior: 'Creates private audited reconciliation reports for superseded drawing revisions but refuses to mark migrations complete, rewrite markups, or claim durable report storage without explicit human review and a configured private adapter.',
+  };
+}
+function revisionReconciliationStoreConfigured() { return Boolean(process.env.CAST_CAD_REVISION_RECONCILIATION_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function createDrawingRevisionReconciliation(state, input = {}, actor) {
+  state.drawingRevisionReconciliationReports ||= [];
+  state.drawingSheetRevisions ||= [];
+  state.markups ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const setId = input.setId || input.set_id || 'current';
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'], contract: drawingRevisionReconciliationContract() };
+  const includeClosed = Boolean(input.includeClosed || input.include_closed);
+  const migrateRequested = Boolean(input.migrateRequested || input.migrate_requested || input.markResolved || input.mark_resolved || input.createMigrationPlan || input.create_migration_plan);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (migrateRequested && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Drawing revision reconciliation migration/completion requires human review approval before markups or quantities are rewritten.', contract: drawingRevisionReconciliationContract() };
+  const relevantRevisions = state.drawingSheetRevisions.filter((row) => row.projectId === projectId && (!setId || row.setId === setId));
+  const currentReplacements = new Map(relevantRevisions.filter((row) => row.status === 'current').map((row) => [row.drawingNumber || row.sheetId, row]));
+  const superseded = relevantRevisions.filter((row) => row.status === 'superseded' || row.supersededByRevisionId);
+  const findings = superseded.map((revision) => {
+    const relatedMarkups = state.markups.filter((markup) => markup.projectId === projectId && (markup.sheetId === revision.sheetId || markup.sheetId === revision.id || markup.revisionId === revision.id) && (includeClosed || !['Resolved','Verified','Closed','Deleted'].includes(markup.status)));
+    const replacement = state.drawingSheetRevisions.find((row) => row.id === revision.supersededByRevisionId) || currentReplacements.get(revision.drawingNumber || revision.sheetId) || null;
+    const unverifiedTakeoffs = relatedMarkups.filter((markup) => markup.measurement && !['Verified','Resolved','Closed'].includes(markup.status));
+    return {
+      revisionId: revision.id,
+      sheetId: revision.sheetId,
+      drawingNumber: revision.drawingNumber,
+      previousRevisionLabel: revision.revisionLabel,
+      replacementRevisionId: replacement?.id || '',
+      replacementSheetId: replacement?.sheetId || '',
+      openMarkupIds: relatedMarkups.map((markup) => markup.id),
+      openMarkupCount: relatedMarkups.length,
+      unverifiedTakeoffMarkupIds: unverifiedTakeoffs.map((markup) => markup.id),
+      severity: !replacement ? 'high' : relatedMarkups.length ? 'medium' : 'info',
+      recommendedAction: !replacement ? 'Review superseded revision without a current replacement before migration.' : relatedMarkups.length ? 'Human-review open markups/takeoffs before carrying them forward to the replacement revision.' : 'No open markup carry-forward needed.',
+    };
+  }).filter((finding) => finding.openMarkupCount || !finding.replacementRevisionId || input.includeClean || input.include_clean);
+  const durableReady = revisionReconciliationStoreConfigured();
+  const providerRequired = migrateRequested && !durableReady;
+  const report = {
+    id: input.id || id('cad_revision_recon'), type: 'drawing-revision-reconciliation', projectId, setId,
+    status: providerRequired ? 'provider-required' : migrateRequested ? 'migration-plan-review-recorded' : 'report-recorded',
+    providerRequired, requiredEnvVars: providerRequired ? ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL'] : [], durablePersistence: durableReady,
+    supersededRevisionCount: superseded.length, findingCount: findings.length, openMarkupCount: findings.reduce((sum, finding) => sum + finding.openMarkupCount, 0),
+    findings, migrateRequested, humanReviewApproved, publicExposure: false, noPublicLinks: true, outputPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingRevisionReconciliationReports.push(report);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD drawing revision reconciliation pending durable adapter' : 'Created CAST CAD drawing revision reconciliation report', 'CAST_CAD_DRAWING_REVISION_RECONCILIATION', report.id, null, report, providerRequired ? 'No durable migration completion, public report link, or markup rewrite was fabricated.' : 'Private reconciliation report recorded; any migration remains human-review gated.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD drawing revision reconciliation migration requires CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL; refusing to fabricate durable migration completion or rewrite markups.', requiredEnvVars: report.requiredEnvVars, reconciliationReport: report, contract: drawingRevisionReconciliationContract() };
+  return { ok: true, status: 201, reconciliationReport: report, contract: drawingRevisionReconciliationContract() };
+}
+function listDrawingRevisionReconciliationReports(state, filters = {}) {
+  state.drawingRevisionReconciliationReports ||= [];
+  let rows = state.drawingRevisionReconciliationReports.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2688,6 +2760,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-bulletin-release', label: 'Private addendum/bulletin change manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private bulletin storage plus transmittal/email/workflow transport before addenda/bulletins are published or delivered.', ready: drawingBulletinStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-as-built-closeout', label: 'Private as-built/redline closeout package', category: 'closeout', requiredEnvVars: ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER'], providerDecision: 'Choose durable private as-built storage plus PDF/as-built export worker before closeout packages are flattened, stored, or released.', ready: drawingAsBuiltStoreConfigured() && drawingAsBuiltPdfWorkerConfigured() },
     { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
+    { id: 'drawing-revision-reconciliation', label: 'Private drawing revision reconciliation/migration records', category: 'governance', requiredEnvVars: ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private reconciliation storage before superseded-sheet markup/takeoff migration plans can be treated as complete or authoritative.', ready: revisionReconciliationStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
   const readyCount = gates.filter((gate) => gate.ready).length;
   const blocked = gates.filter((gate) => !gate.ready);
@@ -2717,7 +2790,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };
