@@ -169,6 +169,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' 
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-as-built-closeout' && gate.requiredEnvVars.includes('CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER')), 'production readiness names exact as-built storage and PDF worker choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-closeout-punch-list' && gate.requiredEnvVars.includes('CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact closeout punch-list storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-turnover-package' && gate.requiredEnvVars.includes('CAST_CAD_TURNOVER_PACKAGE_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact turnover package storage and delivery choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-warranty-claims' && gate.requiredEnvVars.includes('CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact warranty claim storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
@@ -604,6 +605,26 @@ assert.equal(cad.listDrawingTurnoverPackages(state, { projectId: 'alum', setId: 
 assert.equal(cad.drawingTurnoverPackageContract().finalAcceptanceRequiresHumanReview, true, 'turnover package contract keeps final acceptance human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_TURNOVER_PACKAGE'), 'turnover packages are audited');
 
+const publicWarrantyClaim = cad.createDrawingWarrantyClaim(state, { projectId: 'alum', turnoverPackageId: turnoverPackage.turnoverPackage.id, sheetIds: ['A-101'], evidencePointers: ['https://example.com/leak-photo.jpg'] }, owner);
+assert.equal(publicWarrantyClaim.ok, false, 'warranty claims reject public evidence URLs');
+assert.equal(publicWarrantyClaim.code, 'public-url-forbidden', 'warranty claim exposes public URL blocker');
+const warrantyClaim = cad.createDrawingWarrantyClaim(state, { projectId: 'alum', turnoverPackageId: turnoverPackage.turnoverPackage.id, deliverableId: turnoverPackage.turnoverPackage.deliverables[0].id, sheetIds: ['A-101'], markupIds: [markup.markup.id], title: 'Door hardware warranty issue', evidencePointers: ['private://uploads/door-photo.jpg'] }, owner);
+assert.equal(warrantyClaim.ok, true, 'warranty claim draft records provider-independently');
+assert.equal(warrantyClaim.warrantyClaim.publicExposure, false, 'warranty claim forbids public exposure');
+assert.equal(warrantyClaim.warrantyClaim.noPublicLinks, true, 'warranty claim refuses public links');
+assert.equal(warrantyClaim.warrantyClaim.outputPointer, '', 'warranty claim does not fabricate output pointers');
+const blockedWarrantyReview = cad.createDrawingWarrantyClaim(state, { projectId: 'alum', turnoverPackageId: turnoverPackage.turnoverPackage.id, sheetIds: ['A-101'], notifyContractor: true }, owner);
+assert.equal(blockedWarrantyReview.ok, false, 'warranty contractor notice fails closed without human review');
+assert.equal(blockedWarrantyReview.code, 'human-review-required', 'warranty claim exposes human review blocker');
+const blockedWarrantyProvider = cad.createDrawingWarrantyClaim(state, { projectId: 'alum', turnoverPackageId: turnoverPackage.turnoverPackage.id, sheetIds: ['A-101'], notifyContractor: true, humanReviewApproved: true }, owner);
+assert.equal(blockedWarrantyProvider.ok, false, 'warranty contractor notice fails closed without durable storage and private delivery');
+assert.equal(blockedWarrantyProvider.code, 'provider-required', 'warranty claim exposes provider-required blocker');
+assert.deepEqual(blockedWarrantyProvider.requiredEnvVars, ['CAST_CAD_WARRANTY_CLAIM_ADAPTER or CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_WARRANTY_CLAIM_TRANSPORT or CAST_CAD_TURNOVER_DELIVERY_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'warranty claim names exact durable storage and delivery choices');
+assert.equal(blockedWarrantyProvider.warrantyClaim.deliveryPointer, '', 'warranty claim does not fabricate delivery pointers');
+assert.equal(cad.listDrawingWarrantyClaims(state, { projectId: 'alum', turnoverPackageId: turnoverPackage.turnoverPackage.id }).length, 2, 'warranty claims list by project and turnover package');
+assert.equal(cad.drawingWarrantyClaimContract().contractorNoticeRequiresHumanReview, true, 'warranty claim contract keeps contractor notices human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_WARRANTY_CLAIM'), 'warranty claims are audited');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
@@ -747,6 +768,7 @@ assert.ok(castCadJs.includes("createBackendExportJob('drawing-transmittal')"), '
 assert.ok(castCadJs.includes("createBackendExportJob('pdf-annotation-import')"), 'CAST CAD workbench calls PDF annotation import/unflatten job contract');
 assert.ok(castCadJs.includes("createBackendExportJob('model-ingestion')"), 'CAST CAD workbench calls CAD/model ingestion job contract');
 assert.ok(castCadJs.includes("createBackendExportJob('model-quantity-link')"), 'CAST CAD workbench calls model quantity link job contract');
+assert.ok(castCadJs.includes("createBackendExportJob('drawing-warranty-claim')"), 'CAST CAD workbench calls drawing warranty claim contract');
 assert.ok(castCadJs.includes("createBackendExportJob('private-upload-lease')"), 'CAST CAD workbench calls private upload lease contract');
 assert.ok(castCadJs.includes('No public upload URL was fabricated'), 'CAST CAD private upload lease workflow fails closed without fabricating upload URLs');
 assert.ok(castCadJs.includes('CAST_CAD_TAKEOFF_WORKBOOK_WORKER'), 'CAST CAD workbench names takeoff workbook worker requirement');
@@ -754,6 +776,8 @@ assert.ok(castCadJs.includes('CAST_CAD_PDF_RENDERER_WORKER'), 'CAST CAD workbenc
 assert.ok(castCadJs.includes('CAST_CAD_PDF_EXPORT_WORKER'), 'CAST CAD workbench names annotated PDF export worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_DRAWING_UPLOAD_STORAGE_ADAPTER'), 'CAST CAD workbench names drawing upload private storage adapter requirement');
 assert.ok(castCadJs.includes('CAST_CAD_TRANSMITTAL_TRANSPORT'), 'CAST CAD workbench names drawing transmittal transport requirement');
+assert.ok(castCadJs.includes('CAST_CAD_WARRANTY_CLAIM_ADAPTER'), 'CAST CAD workbench names warranty claim durable adapter requirement');
+assert.ok(castCadJs.includes('No local-only warranty claim was fabricated'), 'CAST CAD warranty claims fail closed without fabricating local claim authority');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER'), 'CAST CAD workbench names PDF annotation import worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_MODEL_INGESTION_WORKER'), 'CAST CAD workbench names CAD/model ingestion worker requirement');
 assert.ok(castCadJs.includes('PDF annotation import refuses public URLs'), 'CAST CAD annotation import fails closed instead of accepting public source URLs');
@@ -768,6 +792,8 @@ assert.ok(castCadHtml.includes('data-private-upload-hash'), 'CAST CAD workbench 
 assert.ok(castCadHtml.includes('data-create-drawing-upload'), 'CAST CAD workbench exposes drawing upload package control');
 assert.ok(castCadHtml.includes('data-create-drawing-transmittal'), 'CAST CAD workbench exposes drawing transmittal control');
 assert.ok(castCadHtml.includes('data-drawing-transmittal-recipient'), 'CAST CAD workbench requires a drawing transmittal recipient');
+assert.ok(castCadHtml.includes('data-create-warranty-claim'), 'CAST CAD workbench exposes warranty claim control');
+assert.ok(castCadHtml.includes('data-warranty-turnover-package-id'), 'CAST CAD workbench requires source-cited turnover package ids for warranty claims');
 assert.ok(castCadHtml.includes('data-create-annotation-import'), 'CAST CAD workbench exposes PDF annotation import job control');
 assert.ok(castCadHtml.includes('data-drawing-upload-pointer'), 'CAST CAD workbench requires a private drawing upload pointer');
 assert.ok(castCadHtml.includes('data-create-model-ingestion'), 'CAST CAD workbench exposes CAD/model ingestion job control');
