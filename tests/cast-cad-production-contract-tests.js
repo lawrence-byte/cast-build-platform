@@ -168,6 +168,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-rele
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing bulletin storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-as-built-closeout' && gate.requiredEnvVars.includes('CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER')), 'production readiness names exact as-built storage and PDF worker choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
@@ -545,6 +546,23 @@ const listedSets = cad.listDrawingSetVersions(state, { projectId: 'alum', setId:
 assert.equal(listedSets.versions.length, 1, 'drawing set list filters versions');
 assert.equal(listedSets.revisions.filter((row) => row.sheetId === 'A-101').length, 2, 'drawing set list includes revision history');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_REVISION'), 'slip-sheeting is audited');
+const revisionReconciliation = cad.createDrawingRevisionReconciliation(state, { projectId: 'alum', setId: 'current' }, owner);
+assert.equal(revisionReconciliation.ok, true, 'drawing revision reconciliation report records provider-independently');
+assert.equal(revisionReconciliation.reconciliationReport.publicExposure, false, 'revision reconciliation report forbids public exposure');
+assert.equal(revisionReconciliation.reconciliationReport.noPublicLinks, true, 'revision reconciliation report refuses public links');
+assert.equal(revisionReconciliation.reconciliationReport.openMarkupCount >= 1, true, 'revision reconciliation finds open markups on superseded sheets');
+assert.equal(revisionReconciliation.reconciliationReport.findings[0].replacementRevisionId, slipSheeted.replacement.id, 'revision reconciliation cites replacement revisions');
+const blockedRevisionMigrationReview = cad.createDrawingRevisionReconciliation(state, { projectId: 'alum', setId: 'current', migrateRequested: true }, owner);
+assert.equal(blockedRevisionMigrationReview.ok, false, 'revision reconciliation migration fails closed without human review');
+assert.equal(blockedRevisionMigrationReview.code, 'human-review-required', 'revision reconciliation exposes human review blocker');
+const blockedRevisionMigrationProvider = cad.createDrawingRevisionReconciliation(state, { projectId: 'alum', setId: 'current', migrateRequested: true, humanReviewApproved: true }, owner);
+assert.equal(blockedRevisionMigrationProvider.ok, false, 'revision reconciliation migration fails closed without durable storage');
+assert.equal(blockedRevisionMigrationProvider.code, 'provider-required', 'revision reconciliation exposes provider-required blocker');
+assert.deepEqual(blockedRevisionMigrationProvider.requiredEnvVars, ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL'], 'revision reconciliation names exact durable storage choices');
+assert.equal(blockedRevisionMigrationProvider.reconciliationReport.outputPointer, '', 'revision reconciliation does not fabricate report output pointers');
+assert.equal(cad.listDrawingRevisionReconciliationReports(state, { projectId: 'alum', setId: 'current' }).length, 2, 'revision reconciliation reports list by project/set');
+assert.equal(cad.drawingRevisionReconciliationContract().migrationRequiresHumanReview, true, 'revision reconciliation contract keeps migrations human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_REVISION_RECONCILIATION'), 'revision reconciliation reports are audited');
 
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
@@ -790,6 +808,13 @@ assert.ok(castCadJs.includes('CAST_CAD_DRAWING_QA_ADAPTER or CAST_CAD_DOCUMENT_M
 assert.ok(castCadHtml.includes('data-run-drawing-index-qa'), 'CAST CAD workbench exposes drawing index QA run control');
 assert.ok(castCadHtml.includes('data-drawing-index-qa-reports'), 'CAST CAD workbench exposes drawing index QA report history');
 assert.ok(castCadHtml.includes('data-drawing-index-qa-review'), 'CAST CAD workbench exposes drawing index QA human-review gate');
+assert.ok(castCadJs.includes('function runDrawingRevisionReconciliation'), 'CAST CAD workbench runs drawing revision reconciliation through backend audit');
+assert.ok(castCadJs.includes("type: 'drawing-revision-reconciliation'"), 'CAST CAD workbench calls drawing revision reconciliation export contract');
+assert.ok(castCadJs.includes('No local migration completion, markup rewrite, or public report was fabricated'), 'CAST CAD revision reconciliation fails closed without fabricating migration authority');
+assert.ok(castCadJs.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL'), 'CAST CAD workbench names revision reconciliation durable adapter blocker');
+assert.ok(castCadHtml.includes('data-run-revision-reconciliation'), 'CAST CAD workbench exposes revision reconciliation run control');
+assert.ok(castCadHtml.includes('data-request-revision-migration'), 'CAST CAD workbench exposes human-review-gated migration plan control');
+assert.ok(castCadHtml.includes('data-revision-reconciliation-reports'), 'CAST CAD workbench exposes revision reconciliation report history');
 assert.ok(castCadJs.includes('function createDrawingApprovalPackage'), 'CAST CAD workbench creates drawing approval packages through backend audit');
 assert.ok(castCadJs.includes('function reviewDrawingApprovalPackage'), 'CAST CAD workbench records named reviewer approval decisions through backend audit');
 assert.ok(castCadJs.includes("type: 'drawing-approval-package'"), 'CAST CAD workbench calls drawing approval package export contract');

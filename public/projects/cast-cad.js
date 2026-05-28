@@ -36,6 +36,7 @@ let governanceState = { status: 'idle', roles: [], members: [], permissions: nul
 let viewportMappingState = { status: 'idle', mapping: null, message: 'PDF coordinate mapping not saved yet. Renderer integration still required for true PDF page events.' };
 let scaleCalibrationState = { status: 'idle', calibration: null, message: 'Scale calibration not checked yet. Durable calibration persistence requires CAST_CAD_SCALE_CALIBRATION_ADAPTER or CAST_CAD_MARKUP_DATABASE_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let drawingSetControlState = { status: 'idle', versions: [], revisions: [], selectedRevisionId: '', message: 'Drawing set version controls not loaded yet. Slip-sheeting requires backend audit and human review.' };
+let revisionReconciliationState = { status: 'idle', reports: [], message: 'Drawing revision reconciliation not checked yet. Superseded-sheet markup migration remains human-review gated and durable storage requires CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let drawingApprovalState = { status: 'idle', packages: [], message: 'Drawing approval packages not checked yet. IFC release is human-review gated; durable storage requires CAST_CAD_DRAWING_APPROVAL_ADAPTER or CAST_CAD_DATABASE_URL.' };
 let markupThreadState = { status: 'idle', markupId: '', comments: [], auditLog: [], message: 'Select or refresh a markup thread to load backend comments and audit history.' };
 let markupAttachmentState = { status: 'idle', attachments: [], message: 'Private attachment manifests not checked yet. Durable evidence files require CAST_CAD_ATTACHMENT_STORAGE_ADAPTER.' };
@@ -246,6 +247,18 @@ function renderDrawingSetControls() {
     revisions.innerHTML = drawingSetControlState.revisions.length ? drawingSetControlState.revisions.slice(-6).reverse().map((row) => `<div class="tool-card"><em>${esc(row.status || 'current')} · ${esc(row.revisionLabel || 'revision')}</em><strong>${esc(row.drawingNumber || row.sheetId)} · ${esc(row.drawingTitle || row.fileName || '')}</strong><span>${esc(row.fileName || row.sourcePath || '')}. Supersedes: ${esc(row.supersedesRevisionId || 'none')}; superseded by: ${esc(row.supersededByRevisionId || 'none')}. Backend audit controls current/superseded chains; no local slip-sheet authority is fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing set versions loaded yet. Publish the current set or refresh backend drawing-set history.</p>';
   }
 }
+function renderRevisionReconciliationReports() {
+  const status = document.querySelector('[data-revision-reconciliation-status]');
+  const summary = document.querySelector('[data-revision-reconciliation-summary]');
+  const list = document.querySelector('[data-revision-reconciliation-reports]');
+  if (status) status.textContent = revisionReconciliationState.message;
+  if (summary) summary.textContent = revisionReconciliationState.reports.length
+    ? `${revisionReconciliationState.reports.length} superseded-revision reconciliation report(s) audited. Migrations remain human-review gated and durable storage requires CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL.`
+    : 'Private reconciliation reports flag open markups/takeoffs on superseded sheets before any migration is treated as complete.';
+  if (list) {
+    list.innerHTML = revisionReconciliationState.reports.length ? revisionReconciliationState.reports.slice(-5).reverse().map((report) => `<div class="tool-card"><em>${esc(report.status || 'report-recorded')} · ${esc(report.findingCount || 0)} finding(s)</em><strong>${esc(report.setId || report.id)} · open markups ${esc(report.openMarkupCount || 0)}</strong><span>${esc((report.findings || []).slice(0, 4).map((finding) => `${finding.drawingNumber || finding.sheetId}: ${finding.openMarkupCount} open → ${finding.replacementRevisionId || 'no replacement'}`).join('; ') || 'No superseded-sheet carry-forward issues found')}. No public report link, local migration completion, or markup rewrite was fabricated.</span></div>`).join('') : '<p class="cad-muted">No drawing revision reconciliation reports loaded yet.</p>';
+  }
+}
 function renderDrawingApprovalPackages() {
   const status = document.querySelector('[data-drawing-approval-status]');
   const summary = document.querySelector('[data-drawing-approval-summary]');
@@ -399,6 +412,36 @@ async function slipSheetSelectedRevision() {
     window.CASTShell?.toast?.('Slip-sheet blocked; human review/backend audit required.', { kind: 'error' });
   }
   renderDrawingSetControls();
+}
+async function runDrawingRevisionReconciliation({ toast = false, migrateRequested = false } = {}) {
+  revisionReconciliationState = { ...revisionReconciliationState, status: 'running', message: migrateRequested ? 'Requesting human-review-gated revision migration plan through backend audit…' : 'Running private superseded drawing revision reconciliation through backend audit…' };
+  renderRevisionReconciliationReports();
+  try {
+    const response = await fetch('/api/cast-cad-exports', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ type: 'drawing-revision-reconciliation', projectId: 'alum', setId: 'alum-current-drawings', migrateRequested, humanReviewApproved: Boolean(document.querySelector('[data-revision-reconciliation-review]')?.checked) }) });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || result?.code || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    revisionReconciliationState = { status: 'loaded', reports: [...revisionReconciliationState.reports, result.reconciliationReport].filter(Boolean), message: `Revision reconciliation recorded with ${result.reconciliationReport?.findingCount || 0} finding(s) and ${result.reconciliationReport?.openMarkupCount || 0} open markup(s).` };
+    if (toast) window.CASTShell?.toast?.('Drawing revision reconciliation report created through backend audit.', { kind: 'success' });
+  } catch (error) {
+    console.warn('CAST CAD drawing revision reconciliation blocked', error);
+    revisionReconciliationState = { ...revisionReconciliationState, status: 'blocked', message: `Revision reconciliation blocked: ${error.message}. No local migration completion, markup rewrite, or public report was fabricated.` };
+    if (toast) window.CASTShell?.toast?.('Revision reconciliation blocked; no local migration authority was fabricated.', { kind: 'error' });
+  }
+  renderRevisionReconciliationReports();
+}
+async function loadDrawingRevisionReconciliationReports({ toast = false } = {}) {
+  try {
+    const params = new URLSearchParams({ type: 'drawing-revision-reconciliation', projectId: 'alum', setId: 'alum-current-drawings' });
+    const response = await fetch(`/api/cast-cad-exports?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
+    revisionReconciliationState = { status: 'loaded', reports: result.drawingRevisionReconciliationReports || [], message: `${result.reconciliationReportCount || 0} revision reconciliation report(s) loaded from backend audit. Durable migration completion requires CAST_CAD_REVISION_RECONCILIATION_ADAPTER or CAST_CAD_DATABASE_URL.` };
+    if (toast) window.CASTShell?.toast?.('Revision reconciliation reports refreshed.', { kind: 'success' });
+  } catch (error) {
+    console.warn('Could not load CAST CAD revision reconciliation reports', error);
+    revisionReconciliationState = { ...revisionReconciliationState, status: 'unavailable', message: `Revision reconciliation history unavailable: ${error.message}. No local migration authority was fabricated.` };
+  }
+  renderRevisionReconciliationReports();
 }
 async function loadDrawingApprovalPackages({ toast = false } = {}) {
   try {
@@ -962,6 +1005,7 @@ function render() {
   renderWorkflowLinks();
   renderDocumentMetadataStatus();
   renderDrawingSetControls();
+  renderRevisionReconciliationReports();
   renderDrawingApprovalPackages();
   renderViewportMappingStatus();
   renderMarkupThread();
@@ -2460,6 +2504,9 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-publish-drawing-set-version]')) { publishCurrentDrawingSetVersion({ toast: true }); return; }
   if (event.target.closest('[data-refresh-drawing-set-history]')) { loadDrawingSetHistory({ toast: true }); return; }
   if (event.target.closest('[data-slip-sheet-revision]')) { slipSheetSelectedRevision(); return; }
+  if (event.target.closest('[data-run-revision-reconciliation]')) { runDrawingRevisionReconciliation({ toast: true }); return; }
+  if (event.target.closest('[data-request-revision-migration]')) { runDrawingRevisionReconciliation({ toast: true, migrateRequested: true }); return; }
+  if (event.target.closest('[data-refresh-revision-reconciliation]')) { loadDrawingRevisionReconciliationReports({ toast: true }); return; }
   if (event.target.closest('[data-create-drawing-approval]')) { createDrawingApprovalPackage(); return; }
   if (event.target.closest('[data-review-drawing-approval]')) { reviewDrawingApprovalPackage(); return; }
   if (event.target.closest('[data-refresh-drawing-approvals]')) { loadDrawingApprovalPackages({ toast: true }); return; }
@@ -2522,6 +2569,7 @@ loadAutoLinkRuns();
 loadDocumentMetadataRegistry();
 loadDrawingIndexQaReports();
 loadDrawingSetHistory();
+loadDrawingRevisionReconciliationReports();
 loadDrawingApprovalPackages();
 loadToolLibraryItems();
 loadCostCatalogItems();
