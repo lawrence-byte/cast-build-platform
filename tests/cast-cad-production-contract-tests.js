@@ -166,6 +166,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-approval-store' &&
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-index-qa-store' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing QA durable store choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing issue package storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing bulletin storage and delivery choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-as-built-closeout' && gate.requiredEnvVars.includes('CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER')), 'production readiness names exact as-built storage and PDF worker choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
@@ -423,6 +424,26 @@ assert.equal(blockedBulletinProviders.bulletin.outputPointer, '', 'drawing bulle
 assert.equal(cad.listDrawingBulletins(state, { projectId: 'alum', setId: 'permit', sheetId: 'A-901' }).length, 2, 'drawing bulletins list by project/set/sheet');
 assert.equal(cad.drawingBulletinContract().publishRequiresHumanReview, true, 'drawing bulletin contract keeps publishing human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_BULLETIN'), 'drawing bulletins are audited');
+const uncitedAsBuilt = cad.createDrawingAsBuiltPackage(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], items: [{ sheetId: 'A-901', title: 'Uncited redline' }] }, owner);
+assert.equal(uncitedAsBuilt.ok, false, 'as-built packages fail closed when items lack markup/revision citations');
+assert.ok(uncitedAsBuilt.errors.some((error) => error.includes('markupIds or revisionIds')), 'as-built package citation blocker is explicit');
+const draftAsBuilt = cad.createDrawingAsBuiltPackage(state, { projectId: 'alum', setId: 'permit', title: 'Level 1 redlines', sheetIds: ['A-901'], markupIds: [markup.markup.id] }, owner);
+assert.equal(draftAsBuilt.ok, true, 'as-built/redline draft manifest records provider-independently');
+assert.equal(draftAsBuilt.asBuiltPackage.status, 'draft-review-recorded', 'as-built draft does not claim closeout output');
+assert.equal(draftAsBuilt.asBuiltPackage.publicExposure, false, 'as-built draft forbids public exposure');
+assert.equal(draftAsBuilt.asBuiltPackage.noPublicLinks, true, 'as-built draft refuses public links');
+assert.equal(draftAsBuilt.asBuiltPackage.items[0].markupIds[0], markup.markup.id, 'as-built draft cites source markup');
+const blockedAsBuiltReview = cad.createDrawingAsBuiltPackage(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], markupIds: [markup.markup.id], closeoutPackage: true }, owner);
+assert.equal(blockedAsBuiltReview.ok, false, 'as-built closeout package generation fails closed without human review');
+assert.equal(blockedAsBuiltReview.code, 'human-review-required', 'as-built closeout exposes human-review gate');
+const blockedAsBuiltProviders = cad.createDrawingAsBuiltPackage(state, { projectId: 'alum', setId: 'permit', sheetIds: ['A-901'], markupIds: [markup.markup.id], closeoutPackage: true, humanReviewApproved: true }, owner);
+assert.equal(blockedAsBuiltProviders.ok, false, 'as-built closeout package fails closed without storage/export providers');
+assert.equal(blockedAsBuiltProviders.code, 'provider-required', 'as-built closeout exposes provider-required blocker');
+assert.deepEqual(blockedAsBuiltProviders.requiredEnvVars, ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_PDF_EXPORT_WORKER or CAST_CAD_AS_BUILT_EXPORT_WORKER'], 'as-built closeout names exact storage/export env choices');
+assert.equal(blockedAsBuiltProviders.asBuiltPackage.outputPointer, '', 'as-built closeout does not fabricate PDF output pointers');
+assert.equal(cad.listDrawingAsBuiltPackages(state, { projectId: 'alum', setId: 'permit', sheetId: 'A-901' }).length, 2, 'as-built packages list by project/set/sheet');
+assert.equal(cad.drawingAsBuiltPackageContract().closeoutPackageRequiresHumanReview, true, 'as-built package contract keeps closeout human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_AS_BUILT_PACKAGE'), 'as-built packages are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
 assert.equal(publicModelImport.code, 'public-url-forbidden', 'model/CAD ingestion exposes public URL blocker');

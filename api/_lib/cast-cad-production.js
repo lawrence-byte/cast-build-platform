@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2400,6 +2400,99 @@ function listDrawingBulletins(state, filters = {}) {
   if (filters.sheetId) rows = rows.filter((row) => row.sheetIds.includes(filters.sheetId));
   return rows;
 }
+function drawingAsBuiltPackageContract() {
+  return {
+    type: 'drawing-as-built-package',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    sourceCitationsRequired: ['sheetIds', 'markupIds or revisionIds'],
+    closeoutPackageRequiresHumanReview: true,
+    durableAdapterRequired: 'CAST_CAD_AS_BUILT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL',
+    pdfFlattenWorkerRequired: 'CAST_CAD_PDF_EXPORT_WORKER or CAST_CAD_AS_BUILT_EXPORT_WORKER',
+    failClosedBehavior: 'Records private as-built/redline package manifests but refuses to generate flattened PDFs, expose public links, or claim durable closeout authority without human approval and configured private providers.',
+  };
+}
+function drawingAsBuiltStoreConfigured() { return Boolean(process.env.CAST_CAD_AS_BUILT_PACKAGE_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function drawingAsBuiltPdfWorkerConfigured() { return Boolean(process.env.CAST_CAD_PDF_EXPORT_WORKER || process.env.CAST_CAD_AS_BUILT_EXPORT_WORKER); }
+function normalizeAsBuiltItems(state, input = {}) {
+  const explicit = Array.isArray(input.items) ? input.items : [];
+  if (explicit.length) return explicit.map((item, index) => ({
+    id: item.id || id('cad_asbuilt_item'),
+    sequence: Number(item.sequence || index + 1),
+    sheetId: String(item.sheetId || item.sheet_id || '').trim(),
+    title: String(item.title || item.subject || `As-built item ${index + 1}`).trim(),
+    summary: String(item.summary || item.body || '').trim(),
+    markupIds: Array.isArray(item.markupIds || item.markup_ids) ? (item.markupIds || item.markup_ids).map(String).filter(Boolean) : [],
+    revisionIds: Array.isArray(item.revisionIds || item.revision_ids) ? (item.revisionIds || item.revision_ids).map(String).filter(Boolean) : [],
+    closeoutDiscipline: String(item.closeoutDiscipline || item.closeout_discipline || item.discipline || '').trim(),
+    humanReviewStatus: item.humanReviewStatus || item.human_review_status || 'Needs Review',
+  })).filter((item) => item.sheetId && item.title);
+  const markupIds = Array.isArray(input.markupIds || input.markup_ids) ? (input.markupIds || input.markup_ids).map(String).filter(Boolean) : [];
+  const markups = (state.markups || []).filter((row) => markupIds.includes(row.id));
+  return markups.map((markup, index) => ({
+    id: id('cad_asbuilt_item'),
+    sequence: index + 1,
+    sheetId: markup.sheetId,
+    title: markup.subject || `As-built markup ${index + 1}`,
+    summary: markup.body || '',
+    markupIds: [markup.id],
+    revisionIds: [],
+    closeoutDiscipline: markup.trade || '',
+    humanReviewStatus: markup.status === 'Verified' || markup.status === 'Resolved' ? 'Reviewed' : 'Needs Review',
+  }));
+}
+function createDrawingAsBuiltPackage(state, input = {}, actor) {
+  state.drawingAsBuiltPackages ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const sheetIds = Array.isArray(input.sheetIds || input.sheet_ids) ? (input.sheetIds || input.sheet_ids).map(String).filter(Boolean) : [];
+  const revisionIds = Array.isArray(input.revisionIds || input.revision_ids) ? (input.revisionIds || input.revision_ids).map(String).filter(Boolean) : [];
+  const markupIds = Array.isArray(input.markupIds || input.markup_ids) ? (input.markupIds || input.markup_ids).map(String).filter(Boolean) : [];
+  const items = normalizeAsBuiltItems(state, input);
+  const errors = [];
+  if (!projectId) errors.push('projectId is required.');
+  if (!sheetIds.length) errors.push('At least one sheetId is required for an as-built package.');
+  if (!items.length) errors.push('At least one cited as-built item, markupId, or revisionId is required.');
+  const uncited = items.filter((item) => !item.markupIds.length && !item.revisionIds.length);
+  if (uncited.length) errors.push('Each as-built package item requires markupIds or revisionIds citations.');
+  const missingMarkupIds = [...new Set(items.flatMap((item) => item.markupIds))].filter((markupId) => !(state.markups || []).some((row) => row.id === markupId));
+  if (missingMarkupIds.length) errors.push(`markupIds must reference existing CAST CAD markups: ${missingMarkupIds.join(', ')}.`);
+  if (errors.length) return { ok: false, status: 422, errors, contract: drawingAsBuiltPackageContract() };
+  const closeoutRequested = Boolean(input.closeoutPackage || input.closeout_package || input.publishRequested || input.publish_requested || input.generatePdf || input.generate_pdf);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (closeoutRequested && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'As-built closeout packages or flattened PDF generation require explicit human review approval.', contract: drawingAsBuiltPackageContract() };
+  const durableReady = drawingAsBuiltStoreConfigured();
+  const pdfWorkerReady = drawingAsBuiltPdfWorkerConfigured();
+  const providerRequired = closeoutRequested && !(durableReady && pdfWorkerReady);
+  const pkg = {
+    id: input.id || id('cad_asbuilt_pkg'), type: 'drawing-as-built-package', projectId, setId: input.setId || input.set_id || 'current',
+    packageNumber: input.packageNumber || input.package_number || '', title: input.title || input.name || 'CAST CAD As-Built Package',
+    status: closeoutRequested ? (providerRequired ? 'provider-required' : 'queued-for-private-pdf') : 'draft-review-recorded', closeoutRequested, providerRequired,
+    durablePersistence: durableReady, pdfWorkerReady,
+    requiredEnvVars: closeoutRequested ? [...(!durableReady ? ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL'] : []), ...(!pdfWorkerReady ? ['CAST_CAD_PDF_EXPORT_WORKER or CAST_CAD_AS_BUILT_EXPORT_WORKER'] : [])] : [],
+    sheetIds, revisionIds, markupIds: [...new Set([...markupIds, ...items.flatMap((item) => item.markupIds)])], items,
+    publicExposure: false, noPublicLinks: true, outputPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', humanReviewApproved,
+    createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingAsBuiltPackages.push(pkg);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD as-built package pending private providers' : 'Created CAST CAD as-built/redline package manifest', 'CAST_CAD_DRAWING_AS_BUILT_PACKAGE', pkg.id, null, pkg, providerRequired ? 'No public as-built PDF link, flattened artifact, or durable closeout authority was fabricated.' : 'Private as-built package queued through configured durable store/export worker.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD as-built closeout package generation requires durable package storage plus a private PDF/as-built export worker; refusing to fabricate public links or flattened artifacts.', requiredEnvVars: pkg.requiredEnvVars, asBuiltPackage: pkg, contract: drawingAsBuiltPackageContract() };
+  return { ok: true, status: closeoutRequested ? 202 : 201, asBuiltPackage: pkg, contract: drawingAsBuiltPackageContract() };
+}
+function listDrawingAsBuiltPackages(state, filters = {}) {
+  state.drawingAsBuiltPackages ||= [];
+  let rows = state.drawingAsBuiltPackages.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.sheetId) rows = rows.filter((row) => row.sheetIds.includes(filters.sheetId));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2509,6 +2602,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-index-qa-store', label: 'Durable drawing index QA report store', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose the QA/document metadata/database adapter before drawing index QA reports are durable current-set quality records.', ready: envChoiceReady(['CAST_CAD_DRAWING_QA_ADAPTER|CAST_CAD_DOCUMENT_METADATA_ADAPTER|CAST_CAD_DATABASE_URL']) },
     { id: 'drawing-issue-package-release', label: 'Private drawing issue package/release manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private release-manifest storage plus transmittal/email/workflow transport before issue packages are published or delivered.', ready: drawingIssuePackageStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-bulletin-release', label: 'Private addendum/bulletin change manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private bulletin storage plus transmittal/email/workflow transport before addenda/bulletins are published or delivered.', ready: drawingBulletinStoreConfigured() && transmittalTransportConfigured() },
+    { id: 'drawing-as-built-closeout', label: 'Private as-built/redline closeout package', category: 'closeout', requiredEnvVars: ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER'], providerDecision: 'Choose durable private as-built storage plus PDF/as-built export worker before closeout packages are flattened, stored, or released.', ready: drawingAsBuiltStoreConfigured() && drawingAsBuiltPdfWorkerConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
   const readyCount = gates.filter((gate) => gate.ready).length;
   const blocked = gates.filter((gate) => !gate.ready);
@@ -2538,7 +2632,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };
