@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingWarrantyClaims: [], drawingWarrantyRemediationPlans: [], facilityAssetRegisters: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingWarrantyClaims: [], drawingWarrantyRemediationPlans: [], facilityAssetRegisters: [], facilityMaintenancePlans: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2985,6 +2985,82 @@ function listFacilityAssetRegisters(state, filters = {}) {
   if (filters.assetTag) rows = rows.filter((row) => (row.assets || []).some((asset) => asset.assetTag === filters.assetTag));
   return rows;
 }
+function facilityMaintenanceStoreConfigured() { return Boolean(process.env.CAST_CAD_FACILITY_MAINTENANCE_ADAPTER || process.env.CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function facilityMaintenanceTransportConfigured() { return Boolean(process.env.CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT || process.env.CAST_CAD_WORK_ORDER_PROVIDER || process.env.CAST_CAD_EMAIL_PROVIDER || process.env.CAST_SERVER_WORKFLOW_API_URL); }
+function facilityMaintenancePlanContract() {
+  return {
+    type: 'facility-maintenance-plan',
+    source: 'accepted or draft facility asset registers plus source-cited CAST CAD sheets/markups/O&M deliverables',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    noStore: true,
+    sourceCitationsRequired: ['facilityAssetRegisterId', 'maintenance tasks with assetIds or assetTags'],
+    workOrderDispatchRequiresHumanReview: true,
+    completionRequiresHumanReview: true,
+    failClosedDurableCompletionEnvVars: ['CAST_CAD_FACILITY_MAINTENANCE_ADAPTER or CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'],
+  };
+}
+function createFacilityMaintenancePlan(state, input = {}, actor) {
+  state.facilityMaintenancePlans ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'], contract: facilityMaintenancePlanContract() };
+  const facilityAssetRegisterId = String(input.facilityAssetRegisterId || input.facility_asset_register_id || input.assetRegisterId || input.asset_register_id || '').trim();
+  const register = (state.facilityAssetRegisters || []).find((row) => row.projectId === projectId && row.id === facilityAssetRegisterId);
+  const inputTasks = Array.isArray(input.tasks || input.maintenanceTasks || input.maintenance_tasks) ? (input.tasks || input.maintenanceTasks || input.maintenance_tasks) : [];
+  const errors = [];
+  if (!facilityAssetRegisterId) errors.push('facilityAssetRegisterId is required.');
+  if (facilityAssetRegisterId && !register) errors.push(`facilityAssetRegisterId must reference an existing CAST CAD facility asset register: ${facilityAssetRegisterId}.`);
+  if (!inputTasks.length) errors.push('At least one facility maintenance task is required.');
+  const registerAssets = register?.assets || [];
+  const tasks = inputTasks.map((row, index) => {
+    const assetIds = Array.isArray(row.assetIds || row.asset_ids) ? (row.assetIds || row.asset_ids).map(String).filter(Boolean) : [];
+    const assetTags = Array.isArray(row.assetTags || row.asset_tags) ? (row.assetTags || row.asset_tags).map(String).filter(Boolean) : row.assetTag || row.asset_tag ? [String(row.assetTag || row.asset_tag)] : [];
+    const evidencePointers = Array.isArray(row.evidencePointers || row.evidence_pointers) ? (row.evidencePointers || row.evidence_pointers).map(String).filter(Boolean) : [];
+    if (evidencePointers.some((pointer) => /^https?:\/\//i.test(pointer))) errors.push(`Maintenance task ${index + 1} contains a public evidence URL; use private source pointers or upload leases.`);
+    if (!assetIds.length && !assetTags.length) errors.push(`Maintenance task ${index + 1} requires assetIds or assetTags.`);
+    const missingAssetIds = assetIds.filter((assetId) => !registerAssets.some((asset) => asset.id === assetId));
+    const missingAssetTags = assetTags.filter((assetTag) => !registerAssets.some((asset) => asset.assetTag === assetTag));
+    if (missingAssetIds.length) errors.push(`Maintenance task ${index + 1} assetIds must reference assets in the facility register: ${missingAssetIds.join(', ')}.`);
+    if (missingAssetTags.length) errors.push(`Maintenance task ${index + 1} assetTags must reference assets in the facility register: ${missingAssetTags.join(', ')}.`);
+    return {
+      id: row.id || id('cad_facility_maintenance_task'), title: String(row.title || row.name || `Facility maintenance task ${index + 1}`).trim(),
+      assetIds, assetTags, frequency: String(row.frequency || row.cadence || 'monthly').trim(), responsibleParty: String(row.responsibleParty || row.responsible_party || '').trim(), dueDate: row.dueDate || row.due_date || '', status: row.status || 'needs-review', evidencePointers,
+      publicExposure: false, noPublicLinks: true,
+    };
+  });
+  if (errors.length) return { ok: false, status: 422, errors, contract: facilityMaintenancePlanContract() };
+  const dispatchRequested = Boolean(input.dispatchRequested || input.dispatch_requested || input.createWorkOrders || input.create_work_orders);
+  const completionRequested = Boolean(input.completionRequested || input.completion_requested || input.closeoutRequested || input.closeout_requested);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if ((dispatchRequested || completionRequested) && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Facility maintenance work order dispatch/completion requires explicit human review approval.', contract: facilityMaintenancePlanContract() };
+  const durableReady = facilityMaintenanceStoreConfigured();
+  const transportReady = facilityMaintenanceTransportConfigured();
+  const providerRequired = (dispatchRequested || completionRequested) && (!durableReady || !transportReady);
+  const requiredEnvVars = [];
+  if ((dispatchRequested || completionRequested) && !durableReady) requiredEnvVars.push('CAST_CAD_FACILITY_MAINTENANCE_ADAPTER or CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER or CAST_CAD_DATABASE_URL');
+  if ((dispatchRequested || completionRequested) && !transportReady) requiredEnvVars.push('CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL');
+  const plan = {
+    id: input.id || id('cad_facility_maintenance'), type: 'facility-maintenance-plan', projectId, facilityAssetRegisterId, taskCount: tasks.length, tasks,
+    status: providerRequired ? 'provider-required' : completionRequested ? 'completion-review-recorded' : dispatchRequested ? 'work-order-review-recorded' : 'maintenance-plan-draft-recorded', providerRequired, requiredEnvVars, durablePersistence: durableReady, transportReady, dispatchRequested, completionRequested, humanReviewApproved,
+    publicExposure: false, noPublicLinks: true, outputPointer: '', deliveryPointer: '', workOrderPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', createdByUserId: actor.id, createdAt: now(),
+  };
+  state.facilityMaintenancePlans.push(plan);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD facility maintenance plan pending providers' : 'Created CAST CAD facility maintenance plan', 'CAST_CAD_FACILITY_MAINTENANCE_PLAN', plan.id, null, plan, providerRequired ? 'No durable maintenance work order, public asset link, dispatch, or completion authority was fabricated.' : 'Private facility maintenance plan recorded; work order dispatch and completion remain human-review gated.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD facility maintenance dispatch/completion requires durable maintenance storage and private work-order transport; refusing to fabricate work orders, completion, or public links.', requiredEnvVars, facilityMaintenancePlan: plan, contract: facilityMaintenancePlanContract() };
+  return { ok: true, status: 201, facilityMaintenancePlan: plan, contract: facilityMaintenancePlanContract() };
+}
+function listFacilityMaintenancePlans(state, filters = {}) {
+  state.facilityMaintenancePlans ||= [];
+  let rows = state.facilityMaintenancePlans.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.facilityAssetRegisterId) rows = rows.filter((row) => row.facilityAssetRegisterId === filters.facilityAssetRegisterId);
+  if (filters.assetTag) rows = rows.filter((row) => (row.tasks || []).some((task) => (task.assetTags || []).includes(filters.assetTag)));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -3100,6 +3176,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-warranty-claims', label: 'Private warranty/defect claim records and contractor notices', category: 'closeout', requiredEnvVars: ['CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable warranty claim storage plus private contractor-notice transport before warranty claims are delivered or treated as completion-authoritative.', ready: drawingWarrantyClaimStoreConfigured() && drawingWarrantyClaimTransportConfigured() },
     { id: 'drawing-warranty-remediation', label: 'Private warranty remediation work authorization/completion', category: 'closeout', requiredEnvVars: ['CAST_CAD_WARRANTY_REMEDIATION_ADAPTER|CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_WARRANTY_REMEDIATION_TRANSPORT|CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable warranty remediation storage plus private contractor dispatch/workflow transport before warranty work authorization, completion, or closeout is authoritative.', ready: drawingWarrantyRemediationStoreConfigured() && drawingWarrantyRemediationTransportConfigured() },
     { id: 'facility-asset-register', label: 'Private facility asset register from turnover/O&M', category: 'closeout', requiredEnvVars: ['CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable facility asset-register storage before turnover assets, warranty dates, and owner acceptance can be treated as authoritative.', ready: facilityAssetRegisterStoreConfigured() },
+    { id: 'facility-maintenance-plan', label: 'Private facility maintenance/work-order plans', category: 'closeout', requiredEnvVars: ['CAST_CAD_FACILITY_MAINTENANCE_ADAPTER|CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable facility maintenance storage plus private work-order/email/workflow transport before asset maintenance tasks are dispatched or completed.', ready: facilityMaintenanceStoreConfigured() && facilityMaintenanceTransportConfigured() },
     { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
     { id: 'drawing-revision-reconciliation', label: 'Private drawing revision reconciliation/migration records', category: 'governance', requiredEnvVars: ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private reconciliation storage before superseded-sheet markup/takeoff migration plans can be treated as complete or authoritative.', ready: revisionReconciliationStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
@@ -3131,7 +3208,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, createDrawingWarrantyClaim, listDrawingWarrantyClaims, drawingWarrantyClaimContract, createDrawingWarrantyRemediationPlan, listDrawingWarrantyRemediationPlans, drawingWarrantyRemediationContract, createFacilityAssetRegister, listFacilityAssetRegisters, facilityAssetRegisterContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, createDrawingWarrantyClaim, listDrawingWarrantyClaims, drawingWarrantyClaimContract, createDrawingWarrantyRemediationPlan, listDrawingWarrantyRemediationPlans, drawingWarrantyRemediationContract, createFacilityAssetRegister, listFacilityAssetRegisters, facilityAssetRegisterContract, createFacilityMaintenancePlan, listFacilityMaintenancePlans, facilityMaintenancePlanContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };

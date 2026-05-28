@@ -172,6 +172,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-turnover-package' 
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-warranty-claims' && gate.requiredEnvVars.includes('CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact warranty claim storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-warranty-remediation' && gate.requiredEnvVars.includes('CAST_CAD_WARRANTY_REMEDIATION_ADAPTER|CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_WARRANTY_REMEDIATION_TRANSPORT|CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact warranty remediation storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-asset-register' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact facility asset register storage choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'facility-maintenance-plan' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_MAINTENANCE_ADAPTER|CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility maintenance storage and work-order transport choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.contract.secretValuesExposed, false, 'readiness contract never exposes secret values');
@@ -668,6 +669,29 @@ assert.equal(cad.listFacilityAssetRegisters(state, { projectId: 'alum', turnover
 assert.equal(cad.facilityAssetRegisterContract().assetAcceptanceRequiresHumanReview, true, 'facility asset register contract keeps owner acceptance human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_ASSET_REGISTER'), 'facility asset registers are audited');
 
+const publicFacilityMaintenance = cad.createFacilityMaintenancePlan(state, { projectId: 'alum', facilityAssetRegisterId: facilityAssetRegister.facilityAssetRegister.id, tasks: [{ assetTags: ['DHW-1'], title: 'Monthly DHW inspection', evidencePointers: ['https://example.com/work-order.pdf'] }] }, owner);
+assert.equal(publicFacilityMaintenance.ok, false, 'facility maintenance plans reject public evidence URLs');
+assert.equal(publicFacilityMaintenance.status, 422, 'facility maintenance exposes validation blocker for public evidence');
+const missingFacilityMaintenanceRegister = cad.createFacilityMaintenancePlan(state, { projectId: 'alum', facilityAssetRegisterId: 'cad_facility_missing', tasks: [{ assetTags: ['DHW-1'], title: 'Monthly DHW inspection' }] }, owner);
+assert.equal(missingFacilityMaintenanceRegister.ok, false, 'facility maintenance requires an audited facility asset register');
+const facilityMaintenancePlan = cad.createFacilityMaintenancePlan(state, { projectId: 'alum', facilityAssetRegisterId: facilityAssetRegister.facilityAssetRegister.id, tasks: [{ assetTags: ['DHW-1'], title: 'Monthly DHW inspection', frequency: 'monthly', evidencePointers: ['private://closeout/dhw-maintenance.pdf'] }] }, owner);
+assert.equal(facilityMaintenancePlan.ok, true, 'facility maintenance draft records provider-independently');
+assert.equal(facilityMaintenancePlan.facilityMaintenancePlan.publicExposure, false, 'facility maintenance forbids public exposure');
+assert.equal(facilityMaintenancePlan.facilityMaintenancePlan.noPublicLinks, true, 'facility maintenance refuses public links');
+assert.equal(facilityMaintenancePlan.facilityMaintenancePlan.workOrderPointer, '', 'facility maintenance does not fabricate work-order pointers');
+const blockedFacilityMaintenanceReview = cad.createFacilityMaintenancePlan(state, { projectId: 'alum', facilityAssetRegisterId: facilityAssetRegister.facilityAssetRegister.id, dispatchRequested: true, tasks: [{ assetTags: ['DHW-1'], title: 'Dispatch DHW inspection' }] }, owner);
+assert.equal(blockedFacilityMaintenanceReview.ok, false, 'facility maintenance dispatch fails closed without human review');
+assert.equal(blockedFacilityMaintenanceReview.code, 'human-review-required', 'facility maintenance exposes human review blocker');
+const blockedFacilityMaintenanceProvider = cad.createFacilityMaintenancePlan(state, { projectId: 'alum', facilityAssetRegisterId: facilityAssetRegister.facilityAssetRegister.id, dispatchRequested: true, humanReviewApproved: true, tasks: [{ assetTags: ['DHW-1'], title: 'Dispatch DHW inspection' }] }, owner);
+assert.equal(blockedFacilityMaintenanceProvider.ok, false, 'facility maintenance dispatch fails closed without durable storage and private work-order transport');
+assert.equal(blockedFacilityMaintenanceProvider.code, 'provider-required', 'facility maintenance exposes provider-required blocker');
+assert.deepEqual(blockedFacilityMaintenanceProvider.requiredEnvVars, ['CAST_CAD_FACILITY_MAINTENANCE_ADAPTER or CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'facility maintenance names exact durable storage and work-order transport choices');
+assert.equal(blockedFacilityMaintenanceProvider.facilityMaintenancePlan.deliveryPointer, '', 'facility maintenance does not fabricate delivery pointers');
+assert.equal(cad.listFacilityMaintenancePlans(state, { projectId: 'alum', facilityAssetRegisterId: facilityAssetRegister.facilityAssetRegister.id }).length, 2, 'facility maintenance plans list by project and facility register');
+assert.equal(cad.listFacilityMaintenancePlans(state, { projectId: 'alum', assetTag: 'DHW-1' }).length, 2, 'facility maintenance plans list by asset tag');
+assert.equal(cad.facilityMaintenancePlanContract().completionRequiresHumanReview, true, 'facility maintenance contract keeps completion human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_MAINTENANCE_PLAN'), 'facility maintenance plans are audited');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
@@ -814,6 +838,7 @@ assert.ok(castCadJs.includes("createBackendExportJob('model-quantity-link')"), '
 assert.ok(castCadJs.includes("createBackendExportJob('drawing-warranty-claim')"), 'CAST CAD workbench calls drawing warranty claim contract');
 assert.ok(castCadJs.includes("createBackendExportJob('drawing-warranty-remediation-plan')"), 'CAST CAD workbench calls drawing warranty remediation contract');
 assert.ok(castCadJs.includes("createBackendExportJob('facility-asset-register')"), 'CAST CAD workbench calls facility asset register contract');
+assert.ok(castCadJs.includes("createBackendExportJob('facility-maintenance-plan')"), 'CAST CAD workbench calls facility maintenance plan contract');
 assert.ok(castCadJs.includes("createBackendExportJob('private-upload-lease')"), 'CAST CAD workbench calls private upload lease contract');
 assert.ok(castCadJs.includes('No public upload URL was fabricated'), 'CAST CAD private upload lease workflow fails closed without fabricating upload URLs');
 assert.ok(castCadJs.includes('CAST_CAD_TAKEOFF_WORKBOOK_WORKER'), 'CAST CAD workbench names takeoff workbook worker requirement');
@@ -826,6 +851,8 @@ assert.ok(castCadJs.includes('No local-only warranty claim was fabricated'), 'CA
 assert.ok(castCadJs.includes('CAST_CAD_WARRANTY_REMEDIATION_ADAPTER'), 'CAST CAD workbench names warranty remediation durable adapter requirement');
 assert.ok(castCadJs.includes('No local-only warranty remediation authority was fabricated'), 'CAST CAD warranty remediation fails closed without fabricating local authority');
 assert.ok(castCadJs.includes('No local-only asset authority was fabricated'), 'CAST CAD facility asset registers fail closed without fabricating local asset authority');
+assert.ok(castCadJs.includes('CAST_CAD_FACILITY_MAINTENANCE_ADAPTER'), 'CAST CAD workbench names facility maintenance durable adapter requirement');
+assert.ok(castCadJs.includes('No local-only work-order authority was fabricated'), 'CAST CAD facility maintenance plans fail closed without fabricating local work-order authority');
 assert.ok(castCadHtml.includes('CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER'), 'CAST CAD workbench names facility asset register durable adapter requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER'), 'CAST CAD workbench names PDF annotation import worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_MODEL_INGESTION_WORKER'), 'CAST CAD workbench names CAD/model ingestion worker requirement');
@@ -847,6 +874,8 @@ assert.ok(castCadHtml.includes('data-create-warranty-remediation'), 'CAST CAD wo
 assert.ok(castCadHtml.includes('data-warranty-claim-id'), 'CAST CAD workbench requires source-cited warranty claim ids for remediation');
 assert.ok(castCadHtml.includes('data-create-facility-asset-register'), 'CAST CAD workbench exposes facility asset register controls');
 assert.ok(castCadHtml.includes('data-facility-asset-tag'), 'CAST CAD workbench captures facility asset tags from turnover/O&M');
+assert.ok(castCadHtml.includes('data-create-facility-maintenance-plan'), 'CAST CAD workbench exposes facility maintenance controls');
+assert.ok(castCadHtml.includes('data-facility-asset-register-id'), 'CAST CAD workbench requires source-cited facility asset register ids for maintenance');
 assert.ok(castCadHtml.includes('data-create-annotation-import'), 'CAST CAD workbench exposes PDF annotation import job control');
 assert.ok(castCadHtml.includes('data-drawing-upload-pointer'), 'CAST CAD workbench requires a private drawing upload pointer');
 assert.ok(castCadHtml.includes('data-create-model-ingestion'), 'CAST CAD workbench exposes CAD/model ingestion job control');
