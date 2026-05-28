@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2493,6 +2493,90 @@ function listDrawingAsBuiltPackages(state, filters = {}) {
   if (filters.sheetId) rows = rows.filter((row) => row.sheetIds.includes(filters.sheetId));
   return rows;
 }
+function drawingReleaseAcknowledgementContract() {
+  return {
+    type: 'drawing-release-acknowledgement',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    cacheControl: 'private, max-age=0, no-store',
+    acknowledgedReleaseTypes: ['drawing-transmittal','drawing-issue-package','drawing-bulletin','drawing-as-built-package'],
+    namedRecipientRequired: true,
+    humanReviewRequiredForFinalCloseout: true,
+    durableAdapterRequired: 'CAST_CAD_RELEASE_ACK_ADAPTER or CAST_CAD_DATABASE_URL',
+    failClosedBehavior: 'Records private recipient acknowledgements/read receipts but refuses to claim durable distribution completion, final closeout acceptance, public receipt links, or delivered status without configured private acknowledgement storage and human review where required.',
+  };
+}
+function releaseAcknowledgementStoreConfigured() { return Boolean(process.env.CAST_CAD_RELEASE_ACK_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function findDrawingReleaseRecord(state, releaseType, releaseId) {
+  const buckets = {
+    'drawing-transmittal': state.drawingTransmittals || [],
+    'drawing-issue-package': state.drawingIssuePackages || [],
+    'drawing-bulletin': state.drawingBulletins || [],
+    'drawing-as-built-package': state.drawingAsBuiltPackages || [],
+  };
+  const rows = buckets[releaseType] || [];
+  return rows.find((row) => row.id === releaseId) || null;
+}
+function createDrawingReleaseAcknowledgement(state, input = {}, actor) {
+  state.drawingReleaseAcknowledgements ||= [];
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'view');
+  if (!permission.ok) return permission;
+  const releaseType = String(input.releaseType || input.release_type || input.sourceType || input.source_type || 'drawing-transmittal').trim();
+  const releaseId = String(input.releaseId || input.release_id || input.transmittalId || input.transmittal_id || input.packageId || input.package_id || '').trim();
+  const recipientEmail = String(input.recipientEmail || input.recipient_email || actor.email || '').trim().toLowerCase();
+  const recipientUserId = String(input.recipientUserId || input.recipient_user_id || actor.id || '').trim();
+  const decision = String(input.decision || input.status || 'acknowledged').trim().toLowerCase();
+  const allowedTypes = new Set(drawingReleaseAcknowledgementContract().acknowledgedReleaseTypes);
+  const errors = [];
+  if (!allowedTypes.has(releaseType)) errors.push('releaseType must be drawing-transmittal, drawing-issue-package, drawing-bulletin, or drawing-as-built-package.');
+  if (!releaseId) errors.push('releaseId is required.');
+  if (!recipientEmail && !recipientUserId) errors.push('recipientEmail or recipientUserId is required.');
+  if (!['acknowledged','accepted','rejected','revise-and-resubmit','viewed'].includes(decision)) errors.push('decision must be acknowledged, accepted, rejected, revise-and-resubmit, or viewed.');
+  if (errors.length) return { ok: false, status: 422, errors, contract: drawingReleaseAcknowledgementContract() };
+  const releaseRecord = findDrawingReleaseRecord(state, releaseType, releaseId);
+  if (!releaseRecord) return { ok: false, status: 404, code: 'release-record-required', error: 'Drawing release acknowledgement requires an audited private release/transmittal/bulletin/as-built record.', contract: drawingReleaseAcknowledgementContract() };
+  const recipients = [
+    ...(Array.isArray(releaseRecord.recipients) ? releaseRecord.recipients : []),
+    ...(Array.isArray(releaseRecord.recipientManifest) ? releaseRecord.recipientManifest : []),
+  ];
+  const namedRecipient = recipients.length === 0 || recipients.some((row) => {
+    const email = String(row.email || '').toLowerCase();
+    const userId = String(row.userId || row.user_id || '').trim();
+    return (recipientEmail && email === recipientEmail) || (recipientUserId && userId === recipientUserId);
+  });
+  if (!namedRecipient) return { ok: false, status: 403, code: 'recipient-not-named', error: 'Only named private release recipients can acknowledge receipt.' };
+  const finalCloseout = Boolean(input.finalCloseout || input.final_closeout || input.authoritative || decision === 'accepted');
+  if (finalCloseout && !(input.humanReviewApproved || input.human_review_approved)) return { ok: false, status: 409, code: 'human-review-required', error: 'Final drawing release/closeout acknowledgement acceptance requires human review approval.', contract: drawingReleaseAcknowledgementContract() };
+  const durableReady = releaseAcknowledgementStoreConfigured();
+  const acknowledgement = {
+    id: input.id || id('cad_release_ack'), type: 'drawing-release-acknowledgement', releaseType, releaseId,
+    projectId: releaseRecord.projectId || input.projectId || input.project_id || '', setId: releaseRecord.setId || input.setId || input.set_id || '',
+    sheetIds: Array.isArray(releaseRecord.sheetIds) ? releaseRecord.sheetIds.slice() : [], recipientEmail, recipientUserId,
+    decision, status: durableReady ? 'recorded' : 'provider-required', providerRequired: !durableReady,
+    requiredEnvVars: durableReady ? [] : ['CAST_CAD_RELEASE_ACK_ADAPTER or CAST_CAD_DATABASE_URL'],
+    durablePersistence: durableReady, finalCloseout, humanReviewApproved: Boolean(input.humanReviewApproved || input.human_review_approved),
+    notes: String(input.notes || input.reviewNotes || input.review_notes || '').slice(0, 2000),
+    publicExposure: false, noPublicLinks: true, receiptUrl: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store',
+    createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingReleaseAcknowledgements.push(acknowledgement);
+  audit(state, actor, acknowledgement.providerRequired ? 'Created audit-only CAST CAD drawing release acknowledgement pending durable adapter' : 'Recorded CAST CAD drawing release acknowledgement', 'CAST_CAD_DRAWING_RELEASE_ACK', acknowledgement.id, null, acknowledgement, acknowledgement.providerRequired ? 'No public receipt link, durable distribution completion, or delivered status was fabricated.' : 'Private acknowledgement persisted through configured adapter.');
+  if (!durableReady) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD drawing release acknowledgement storage requires CAST_CAD_RELEASE_ACK_ADAPTER or CAST_CAD_DATABASE_URL; refusing to claim durable distribution completion or fabricate public receipt links.', requiredEnvVars: acknowledgement.requiredEnvVars, acknowledgement, contract: drawingReleaseAcknowledgementContract() };
+  return { ok: true, status: 201, acknowledgement, contract: drawingReleaseAcknowledgementContract() };
+}
+function listDrawingReleaseAcknowledgements(state, filters = {}) {
+  state.drawingReleaseAcknowledgements ||= [];
+  let rows = state.drawingReleaseAcknowledgements.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.releaseType) rows = rows.filter((row) => row.releaseType === filters.releaseType);
+  if (filters.releaseId) rows = rows.filter((row) => row.releaseId === filters.releaseId);
+  if (filters.recipientEmail) rows = rows.filter((row) => row.recipientEmail === String(filters.recipientEmail).toLowerCase());
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2603,6 +2687,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-issue-package-release', label: 'Private drawing issue package/release manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private release-manifest storage plus transmittal/email/workflow transport before issue packages are published or delivered.', ready: drawingIssuePackageStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-bulletin-release', label: 'Private addendum/bulletin change manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private bulletin storage plus transmittal/email/workflow transport before addenda/bulletins are published or delivered.', ready: drawingBulletinStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-as-built-closeout', label: 'Private as-built/redline closeout package', category: 'closeout', requiredEnvVars: ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER'], providerDecision: 'Choose durable private as-built storage plus PDF/as-built export worker before closeout packages are flattened, stored, or released.', ready: drawingAsBuiltStoreConfigured() && drawingAsBuiltPdfWorkerConfigured() },
+    { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
   const readyCount = gates.filter((gate) => gate.ready).length;
   const blocked = gates.filter((gate) => !gate.ready);
@@ -2632,7 +2717,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };

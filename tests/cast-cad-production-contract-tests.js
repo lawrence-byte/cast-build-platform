@@ -167,6 +167,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-index-qa-store' &&
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing issue package storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing bulletin storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-as-built-closeout' && gate.requiredEnvVars.includes('CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER')), 'production readiness names exact as-built storage and PDF worker choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
 
 const workbook = cad.createTakeoffWorkbookExport(state, { projectId: 'alum', sheetId: 'A-101' }, owner);
@@ -444,6 +445,24 @@ assert.equal(blockedAsBuiltProviders.asBuiltPackage.outputPointer, '', 'as-built
 assert.equal(cad.listDrawingAsBuiltPackages(state, { projectId: 'alum', setId: 'permit', sheetId: 'A-901' }).length, 2, 'as-built packages list by project/set/sheet');
 assert.equal(cad.drawingAsBuiltPackageContract().closeoutPackageRequiresHumanReview, true, 'as-built package contract keeps closeout human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_AS_BUILT_PACKAGE'), 'as-built packages are audited');
+const missingReleaseAck = cad.createDrawingReleaseAcknowledgement(state, { releaseType: 'drawing-transmittal', releaseId: 'missing', recipientEmail: 'gc@example.com' }, owner);
+assert.equal(missingReleaseAck.ok, false, 'drawing release acknowledgements require an audited release record');
+assert.equal(missingReleaseAck.code, 'release-record-required', 'drawing release acknowledgement exposes missing release blocker');
+const outsiderReleaseAck = cad.createDrawingReleaseAcknowledgement(state, { releaseType: 'drawing-bulletin', releaseId: blockedBulletinProviders.bulletin.id, recipientEmail: 'other@example.com' }, owner);
+assert.equal(outsiderReleaseAck.ok, false, 'drawing release acknowledgements fail closed for unnamed recipients');
+assert.equal(outsiderReleaseAck.code, 'recipient-not-named', 'drawing release acknowledgement exposes named-recipient gate');
+const blockedFinalReleaseAck = cad.createDrawingReleaseAcknowledgement(state, { releaseType: 'drawing-bulletin', releaseId: blockedBulletinProviders.bulletin.id, recipientEmail: 'gc@example.com', decision: 'accepted' }, owner);
+assert.equal(blockedFinalReleaseAck.ok, false, 'final release acknowledgement acceptance requires human review');
+assert.equal(blockedFinalReleaseAck.code, 'human-review-required', 'drawing release acknowledgement exposes final acceptance review gate');
+const releaseAck = cad.createDrawingReleaseAcknowledgement(state, { releaseType: 'drawing-bulletin', releaseId: blockedBulletinProviders.bulletin.id, recipientEmail: 'gc@example.com', decision: 'acknowledged', notes: 'Received for coordination.' }, owner);
+assert.equal(releaseAck.ok, false, 'drawing release acknowledgement fails closed without durable acknowledgement storage');
+assert.equal(releaseAck.code, 'provider-required', 'drawing release acknowledgement exposes provider-required blocker');
+assert.deepEqual(releaseAck.requiredEnvVars, ['CAST_CAD_RELEASE_ACK_ADAPTER or CAST_CAD_DATABASE_URL'], 'drawing release acknowledgement names exact durable storage choices');
+assert.equal(releaseAck.acknowledgement.publicExposure, false, 'drawing release acknowledgement forbids public exposure');
+assert.equal(releaseAck.acknowledgement.receiptUrl, '', 'drawing release acknowledgement does not fabricate public receipt links');
+assert.equal(cad.listDrawingReleaseAcknowledgements(state, { projectId: 'alum', releaseType: 'drawing-bulletin' }).length, 1, 'drawing release acknowledgements list by project/release type');
+assert.equal(cad.drawingReleaseAcknowledgementContract().humanReviewRequiredForFinalCloseout, true, 'drawing release acknowledgement contract keeps final acceptance human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_RELEASE_ACK'), 'drawing release acknowledgements are audited');
 const publicModelImport = cad.createModelIngestionJob(state, { projectId: 'alum', sourcePointer: 'https://example.com/model.ifc', fileName: 'model.ifc' }, owner);
 assert.equal(publicModelImport.ok, false, 'model/CAD ingestion rejects public source URLs');
 assert.equal(publicModelImport.code, 'public-url-forbidden', 'model/CAD ingestion exposes public URL blocker');
