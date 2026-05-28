@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2649,6 +2649,64 @@ function listDrawingRevisionReconciliationReports(state, filters = {}) {
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
   return rows;
 }
+function drawingCloseoutPunchListStoreConfigured() { return Boolean(process.env.CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function drawingCloseoutPunchListContract() {
+  return {
+    type: 'drawing-closeout-punch-list',
+    source: 'open CAST CAD markups/takeoffs plus release acknowledgement records',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    noStore: true,
+    humanReviewRequiredBeforeFinalAcceptance: true,
+    failClosedDurableCompletionEnvVars: ['CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER or CAST_CAD_DATABASE_URL'],
+  };
+}
+function createDrawingCloseoutPunchList(state, input = {}, actor) {
+  state.drawingCloseoutPunchLists ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const setId = input.setId || input.set_id || 'current';
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'], contract: drawingCloseoutPunchListContract() };
+  const sheetIds = Array.isArray(input.sheetIds || input.sheet_ids) ? (input.sheetIds || input.sheet_ids).map(String).filter(Boolean) : [];
+  const includeResolved = Boolean(input.includeResolved || input.include_resolved);
+  const finalAcceptanceRequested = Boolean(input.finalAcceptanceRequested || input.final_acceptance_requested || input.closeoutComplete || input.closeout_complete);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (finalAcceptanceRequested && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Drawing closeout punch-list final acceptance requires explicit human review approval.', contract: drawingCloseoutPunchListContract() };
+  const closeoutStatuses = ['Resolved','Verified','Closed','Deleted'];
+  const sourceMarkups = state.markups.filter((markup) => markup.projectId === projectId && (!sheetIds.length || sheetIds.includes(markup.sheetId)) && (includeResolved || !closeoutStatuses.includes(markup.status)));
+  const items = sourceMarkups.map((markup) => ({
+    id: id('cad_closeout_item'), markupId: markup.id, sheetId: markup.sheetId, subject: markup.subject, status: markup.status,
+    priority: markup.priority, trade: markup.trade, assigneeUserId: markup.assigneeUserId, costCode: markup.costCode,
+    needsVerification: !['Verified','Closed'].includes(markup.status), measurement: markup.measurement || null,
+    sourceSnapshot: { markupId: markup.id, tool: markup.tool, layer: markup.layer || '', groupId: markup.groupId || '', createdAt: markup.createdAt },
+  }));
+  const acknowledgements = (state.drawingReleaseAcknowledgements || []).filter((ack) => ack.projectId === projectId && (!sheetIds.length || !ack.sheetIds?.length || ack.sheetIds.some((sheetId) => sheetIds.includes(sheetId))));
+  const durableReady = drawingCloseoutPunchListStoreConfigured();
+  const providerRequired = finalAcceptanceRequested && !durableReady;
+  const punchList = {
+    id: input.id || id('cad_closeout_punch'), type: 'drawing-closeout-punch-list', projectId, setId, sheetIds,
+    status: providerRequired ? 'provider-required' : finalAcceptanceRequested ? 'final-acceptance-review-recorded' : 'punch-list-recorded',
+    providerRequired, requiredEnvVars: providerRequired ? ['CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER or CAST_CAD_DATABASE_URL'] : [], durablePersistence: durableReady,
+    itemCount: items.length, openItemCount: items.filter((item) => item.needsVerification).length, acknowledgementCount: acknowledgements.length,
+    items, acknowledgementIds: acknowledgements.map((ack) => ack.id), finalAcceptanceRequested, humanReviewApproved,
+    publicExposure: false, noPublicLinks: true, outputPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingCloseoutPunchLists.push(punchList);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD closeout punch list pending durable adapter' : 'Created CAST CAD closeout punch list', 'CAST_CAD_DRAWING_CLOSEOUT_PUNCH_LIST', punchList.id, null, punchList, providerRequired ? 'No durable final acceptance, public closeout link, or completion authority was fabricated.' : 'Private punch-list record created; final acceptance remains human-review gated.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD closeout punch-list final acceptance requires CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER or CAST_CAD_DATABASE_URL; refusing to fabricate durable closeout completion.', requiredEnvVars: punchList.requiredEnvVars, punchList, contract: drawingCloseoutPunchListContract() };
+  return { ok: true, status: 201, punchList, contract: drawingCloseoutPunchListContract() };
+}
+function listDrawingCloseoutPunchLists(state, filters = {}) {
+  state.drawingCloseoutPunchLists ||= [];
+  let rows = state.drawingCloseoutPunchLists.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.sheetId) rows = rows.filter((row) => !row.sheetIds?.length || row.sheetIds.includes(filters.sheetId) || row.items?.some((item) => item.sheetId === filters.sheetId));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2759,6 +2817,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-issue-package-release', label: 'Private drawing issue package/release manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_ISSUE_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private release-manifest storage plus transmittal/email/workflow transport before issue packages are published or delivered.', ready: drawingIssuePackageStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-bulletin-release', label: 'Private addendum/bulletin change manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private bulletin storage plus transmittal/email/workflow transport before addenda/bulletins are published or delivered.', ready: drawingBulletinStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-as-built-closeout', label: 'Private as-built/redline closeout package', category: 'closeout', requiredEnvVars: ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER'], providerDecision: 'Choose durable private as-built storage plus PDF/as-built export worker before closeout packages are flattened, stored, or released.', ready: drawingAsBuiltStoreConfigured() && drawingAsBuiltPdfWorkerConfigured() },
+    { id: 'drawing-closeout-punch-list', label: 'Private closeout punch-list/final acceptance records', category: 'closeout', requiredEnvVars: ['CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable closeout punch-list storage before final acceptance or completion can be treated as authoritative.', ready: drawingCloseoutPunchListStoreConfigured() },
     { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
     { id: 'drawing-revision-reconciliation', label: 'Private drawing revision reconciliation/migration records', category: 'governance', requiredEnvVars: ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private reconciliation storage before superseded-sheet markup/takeoff migration plans can be treated as complete or authoritative.', ready: revisionReconciliationStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
@@ -2790,7 +2849,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };
