@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2707,6 +2707,83 @@ function listDrawingCloseoutPunchLists(state, filters = {}) {
   if (filters.sheetId) rows = rows.filter((row) => !row.sheetIds?.length || row.sheetIds.includes(filters.sheetId) || row.items?.some((item) => item.sheetId === filters.sheetId));
   return rows;
 }
+function drawingTurnoverPackageStoreConfigured() { return Boolean(process.env.CAST_CAD_TURNOVER_PACKAGE_ADAPTER || process.env.CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function drawingTurnoverDeliveryConfigured() { return Boolean(process.env.CAST_CAD_TURNOVER_DELIVERY_TRANSPORT || process.env.CAST_CAD_TRANSMITTAL_TRANSPORT || process.env.CAST_CAD_EMAIL_PROVIDER || process.env.CAST_SERVER_WORKFLOW_API_URL); }
+function drawingTurnoverPackageContract() {
+  return {
+    type: 'drawing-turnover-package',
+    source: 'approved as-built packages, closeout punch lists, release acknowledgements, and named O&M/warranty/training deliverables',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    noStore: true,
+    finalAcceptanceRequiresHumanReview: true,
+    noBudgetOrCompletionAuthorityWithoutProviders: true,
+    failClosedDurableCompletionEnvVars: ['CAST_CAD_TURNOVER_PACKAGE_ADAPTER or CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_TURNOVER_DELIVERY_TRANSPORT or CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'],
+  };
+}
+function normalizeTurnoverDeliverables(input = {}) {
+  const rows = Array.isArray(input.deliverables || input.closeoutDeliverables || input.turnoverDeliverables) ? (input.deliverables || input.closeoutDeliverables || input.turnoverDeliverables) : [];
+  return rows.map((row) => ({
+    id: row.id || id('cad_turnover_deliverable'),
+    category: String(row.category || row.type || 'closeout-document').trim(),
+    title: String(row.title || row.name || 'Closeout deliverable').trim(),
+    responsibleParty: String(row.responsibleParty || row.responsible_party || row.contractor || '').trim(),
+    status: row.status || 'Needs Review',
+    sourcePointer: String(row.sourcePointer || row.source_pointer || '').trim(),
+    noPublicLinks: !/^https?:\/\//i.test(String(row.sourcePointer || row.source_pointer || '')),
+    humanReviewApproved: Boolean(row.humanReviewApproved || row.human_review_approved),
+  })).filter((row) => row.title);
+}
+function createDrawingTurnoverPackage(state, input = {}, actor) {
+  state.drawingTurnoverPackages ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  const setId = input.setId || input.set_id || 'current';
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'], contract: drawingTurnoverPackageContract() };
+  const finalAcceptanceRequested = Boolean(input.finalAcceptanceRequested || input.final_acceptance_requested || input.ownerTurnoverRequested || input.owner_turnover_requested);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (finalAcceptanceRequested && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'CAST CAD owner turnover/final acceptance requires explicit human review approval.', contract: drawingTurnoverPackageContract() };
+  const deliverables = normalizeTurnoverDeliverables(input);
+  const publicDeliverable = deliverables.find((row) => row.noPublicLinks === false);
+  if (publicDeliverable) return { ok: false, status: 422, code: 'public-url-forbidden', error: 'CAST CAD turnover packages reject public deliverable URLs; use private source pointers or upload leases.', contract: drawingTurnoverPackageContract() };
+  const asBuiltPackageIds = Array.isArray(input.asBuiltPackageIds || input.as_built_package_ids) ? (input.asBuiltPackageIds || input.as_built_package_ids).map(String).filter(Boolean) : [];
+  const punchListIds = Array.isArray(input.punchListIds || input.punch_list_ids) ? (input.punchListIds || input.punch_list_ids).map(String).filter(Boolean) : [];
+  const acknowledgementIds = Array.isArray(input.acknowledgementIds || input.acknowledgement_ids) ? (input.acknowledgementIds || input.acknowledgement_ids).map(String).filter(Boolean) : [];
+  const citedAsBuilt = (state.drawingAsBuiltPackages || []).filter((row) => row.projectId === projectId && (!asBuiltPackageIds.length || asBuiltPackageIds.includes(row.id)));
+  const citedPunchLists = (state.drawingCloseoutPunchLists || []).filter((row) => row.projectId === projectId && (!punchListIds.length || punchListIds.includes(row.id)));
+  const citedAcknowledgements = (state.drawingReleaseAcknowledgements || []).filter((row) => row.projectId === projectId && (!acknowledgementIds.length || acknowledgementIds.includes(row.id)));
+  const openPunchItems = citedPunchLists.reduce((sum, row) => sum + Number(row.openItemCount || 0), 0);
+  const unreviewedDeliverables = deliverables.filter((row) => !row.humanReviewApproved || !['Accepted','Approved','Verified','Complete'].includes(row.status)).length;
+  if (finalAcceptanceRequested && (openPunchItems > 0 || unreviewedDeliverables > 0)) return { ok: false, status: 409, code: 'closeout-incomplete', error: 'CAST CAD turnover final acceptance requires zero open punch items and reviewed/accepted deliverables.', openPunchItems, unreviewedDeliverables, contract: drawingTurnoverPackageContract() };
+  const durableReady = drawingTurnoverPackageStoreConfigured();
+  const deliveryReady = drawingTurnoverDeliveryConfigured();
+  const providerRequired = finalAcceptanceRequested && (!durableReady || !deliveryReady);
+  const requiredEnvVars = [];
+  if (finalAcceptanceRequested && !durableReady) requiredEnvVars.push('CAST_CAD_TURNOVER_PACKAGE_ADAPTER or CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL');
+  if (finalAcceptanceRequested && !deliveryReady) requiredEnvVars.push('CAST_CAD_TURNOVER_DELIVERY_TRANSPORT or CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL');
+  const turnoverPackage = {
+    id: input.id || id('cad_turnover_pkg'), type: 'drawing-turnover-package', projectId, setId,
+    status: providerRequired ? 'provider-required' : finalAcceptanceRequested ? 'owner-turnover-review-recorded' : 'turnover-manifest-recorded',
+    providerRequired, requiredEnvVars, durablePersistence: durableReady, deliveryTransportReady: deliveryReady,
+    deliverableCount: deliverables.length, unreviewedDeliverableCount: unreviewedDeliverables, openPunchItemCount: openPunchItems,
+    deliverables, asBuiltPackageIds: citedAsBuilt.map((row) => row.id), punchListIds: citedPunchLists.map((row) => row.id), acknowledgementIds: citedAcknowledgements.map((row) => row.id),
+    finalAcceptanceRequested, humanReviewApproved, publicExposure: false, noPublicLinks: true, outputPointer: '', deliveryPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', createdByUserId: actor.id, createdAt: now(),
+  };
+  state.drawingTurnoverPackages.push(turnoverPackage);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD owner turnover package pending providers' : 'Created CAST CAD owner turnover package', 'CAST_CAD_DRAWING_TURNOVER_PACKAGE', turnoverPackage.id, null, turnoverPackage, providerRequired ? 'No durable closeout completion, delivery pointer, public turnover link, or owner-acceptance authority was fabricated.' : 'Private turnover package manifest recorded; final acceptance remains human-review gated.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD owner turnover/final acceptance requires durable turnover storage and private delivery transport; refusing to fabricate completion or public links.', requiredEnvVars, turnoverPackage, contract: drawingTurnoverPackageContract() };
+  return { ok: true, status: 201, turnoverPackage, contract: drawingTurnoverPackageContract() };
+}
+function listDrawingTurnoverPackages(state, filters = {}) {
+  state.drawingTurnoverPackages ||= [];
+  let rows = state.drawingTurnoverPackages.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.setId) rows = rows.filter((row) => row.setId === filters.setId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -2818,6 +2895,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-bulletin-release', label: 'Private addendum/bulletin change manifest', category: 'governance', requiredEnvVars: ['CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable private bulletin storage plus transmittal/email/workflow transport before addenda/bulletins are published or delivered.', ready: drawingBulletinStoreConfigured() && transmittalTransportConfigured() },
     { id: 'drawing-as-built-closeout', label: 'Private as-built/redline closeout package', category: 'closeout', requiredEnvVars: ['CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER'], providerDecision: 'Choose durable private as-built storage plus PDF/as-built export worker before closeout packages are flattened, stored, or released.', ready: drawingAsBuiltStoreConfigured() && drawingAsBuiltPdfWorkerConfigured() },
     { id: 'drawing-closeout-punch-list', label: 'Private closeout punch-list/final acceptance records', category: 'closeout', requiredEnvVars: ['CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable closeout punch-list storage before final acceptance or completion can be treated as authoritative.', ready: drawingCloseoutPunchListStoreConfigured() },
+    { id: 'drawing-turnover-package', label: 'Private owner turnover/O&M/warranty package', category: 'closeout', requiredEnvVars: ['CAST_CAD_TURNOVER_PACKAGE_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable closeout turnover storage plus private delivery/workflow transport before owner turnover packages are delivered or final acceptance is authoritative.', ready: drawingTurnoverPackageStoreConfigured() && drawingTurnoverDeliveryConfigured() },
     { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
     { id: 'drawing-revision-reconciliation', label: 'Private drawing revision reconciliation/migration records', category: 'governance', requiredEnvVars: ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private reconciliation storage before superseded-sheet markup/takeoff migration plans can be treated as complete or authoritative.', ready: revisionReconciliationStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
@@ -2849,7 +2927,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };

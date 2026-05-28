@@ -168,6 +168,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-issue-package-rele
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-bulletin-release' && gate.requiredEnvVars.includes('CAST_CAD_DRAWING_BULLETIN_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact drawing bulletin storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-as-built-closeout' && gate.requiredEnvVars.includes('CAST_CAD_AS_BUILT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_PDF_EXPORT_WORKER|CAST_CAD_AS_BUILT_EXPORT_WORKER')), 'production readiness names exact as-built storage and PDF worker choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-closeout-punch-list' && gate.requiredEnvVars.includes('CAST_CAD_CLOSEOUT_PUNCH_LIST_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact closeout punch-list storage choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-turnover-package' && gate.requiredEnvVars.includes('CAST_CAD_TURNOVER_PACKAGE_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact turnover package storage and delivery choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.missingRequiredEnvChoices.every((gate) => Array.isArray(gate.requiredEnvVars) && gate.providerDecision), true, 'provider blockers include env choices and provider decisions');
@@ -580,6 +581,28 @@ assert.deepEqual(blockedCloseoutProvider.requiredEnvVars, ['CAST_CAD_CLOSEOUT_PU
 assert.equal(cad.listDrawingCloseoutPunchLists(state, { projectId: 'alum', setId: 'current', sheetId: 'A-101' }).length, 2, 'closeout punch lists list by project/set/sheet');
 assert.equal(cad.drawingCloseoutPunchListContract().humanReviewRequiredBeforeFinalAcceptance, true, 'closeout punch-list contract keeps final acceptance human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_CLOSEOUT_PUNCH_LIST'), 'closeout punch lists are audited');
+const publicTurnoverPackage = cad.createDrawingTurnoverPackage(state, { projectId: 'alum', setId: 'current', deliverables: [{ title: 'O&M manual', category: 'om-manual', sourcePointer: 'https://example.com/om.pdf' }] }, owner);
+assert.equal(publicTurnoverPackage.ok, false, 'turnover package rejects public deliverable URLs');
+assert.equal(publicTurnoverPackage.code, 'public-url-forbidden', 'turnover package exposes public URL blocker');
+const turnoverPackage = cad.createDrawingTurnoverPackage(state, { projectId: 'alum', setId: 'current', punchListIds: [closeoutPunchList.punchList.id], deliverables: [{ title: 'Warranty matrix', category: 'warranty', responsibleParty: 'GC', sourcePointer: 'private://closeout/warranty-matrix.pdf' }] }, owner);
+assert.equal(turnoverPackage.ok, true, 'drawing turnover package manifest records provider-independently');
+assert.equal(turnoverPackage.turnoverPackage.publicExposure, false, 'turnover package forbids public exposure');
+assert.equal(turnoverPackage.turnoverPackage.noPublicLinks, true, 'turnover package refuses public links');
+assert.equal(turnoverPackage.turnoverPackage.outputPointer, '', 'turnover package does not fabricate output pointers');
+const blockedTurnoverReview = cad.createDrawingTurnoverPackage(state, { projectId: 'alum', setId: 'current', finalAcceptanceRequested: true }, owner);
+assert.equal(blockedTurnoverReview.ok, false, 'owner turnover final acceptance fails closed without human review');
+assert.equal(blockedTurnoverReview.code, 'human-review-required', 'turnover package exposes human review blocker');
+const blockedTurnoverIncomplete = cad.createDrawingTurnoverPackage(state, { projectId: 'alum', setId: 'current', punchListIds: [closeoutPunchList.punchList.id], finalAcceptanceRequested: true, humanReviewApproved: true, deliverables: [{ title: 'O&M manual', status: 'Needs Review', sourcePointer: 'private://closeout/om.pdf' }] }, owner);
+assert.equal(blockedTurnoverIncomplete.ok, false, 'owner turnover final acceptance fails closed with open punch/unreviewed deliverables');
+assert.equal(blockedTurnoverIncomplete.code, 'closeout-incomplete', 'turnover package exposes incomplete closeout blocker');
+const blockedTurnoverProvider = cad.createDrawingTurnoverPackage(state, { projectId: 'turnover-clean', setId: 'current', finalAcceptanceRequested: true, humanReviewApproved: true, deliverables: [{ title: 'Accepted warranty matrix', status: 'Accepted', humanReviewApproved: true, sourcePointer: 'private://closeout/warranty.pdf' }] }, owner);
+assert.equal(blockedTurnoverProvider.ok, false, 'owner turnover final acceptance fails closed without durable storage and private delivery');
+assert.equal(blockedTurnoverProvider.code, 'provider-required', 'turnover package exposes provider-required blocker');
+assert.deepEqual(blockedTurnoverProvider.requiredEnvVars, ['CAST_CAD_TURNOVER_PACKAGE_ADAPTER or CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_TURNOVER_DELIVERY_TRANSPORT or CAST_CAD_TRANSMITTAL_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'turnover package names exact durable storage and delivery choices');
+assert.equal(blockedTurnoverProvider.turnoverPackage.deliveryPointer, '', 'turnover package does not fabricate delivery pointers');
+assert.equal(cad.listDrawingTurnoverPackages(state, { projectId: 'alum', setId: 'current' }).length, 1, 'turnover packages list by project/set');
+assert.equal(cad.drawingTurnoverPackageContract().finalAcceptanceRequiresHumanReview, true, 'turnover package contract keeps final acceptance human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_TURNOVER_PACKAGE'), 'turnover packages are audited');
 
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
