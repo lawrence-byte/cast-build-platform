@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingWarrantyClaims: [], drawingWarrantyRemediationPlans: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingWarrantyClaims: [], drawingWarrantyRemediationPlans: [], facilityAssetRegisters: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -2919,6 +2919,72 @@ function listDrawingWarrantyRemediationPlans(state, filters = {}) {
   if (filters.markupId) rows = rows.filter((row) => (row.markupIds || []).includes(filters.markupId));
   return rows;
 }
+function facilityAssetRegisterStoreConfigured() { return Boolean(process.env.CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER || process.env.CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function facilityAssetRegisterContract() {
+  return {
+    type: 'facility-asset-register',
+    source: 'reviewed turnover/O&M/warranty deliverables and source-cited CAST CAD sheets/markups',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    noStore: true,
+    sourceCitationsRequired: ['turnoverPackageId', 'asset rows with sheetIds, markupIds, or deliverableIds'],
+    assetAcceptanceRequiresHumanReview: true,
+    failClosedDurableCompletionEnvVars: ['CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER or CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL'],
+  };
+}
+function createFacilityAssetRegister(state, input = {}, actor) {
+  state.facilityAssetRegisters ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'], contract: facilityAssetRegisterContract() };
+  const turnoverPackageId = String(input.turnoverPackageId || input.turnover_package_id || '').trim();
+  const turnoverPackage = (state.drawingTurnoverPackages || []).find((row) => row.projectId === projectId && row.id === turnoverPackageId);
+  const inputRows = Array.isArray(input.assets || input.assetRows || input.asset_rows) ? (input.assets || input.assetRows || input.asset_rows) : [];
+  const errors = [];
+  if (!turnoverPackageId) errors.push('turnoverPackageId is required.');
+  if (turnoverPackageId && !turnoverPackage) errors.push(`turnoverPackageId must reference an existing CAST CAD turnover package: ${turnoverPackageId}.`);
+  if (!inputRows.length) errors.push('At least one facility asset row is required.');
+  const assets = inputRows.map((row, index) => {
+    const sheetIds = Array.isArray(row.sheetIds || row.sheet_ids) ? (row.sheetIds || row.sheet_ids).map(String).filter(Boolean) : [];
+    const markupIds = Array.isArray(row.markupIds || row.markup_ids) ? (row.markupIds || row.markup_ids).map(String).filter(Boolean) : [];
+    const deliverableIds = Array.isArray(row.deliverableIds || row.deliverable_ids) ? (row.deliverableIds || row.deliverable_ids).map(String).filter(Boolean) : [];
+    const privateEvidencePointers = Array.isArray(row.evidencePointers || row.evidence_pointers) ? (row.evidencePointers || row.evidence_pointers).map(String).filter(Boolean) : [];
+    if (privateEvidencePointers.some((pointer) => /^https?:\/\//i.test(pointer))) errors.push(`Asset row ${index + 1} contains a public evidence URL; use private source pointers or upload leases.`);
+    if (!sheetIds.length && !markupIds.length && !deliverableIds.length) errors.push(`Asset row ${index + 1} requires sheetIds, markupIds, or deliverableIds.`);
+    return {
+      id: row.id || id('cad_facility_asset'), assetTag: String(row.assetTag || row.asset_tag || row.tag || '').trim(), name: String(row.name || row.title || `Facility asset ${index + 1}`).trim(),
+      category: String(row.category || row.type || 'facility-asset').trim(), location: String(row.location || '').trim(), responsibleParty: String(row.responsibleParty || row.responsible_party || '').trim(), warrantyEndDate: row.warrantyEndDate || row.warranty_end_date || '',
+      sheetIds, markupIds, deliverableIds, evidencePointers: privateEvidencePointers, status: row.status || 'needs-review', humanReviewed: Boolean(row.humanReviewed || row.human_reviewed), publicExposure: false, noPublicLinks: true,
+    };
+  });
+  if (errors.length) return { ok: false, status: 422, errors, contract: facilityAssetRegisterContract() };
+  const acceptanceRequested = Boolean(input.acceptanceRequested || input.acceptance_requested || input.ownerAcceptance || input.owner_acceptance || input.authoritative);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if (acceptanceRequested && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Facility asset register acceptance requires explicit human review approval.', contract: facilityAssetRegisterContract() };
+  const durableReady = facilityAssetRegisterStoreConfigured();
+  const providerRequired = acceptanceRequested && !durableReady;
+  const requiredEnvVars = providerRequired ? ['CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER or CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER or CAST_CAD_DATABASE_URL'] : [];
+  const register = {
+    id: input.id || id('cad_facility_asset_register'), type: 'facility-asset-register', projectId, turnoverPackageId, assetCount: assets.length, assets,
+    status: providerRequired ? 'provider-required' : acceptanceRequested ? 'asset-acceptance-review-recorded' : 'asset-register-draft-recorded', providerRequired, requiredEnvVars, durablePersistence: durableReady, acceptanceRequested, humanReviewApproved,
+    publicExposure: false, noPublicLinks: true, outputPointer: '', deliveryPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', createdByUserId: actor.id, createdAt: now(),
+  };
+  state.facilityAssetRegisters.push(register);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD facility asset register pending durable adapter' : 'Created CAST CAD facility asset register', 'CAST_CAD_FACILITY_ASSET_REGISTER', register.id, null, register, providerRequired ? 'No durable facility asset authority, public register link, or owner-acceptance completion was fabricated.' : 'Private facility asset register recorded; acceptance remains human-review gated.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD facility asset register acceptance requires durable asset-register storage; refusing to fabricate owner asset authority or public links.', requiredEnvVars, facilityAssetRegister: register, contract: facilityAssetRegisterContract() };
+  return { ok: true, status: 201, facilityAssetRegister: register, contract: facilityAssetRegisterContract() };
+}
+function listFacilityAssetRegisters(state, filters = {}) {
+  state.facilityAssetRegisters ||= [];
+  let rows = state.facilityAssetRegisters.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.turnoverPackageId) rows = rows.filter((row) => row.turnoverPackageId === filters.turnoverPackageId);
+  if (filters.assetTag) rows = rows.filter((row) => (row.assets || []).some((asset) => asset.assetTag === filters.assetTag));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -3033,6 +3099,7 @@ function castCadProductionReadiness() {
     { id: 'drawing-turnover-package', label: 'Private owner turnover/O&M/warranty package', category: 'closeout', requiredEnvVars: ['CAST_CAD_TURNOVER_PACKAGE_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_TRANSMITTAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable closeout turnover storage plus private delivery/workflow transport before owner turnover packages are delivered or final acceptance is authoritative.', ready: drawingTurnoverPackageStoreConfigured() && drawingTurnoverDeliveryConfigured() },
     { id: 'drawing-warranty-claims', label: 'Private warranty/defect claim records and contractor notices', category: 'closeout', requiredEnvVars: ['CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_TURNOVER_DELIVERY_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable warranty claim storage plus private contractor-notice transport before warranty claims are delivered or treated as completion-authoritative.', ready: drawingWarrantyClaimStoreConfigured() && drawingWarrantyClaimTransportConfigured() },
     { id: 'drawing-warranty-remediation', label: 'Private warranty remediation work authorization/completion', category: 'closeout', requiredEnvVars: ['CAST_CAD_WARRANTY_REMEDIATION_ADAPTER|CAST_CAD_WARRANTY_CLAIM_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_WARRANTY_REMEDIATION_TRANSPORT|CAST_CAD_WARRANTY_CLAIM_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable warranty remediation storage plus private contractor dispatch/workflow transport before warranty work authorization, completion, or closeout is authoritative.', ready: drawingWarrantyRemediationStoreConfigured() && drawingWarrantyRemediationTransportConfigured() },
+    { id: 'facility-asset-register', label: 'Private facility asset register from turnover/O&M', category: 'closeout', requiredEnvVars: ['CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable facility asset-register storage before turnover assets, warranty dates, and owner acceptance can be treated as authoritative.', ready: facilityAssetRegisterStoreConfigured() },
     { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
     { id: 'drawing-revision-reconciliation', label: 'Private drawing revision reconciliation/migration records', category: 'governance', requiredEnvVars: ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private reconciliation storage before superseded-sheet markup/takeoff migration plans can be treated as complete or authoritative.', ready: revisionReconciliationStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
@@ -3064,7 +3131,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, createDrawingWarrantyClaim, listDrawingWarrantyClaims, drawingWarrantyClaimContract, createDrawingWarrantyRemediationPlan, listDrawingWarrantyRemediationPlans, drawingWarrantyRemediationContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, createDrawingWarrantyClaim, listDrawingWarrantyClaims, drawingWarrantyClaimContract, createDrawingWarrantyRemediationPlan, listDrawingWarrantyRemediationPlans, drawingWarrantyRemediationContract, createFacilityAssetRegister, listFacilityAssetRegisters, facilityAssetRegisterContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };
