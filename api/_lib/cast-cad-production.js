@@ -17,7 +17,7 @@ const CAST_CAD_PERMISSIONS = {
 };
 
 const DEFAULT_STATE = () => ({
-  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingWarrantyClaims: [], drawingWarrantyRemediationPlans: [], facilityAssetRegisters: [], facilityMaintenancePlans: [], facilityInspectionReports: [], facilityConditionAssessments: [], facilityCapitalRenewalPlans: [], facilityWorkOrderHandoffs: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
+  markups: [], comments: [], commentMentionEvents: [], attachments: [], privateUploadLeases: [], auditLog: [], exportJobs: [], rfiLinks: [], workflowLinks: [], reviewRooms: [], reviewRoomInviteEvents: [], ocrPages: [], drawingAutoLinkRuns: [], comparisonJobs: [], modelIngestionJobs: [], modelQuantityLinks: [], aiFindings: [], userPreferences: [], viewportMappings: [], scaleCalibrations: [], pdfRendererSessions: [], drawingSetVersions: [], drawingSheetRevisions: [], drawingDocuments: [], drawingIndexQaReports: [], drawingRevisionReconciliationReports: [], drawingCloseoutPunchLists: [], drawingTurnoverPackages: [], drawingWarrantyClaims: [], drawingWarrantyRemediationPlans: [], facilityAssetRegisters: [], facilityMaintenancePlans: [], facilityInspectionReports: [], facilityConditionAssessments: [], facilityCapitalRenewalPlans: [], facilityWorkOrderHandoffs: [], facilityServiceHistoryRecords: [], drawingUploadPackages: [], drawingTransmittals: [], drawingApprovalPackages: [], drawingApprovalDecisions: [], drawingIssuePackages: [], drawingBulletins: [], drawingAsBuiltPackages: [], drawingReleaseAcknowledgements: [], toolLibraryItems: [], toolLibraryPlacements: [], costCatalogItems: [], costCatalogImports: [], batchOperations: [], fieldPackages: [], fieldSyncEvents: [], projectMembers: [], pdfStreamLeases: [], savedMarkupViews: [],
 });
 let memoryState = DEFAULT_STATE();
 
@@ -3394,6 +3394,99 @@ function listFacilityWorkOrderHandoffs(state, filters = {}) {
   if (filters.assetTag) rows = rows.filter((row) => (row.items || []).some((item) => (item.assetTags || []).includes(filters.assetTag)));
   return rows;
 }
+function facilityServiceHistoryStoreConfigured() { return Boolean(process.env.CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER || process.env.CAST_CAD_FACILITY_WORK_ORDER_ADAPTER || process.env.CAST_CAD_DATABASE_URL); }
+function facilityServiceHistoryTransportConfigured() { return Boolean(process.env.CAST_CAD_FACILITY_SERVICE_HISTORY_TRANSPORT || process.env.CAST_CAD_WORK_ORDER_PROVIDER || process.env.CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT || process.env.CAST_CAD_EMAIL_PROVIDER || process.env.CAST_SERVER_WORKFLOW_API_URL); }
+function facilityServiceHistoryContract() {
+  return {
+    type: 'facility-service-history-record',
+    source: 'audited facility work-order handoffs plus private completion evidence, asset tags, CAST CAD sheets, and markups',
+    publicExposure: false,
+    noPublicLinks: true,
+    requiresAuth: true,
+    noStore: true,
+    sourceCitationsRequired: ['facilityWorkOrderHandoffId', 'service items with handoffItemIds, assetIds, or assetTags'],
+    completionRequiresHumanReview: true,
+    ownerAcceptanceRequiresHumanReview: true,
+    failClosedDurableCompletionEnvVars: ['CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER or CAST_CAD_FACILITY_WORK_ORDER_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_FACILITY_SERVICE_HISTORY_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'],
+  };
+}
+function createFacilityServiceHistoryRecord(state, input = {}, actor) {
+  state.facilityServiceHistoryRecords ||= [];
+  const permission = requireCastCad(actor.role, 'manage_drawing_sets');
+  if (!permission.ok) return permission;
+  const projectId = input.projectId || input.project_id;
+  if (!projectId) return { ok: false, status: 422, errors: ['projectId is required.'], contract: facilityServiceHistoryContract() };
+  const facilityWorkOrderHandoffId = String(input.facilityWorkOrderHandoffId || input.facility_work_order_handoff_id || input.workOrderHandoffId || input.work_order_handoff_id || '').trim();
+  const handoff = facilityWorkOrderHandoffId ? (state.facilityWorkOrderHandoffs || []).find((row) => row.projectId === projectId && row.id === facilityWorkOrderHandoffId) : null;
+  const inputItems = Array.isArray(input.items || input.serviceItems || input.service_items) ? (input.items || input.serviceItems || input.service_items) : [];
+  const errors = [];
+  if (!facilityWorkOrderHandoffId) errors.push('facilityWorkOrderHandoffId is required.');
+  if (facilityWorkOrderHandoffId && !handoff) errors.push(`facilityWorkOrderHandoffId must reference an existing CAST CAD facility work-order handoff: ${facilityWorkOrderHandoffId}.`);
+  if (!inputItems.length) errors.push('At least one facility service-history item is required.');
+  const handoffItems = handoff?.items || [];
+  const items = inputItems.map((row, index) => {
+    const handoffItemIds = Array.isArray(row.handoffItemIds || row.handoff_item_ids) ? (row.handoffItemIds || row.handoff_item_ids).map(String).filter(Boolean) : row.handoffItemId || row.handoff_item_id ? [String(row.handoffItemId || row.handoff_item_id)] : [];
+    const referencedHandoffItems = handoffItems.filter((item) => handoffItemIds.includes(item.id));
+    const assetIds = Array.from(new Set([
+      ...(Array.isArray(row.assetIds || row.asset_ids) ? (row.assetIds || row.asset_ids).map(String).filter(Boolean) : []),
+      ...referencedHandoffItems.flatMap((item) => item.assetIds || []),
+    ]));
+    const assetTags = Array.from(new Set([
+      ...(Array.isArray(row.assetTags || row.asset_tags) ? (row.assetTags || row.asset_tags).map(String).filter(Boolean) : row.assetTag || row.asset_tag ? [String(row.assetTag || row.asset_tag)] : []),
+      ...referencedHandoffItems.flatMap((item) => item.assetTags || []),
+    ]));
+    const sheetIds = Array.from(new Set([
+      ...(Array.isArray(row.sheetIds || row.sheet_ids) ? (row.sheetIds || row.sheet_ids).map(String).filter(Boolean) : []),
+      ...referencedHandoffItems.flatMap((item) => item.sheetIds || []),
+    ]));
+    const markupIds = Array.from(new Set([
+      ...(Array.isArray(row.markupIds || row.markup_ids) ? (row.markupIds || row.markup_ids).map(String).filter(Boolean) : []),
+      ...referencedHandoffItems.flatMap((item) => item.markupIds || []),
+    ]));
+    const evidencePointers = Array.from(new Set([
+      ...(Array.isArray(row.evidencePointers || row.evidence_pointers) ? (row.evidencePointers || row.evidence_pointers).map(String).filter(Boolean) : []),
+      ...referencedHandoffItems.flatMap((item) => item.evidencePointers || []),
+    ]));
+    if (evidencePointers.some((pointer) => /^https?:\/\//i.test(pointer))) errors.push(`Service history item ${index + 1} contains a public evidence URL; use private source pointers or upload leases.`);
+    if (!handoffItemIds.length && !assetIds.length && !assetTags.length) errors.push(`Service history item ${index + 1} requires handoffItemIds, assetIds, or assetTags.`);
+    const missingHandoffItemIds = handoffItemIds.filter((itemId) => !handoffItems.some((item) => item.id === itemId));
+    if (missingHandoffItemIds.length) errors.push(`Service history item ${index + 1} handoffItemIds must reference items in the work-order handoff: ${missingHandoffItemIds.join(', ')}.`);
+    return {
+      id: row.id || id('cad_facility_service_item'), title: String(row.title || row.name || `Facility service item ${index + 1}`).trim(),
+      handoffItemIds, assetIds, assetTags, sheetIds, markupIds, serviceDate: row.serviceDate || row.service_date || row.completedAt || row.completed_at || '', technician: String(row.technician || row.contractor || '').trim(), result: String(row.result || row.status || 'completed-needs-review').trim(), notes: String(row.notes || row.description || '').trim(), evidencePointers,
+      publicExposure: false, noPublicLinks: true,
+    };
+  });
+  if (errors.length) return { ok: false, status: 422, errors, contract: facilityServiceHistoryContract() };
+  const closeoutRequested = Boolean(input.closeoutRequested || input.closeout_requested || input.completionRequested || input.completion_requested);
+  const ownerAcceptanceRequested = Boolean(input.ownerAcceptanceRequested || input.owner_acceptance_requested);
+  const humanReviewApproved = Boolean(input.humanReviewApproved || input.human_review_approved);
+  if ((closeoutRequested || ownerAcceptanceRequested) && !humanReviewApproved) return { ok: false, status: 409, code: 'human-review-required', error: 'Facility service-history closeout and owner acceptance require explicit human review approval.', contract: facilityServiceHistoryContract() };
+  const durableReady = facilityServiceHistoryStoreConfigured();
+  const transportReady = facilityServiceHistoryTransportConfigured();
+  const providerRequired = (closeoutRequested || ownerAcceptanceRequested) && (!durableReady || !transportReady);
+  const requiredEnvVars = [];
+  if ((closeoutRequested || ownerAcceptanceRequested) && !durableReady) requiredEnvVars.push('CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER or CAST_CAD_FACILITY_WORK_ORDER_ADAPTER or CAST_CAD_DATABASE_URL');
+  if ((closeoutRequested || ownerAcceptanceRequested) && !transportReady) requiredEnvVars.push('CAST_CAD_FACILITY_SERVICE_HISTORY_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL');
+  const record = {
+    id: input.id || id('cad_facility_service_history'), type: 'facility-service-history-record', projectId, facilityWorkOrderHandoffId, itemCount: items.length, items,
+    status: providerRequired ? 'provider-required' : ownerAcceptanceRequested ? 'owner-acceptance-review-recorded' : closeoutRequested ? 'service-closeout-review-recorded' : 'service-history-draft-recorded', providerRequired, requiredEnvVars, durablePersistence: durableReady, transportReady, closeoutRequested, ownerAcceptanceRequested, humanReviewApproved,
+    publicExposure: false, noPublicLinks: true, outputPointer: '', deliveryPointer: '', assetHistoryPointer: '', cmmsPointer: '', requiresAuth: true, cacheControl: 'private, max-age=0, no-store', createdByUserId: actor.id, createdAt: now(),
+  };
+  state.facilityServiceHistoryRecords.push(record);
+  audit(state, actor, providerRequired ? 'Created audit-only CAST CAD facility service history record pending providers' : 'Created CAST CAD facility service history record', 'CAST_CAD_FACILITY_SERVICE_HISTORY_RECORD', record.id, null, record, providerRequired ? 'No durable asset history, CMMS completion, public asset link, closeout, or owner acceptance was fabricated.' : 'Private facility service history record audited; closeout and owner acceptance remain human-review gated.');
+  if (providerRequired) return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD facility service history requires durable service-history storage and private CMMS/work-order transport; refusing to fabricate asset history, closeout, owner acceptance, or public links.', requiredEnvVars, facilityServiceHistoryRecord: record, contract: facilityServiceHistoryContract() };
+  return { ok: true, status: 201, facilityServiceHistoryRecord: record, contract: facilityServiceHistoryContract() };
+}
+function listFacilityServiceHistoryRecords(state, filters = {}) {
+  state.facilityServiceHistoryRecords ||= [];
+  let rows = state.facilityServiceHistoryRecords.slice();
+  if (filters.projectId) rows = rows.filter((row) => row.projectId === filters.projectId);
+  if (filters.status) rows = rows.filter((row) => row.status === filters.status);
+  if (filters.facilityWorkOrderHandoffId) rows = rows.filter((row) => row.facilityWorkOrderHandoffId === filters.facilityWorkOrderHandoffId);
+  if (filters.assetTag) rows = rows.filter((row) => (row.items || []).some((item) => (item.assetTags || []).includes(filters.assetTag)));
+  return rows;
+}
 function normalizeProjectMember(input = {}, actor) {
   const role = normalizeRole(input.role || 'Read Only Viewer');
   return {
@@ -3514,6 +3607,7 @@ function castCadProductionReadiness() {
     { id: 'facility-condition-assessment', label: 'Private facility condition/capital-renewal assessments', category: 'closeout', requiredEnvVars: ['CAST_CAD_FACILITY_CONDITION_ADAPTER|CAST_CAD_FACILITY_INSPECTION_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_CAPITAL_PLANNING_PROVIDER|CAST_CAD_FACILITY_CONDITION_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable facility condition storage plus private capital-planning/work-order transport before condition findings, capital renewal requests, or owner acceptance are authoritative.', ready: facilityConditionStoreConfigured() && facilityConditionTransportConfigured() },
     { id: 'facility-capital-renewal-plan', label: 'Private facility capital renewal budget/work-order plans', category: 'closeout', requiredEnvVars: ['CAST_CAD_CAPITAL_RENEWAL_ADAPTER|CAST_CAD_FACILITY_CONDITION_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_CAPITAL_PLANNING_PROVIDER|CAST_CAD_CAPITAL_RENEWAL_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable facility capital-renewal storage plus private capital-planning/work-order transport before budget requests, work orders, or owner approvals are authoritative.', ready: facilityCapitalRenewalStoreConfigured() && facilityCapitalRenewalTransportConfigured() },
     { id: 'facility-work-order-handoff', label: 'Private facility work-order/CMMS handoff', category: 'closeout', requiredEnvVars: ['CAST_CAD_FACILITY_WORK_ORDER_ADAPTER|CAST_CAD_CAPITAL_RENEWAL_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT|CAST_CAD_CAPITAL_RENEWAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable work-order handoff storage plus private CMMS/work-order/email transport before dispatch, CMMS records, or completion can be authoritative.', ready: facilityWorkOrderHandoffStoreConfigured() && facilityWorkOrderHandoffTransportConfigured() },
+    { id: 'facility-service-history-record', label: 'Private facility service history/asset ledger', category: 'closeout', requiredEnvVars: ['CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER|CAST_CAD_FACILITY_WORK_ORDER_ADAPTER|CAST_CAD_DATABASE_URL', 'CAST_CAD_FACILITY_SERVICE_HISTORY_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL'], providerDecision: 'Choose durable service-history storage plus private CMMS/work-order/email transport before completed service, asset history, closeout, or owner acceptance is authoritative.', ready: facilityServiceHistoryStoreConfigured() && facilityServiceHistoryTransportConfigured() },
     { id: 'drawing-release-acknowledgements', label: 'Private drawing release acknowledgements/read receipts', category: 'governance', requiredEnvVars: ['CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private acknowledgement/read-receipt storage before recipient acknowledgements can complete distribution, final release, or closeout acceptance.', ready: releaseAcknowledgementStoreConfigured() },
     { id: 'drawing-revision-reconciliation', label: 'Private drawing revision reconciliation/migration records', category: 'governance', requiredEnvVars: ['CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL'], providerDecision: 'Choose durable private reconciliation storage before superseded-sheet markup/takeoff migration plans can be treated as complete or authoritative.', ready: revisionReconciliationStoreConfigured() },
   ].map((gate) => ({ ...gate, status: gate.ready ? 'ready' : 'provider-required', publicExposure: false, noPublicLinks: true, secretValuesExposed: false }));
@@ -3545,7 +3639,7 @@ module.exports = {
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,
   buildComparisonJob, createModelIngestionJob, listModelIngestionJobs, createModelQuantityLink, listModelQuantityLinks, modelQuantityLinkContract, createBatchOperation, listBatchOperations, createFieldPackage, syncFieldPackageDeltas, listFieldPackages,
-  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, createDrawingWarrantyClaim, listDrawingWarrantyClaims, drawingWarrantyClaimContract, createDrawingWarrantyRemediationPlan, listDrawingWarrantyRemediationPlans, drawingWarrantyRemediationContract, createFacilityAssetRegister, listFacilityAssetRegisters, facilityAssetRegisterContract, createFacilityMaintenancePlan, listFacilityMaintenancePlans, facilityMaintenancePlanContract, createFacilityInspectionReport, listFacilityInspectionReports, facilityInspectionReportContract, createFacilityConditionAssessment, listFacilityConditionAssessments, facilityConditionAssessmentContract, createFacilityCapitalRenewalPlan, listFacilityCapitalRenewalPlans, facilityCapitalRenewalPlanContract, createFacilityWorkOrderHandoff, listFacilityWorkOrderHandoffs, facilityWorkOrderHandoffContract, fieldPackageContract,
+  createDrawingUploadPackage, listDrawingUploadPackages, createDrawingTransmittal, listDrawingTransmittals, createDrawingSetVersion, slipSheetRevision, listDrawingSetVersions, createDrawingApprovalPackage, reviewDrawingApprovalPackage, listDrawingApprovalPackages, drawingApprovalContract, runDrawingIndexQa, listDrawingIndexQaReports, drawingIndexQaContract, createDrawingIssuePackage, listDrawingIssuePackages, drawingIssuePackageContract, createDrawingBulletin, listDrawingBulletins, drawingBulletinContract, createDrawingAsBuiltPackage, listDrawingAsBuiltPackages, drawingAsBuiltPackageContract, createDrawingReleaseAcknowledgement, listDrawingReleaseAcknowledgements, drawingReleaseAcknowledgementContract, createDrawingRevisionReconciliation, listDrawingRevisionReconciliationReports, drawingRevisionReconciliationContract, createDrawingCloseoutPunchList, listDrawingCloseoutPunchLists, drawingCloseoutPunchListContract, createDrawingTurnoverPackage, listDrawingTurnoverPackages, drawingTurnoverPackageContract, createDrawingWarrantyClaim, listDrawingWarrantyClaims, drawingWarrantyClaimContract, createDrawingWarrantyRemediationPlan, listDrawingWarrantyRemediationPlans, drawingWarrantyRemediationContract, createFacilityAssetRegister, listFacilityAssetRegisters, facilityAssetRegisterContract, createFacilityMaintenancePlan, listFacilityMaintenancePlans, facilityMaintenancePlanContract, createFacilityInspectionReport, listFacilityInspectionReports, facilityInspectionReportContract, createFacilityConditionAssessment, listFacilityConditionAssessments, facilityConditionAssessmentContract, createFacilityCapitalRenewalPlan, listFacilityCapitalRenewalPlans, facilityCapitalRenewalPlanContract, createFacilityWorkOrderHandoff, listFacilityWorkOrderHandoffs, facilityWorkOrderHandoffContract, createFacilityServiceHistoryRecord, listFacilityServiceHistoryRecords, facilityServiceHistoryContract, fieldPackageContract,
   upsertProjectMemberRole, listProjectMembers, buildPermissionMatrix, getEffectivePermissions, readCastCadAuditLog, castCadProductionReadiness,
   markupsCsv,
 };

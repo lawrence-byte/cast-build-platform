@@ -177,6 +177,7 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'facility-inspection-report
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-condition-assessment' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_CONDITION_ADAPTER|CAST_CAD_FACILITY_INSPECTION_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_CAPITAL_PLANNING_PROVIDER|CAST_CAD_FACILITY_CONDITION_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility condition storage and capital planning transport choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-capital-renewal-plan' && gate.requiredEnvVars.includes('CAST_CAD_CAPITAL_RENEWAL_ADAPTER|CAST_CAD_FACILITY_CONDITION_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_CAPITAL_PLANNING_PROVIDER|CAST_CAD_CAPITAL_RENEWAL_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility capital renewal storage and capital planning transport choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-work-order-handoff' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_WORK_ORDER_ADAPTER|CAST_CAD_CAPITAL_RENEWAL_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT|CAST_CAD_CAPITAL_RENEWAL_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility work-order handoff storage and CMMS/work-order transport choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'facility-service-history-record' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER|CAST_CAD_FACILITY_WORK_ORDER_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_SERVICE_HISTORY_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility service-history storage and CMMS/work-order transport choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.contract.secretValuesExposed, false, 'readiness contract never exposes secret values');
@@ -789,6 +790,30 @@ assert.equal(cad.listFacilityWorkOrderHandoffs(state, { projectId: 'alum', asset
 assert.equal(cad.facilityWorkOrderHandoffContract().dispatchRequiresHumanReview, true, 'facility work-order handoff contract keeps dispatch human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_WORK_ORDER_HANDOFF'), 'facility work-order handoffs are audited');
 
+const publicServiceHistory = cad.createFacilityServiceHistoryRecord(state, { projectId: 'alum', facilityWorkOrderHandoffId: facilityWorkOrderHandoff.facilityWorkOrderHandoff.id, items: [{ assetTags: ['DHW-1'], title: 'DHW service completed', evidencePointers: ['https://example.com/service.pdf'] }] }, owner);
+assert.equal(publicServiceHistory.ok, false, 'facility service history rejects public evidence URLs');
+assert.equal(publicServiceHistory.status, 422, 'facility service history exposes validation blocker for public evidence');
+const missingServiceHistorySource = cad.createFacilityServiceHistoryRecord(state, { projectId: 'alum', facilityWorkOrderHandoffId: 'cad_facility_work_order_missing', items: [{ assetTags: ['DHW-1'], title: 'Missing service source' }] }, owner);
+assert.equal(missingServiceHistorySource.ok, false, 'facility service history requires an audited work-order handoff source');
+const handoffItemId = facilityWorkOrderHandoff.facilityWorkOrderHandoff.items[0].id;
+const facilityServiceHistory = cad.createFacilityServiceHistoryRecord(state, { projectId: 'alum', facilityWorkOrderHandoffId: facilityWorkOrderHandoff.facilityWorkOrderHandoff.id, items: [{ handoffItemIds: [handoffItemId], assetTags: ['DHW-1'], title: 'DHW service completion evidence', technician: 'CAST Mechanical', serviceDate: '2026-05-29', sheetIds: ['A-101'], markupIds: [markup.markup.id], evidencePointers: ['private://closeout/dhw-service-history.pdf'] }] }, owner);
+assert.equal(facilityServiceHistory.ok, true, 'facility service history draft records provider-independently');
+assert.equal(facilityServiceHistory.facilityServiceHistoryRecord.publicExposure, false, 'facility service history forbids public exposure');
+assert.equal(facilityServiceHistory.facilityServiceHistoryRecord.noPublicLinks, true, 'facility service history refuses public links');
+assert.equal(facilityServiceHistory.facilityServiceHistoryRecord.assetHistoryPointer, '', 'facility service history does not fabricate asset history pointers');
+const blockedServiceHistoryReview = cad.createFacilityServiceHistoryRecord(state, { projectId: 'alum', facilityWorkOrderHandoffId: facilityWorkOrderHandoff.facilityWorkOrderHandoff.id, closeoutRequested: true, items: [{ handoffItemIds: [handoffItemId], title: 'Close out DHW service' }] }, owner);
+assert.equal(blockedServiceHistoryReview.ok, false, 'facility service history closeout fails closed without human review');
+assert.equal(blockedServiceHistoryReview.code, 'human-review-required', 'facility service history exposes human review blocker');
+const blockedServiceHistoryProvider = cad.createFacilityServiceHistoryRecord(state, { projectId: 'alum', facilityWorkOrderHandoffId: facilityWorkOrderHandoff.facilityWorkOrderHandoff.id, closeoutRequested: true, humanReviewApproved: true, items: [{ handoffItemIds: [handoffItemId], title: 'Close out DHW service' }] }, owner);
+assert.equal(blockedServiceHistoryProvider.ok, false, 'facility service history closeout fails closed without durable storage and private CMMS/work-order transport');
+assert.equal(blockedServiceHistoryProvider.code, 'provider-required', 'facility service history exposes provider-required blocker');
+assert.deepEqual(blockedServiceHistoryProvider.requiredEnvVars, ['CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER or CAST_CAD_FACILITY_WORK_ORDER_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_FACILITY_SERVICE_HISTORY_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_FACILITY_WORK_ORDER_TRANSPORT or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'facility service history names exact durable storage and CMMS/work-order transport choices');
+assert.equal(blockedServiceHistoryProvider.facilityServiceHistoryRecord.cmmsPointer, '', 'facility service history does not fabricate CMMS pointers');
+assert.equal(cad.listFacilityServiceHistoryRecords(state, { projectId: 'alum', facilityWorkOrderHandoffId: facilityWorkOrderHandoff.facilityWorkOrderHandoff.id }).length, 2, 'facility service histories list by project and work-order handoff');
+assert.equal(cad.listFacilityServiceHistoryRecords(state, { projectId: 'alum', assetTag: 'DHW-1' }).length, 2, 'facility service histories list by asset tag');
+assert.equal(cad.facilityServiceHistoryContract().ownerAcceptanceRequiresHumanReview, true, 'facility service history contract keeps owner acceptance human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_SERVICE_HISTORY_RECORD'), 'facility service history records are audited');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
@@ -937,6 +962,7 @@ assert.ok(castCadJs.includes("createBackendExportJob('drawing-warranty-remediati
 assert.ok(castCadJs.includes("createBackendExportJob('facility-asset-register')"), 'CAST CAD workbench calls facility asset register contract');
 assert.ok(castCadJs.includes("createBackendExportJob('facility-maintenance-plan')"), 'CAST CAD workbench calls facility maintenance plan contract');
 assert.ok(castCadJs.includes("createBackendExportJob('facility-inspection-report')"), 'CAST CAD workbench calls facility inspection report contract');
+assert.ok(castCadJs.includes("createBackendExportJob('facility-service-history-record')"), 'CAST CAD workbench calls facility service history contract');
 assert.ok(castCadJs.includes("createBackendExportJob('private-upload-lease')"), 'CAST CAD workbench calls private upload lease contract');
 assert.ok(castCadJs.includes('No public upload URL was fabricated'), 'CAST CAD private upload lease workflow fails closed without fabricating upload URLs');
 assert.ok(castCadJs.includes('CAST_CAD_TAKEOFF_WORKBOOK_WORKER'), 'CAST CAD workbench names takeoff workbook worker requirement');
@@ -955,6 +981,8 @@ assert.ok(castCadJs.includes('CAST_CAD_FACILITY_INSPECTION_ADAPTER'), 'CAST CAD 
 assert.ok(castCadJs.includes('No local-only inspection closeout authority was fabricated'), 'CAST CAD facility inspection reports fail closed without fabricating local closeout authority');
 assert.ok(castCadJs.includes('CAST_CAD_CAPITAL_RENEWAL_ADAPTER'), 'CAST CAD workbench names facility capital renewal durable adapter requirement');
 assert.ok(castCadJs.includes('No local-only budget/work-order authority was fabricated'), 'CAST CAD facility capital renewal plans fail closed without fabricating budget or work-order authority');
+assert.ok(castCadJs.includes('CAST_CAD_FACILITY_SERVICE_HISTORY_ADAPTER'), 'CAST CAD workbench names facility service history durable adapter requirement');
+assert.ok(castCadJs.includes('No local-only asset ledger, CMMS completion, or owner acceptance was fabricated'), 'CAST CAD facility service history fails closed without fabricating asset ledger authority');
 assert.ok(castCadHtml.includes('CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER'), 'CAST CAD workbench names facility asset register durable adapter requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER'), 'CAST CAD workbench names PDF annotation import worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_MODEL_INGESTION_WORKER'), 'CAST CAD workbench names CAD/model ingestion worker requirement');
