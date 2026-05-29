@@ -716,6 +716,29 @@ assert.equal(cad.listFacilityInspectionReports(state, { projectId: 'alum', asset
 assert.equal(cad.facilityInspectionReportContract().closeoutRequiresHumanReview, true, 'facility inspection contract keeps closeout human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_INSPECTION_REPORT'), 'facility inspection reports are audited');
 
+const publicFacilityCondition = cad.createFacilityConditionAssessment(state, { projectId: 'alum', facilityInspectionReportId: facilityInspectionReport.facilityInspectionReport.id, findings: [{ assetTags: ['DHW-1'], title: 'DHW nearing replacement', evidencePointers: ['https://example.com/condition.pdf'] }] }, owner);
+assert.equal(publicFacilityCondition.ok, false, 'facility condition assessments reject public evidence URLs');
+assert.equal(publicFacilityCondition.status, 422, 'facility condition exposes validation blocker for public evidence');
+const missingFacilityConditionInspection = cad.createFacilityConditionAssessment(state, { projectId: 'alum', facilityInspectionReportId: 'cad_facility_inspection_missing', findings: [{ assetTags: ['DHW-1'], title: 'DHW nearing replacement' }] }, owner);
+assert.equal(missingFacilityConditionInspection.ok, false, 'facility condition requires an audited inspection report');
+const facilityConditionAssessment = cad.createFacilityConditionAssessment(state, { projectId: 'alum', facilityInspectionReportId: facilityInspectionReport.facilityInspectionReport.id, findings: [{ assetTags: ['DHW-1'], title: 'DHW capital renewal candidate', condition: 'fair', severity: 'medium', estimatedCost: 12000, sheetIds: ['A-101'], markupIds: [markup.markup.id], evidencePointers: ['private://closeout/dhw-condition.pdf'] }] }, owner);
+assert.equal(facilityConditionAssessment.ok, true, 'facility condition draft records provider-independently');
+assert.equal(facilityConditionAssessment.facilityConditionAssessment.publicExposure, false, 'facility condition forbids public exposure');
+assert.equal(facilityConditionAssessment.facilityConditionAssessment.noPublicLinks, true, 'facility condition refuses public links');
+assert.equal(facilityConditionAssessment.facilityConditionAssessment.capitalPlanPointer, '', 'facility condition does not fabricate capital plan pointers');
+const blockedFacilityConditionReview = cad.createFacilityConditionAssessment(state, { projectId: 'alum', facilityInspectionReportId: facilityInspectionReport.facilityInspectionReport.id, capitalRenewalRequested: true, findings: [{ assetTags: ['DHW-1'], title: 'Request DHW renewal' }] }, owner);
+assert.equal(blockedFacilityConditionReview.ok, false, 'facility condition capital renewal fails closed without human review');
+assert.equal(blockedFacilityConditionReview.code, 'human-review-required', 'facility condition exposes human review blocker');
+const blockedFacilityConditionProvider = cad.createFacilityConditionAssessment(state, { projectId: 'alum', facilityInspectionReportId: facilityInspectionReport.facilityInspectionReport.id, capitalRenewalRequested: true, humanReviewApproved: true, findings: [{ assetTags: ['DHW-1'], title: 'Request DHW renewal' }] }, owner);
+assert.equal(blockedFacilityConditionProvider.ok, false, 'facility condition capital renewal fails closed without durable storage and private capital planning transport');
+assert.equal(blockedFacilityConditionProvider.code, 'provider-required', 'facility condition exposes provider-required blocker');
+assert.deepEqual(blockedFacilityConditionProvider.requiredEnvVars, ['CAST_CAD_FACILITY_CONDITION_ADAPTER or CAST_CAD_FACILITY_INSPECTION_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_CAPITAL_PLANNING_PROVIDER or CAST_CAD_FACILITY_CONDITION_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'facility condition names exact durable storage and capital planning/work-order transport choices');
+assert.equal(blockedFacilityConditionProvider.facilityConditionAssessment.deliveryPointer, '', 'facility condition does not fabricate delivery pointers');
+assert.equal(cad.listFacilityConditionAssessments(state, { projectId: 'alum', facilityInspectionReportId: facilityInspectionReport.facilityInspectionReport.id }).length, 2, 'facility condition assessments list by project and inspection report');
+assert.equal(cad.listFacilityConditionAssessments(state, { projectId: 'alum', assetTag: 'DHW-1' }).length, 2, 'facility condition assessments list by asset tag');
+assert.equal(cad.facilityConditionAssessmentContract().capitalRenewalRequiresHumanReview, true, 'facility condition contract keeps capital renewal human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_CONDITION_ASSESSMENT'), 'facility condition assessments are audited');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
