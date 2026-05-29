@@ -174,6 +174,8 @@ assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-warranty-remediati
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-asset-register' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_CLOSEOUT_PACKAGE_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact facility asset register storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-maintenance-plan' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_MAINTENANCE_ADAPTER|CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_MAINTENANCE_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility maintenance storage and work-order transport choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'facility-inspection-report' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_INSPECTION_ADAPTER|CAST_CAD_FACILITY_MAINTENANCE_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_INSPECTION_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility inspection storage and work-order transport choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'facility-condition-assessment' && gate.requiredEnvVars.includes('CAST_CAD_FACILITY_CONDITION_ADAPTER|CAST_CAD_FACILITY_INSPECTION_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_CAPITAL_PLANNING_PROVIDER|CAST_CAD_FACILITY_CONDITION_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility condition storage and capital planning transport choices');
+assert.ok(readiness.gates.some((gate) => gate.id === 'facility-capital-renewal-plan' && gate.requiredEnvVars.includes('CAST_CAD_CAPITAL_RENEWAL_ADAPTER|CAST_CAD_FACILITY_CONDITION_ADAPTER|CAST_CAD_DATABASE_URL') && gate.requiredEnvVars.includes('CAST_CAD_CAPITAL_PLANNING_PROVIDER|CAST_CAD_CAPITAL_RENEWAL_TRANSPORT|CAST_CAD_WORK_ORDER_PROVIDER|CAST_CAD_EMAIL_PROVIDER|CAST_SERVER_WORKFLOW_API_URL')), 'production readiness names exact facility capital renewal storage and capital planning transport choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-release-acknowledgements' && gate.requiredEnvVars.includes('CAST_CAD_RELEASE_ACK_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing release acknowledgement storage choices');
 assert.ok(readiness.gates.some((gate) => gate.id === 'drawing-revision-reconciliation' && gate.requiredEnvVars.includes('CAST_CAD_REVISION_RECONCILIATION_ADAPTER|CAST_CAD_DATABASE_URL')), 'production readiness names exact drawing revision reconciliation storage choices');
 assert.equal(readiness.contract.secretValuesExposed, false, 'readiness contract never exposes secret values');
@@ -739,6 +741,30 @@ assert.equal(cad.listFacilityConditionAssessments(state, { projectId: 'alum', as
 assert.equal(cad.facilityConditionAssessmentContract().capitalRenewalRequiresHumanReview, true, 'facility condition contract keeps capital renewal human-review gated');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_CONDITION_ASSESSMENT'), 'facility condition assessments are audited');
 
+const conditionFindingId = facilityConditionAssessment.facilityConditionAssessment.findings[0].id;
+const publicCapitalRenewal = cad.createFacilityCapitalRenewalPlan(state, { projectId: 'alum', facilityConditionAssessmentId: facilityConditionAssessment.facilityConditionAssessment.id, items: [{ findingIds: [conditionFindingId], title: 'DHW renewal budget', evidencePointers: ['https://example.com/capital-plan.pdf'] }] }, owner);
+assert.equal(publicCapitalRenewal.ok, false, 'facility capital renewal plans reject public evidence URLs');
+assert.equal(publicCapitalRenewal.status, 422, 'facility capital renewal exposes validation blocker for public evidence');
+const missingCapitalRenewalCondition = cad.createFacilityCapitalRenewalPlan(state, { projectId: 'alum', facilityConditionAssessmentId: 'cad_facility_condition_missing', items: [{ assetTags: ['DHW-1'], title: 'DHW renewal budget' }] }, owner);
+assert.equal(missingCapitalRenewalCondition.ok, false, 'facility capital renewal requires an audited condition assessment');
+const facilityCapitalRenewalPlan = cad.createFacilityCapitalRenewalPlan(state, { projectId: 'alum', facilityConditionAssessmentId: facilityConditionAssessment.facilityConditionAssessment.id, items: [{ findingIds: [conditionFindingId], assetTags: ['DHW-1'], title: 'DHW capital renewal budget', estimatedCost: 12000, sheetIds: ['A-101'], markupIds: [markup.markup.id], evidencePointers: ['private://closeout/dhw-capital-renewal.pdf'] }] }, owner);
+assert.equal(facilityCapitalRenewalPlan.ok, true, 'facility capital renewal draft records provider-independently');
+assert.equal(facilityCapitalRenewalPlan.facilityCapitalRenewalPlan.publicExposure, false, 'facility capital renewal forbids public exposure');
+assert.equal(facilityCapitalRenewalPlan.facilityCapitalRenewalPlan.noPublicLinks, true, 'facility capital renewal refuses public links');
+assert.equal(facilityCapitalRenewalPlan.facilityCapitalRenewalPlan.budgetRequestPointer, '', 'facility capital renewal does not fabricate budget request pointers');
+const blockedCapitalRenewalReview = cad.createFacilityCapitalRenewalPlan(state, { projectId: 'alum', facilityConditionAssessmentId: facilityConditionAssessment.facilityConditionAssessment.id, budgetRequestRequested: true, items: [{ findingIds: [conditionFindingId], title: 'Request DHW capital budget' }] }, owner);
+assert.equal(blockedCapitalRenewalReview.ok, false, 'facility capital renewal budget requests fail closed without human review');
+assert.equal(blockedCapitalRenewalReview.code, 'human-review-required', 'facility capital renewal exposes human review blocker');
+const blockedCapitalRenewalProvider = cad.createFacilityCapitalRenewalPlan(state, { projectId: 'alum', facilityConditionAssessmentId: facilityConditionAssessment.facilityConditionAssessment.id, budgetRequestRequested: true, humanReviewApproved: true, items: [{ findingIds: [conditionFindingId], title: 'Request DHW capital budget' }] }, owner);
+assert.equal(blockedCapitalRenewalProvider.ok, false, 'facility capital renewal budget requests fail closed without durable storage and private capital planning transport');
+assert.equal(blockedCapitalRenewalProvider.code, 'provider-required', 'facility capital renewal exposes provider-required blocker');
+assert.deepEqual(blockedCapitalRenewalProvider.requiredEnvVars, ['CAST_CAD_CAPITAL_RENEWAL_ADAPTER or CAST_CAD_FACILITY_CONDITION_ADAPTER or CAST_CAD_DATABASE_URL', 'CAST_CAD_CAPITAL_PLANNING_PROVIDER or CAST_CAD_CAPITAL_RENEWAL_TRANSPORT or CAST_CAD_WORK_ORDER_PROVIDER or CAST_CAD_EMAIL_PROVIDER or CAST_SERVER_WORKFLOW_API_URL'], 'facility capital renewal names exact durable storage and capital planning/work-order transport choices');
+assert.equal(blockedCapitalRenewalProvider.facilityCapitalRenewalPlan.workOrderPointer, '', 'facility capital renewal does not fabricate work-order pointers');
+assert.equal(cad.listFacilityCapitalRenewalPlans(state, { projectId: 'alum', facilityConditionAssessmentId: facilityConditionAssessment.facilityConditionAssessment.id }).length, 2, 'facility capital renewal plans list by project and condition assessment');
+assert.equal(cad.listFacilityCapitalRenewalPlans(state, { projectId: 'alum', assetTag: 'DHW-1' }).length, 1, 'facility capital renewal plans list by asset tag');
+assert.equal(cad.facilityCapitalRenewalPlanContract().budgetRequestRequiresHumanReview, true, 'facility capital renewal contract keeps budget requests human-review gated');
+assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_FACILITY_CAPITAL_RENEWAL_PLAN'), 'facility capital renewal plans are audited');
+
 const defaultPrefs = cad.getViewerPreferences(state, owner, 'alum');
 assert.equal(defaultPrefs.ok, true, 'viewer preferences can be read by authenticated viewers');
 assert.equal(defaultPrefs.source, 'default', 'viewer preferences return defaults before save');
@@ -903,6 +929,8 @@ assert.ok(castCadJs.includes('CAST_CAD_FACILITY_MAINTENANCE_ADAPTER'), 'CAST CAD
 assert.ok(castCadJs.includes('No local-only work-order authority was fabricated'), 'CAST CAD facility maintenance plans fail closed without fabricating local work-order authority');
 assert.ok(castCadJs.includes('CAST_CAD_FACILITY_INSPECTION_ADAPTER'), 'CAST CAD workbench names facility inspection durable adapter requirement');
 assert.ok(castCadJs.includes('No local-only inspection closeout authority was fabricated'), 'CAST CAD facility inspection reports fail closed without fabricating local closeout authority');
+assert.ok(castCadJs.includes('CAST_CAD_CAPITAL_RENEWAL_ADAPTER'), 'CAST CAD workbench names facility capital renewal durable adapter requirement');
+assert.ok(castCadJs.includes('No local-only budget/work-order authority was fabricated'), 'CAST CAD facility capital renewal plans fail closed without fabricating budget or work-order authority');
 assert.ok(castCadHtml.includes('CAST_CAD_FACILITY_ASSET_REGISTER_ADAPTER'), 'CAST CAD workbench names facility asset register durable adapter requirement');
 assert.ok(castCadJs.includes('CAST_CAD_PDF_ANNOTATION_IMPORT_WORKER'), 'CAST CAD workbench names PDF annotation import worker requirement');
 assert.ok(castCadJs.includes('CAST_CAD_MODEL_INGESTION_WORKER'), 'CAST CAD workbench names CAD/model ingestion worker requirement');
@@ -928,6 +956,10 @@ assert.ok(castCadHtml.includes('data-create-facility-maintenance-plan'), 'CAST C
 assert.ok(castCadHtml.includes('data-facility-asset-register-id'), 'CAST CAD workbench requires source-cited facility asset register ids for maintenance');
 assert.ok(castCadHtml.includes('data-create-facility-inspection-report'), 'CAST CAD workbench exposes facility inspection controls');
 assert.ok(castCadHtml.includes('data-facility-maintenance-plan-id'), 'CAST CAD workbench requires source-cited facility maintenance plan ids for inspection');
+assert.ok(castCadHtml.includes('data-create-facility-condition-assessment'), 'CAST CAD workbench exposes facility condition assessment controls');
+assert.ok(castCadHtml.includes('data-facility-inspection-report-id'), 'CAST CAD workbench requires source-cited facility inspection report ids for condition assessment');
+assert.ok(castCadHtml.includes('data-create-facility-capital-renewal'), 'CAST CAD workbench exposes facility capital renewal controls');
+assert.ok(castCadHtml.includes('data-facility-condition-assessment-id'), 'CAST CAD workbench requires source-cited facility condition assessment ids for capital renewal');
 assert.ok(castCadHtml.includes('data-create-annotation-import'), 'CAST CAD workbench exposes PDF annotation import job control');
 assert.ok(castCadHtml.includes('data-drawing-upload-pointer'), 'CAST CAD workbench requires a private drawing upload pointer');
 assert.ok(castCadHtml.includes('data-create-model-ingestion'), 'CAST CAD workbench exposes CAD/model ingestion job control');
