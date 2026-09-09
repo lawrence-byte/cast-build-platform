@@ -954,6 +954,10 @@ function drawingAutoLinkContract() {
     publicExposure: false,
     requiresAuth: true,
     humanReviewRequiredBeforePublish: true,
+    candidateReviewRequired: true,
+    reviewDecisions: ['Approved', 'Rejected'],
+    reviewPersistence: 'memory-only',
+    durablePublisherIntegrated: false,
     noPublicUrls: true,
     sourceCitationRequired: true,
     durableAdapterRequired: 'CAST_CAD_DOCUMENT_METADATA_ADAPTER',
@@ -974,6 +978,7 @@ function detectDrawingReferences(text) {
   return [...refs];
 }
 function createDrawingAutoLinks(state, input = {}, actor) {
+  if (input.publish || input.publishLinks || input.publish_links || input.authoritative) return publishDrawingAutoLinkRun(state, input, actor);
   state.ocrPages ||= [];
   state.drawingDocuments ||= [];
   state.drawingAutoLinkRuns ||= [];
@@ -1013,19 +1018,12 @@ function createDrawingAutoLinks(state, input = {}, actor) {
       });
     });
   });
-  const publishRequested = Boolean(input.publish || input.publishLinks || input.publish_links || input.authoritative);
-  if (publishRequested && !(input.humanReviewApproved || input.human_review_approved)) {
-    return { ok: false, status: 409, code: 'human-review-required', error: 'CAST CAD Auto Link candidates cannot be published as navigable sheet links without human review approval.', candidates, contract: drawingAutoLinkContract() };
-  }
   const providerReady = Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER || process.env.CAST_CAD_DATABASE_URL);
-  if (publishRequested && !providerReady) {
-    return { ok: false, status: 503, code: 'provider-required', error: 'CAST CAD Auto Link publishing requires CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL; refusing to fabricate durable private sheet links.', requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], candidates, contract: drawingAutoLinkContract() };
-  }
   const run = {
     id: input.id || id('cad_autolink_run'),
     projectId,
     sourceSheetId,
-    status: publishRequested ? 'ready-to-publish' : 'needs-review',
+    status: 'needs-review',
     candidateCount: candidates.length,
     candidates,
     providerRequired: !providerReady,
@@ -1035,7 +1033,7 @@ function createDrawingAutoLinks(state, input = {}, actor) {
     createdAt: now(),
   };
   state.drawingAutoLinkRuns.push(run);
-  audit(state, actor, 'Created CAST CAD drawing Auto Link candidates', 'CAST_CAD_DRAWING_AUTOLINK_RUN', run.id, null, run, 'Provider-independent private sheet-link candidates require human review before publication; no public links were fabricated.');
+  audit(state, actor, 'Created CAST CAD drawing Auto Link candidates', 'CAST_CAD_DRAWING_AUTOLINK_RUN', run.id, null, clone(run), 'Provider-independent private sheet-link candidates require human review before publication; no public links were fabricated.');
   return { ok: true, autoLinkRun: run, candidates, contract: drawingAutoLinkContract() };
 }
 function listDrawingAutoLinks(state, filters = {}) {
@@ -1048,6 +1046,77 @@ function listDrawingAutoLinks(state, filters = {}) {
   }
   if (filters.status) rows = rows.filter((row) => row.status === filters.status);
   return rows;
+}
+function scopedAutoLinkRun(state, input, actor) {
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  if (!input.projectId || !input.sourceSheetId || !input.runId) {
+    return { ok: false, status: 422, code: 'auto-link-scope-required', error: 'projectId, sourceSheetId, and an existing runId are required; generate and review candidates first.' };
+  }
+  const matches = (state.drawingAutoLinkRuns || []).filter((row) => row.id === input.runId && row.projectId === input.projectId && row.sourceSheetId === input.sourceSheetId);
+  if (matches.length > 1) return { ok: false, status: 409, code: 'auto-link-run-ambiguous', error: 'Duplicate run identifiers cannot be reviewed or published. Generate a uniquely identified run.' };
+  const run = matches[0];
+  if (!run) return { ok: false, status: 404, code: 'auto-link-run-not-found', error: 'Auto Link run not found in the requested project/sheet scope. Refresh candidates; no fallback run was selected.' };
+  return { ok: true, run };
+}
+function reviewDrawingAutoLinkCandidate(state, input = {}, actor) {
+  const scoped = scopedAutoLinkRun(state, input, actor);
+  if (!scoped.ok) return scoped;
+  const run = scoped.run;
+  if (!input.candidateId) return { ok: false, status: 422, code: 'auto-link-candidate-required', error: 'An exact candidateId is required; no first-candidate fallback is allowed.' };
+  const candidate = run.candidates.find((row) => row.id === input.candidateId && row.projectId === input.projectId && row.sourceSheetId === input.sourceSheetId);
+  if (!candidate) return { ok: false, status: 404, code: 'auto-link-candidate-not-found', error: 'Candidate not found in the requested Auto Link run.' };
+  if (!['Approved', 'Rejected'].includes(input.decision)) return { ok: false, status: 422, code: 'invalid-auto-link-review-decision', error: 'An explicit Approved or Rejected decision is required.' };
+  if (input.humanReviewApproved !== true) return { ok: false, status: 409, code: 'human-review-required', error: 'Confirm human review of this candidate before recording a decision.' };
+  if (!Number.isInteger(input.expectedReviewVersion) || input.expectedReviewVersion < 0) return { ok: false, status: 422, code: 'review-version-required', error: 'expectedReviewVersion must be a nonnegative integer from the loaded candidate.' };
+  if (input.expectedReviewVersion !== (candidate.reviewVersion || 0)) return { ok: false, status: 409, code: 'stale-auto-link-review', error: 'This candidate was reviewed since it was loaded. Refresh before changing its decision.' };
+  if (!candidate.sourceCitation?.ocrPageId || !candidate.targetDocumentId) return { ok: false, status: 409, code: 'source-citation-required', error: 'Review requires an OCR citation and a target document record.' };
+  const before = clone(candidate);
+  const approved = input.decision === 'Approved';
+  Object.assign(candidate, {
+    decision: input.decision,
+    status: approved ? 'Approved - Pending Durable Publish' : 'Rejected',
+    humanReviewed: true,
+    humanReviewApproved: approved,
+    reviewedByUserId: actor.id,
+    reviewedAt: now(),
+    reviewVersion: input.expectedReviewVersion + 1,
+    reviewNotes: String(input.reviewNotes || '').trim().slice(0, 2000),
+    durablePublished: false,
+    publicExposure: false,
+    noPublicUrls: true,
+  });
+  run.reviewedCandidateCount = run.candidates.filter((row) => row.humanReviewed === true).length;
+  run.approvedCandidateCount = run.candidates.filter((row) => row.decision === 'Approved').length;
+  run.rejectedCandidateCount = run.candidates.filter((row) => row.decision === 'Rejected').length;
+  run.status = run.reviewedCandidateCount < run.candidates.length ? 'needs-review' : run.approvedCandidateCount ? 'reviewed-pending-publish' : 'reviewed-rejected';
+  audit(state, actor, 'Reviewed CAST CAD drawing Auto Link candidate', 'CAST_CAD_DRAWING_AUTOLINK_CANDIDATE', candidate.id, before, clone(candidate), 'Runtime-only candidate decision. No durable private sheet link was published.');
+  return { ok: true, status: 200, autoLinkRun: clone(run), candidate: clone(candidate), contract: drawingAutoLinkContract(), persistence: 'memory-only', durablePublished: false, requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'] };
+}
+function publishDrawingAutoLinkRun(state, input = {}, actor) {
+  const auth = requireAuthenticatedActor(actor);
+  if (!auth.ok) return auth;
+  const permission = requireCastCad(actor.role, 'edit_markup');
+  if (!permission.ok) return permission;
+  if (input.humanReviewApproved !== true) return { ok: false, status: 409, code: 'human-review-required', error: 'Explicit human review is required before attempting Auto Link publication.' };
+  const scoped = scopedAutoLinkRun(state, input, actor);
+  if (!scoped.ok) return scoped;
+  const run = scoped.run;
+  if (!run.candidates.length || run.candidates.some((row) => row.humanReviewed !== true || !['Approved', 'Rejected'].includes(row.decision))) return { ok: false, status: 409, code: 'candidate-review-required', error: 'Review every candidate in the existing run before publishing; generating a new run cannot carry forward review approval.' };
+  const approved = run.candidates.filter((row) => row.decision === 'Approved' && row.humanReviewApproved === true);
+  if (!approved.length) return { ok: false, status: 409, code: 'no-approved-candidates', error: 'No approved candidates are available to publish. Rejected candidates cannot become links.' };
+  const configured = Boolean(process.env.CAST_CAD_DOCUMENT_METADATA_ADAPTER || process.env.CAST_CAD_DATABASE_URL);
+  const result = {
+    ok: false, status: 503, code: configured ? 'adapter-integration-required' : 'provider-required',
+    error: configured ? 'Auto Link adapter configuration is present, but durable private link persistence/readback is not integrated. No links were published.' : 'Auto Link publication requires CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL and an implemented private persistence adapter. No links were published.',
+    runId: run.id, approvedCandidateIds: approved.map((row) => row.id),
+    requiredEnvVars: ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'],
+    durablePublished: false, outputPointer: '', publicExposure: false, persistence: 'memory-only', contract: drawingAutoLinkContract(),
+  };
+  audit(state, actor, 'Blocked CAST CAD Auto Link publication', 'CAST_CAD_DRAWING_AUTOLINK_PUBLISH', run.id, null, clone(result), 'Only reviewed existing candidates may be submitted. An environment variable is not evidence of an integrated durable adapter.');
+  return result;
 }
 function normalizeAiFinding(input = {}, actor) {
   const sourceCitations = Array.isArray(input.sourceCitations || input.source_citations) ? (input.sourceCitations || input.source_citations) : [];
@@ -3712,7 +3781,7 @@ module.exports = {
   buildPdfStreamContract, createPdfStreamLease, createPdfRendererSession, listPdfRendererSessions, pdfRendererContract, sheetFromIndex, buildServerPdfUrls, createPrivateUploadLease, listPrivateUploadLeases, privateUploadLeaseContract, createMarkup, updateMarkup, deleteMarkup, listMarkups, createSavedMarkupView, listSavedMarkupViews, runSavedMarkupView, createTakeoffWorkbookExport, createAnnotatedPdfExport, createPdfAnnotationImportJob,
   createMarkupComment, listMarkupComments, createCommentMentionDelivery, listCommentMentionEvents, listMarkupAudit, createMarkupAttachment, listMarkupAttachments, attachmentContract,
   defaultViewerPreferences, normalizeViewerPreferences, getViewerPreferences, saveViewerPreferences, saveViewportMapping, listViewportMappings, normalizedPointToPdfPoint, upsertScaleCalibration, listScaleCalibrations, scaleCalibrationContract,
-  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
+  createRfiFromMarkup, createWorkflowLinkFromMarkup, listWorkflowLinks, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, reviewDrawingAutoLinkCandidate, publishDrawingAutoLinkRun, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, createReviewRoom, createReviewRoomInviteDelivery, listReviewRoomInviteEvents,
   upsertDrawingDocumentMetadata, importDrawingDocumentMetadataFromIndex, listDrawingDocumentMetadata,
   createToolLibraryItem, updateToolLibraryItem, listToolLibraryItems, applyToolLibraryItemToMarkup,
   upsertCostCatalogItem, importCostCatalogItems, listCostCatalogItems, costCatalogContract,

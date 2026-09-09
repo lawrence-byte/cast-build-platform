@@ -934,7 +934,8 @@ function renderAutoLinkCandidates() {
     list.innerHTML = '<p class="cad-muted">No Auto Link candidates loaded yet. Create reviewed OCR/index source text, then generate private sheet-link candidates.</p>';
     return;
   }
-  list.innerHTML = candidates.slice(0, 8).map((candidate) => `<div class="tool-card"><em>${esc(candidate.status || 'Needs Review')} · confidence ${esc(candidate.confidence ?? 'n/a')}</em><strong>${esc(candidate.sourceSheetId || selectedDrawingId)} → ${esc(candidate.targetDrawingNumber || candidate.targetSheetId || 'target sheet')}</strong><span>Reference ${esc(candidate.referenceText || '')}; source citation ${esc(candidate.sourceCitation?.ocrPageId || '')}. Private link only; human review and durable metadata/database adapter required before publishing.</span></div>`).join('');
+  const run = (autoLinkState.runs || []).slice(-1)[0];
+  list.innerHTML = candidates.map((candidate) => `<div class="tool-card" data-auto-link-card data-run-id="${esc(run?.id || '')}" data-candidate-id="${esc(candidate.id)}"><em>${esc(candidate.status || 'Needs Review')} · confidence ${esc(candidate.confidence ?? 'n/a')}</em><strong>${esc(candidate.sourceSheetId || selectedDrawingId)} → ${esc(candidate.targetDrawingNumber || candidate.targetSheetId || 'target sheet')}</strong><span>Reference ${esc(candidate.referenceText || '')}; source citation ${esc(candidate.sourceCitation?.ocrPageId || '')}, page ${esc(candidate.sourceCitation?.pageNumber || '')}: ${esc(candidate.sourceCitation?.excerpt || '')}. Private link only; human review and durable metadata/database adapter required before publishing.</span><label><input type="checkbox" data-auto-link-confirm autocomplete="off"> I checked this reference and target sheet</label><label>Review notes <input type="text" data-auto-link-notes maxlength="2000" value="${esc(candidate.reviewNotes || '')}"></label><div><button class="cb-btn small cb-btn--ghost" type="button" data-review-auto-link-candidate="Approved">Approve candidate</button> <button class="cb-btn small cb-btn--ghost" type="button" data-review-auto-link-candidate="Rejected">Reject candidate</button></div></div>`).join('');
 }
 function renderReviewRooms() {
   const status = document.querySelector('[data-review-room-status]');
@@ -1284,39 +1285,86 @@ async function createReviewedOcrIndexSample() {
     renderOcrSearchResults();
   }
 }
+let autoLinkRequestId = 0;
+function isCurrentAutoLinkRequest(requestId, sheetId, projectId) {
+  return requestId === autoLinkRequestId && sheetId === selectedDrawingId && projectId === (selectedDrawing()?.project_id || 'alum');
+}
 async function loadAutoLinkRuns({ toast = false } = {}) {
+  const requestId = ++autoLinkRequestId;
+  const sheetId = selectedDrawingId;
+  const projectId = selectedDrawing()?.project_id || 'alum';
   try {
-    const drawing = selectedDrawing();
-    const params = new URLSearchParams({ action: 'auto-links', projectId: drawing?.project_id || 'alum', sourceSheetId: selectedDrawingId });
+    const params = new URLSearchParams({ action: 'auto-links', projectId, sourceSheetId: sheetId });
     const response = await fetch(`/api/cast-cad-search?${params.toString()}`, { headers: { accept: 'application/json' }, cache: 'no-store' });
     const result = await response.json().catch(() => null);
-    if (!response.ok || result?.ok === false) throw new Error(result?.error || `HTTP ${response.status}`);
-    const runs = result.autoLinkRuns || [];
+    if (!isCurrentAutoLinkRequest(requestId, sheetId, projectId)) return;
+    if (!response.ok || result?.ok !== true || !Array.isArray(result.autoLinkRuns)) throw new Error(result?.error || `Invalid Auto Link response (HTTP ${response.status})`);
+    const runs = result.autoLinkRuns;
+    if (runs.some((run) => run.projectId !== projectId || run.sourceSheetId !== sheetId)) throw new Error('Auto Link response scope mismatch');
     const latest = runs.slice(-1)[0] || {};
-    autoLinkState = { status: 'loaded', runs, candidates: latest.candidates || [], message: `${result.runCount || runs.length} Auto Link run(s) loaded. Candidates are private, source-cited, and human-review-gated; publishing requires ${result.contract?.durableAdapterRequired || 'CAST_CAD_DOCUMENT_METADATA_ADAPTER'}.` };
+    autoLinkState = { status: 'loaded', runs, candidates: latest.candidates || [], message: `${runs.length} Auto Link run(s) loaded. Review each source citation and target sheet. Decisions are runtime-only; durable publishing requires an integrated CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL adapter.` };
     if (toast) window.CASTShell?.toast?.('Auto Link candidates refreshed from backend contract.', { kind: 'success' });
   } catch (error) {
-    console.warn('CAST CAD Auto Link API unavailable', error);
+    if (!isCurrentAutoLinkRequest(requestId, sheetId, projectId)) return;
     autoLinkState = { ...autoLinkState, status: 'unavailable', message: `Auto Link unavailable: ${error.message}. No local sheet hyperlinks or public links were fabricated.` };
     if (toast) window.CASTShell?.toast?.('Auto Link unavailable; no sheet links were fabricated.', { kind: 'error' });
   }
   renderAutoLinkCandidates();
 }
 async function createAutoLinkCandidates({ publish = false } = {}) {
-  const drawing = selectedDrawing();
-  if (!selectedDrawingId) { window.CASTShell?.toast?.('Select a sheet before generating Auto Link candidates.', { kind: 'error' }); return; }
+  const sheetId = selectedDrawingId;
+  const projectId = selectedDrawing()?.project_id || 'alum';
+  if (!sheetId) { window.CASTShell?.toast?.('Select a sheet before generating Auto Link candidates.', { kind: 'error' }); return; }
+  const run = (autoLinkState.runs || []).slice(-1)[0];
   const humanReviewApproved = Boolean(document.querySelector('[data-auto-link-review]')?.checked);
+  if (publish && (!run || run.projectId !== projectId || run.sourceSheetId !== sheetId)) { window.CASTShell?.toast?.('Load and review the selected sheet’s existing Auto Link run before publishing.', { kind: 'error' }); return; }
+  const requestId = ++autoLinkRequestId;
   try {
-    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ action: 'auto-links', projectId: drawing?.project_id || 'alum', sourceSheetId: selectedDrawingId, publishLinks: publish, humanReviewApproved }) });
+    const payload = publish ? { action: 'publish-auto-link-run', projectId, sourceSheetId: sheetId, runId: run.id, humanReviewApproved } : { action: 'auto-links', projectId, sourceSheetId: sheetId };
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
     const result = await response.json().catch(() => null);
-    if (!response.ok || result?.ok === false) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
-    const run = result.autoLinkRun || {};
-    autoLinkState = { status: run.status || 'needs-review', runs: [...autoLinkState.runs.filter((row) => row.id !== run.id), run].filter(Boolean), candidates: result.candidates || run.candidates || [], message: `${result.candidates?.length || run.candidateCount || 0} private Auto Link candidate(s) generated. Human review is required before publishing; no public sheet links were fabricated.` };
+    if (!isCurrentAutoLinkRequest(requestId, sheetId, projectId)) return;
+    if (!response.ok || result?.ok !== true) throw new Error(result?.error || (result?.errors || []).join(' ') || `HTTP ${response.status}`);
+    if (publish) throw new Error('Durable Auto Link publication is not integrated; no publication success can be verified');
+    const createdRun = result.autoLinkRun;
+    if (!createdRun?.id || createdRun.projectId !== projectId || createdRun.sourceSheetId !== sheetId || !Array.isArray(createdRun.candidates)) throw new Error('Missing or mismatched audited Auto Link run');
+    autoLinkState = { status: createdRun.status || 'needs-review', runs: [...autoLinkState.runs.filter((row) => row.id !== createdRun.id), createdRun], candidates: createdRun.candidates, message: `${createdRun.candidates.length} private Auto Link candidate(s) generated. Review each candidate; decisions and audit records remain runtime-only until a durable adapter is integrated.` };
     window.CASTShell?.toast?.('Auto Link candidates generated through audited backend contract.', { kind: 'success' });
   } catch (error) {
-    console.warn('Could not create CAST CAD Auto Link candidates', error);
-    autoLinkState = { ...autoLinkState, status: 'blocked', message: `Auto Link blocked: ${error.message}. Create reviewed OCR/index source text and document metadata first; no local hyperlink authority was fabricated.` };
+    if (!isCurrentAutoLinkRequest(requestId, sheetId, projectId)) return;
+    autoLinkState = { ...autoLinkState, status: 'blocked', message: `Auto Link blocked: ${error.message}. No local hyperlink authority was fabricated.` };
     window.CASTShell?.toast?.('Auto Link blocked; no local sheet links were fabricated.', { kind: 'error' });
+  }
+  renderAutoLinkCandidates();
+}
+async function reviewAutoLinkCandidate(button) {
+  const card = button.closest('[data-auto-link-card]');
+  const run = (autoLinkState.runs || []).find((row) => row.id === card?.dataset.runId);
+  const candidate = run?.candidates.find((row) => row.id === card?.dataset.candidateId);
+  const sheetId = selectedDrawingId;
+  const projectId = selectedDrawing()?.project_id || 'alum';
+  const confirmed = card?.querySelector('[data-auto-link-confirm]')?.checked === true;
+  if (!candidate || run.projectId !== projectId || run.sourceSheetId !== sheetId || !confirmed) { window.CASTShell?.toast?.('Confirm review of this exact candidate in the selected sheet first.', { kind: 'error' }); return; }
+  const requestId = ++autoLinkRequestId;
+  const buttons = card.querySelectorAll('button');
+  buttons.forEach((control) => { control.disabled = true; });
+  try {
+    const payload = { action: 'review-auto-link-candidate', projectId, sourceSheetId: sheetId, runId: run.id, candidateId: candidate.id, decision: button.dataset.reviewAutoLinkCandidate, humanReviewApproved: confirmed, expectedReviewVersion: candidate.reviewVersion || 0, reviewNotes: card.querySelector('[data-auto-link-notes]')?.value || '' };
+    const response = await fetch('/api/cast-cad-search', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(payload) });
+    const result = await response.json().catch(() => null);
+    if (!isCurrentAutoLinkRequest(requestId, sheetId, projectId)) return;
+    if (!response.ok || result?.ok !== true) throw new Error(result?.error || `HTTP ${response.status}`);
+    const reviewedRun = result.autoLinkRun;
+    const reviewedCandidate = reviewedRun?.candidates?.find((row) => row.id === candidate.id);
+    if (reviewedRun?.id !== run.id || reviewedRun.projectId !== projectId || reviewedRun.sourceSheetId !== sheetId || reviewedCandidate?.decision !== payload.decision || reviewedCandidate?.reviewVersion !== payload.expectedReviewVersion + 1 || reviewedCandidate?.durablePublished !== false) throw new Error('Missing or mismatched audited candidate decision');
+    autoLinkState = { status: reviewedRun.status, runs: autoLinkState.runs.map((row) => row.id === reviewedRun.id ? reviewedRun : row), candidates: reviewedRun.candidates, message: `Candidate ${payload.decision.toLowerCase()} through backend audit. Runtime-only record; durable publishing still requires an integrated CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL adapter.` };
+    window.CASTShell?.toast?.('Auto Link decision recorded; no durable link published.', { kind: 'success' });
+  } catch (error) {
+    if (!isCurrentAutoLinkRequest(requestId, sheetId, projectId)) return;
+    autoLinkState = { ...autoLinkState, status: 'blocked', message: `Auto Link review blocked: ${error.message}. No local sheet hyperlink or durable publish authority was fabricated. Refresh before retrying.` };
+    window.CASTShell?.toast?.('Auto Link review blocked; no local decision was fabricated.', { kind: 'error' });
+  } finally {
+    buttons.forEach((control) => { control.disabled = false; });
   }
   renderAutoLinkCandidates();
 }
@@ -2754,6 +2802,8 @@ document.addEventListener('click', (event) => {
   if (event.target.closest('[data-search-ocr-symbols]')) { searchOcrSymbolIndex({ toast: true }); return; }
   if (event.target.closest('[data-index-ocr-sample]')) { createReviewedOcrIndexSample(); return; }
   if (event.target.closest('[data-create-auto-links]')) { createAutoLinkCandidates({ publish: false }); return; }
+  const autoLinkReview = event.target.closest('[data-review-auto-link-candidate]');
+  if (autoLinkReview) { reviewAutoLinkCandidate(autoLinkReview); return; }
   if (event.target.closest('[data-publish-auto-links]')) { createAutoLinkCandidates({ publish: true }); return; }
   if (event.target.closest('[data-load-auto-links]')) { loadAutoLinkRuns({ toast: true }); return; }
   if (event.target.closest('[data-create-review-room]')) { createReviewRoomForSelectedScope(); return; }

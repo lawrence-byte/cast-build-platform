@@ -275,11 +275,11 @@
         <article class="cad-panel">
           <div class="cad-panel-head"><h2>Auto Link candidates</h2><span class="badge">Private links only</span></div>
           <div class="cad-panel-body">
-            <p class="cad-muted">Creates source-cited private sheet-link candidates from audited OCR/index text and drawing metadata. Candidates stay Needs Review; publishing fails closed until human review plus CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL is configured.</p>
+            <p class="cad-muted">Review each source citation and target sheet, then explicitly approve or reject that candidate. Decisions and audit records are runtime-only, not durable database records. Publishing uses the reviewed existing run and remains blocked until CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL is configured and its private persistence adapter is integrated.</p>
             <div class="pdf-intake cad-auto-link-controls" aria-label="CAST CAD Auto Link controls">
               <label><input type="checkbox" data-auto-link-review autocomplete="off"> Human reviewed for publish</label>
               <button class="cb-btn small cb-btn--ghost" type="button" data-create-auto-links>Generate Auto Link candidates</button>
-              <button class="cb-btn small cb-btn--ghost" type="button" data-publish-auto-links>Try reviewed publish</button>
+              <button class="cb-btn small cb-btn--ghost" type="button" data-publish-auto-links>Try publishing reviewed run</button>
               <button class="cb-btn small cb-btn--ghost" type="button" data-load-auto-links>Refresh Auto Links</button>
               <span class="pdf-status" data-auto-link-status>Auto Link candidates not checked yet. Private links require reviewed OCR/index sources and durable metadata adapters before publishing.</span>
             </div>

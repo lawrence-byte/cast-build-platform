@@ -26,6 +26,12 @@ jobs:
       - name: Build deploy artifact
         run: npm run build
 
+      - name: Test platform and CAST CAD contracts
+        run: npm test
+
+      - name: Check public artifact privacy
+        run: npm run check:public-artifacts
+
       - name: Check third-party script approvals
         run: npm run check:third-party-scripts
 

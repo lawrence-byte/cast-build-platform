@@ -285,9 +285,8 @@ const blockedAutoLinkPublish = cad.createDrawingAutoLinks(state, { projectId: 'a
 assert.equal(blockedAutoLinkPublish.ok, false, 'Auto Link publishing fails closed without human review');
 assert.equal(blockedAutoLinkPublish.code, 'human-review-required', 'Auto Link publishing exposes human review blocker');
 const blockedAutoLinkDurablePublish = cad.createDrawingAutoLinks(state, { projectId: 'alum', sourceSheetId: 'A-101', publishLinks: true, humanReviewApproved: true }, owner);
-assert.equal(blockedAutoLinkDurablePublish.ok, false, 'Auto Link durable publishing fails closed without metadata/database adapter');
-assert.equal(blockedAutoLinkDurablePublish.code, 'provider-required', 'Auto Link durable publishing exposes provider-required blocker');
-assert.deepEqual(blockedAutoLinkDurablePublish.requiredEnvVars, ['CAST_CAD_DOCUMENT_METADATA_ADAPTER or CAST_CAD_DATABASE_URL'], 'Auto Link durable publishing names exact adapter env choices');
+assert.equal(blockedAutoLinkDurablePublish.ok, false, 'Auto Link publishing cannot generate fresh unreviewed candidates');
+assert.equal(blockedAutoLinkDurablePublish.code, 'auto-link-scope-required', 'Auto Link publishing requires an existing reviewed run before checking its provider');
 assert.equal(cad.listDrawingAutoLinks(state, { projectId: 'alum', sheetId: 'A-101' }).length, 1, 'Auto Link runs list by project/source sheet');
 assert.ok(state.auditLog.some((row) => row.entityType === 'CAST_CAD_DRAWING_AUTOLINK_RUN'), 'Auto Link candidate runs are audited');
 
