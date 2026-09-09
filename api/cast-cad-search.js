@@ -1,5 +1,5 @@
 'use strict';
-const { getActor, getState, json, readBody, requireAuthenticatedActor, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, requireCastCad } = require('./_lib/cast-cad-production');
+const { getActor, getState, json, readBody, requireAuthenticatedActor, indexOcrPage, searchOcr, createDrawingAutoLinks, listDrawingAutoLinks, reviewDrawingAutoLinkCandidate, publishDrawingAutoLinkRun, drawingAutoLinkContract, createAiFinding, reviewAiFinding, listAiFindings, requireCastCad } = require('./_lib/cast-cad-production');
 
 module.exports = async function handler(req, res) {
   const state = getState(); const actor = getActor(req);
@@ -29,10 +29,14 @@ module.exports = async function handler(req, res) {
         ? createAiFinding(state, body, actor)
         : action === 'review-ai-finding'
           ? reviewAiFinding(state, body.findingId || body.finding_id || body.id, body, actor)
+          : action === 'review-auto-link-candidate'
+            ? reviewDrawingAutoLinkCandidate(state, body, actor)
+          : action === 'publish-auto-link-run'
+            ? publishDrawingAutoLinkRun(state, body, actor)
           : action === 'auto-links' || action === 'drawing-auto-links' || action === 'autolink'
             ? createDrawingAutoLinks(state, body, actor)
           : indexOcrPage(state, body, actor);
-      return json(res, result.ok ? 201 : (result.status || 422), result);
+      return json(res, result.ok ? (result.status || 201) : (result.status || 422), result);
     }
     return json(res, 405, { ok: false, error: 'Method not allowed.' }, { allow: 'GET, POST' });
   } catch (error) { return json(res, 500, { ok: false, error: error.message }); }

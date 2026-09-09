@@ -4,7 +4,23 @@
 
 CAST CAD is implemented as a Phase 1–3 static-platform MVP plus production API contracts for the remaining enterprise modules. The repo now has the route, viewer/markup/takeoff foundation, architecture, schema target, feature flags, backend contracts, fail-closed private-file gates, workflow endpoints, and tests that make provider-dependent infrastructure explicit and guarded.
 
-## 2026-05 production-completion update
+## 2026-09-09: Complete the stranded Auto Link review workflow
+
+The earlier candidate-review work in PR #57 (`512ae6b`) did not reach `main`: its check failed during GitHub checkout, and the PR later became conflicting. This is an existing unfinished Auto Link item, not a new facility-management module. The old branch is preserved. The original review concept is completed against current `main` with stronger safeguards:
+
+- Each candidate has separate **Approve candidate** / **Reject candidate** controls, a confirmation checkbox, source excerpt/page, and review notes. Every candidate is accessible; the former eight-card truncation is removed.
+- `POST /api/cast-cad-search` with `action=review-auto-link-candidate` requires exact `projectId`, `sourceSheetId`, `runId`, `candidateId`, explicit `decision=Approved|Rejected`, boolean `humanReviewApproved=true`, and `expectedReviewVersion` from the loaded candidate (initially zero). Missing/mismatched/ambiguous scope, stale decisions, read-only roles, and missing strict-auth identity fail closed. No fallback to the first candidate or another run is permitted.
+- Candidate review records and creation/review audit snapshots remain **memory-only**. Responses and the workbench disclose this; neither approval nor nonempty configuration proves durable persistence. The existing production identity integration is still a prerequisite; these role/header contract tests do not establish real session verification.
+- `action=publish-auto-link-run` uses the existing reviewed run. All candidates need a decision, and only approved candidates are eligible. Legacy `auto-links` publication flags use the same gate instead of generating fresh, implicitly approved candidates.
+- Durable publishing remains `503 provider-required` without `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL`, and `503 adapter-integration-required` when configuration exists but the private persistence adapter is not implemented. No URL, output pointer, provider queue, or durable link is fabricated.
+- The workbench ignores stale responses after sheet changes, validates returned decision identity/version, and never invents a local approval on network or malformed-response failures.
+- Regression coverage: `tests/cast-cad-auto-link-review-tests.js` exercises service decisions, immutable audit snapshots, HTTP mutation/readback, strict-auth/role refusals, publication gates with missing and placeholder configuration, and actual workbench functions against a local fixture API. It is included in `npm test`; CI runs tests and public-artifact privacy checks alongside the existing built-artifact third-party script check.
+
+**Validation (2026-09-09):** `npm test`, `npm run build`, `npm run check:public-artifacts`, `npm run check:third-party-scripts`, the requested combined `node --check` command, and individual syntax checks for all 68 matching JavaScript files passed. The build ran in an isolated, source-hash-verified snapshot so the pre-existing ignored `dist/` remained untouched. Service/HTTP/workbench tests use explicitly synthetic local fixtures, not real production drawing or provider results. Production verification is recorded on the completion PR after deployment; the May live checks below are historical evidence only.
+
+**Next provider decision:** choose and implement private project-scoped database/metadata persistence through `CAST_CAD_DOCUMENT_METADATA_ADAPTER` or `CAST_CAD_DATABASE_URL`, including atomic review-version checks, immutable durable audit records, authenticated project authorization, and publish/readback verification. Production OCR still needs `CAST_CAD_OCR_WORKER` or `CAST_CAD_AUTOLINK_WORKER`. Do not interpret setting these names alone as implementation or production completion.
+
+## 2026-05 production-completion history
 
 Implemented backend contracts and tests for the remaining non-static elements that can be completed without external provider credentials:
 
