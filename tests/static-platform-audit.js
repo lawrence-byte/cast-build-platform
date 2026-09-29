@@ -646,6 +646,18 @@ if (!fs.existsSync(budgetAuditPath)) {
   }
 }
 const alumReplicaPage = fs.readFileSync(path.join(root, 'public/projects/golden-hill-procore.html'), 'utf8');
+if (!/<meta\s+name=["']robots["']\s+content=["']noindex, nofollow, noarchive["']\s*\/?>/i.test(alumReplicaPage)) {
+  console.error('Alüm replica page must remain excluded from search indexing.');
+  failed = true;
+}
+if (!alumReplicaPage.includes('1101 25th Street, Golden Hill')) {
+  console.error('Alüm replica page must use the verified Golden Hill neighborhood.');
+  failed = true;
+}
+if (/1101 25th Street,\s*Bankers Hill/i.test(alumReplicaPage)) {
+  console.error('Alüm replica page must not regress to the obsolete Bankers Hill neighborhood.');
+  failed = true;
+}
 if (/source-logs\//i.test(alumReplicaPage)) {
   console.error('Alüm replica page must not link directly to private source-log artifacts.');
   failed = true;
@@ -1013,6 +1025,9 @@ for (const docIntelDir of [
 }
 
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
+const globalHeaders = (vercelConfig.headers || []).find((entry) => entry.source === '/(.*)')?.headers || [];
+const globalRobotsHeader = globalHeaders.find((header) => header.key.toLowerCase() === 'x-robots-tag');
+if (globalRobotsHeader?.value !== 'noindex, nofollow, noarchive') fail('CAST Build must remain globally excluded from search indexing');
 const rewrites = vercelConfig.rewrites || [];
 for (const source of ['/admin', '/projects', '/procore', '/document-tools', '/schedule-brain', '/schedule', '/projects/alum-management-control-center', '/projects/alum-management', '/projects/golden-hill', '/projects/overlook']) {
   const rewrite = rewrites.find((row) => row.source === source);
